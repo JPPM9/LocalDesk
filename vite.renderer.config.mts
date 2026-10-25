@@ -1,5 +1,6 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 
 // Content-Security-Policy für die fertige App: Die Oberfläche darf nur eigene
 // Skripte laden und selbst keine Netzwerkverbindungen aufbauen – alles Netzwerk
@@ -29,5 +30,5 @@ function cspPlugin(): Plugin {
 
 // https://vitejs.dev/config
 export default defineConfig({
-  plugins: [react(), cspPlugin()],
+  plugins: [react(), tailwindcss(), cspPlugin()],
 });

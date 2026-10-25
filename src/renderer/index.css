@@ -1,27 +1,70 @@
+@import 'tailwindcss';
+
+/*
+ * Farb-Tokens: Jede Farbe hat einen Namen nach ihrer Aufgabe (z. B. "surface"),
+ * nicht nach ihrem Aussehen. Hell und Dunkel setzen nur andere Werte für dieselben
+ * Namen – die Komponenten müssen das Farbschema dadurch nicht kennen.
+ * Das Schema folgt Windows (Einstellungen → Personalisierung → Farben).
+ */
 :root {
-  color-scheme: light dark;
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  background: Canvas;
-  color: CanvasText;
+  color-scheme: light;
+  --ld-bg: #f6f7f9;
+  --ld-surface: #ffffff;
+  --ld-surface-hover: #eef0f3;
+  --ld-border: #dde1e6;
+  --ld-text: #1b1f24;
+  --ld-muted: #5f6b7a;
+  --ld-accent: #2563eb;
+  --ld-accent-soft: #dbe6fd;
+  --ld-ok: #15803d;
+  --ld-warn: #b45309;
+  --ld-error: #b91c1c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --ld-bg: #0f1115;
+    --ld-surface: #161a20;
+    --ld-surface-hover: #1f242c;
+    --ld-border: #2a3039;
+    --ld-text: #e6e9ee;
+    --ld-muted: #8b95a3;
+    --ld-accent: #5b8def;
+    --ld-accent-soft: #1c2a45;
+    --ld-ok: #4ade80;
+    --ld-warn: #fbbf24;
+    --ld-error: #f87171;
+  }
+}
+
+/* Macht die Tokens als Tailwind-Klassen nutzbar, z. B. bg-surface, text-muted, border-border. */
+@theme inline {
+  --color-bg: var(--ld-bg);
+  --color-surface: var(--ld-surface);
+  --color-surface-hover: var(--ld-surface-hover);
+  --color-border: var(--ld-border);
+  --color-text: var(--ld-text);
+  --color-muted: var(--ld-muted);
+  --color-accent: var(--ld-accent);
+  --color-accent-soft: var(--ld-accent-soft);
+  --color-ok: var(--ld-ok);
+  --color-warn: var(--ld-warn);
+  --color-error: var(--ld-error);
+  --font-sans: 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Cascadia Mono', Consolas, ui-monospace, monospace;
+}
+
+html,
+body,
+#root {
+  height: 100%;
 }
 
 body {
   margin: 0;
-}
-
-.placeholder {
-  max-width: 38rem;
-  margin: 4rem auto;
-  padding: 0 1rem;
-}
-
-.placeholder dl {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  gap: 0.25rem 1rem;
-  font-family: Consolas, ui-monospace, monospace;
-}
-
-.placeholder dd {
-  margin: 0;
+  background: var(--ld-bg);
+  color: var(--ld-text);
+  font-family: var(--font-sans);
+  font-size: 14px;
 }

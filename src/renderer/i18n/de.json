@@ -1,0 +1,29 @@
+{
+  "nav": {
+    "sectionChat": "Chat",
+    "chat": "Chat",
+    "sectionModels": "Modelle",
+    "models": "Installierte Modelle",
+    "sectionSystem": "System",
+    "settings": "Einstellungen",
+    "collapse": "Seitenleiste einklappen",
+    "expand": "Seitenleiste ausklappen"
+  },
+  "status": {
+    "notConnected": "Ollama: noch nicht verbunden"
+  },
+  "chat": {
+    "title": "Chat",
+    "placeholder": "Hier entsteht der Chat mit Streaming und Verlauf."
+  },
+  "models": {
+    "title": "Installierte Modelle",
+    "placeholder": "Hier erscheint die Liste deiner Ollama-Modelle."
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "about": "Über LocalDesk",
+    "version": "Version",
+    "loading": "Lade …"
+  }
+}

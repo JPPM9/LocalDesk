@@ -1,32 +1,23 @@
-import { useEffect, useState } from 'react';
-import type { AppInfo } from '../shared/api';
+import { HashRouter, Navigate, Route, Routes } from 'react-router';
+import { AppLayout } from './components/AppLayout';
+import { ChatPage } from './pages/ChatPage';
+import { ModelsPage } from './pages/ModelsPage';
+import { SettingsPage } from './pages/SettingsPage';
 
-// Platzhalter für Phase 0: zeigt, dass React läuft und die Brücke zum Main-Prozess funktioniert.
+// HashRouter statt BrowserRouter: Die fertige App wird als Datei (file://) geladen,
+// dort funktionieren nur Adressen hinter dem # (z. B. index.html#/chat).
 export function App() {
-  const [info, setInfo] = useState<AppInfo | null>(null);
-
-  useEffect(() => {
-    window.api.getAppInfo().then(setInfo);
-  }, []);
-
   return (
-    <main className="placeholder">
-      <h1>LocalDesk</h1>
-      <p>Grundgerüst läuft.</p>
-      {info ? (
-        <dl>
-          <dt>Version</dt>
-          <dd>{info.version}</dd>
-          <dt>Electron</dt>
-          <dd>{info.electron}</dd>
-          <dt>Node</dt>
-          <dd>{info.node}</dd>
-          <dt>Chromium</dt>
-          <dd>{info.chrome}</dd>
-        </dl>
-      ) : (
-        <p>Verbinde mit Main-Prozess …</p>
-      )}
-    </main>
+    <HashRouter>
+      <Routes>
+        <Route element={<AppLayout />}>
+          <Route index element={<Navigate to="/chat" replace />} />
+          <Route path="chat" element={<ChatPage />} />
+          <Route path="models" element={<ModelsPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+          <Route path="*" element={<Navigate to="/chat" replace />} />
+        </Route>
+      </Routes>
+    </HashRouter>
   );
 }
