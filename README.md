@@ -21,7 +21,7 @@ npm start
 
 `npm start` öffnet die App im Entwicklungsmodus (mit Entwicklerwerkzeugen in einem
 eigenen Fenster). Änderungen an der Oberfläche erscheinen sofort; Änderungen am
-Main-Prozess brauchen einen Neustart (im Terminal `rs` + Enter).
+Main-Prozess brauchen einen Neustart (im Terminal Taste `r`; beenden mit `q`).
 
 ## Weitere Befehle
 

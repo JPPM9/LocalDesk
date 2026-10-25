@@ -40,8 +40,14 @@
 
 ## Phasen
 
-0. Setup ✅ · 1. Minimal-App (Modellliste, Chat-Streaming, Verlauf) · 2. Organisation & Parameter ·
-1. Modelle & Status · 4. MCP · 5. RAG · 6. Memory/Obsidian · 7. Installer & Update-Check
+- Phase 0: Setup ✅
+- Phase 1: Minimal-App (Modellliste, Chat-Streaming, Verlauf)
+- Phase 2: Organisation & Parameter
+- Phase 3: Modelle & Status
+- Phase 4: MCP
+- Phase 5: RAG
+- Phase 6: Memory/Obsidian
+- Phase 7: Installer & Update-Check
 
 ## Befehle
 
