@@ -60,6 +60,7 @@ const ollama = new OllamaProvider();
 
 function registerIpcHandlers() {
   ipcMain.handle(IpcChannels.getOllamaStatus, () => ollama.checkStatus());
+  ipcMain.handle(IpcChannels.listModels, () => ollama.listModels());
 
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({
     name: app.getName(),

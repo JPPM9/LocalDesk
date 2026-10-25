@@ -20,7 +20,27 @@
   },
   "models": {
     "title": "Installierte Modelle",
-    "placeholder": "Hier erscheint die Liste deiner Ollama-Modelle."
+    "refresh": "Aktualisieren",
+    "loading": "Lade Modelle …",
+    "error": "Modellliste konnte nicht geladen werden",
+    "empty": "Keine Modelle installiert. Lade eines mit „ollama pull <name>“ herunter.",
+    "columns": {
+      "name": "Name",
+      "parameters": "Parameter",
+      "quantization": "Quantisierung",
+      "size": "Größe",
+      "context": "Max. Kontext",
+      "capabilities": "Fähigkeiten",
+      "modified": "Geändert"
+    },
+    "capability": {
+      "vision": "Bilder",
+      "audio": "Audio",
+      "tools": "Tools",
+      "thinking": "Denken",
+      "embedding": "Embedding",
+      "insert": "Einfügen"
+    }
   },
   "settings": {
     "title": "Einstellungen",
