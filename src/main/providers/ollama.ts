@@ -1,4 +1,12 @@
-import type { ModelInfo, ProviderStatus, Result } from '../../shared/api';
+import type {
+  ChatChunk,
+  ChatRequest,
+  ChatStats,
+  ModelInfo,
+  ProviderStatus,
+  Result,
+} from '../../shared/api';
+import { readNdjson } from './ndjson';
 import type { Provider } from './provider';
 
 export const DEFAULT_OLLAMA_URL = 'http://localhost:11434';
@@ -19,6 +27,17 @@ interface OllamaTag {
     context_length?: unknown;
   };
   capabilities?: unknown;
+}
+
+/** Eine Zeile aus dem Stream von `POST /api/chat`. */
+interface OllamaChatLine {
+  message?: { content?: unknown; thinking?: unknown };
+  done?: unknown;
+  error?: unknown;
+  eval_count?: unknown;
+  eval_duration?: unknown;
+  prompt_eval_count?: unknown;
+  total_duration?: unknown;
 }
 
 interface OllamaOptions {
@@ -81,9 +100,86 @@ export class OllamaProvider implements Provider {
     }
   }
 
+  async *chat(
+    request: ChatRequest,
+    signal: AbortSignal,
+  ): AsyncGenerator<ChatChunk> {
+    let response: Response;
+    try {
+      response = await this.fetchFn(`${this.baseUrl}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: request.model,
+          messages: request.messages,
+          stream: true,
+        }),
+        signal,
+      });
+    } catch (error) {
+      if (signal.aborted) throw error; // Abbruch durch den Nutzer – kein Fehler
+      throw new Error(describeError(error));
+    }
+
+    if (!response.ok || !response.body) {
+      throw new Error(await readErrorMessage(response));
+    }
+
+    for await (const raw of readNdjson(response.body)) {
+      const line = raw as OllamaChatLine;
+      if (typeof line.error === 'string') {
+        throw new Error(line.error);
+      }
+      const thinking = line.message?.thinking;
+      if (typeof thinking === 'string' && thinking !== '') {
+        yield { type: 'thinking', text: thinking };
+      }
+      const content = line.message?.content;
+      if (typeof content === 'string' && content !== '') {
+        yield { type: 'content', text: content };
+      }
+      if (line.done === true) {
+        yield { type: 'done', stats: toChatStats(line) };
+        return;
+      }
+    }
+  }
+
   private offline(error: string): ProviderStatus {
     return { online: false, baseUrl: this.baseUrl, error };
   }
+}
+
+/** Ollama schickt Fehler als `{"error": "..."}` – sonst nehmen wir den HTTP-Status. */
+async function readErrorMessage(response: Response): Promise<string> {
+  try {
+    const body = (await response.json()) as { error?: unknown };
+    if (typeof body.error === 'string') return body.error;
+  } catch {
+    // Antwort war kein JSON
+  }
+  return `HTTP ${response.status}`;
+}
+
+/** Ollama misst Zeiten in Nanosekunden. */
+function toChatStats(line: OllamaChatLine): ChatStats | undefined {
+  const evalCount = line.eval_count;
+  const evalNs = line.eval_duration;
+  if (
+    typeof evalCount !== 'number' ||
+    typeof evalNs !== 'number' ||
+    evalNs <= 0
+  ) {
+    return undefined;
+  }
+  return {
+    outputTokens: evalCount,
+    tokensPerSecond: evalCount / (evalNs / 1e9),
+    promptTokens:
+      typeof line.prompt_eval_count === 'number' ? line.prompt_eval_count : 0,
+    totalMs:
+      typeof line.total_duration === 'number' ? line.total_duration / 1e6 : 0,
+  };
 }
 
 /**

@@ -3,6 +3,7 @@ import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import { IpcChannels, type AppInfo } from '../shared/api';
 import { OllamaProvider } from './providers/ollama';
+import { registerChatHandlers } from './chat-service';
 
 // Der Windows-Installer (Squirrel) startet die App kurz beim Installieren,
 // um Verknüpfungen anzulegen – in dem Fall sofort wieder beenden.
@@ -61,6 +62,7 @@ const ollama = new OllamaProvider();
 function registerIpcHandlers() {
   ipcMain.handle(IpcChannels.getOllamaStatus, () => ollama.checkStatus());
   ipcMain.handle(IpcChannels.listModels, () => ollama.listModels());
+  registerChatHandlers(ollama);
 
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({
     name: app.getName(),

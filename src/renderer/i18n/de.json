@@ -16,7 +16,22 @@
   },
   "chat": {
     "title": "Chat",
-    "placeholder": "Hier entsteht der Chat mit Streaming und Verlauf."
+    "model": "Modell",
+    "noModels": "Keine Modelle",
+    "newChat": "Neuer Chat",
+    "empty": "Wähle oben ein Modell und schreib eine Nachricht.",
+    "modelsError": "Modelle konnten nicht geladen werden: {{error}}",
+    "inputPlaceholder": "Nachricht schreiben …",
+    "inputNoModel": "Kein Modell verfügbar – läuft Ollama?",
+    "hint": "Enter senden · Umschalt+Enter neue Zeile · Verlauf wird noch nicht gespeichert",
+    "send": "Senden",
+    "stop": "Stopp",
+    "waiting": "Modell wird geladen …",
+    "thinking": "Gedanken",
+    "thinkingNow": "Denkt nach …",
+    "aborted": "Abgebrochen",
+    "error": "Fehler: {{error}}",
+    "stats": "{{tokens}} Tokens · {{speed}} Tokens/s · {{seconds}} s"
   },
   "models": {
     "title": "Installierte Modelle",

@@ -1,0 +1,153 @@
+/* Darstellung von Modellantworten (Markdown) und Farben für Code-Hervorhebung. */
+
+:root {
+  --ld-code-bg: #f1f3f6;
+  --ld-hl-keyword: #a626a4;
+  --ld-hl-string: #50a14f;
+  --ld-hl-number: #b76b01;
+  --ld-hl-comment: #8a94a3;
+  --ld-hl-title: #4078f2;
+  --ld-hl-type: #c18401;
+  --ld-hl-attr: #986801;
+  --ld-hl-deleted: #e45649;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ld-code-bg: #0b0d11;
+    --ld-hl-keyword: #c678dd;
+    --ld-hl-string: #98c379;
+    --ld-hl-number: #d19a66;
+    --ld-hl-comment: #6b7380;
+    --ld-hl-title: #61afef;
+    --ld-hl-type: #e5c07b;
+    --ld-hl-attr: #d19a66;
+    --ld-hl-deleted: #e06c75;
+  }
+}
+
+.markdown {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.markdown > * + * {
+  margin-top: 0.75em;
+}
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4 {
+  font-weight: 600;
+  line-height: 1.3;
+  margin-top: 1.2em;
+}
+.markdown h1 {
+  font-size: 1.35em;
+}
+.markdown h2 {
+  font-size: 1.2em;
+}
+.markdown h3 {
+  font-size: 1.05em;
+}
+.markdown ul {
+  list-style: disc;
+  padding-left: 1.5em;
+}
+.markdown ol {
+  list-style: decimal;
+  padding-left: 1.5em;
+}
+.markdown li + li {
+  margin-top: 0.25em;
+}
+.markdown a {
+  color: var(--ld-accent);
+  text-decoration: underline;
+}
+.markdown blockquote {
+  border-left: 3px solid var(--ld-border);
+  padding-left: 0.9em;
+  color: var(--ld-muted);
+}
+.markdown hr {
+  border-color: var(--ld-border);
+}
+.markdown :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--ld-code-bg);
+  border: 1px solid var(--ld-border);
+  border-radius: 4px;
+  padding: 0.05em 0.35em;
+}
+.markdown pre {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  background: var(--ld-code-bg);
+  border: 1px solid var(--ld-border);
+  border-radius: 6px;
+  padding: 0.8em 1em;
+  overflow-x: auto;
+}
+.markdown table {
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+}
+.markdown th,
+.markdown td {
+  border: 1px solid var(--ld-border);
+  padding: 0.35em 0.7em;
+}
+.markdown th {
+  background: var(--ld-surface);
+  font-weight: 600;
+}
+
+/* highlight.js-Klassen, wie rehype-highlight sie setzt */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-meta .hljs-keyword {
+  color: var(--ld-hl-keyword);
+}
+.hljs-string,
+.hljs-regexp,
+.hljs-addition {
+  color: var(--ld-hl-string);
+}
+.hljs-number,
+.hljs-symbol,
+.hljs-bullet {
+  color: var(--ld-hl-number);
+}
+.hljs-comment,
+.hljs-quote {
+  color: var(--ld-hl-comment);
+  font-style: italic;
+}
+.hljs-title,
+.hljs-section,
+.hljs-function .hljs-title {
+  color: var(--ld-hl-title);
+}
+.hljs-type,
+.hljs-built_in,
+.hljs-class .hljs-title {
+  color: var(--ld-hl-type);
+}
+.hljs-attr,
+.hljs-attribute,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-property {
+  color: var(--ld-hl-attr);
+}
+.hljs-deletion {
+  color: var(--ld-hl-deleted);
+}
+.hljs-meta {
+  color: var(--ld-muted);
+}
