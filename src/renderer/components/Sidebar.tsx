@@ -8,6 +8,7 @@ import {
   Settings,
   type LucideIcon,
 } from 'lucide-react';
+import { StatusPill } from './StatusPill';
 
 interface NavItem {
   to: string;
@@ -96,10 +97,9 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         ))}
       </nav>
 
-      {/* Platz für die Statusanzeige (Ollama, geladenes Modell, VRAM) – folgt im nächsten Schritt. */}
-      <div className="border-t border-border px-3 py-2.5 text-xs text-muted">
-        <span className="inline-block h-2 w-2 rounded-full bg-muted" />
-        {!collapsed && <span className="ml-2">{t('status.notConnected')}</span>}
+      {/* Geladenes Modell, VRAM und GPU-Last kommen in Phase 3 dazu. */}
+      <div className="border-t border-border px-3 py-2.5">
+        <StatusPill compact={collapsed} />
       </div>
     </aside>
   );

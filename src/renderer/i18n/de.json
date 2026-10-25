@@ -10,7 +10,9 @@
     "expand": "Seitenleiste ausklappen"
   },
   "status": {
-    "notConnected": "Ollama: noch nicht verbunden"
+    "checking": "Ollama: prüfe Verbindung …",
+    "online": "Ollama {{version}}",
+    "offline": "Ollama offline"
   },
   "chat": {
     "title": "Chat",

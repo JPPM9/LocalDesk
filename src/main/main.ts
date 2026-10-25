@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import { IpcChannels, type AppInfo } from '../shared/api';
+import { OllamaProvider } from './providers/ollama';
 
 // Der Windows-Installer (Squirrel) startet die App kurz beim Installieren,
 // um Verknüpfungen anzulegen – in dem Fall sofort wieder beenden.
@@ -54,7 +55,12 @@ const createWindow = () => {
   }
 };
 
+// Feste Standard-Adresse; umschaltbare Server-Profile (lokal/LAN) kommen in Phase 2.
+const ollama = new OllamaProvider();
+
 function registerIpcHandlers() {
+  ipcMain.handle(IpcChannels.getOllamaStatus, () => ollama.checkStatus());
+
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({
     name: app.getName(),
     version: app.getVersion(),
