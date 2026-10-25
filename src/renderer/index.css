@@ -1,0 +1,27 @@
+:root {
+  color-scheme: light dark;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: Canvas;
+  color: CanvasText;
+}
+
+body {
+  margin: 0;
+}
+
+.placeholder {
+  max-width: 38rem;
+  margin: 4rem auto;
+  padding: 0 1rem;
+}
+
+.placeholder dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 1rem;
+  font-family: Consolas, ui-monospace, monospace;
+}
+
+.placeholder dd {
+  margin: 0;
+}
