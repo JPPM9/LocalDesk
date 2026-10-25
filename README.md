@@ -27,6 +27,7 @@ Main-Prozess brauchen einen Neustart (im Terminal Taste `r`; beenden mit `q`).
 
 | Befehl              | Zweck                                           |
 | ------------------- | ----------------------------------------------- |
+| `npm test`          | Automatische Tests ausführen (Vitest)           |
 | `npm run typecheck` | TypeScript prüft alle Typen                     |
 | `npm run lint`      | Code-Regeln und Formatierung prüfen             |
 | `npm run lint:fix`  | Formatierung automatisch korrigieren            |
