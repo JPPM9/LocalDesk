@@ -1,33 +1,15 @@
-import { useEffect, useState } from 'react';
-import type { Result, RunningModel } from '../../shared/api';
-import { onServerChanged } from '../serverEvents';
+import type { GpuStatus, Result, RunningModel } from '../../shared/api';
+import { usePolling } from './usePolling';
 
-/**
- * Fragt regelmäßig ab, welche Modelle gerade geladen sind.
- * `null` heißt: Die erste Antwort steht noch aus.
- */
+/** Welche Modelle gerade geladen sind (regelmäßig neu abgefragt). */
 export function useRunningModels(intervalMs: number) {
-  const [result, setResult] = useState<Result<RunningModel[]> | null>(null);
+  return usePolling<Result<RunningModel[]>>(
+    () => window.api.listRunningModels(),
+    intervalMs,
+  );
+}
 
-  useEffect(() => {
-    let active = true;
-    // Nur die neueste Abfrage zählt (z. B. nach einem Serverwechsel).
-    let latest = 0;
-    const check = async () => {
-      const request = ++latest;
-      const next = await window.api.listRunningModels();
-      if (active && request === latest) setResult(next);
-    };
-
-    void check();
-    const timer = setInterval(check, intervalMs);
-    const unsubscribe = onServerChanged(() => void check());
-    return () => {
-      active = false;
-      clearInterval(timer);
-      unsubscribe();
-    };
-  }, [intervalMs]);
-
-  return result;
+/** Messwerte der Grafikkarte (regelmäßig neu abgefragt). */
+export function useGpuStatus(intervalMs: number) {
+  return usePolling<GpuStatus>(() => window.api.getGpuStatus(), intervalMs);
 }

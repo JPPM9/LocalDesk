@@ -1,8 +1,8 @@
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useOllamaStatus } from '../hooks/useOllamaStatus';
-import { useRunningModels } from '../hooks/useRunningModels';
-import { formatBytes } from '../utils/format';
+import { useGpuStatus, useRunningModels } from '../hooks/useRunningModels';
+import { formatMemory } from '../utils/format';
 import { gpuSplit } from '../utils/running';
 
 interface StatusPillProps {
@@ -18,6 +18,7 @@ export function StatusPill({ compact }: StatusPillProps) {
   const { t } = useTranslation();
   const status = useOllamaStatus();
   const running = useRunningModels(RUNNING_POLL_MS);
+  const gpuStatus = useGpuStatus(RUNNING_POLL_MS);
 
   let dotClass = 'bg-muted';
   let label = t('status.checking');
@@ -40,14 +41,26 @@ export function StatusPill({ compact }: StatusPillProps) {
     loaded.length > 0
       ? t('status.loadedShort', {
           name: loaded[0].name,
-          vram: formatBytes(loaded[0].vramBytes),
+          vram: formatMemory(loaded[0].vramBytes),
         }) +
         (loaded.length > 1
           ? ` ${t('status.loadedMore', { count: loaded.length - 1 })}`
           : '')
       : '';
 
-  const tooltip = [label, detail, loadedText].filter(Boolean).join('\n');
+  // Erste Grafikkarte in Kurzform, z. B. „GPU 29 % · 1,3 GB / 16,0 GB“
+  const gpu = gpuStatus?.available ? gpuStatus.gpus[0] : undefined;
+  const gpuText = gpu
+    ? t('status.gpuShort', {
+        util: gpu.utilizationPercent ?? '–',
+        used: formatMemory(gpu.memoryUsedBytes),
+        total: formatMemory(gpu.memoryTotalBytes),
+      })
+    : '';
+
+  const tooltip = [label, detail, loadedText, gpuText]
+    .filter(Boolean)
+    .join('\n');
 
   return (
     <Link
@@ -72,6 +85,11 @@ export function StatusPill({ compact }: StatusPillProps) {
                 className={`truncate font-mono text-[11px] ${partlyOnCpu ? 'text-warn' : 'text-accent'}`}
               >
                 {loadedText}
+              </div>
+            )}
+            {gpuText && (
+              <div className="truncate font-mono text-[11px] text-muted">
+                {gpuText}
               </div>
             )}
           </div>

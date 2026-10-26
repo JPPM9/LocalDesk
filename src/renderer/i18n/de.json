@@ -27,7 +27,22 @@
     "unloadIn": "Wird entladen in",
     "cpuWarning": "Ein Teil des Modells passt nicht in den Grafikspeicher und läuft auf dem Prozessor – Antworten werden dadurch deutlich langsamer. Abhilfe: kleinere Kontextlänge, kleineres Modell oder andere geladene Modelle entladen lassen.",
     "loadedShort": "{{name}} · {{vram}}",
-    "loadedMore": "+{{count}} weitere"
+    "loadedMore": "+{{count}} weitere",
+    "gpuShort": "GPU {{util}} % · {{used}} / {{total}}"
+  },
+  "gpu": {
+    "title": "Grafikkarte",
+    "utilization": "Auslastung",
+    "vram": "Grafikspeicher (VRAM)",
+    "vramUsed": "{{used}} von {{total}} belegt",
+    "ollama": "Ollama",
+    "others": "andere Programme",
+    "free": "frei",
+    "temperature": "Temperatur",
+    "power": "Stromverbrauch",
+    "remote": "Die Grafikkarte kann LocalDesk nur messen, wenn der aktive Ollama-Server auf diesem PC läuft. Für einen Server im LAN siehst du unten, was Ollama selbst meldet.",
+    "noNvidia": "Keine NVIDIA-Grafikkarte gefunden (nvidia-smi fehlt). Die geladenen Modelle unten zeigen trotzdem, wie viel VRAM Ollama nutzt.",
+    "error": "Grafikkarte konnte nicht abgefragt werden: {{error}}"
   },
   "shortcuts": {
     "title": "Tastenkürzel",

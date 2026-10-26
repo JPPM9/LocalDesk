@@ -33,6 +33,31 @@ export type ProviderStatus =
   | { online: true; baseUrl: string; version: string }
   | { online: false; baseUrl: string; error: string };
 
+/** Messwerte einer NVIDIA-Grafikkarte (aus nvidia-smi). Fehlt ein Wert, meldet die Karte ihn nicht. */
+export interface GpuInfo {
+  index: number;
+  name: string;
+  /** Wie stark die Recheneinheiten gerade arbeiten, 0–100. */
+  utilizationPercent?: number;
+  memoryUsedBytes?: number;
+  memoryTotalBytes?: number;
+  temperatureC?: number;
+  powerWatts?: number;
+  powerLimitWatts?: number;
+}
+
+/**
+ * GPU-Messung ist nur möglich, wenn Ollama auf diesem PC läuft und eine
+ * NVIDIA-Karte mit nvidia-smi vorhanden ist.
+ */
+export type GpuStatus =
+  | { available: true; gpus: GpuInfo[] }
+  | {
+      available: false;
+      reason: 'remote' | 'no-nvidia' | 'error';
+      error?: string;
+    };
+
 /** Ein Modell, das gerade im Speicher geladen ist (GPU und/oder CPU). */
 export interface RunningModel {
   name: string;
@@ -220,6 +245,7 @@ export interface LocalDeskApi {
   getOllamaStatus: () => Promise<ProviderStatus>;
   listModels: () => Promise<Result<ModelInfo[]>>;
   listRunningModels: () => Promise<Result<RunningModel[]>>;
+  getGpuStatus: () => Promise<GpuStatus>;
 
   listChats: () => Promise<ChatSummary[]>;
   getChat: (chatId: string) => Promise<ChatDetail | null>;
@@ -265,6 +291,7 @@ export const IpcChannels = {
   getOllamaStatus: 'ollama:get-status',
   listModels: 'models:list',
   listRunningModels: 'models:list-running',
+  getGpuStatus: 'system:gpu-status',
   listChats: 'chats:list',
   getChat: 'chats:get',
   renameChat: 'chats:rename',

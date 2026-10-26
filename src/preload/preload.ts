@@ -12,6 +12,7 @@ const api: LocalDeskApi = {
   getOllamaStatus: () => ipcRenderer.invoke(IpcChannels.getOllamaStatus),
   listModels: () => ipcRenderer.invoke(IpcChannels.listModels),
   listRunningModels: () => ipcRenderer.invoke(IpcChannels.listRunningModels),
+  getGpuStatus: () => ipcRenderer.invoke(IpcChannels.getGpuStatus),
 
   listChats: () => ipcRenderer.invoke(IpcChannels.listChats),
   getChat: (chatId) => ipcRenderer.invoke(IpcChannels.getChat, chatId),

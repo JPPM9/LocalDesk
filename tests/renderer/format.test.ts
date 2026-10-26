@@ -3,7 +3,22 @@ import {
   formatBytes,
   formatContext,
   formatDate,
+  formatMemory,
 } from '../../src/renderer/utils/format';
+
+describe('formatMemory', () => {
+  it('zeigt VRAM wie der Task-Manager (1024er-Schritte)', () => {
+    expect(formatMemory(16380 * 1024 * 1024)).toBe('16,0 GB'); // RTX 4060 Ti
+    expect(formatMemory(14383820307)).toBe('13,4 GB'); // qwen3:14b mit 32K Kontext
+    expect(formatMemory(1322 * 1024 * 1024)).toBe('1,3 GB');
+  });
+
+  it('nutzt MB unter 1 GB und einen Strich für unbekannt', () => {
+    expect(formatMemory(512 * 1024 * 1024)).toBe('512 MB');
+    expect(formatMemory(0)).toBe('0 MB');
+    expect(formatMemory(undefined)).toBe('–');
+  });
+});
 
 describe('formatBytes', () => {
   it('zeigt Modellgrößen wie ollama list', () => {

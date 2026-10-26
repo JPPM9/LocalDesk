@@ -14,6 +14,19 @@ export function formatBytes(bytes: number): string {
   return `${value.toLocaleString('de-DE', { minimumFractionDigits: digits, maximumFractionDigits: digits })} ${units[unit]}`;
 }
 
+/**
+ * Arbeitsspeicher/VRAM wie im Windows-Task-Manager: 1 GB = 1024³ Bytes.
+ * So steht bei einer 16-GB-Grafikkarte auch „16,0 GB“ (dezimal wären es 17,2).
+ */
+export function formatMemory(bytes: number | undefined): string {
+  if (bytes === undefined || bytes < 0) return '–';
+  const gib = bytes / 1024 ** 3;
+  if (gib >= 1) {
+    return `${gib.toLocaleString('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} GB`;
+  }
+  return `${Math.round(bytes / 1024 ** 2).toLocaleString('de-DE')} MB`;
+}
+
 /** Kontextlänge in Tokens, z. B. 131072 → "128K" (Modelle zählen in 1024er-Schritten). */
 export function formatContext(tokens: number | undefined): string {
   if (!tokens) return '–';

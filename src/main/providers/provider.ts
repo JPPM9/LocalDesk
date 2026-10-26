@@ -13,6 +13,8 @@ import type {
  * wird später eine weitere Klasse, die dieselben Methoden anbietet.
  */
 export interface Provider {
+  /** Adresse des Servers, z. B. http://localhost:11434 */
+  readonly baseUrl: string;
   checkStatus(): Promise<ProviderStatus>;
   listModels(): Promise<Result<ModelInfo[]>>;
   /** Modelle, die gerade im Speicher geladen sind. */

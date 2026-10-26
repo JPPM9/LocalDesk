@@ -68,6 +68,12 @@
   GPU/CPU-Anteil = `size_vram / size` (wie `ollama ps`, geprüft: muse-glimmer:30b 78 % GPU auf 16 GB).
   Gemessen: qwen3:14b braucht mit 4K Kontext 9,7 GB, mit 32K 14,4 GB. Statusleiste unten zeigt das
   geladene Modell (orange, wenn teilweise auf CPU) und führt per Klick zur Status-Seite.
+- **GPU-Messung** (`src/main/system/gpu.ts`): `nvidia-smi` per `execFile` mit festen Argumenten (keine
+  Shell), 2 s Timeout, CSV-Parser `parseNvidiaSmi` getestet. Nur wenn der aktive Server lokal ist
+  (`isLocalServer`), sonst `reason: 'remote'`. Fehlt nvidia-smi → `no-nvidia`.
+- **Einheiten**: Arbeitsspeicher/VRAM binär mit `formatMemory` (1 GB = 1024³, wie Task-Manager → 16-GB-Karte
+  zeigt 16,0 GB). Dateigrößen der Modelle dezimal mit `formatBytes` (wie `ollama list`).
+- Regelmäßige Abfragen über `usePolling` (neueste Antwort gewinnt, sofort nach Serverwechsel).
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
 - **Netzwerk**: nur Ollama-Server (lokal/LAN), Modell-Downloads über Ollama, Update-Prüfung nur per Knopf.
   Keine Telemetrie.

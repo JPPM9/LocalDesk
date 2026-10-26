@@ -2,7 +2,9 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'node:path';
 import type { DatabaseSync } from 'node:sqlite';
 import started from 'electron-squirrel-startup';
-import { IpcChannels, type AppInfo } from '../shared/api';
+import { IpcChannels, type AppInfo, type GpuStatus } from '../shared/api';
+import { isLocalServer } from '../shared/server';
+import { queryGpus } from './system/gpu';
 import { registerChatHandlers } from './chat-service';
 import { openDatabase } from './db/database';
 import { ChatRepository } from './db/chat-repository';
@@ -75,6 +77,15 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
   ipcMain.handle(IpcChannels.listModels, () => getProvider().listModels());
   ipcMain.handle(IpcChannels.listRunningModels, () =>
     getProvider().listRunning(),
+  );
+  // Die Grafikkarte lässt sich nur messen, wenn Ollama auf diesem PC rechnet –
+  // bei einem Server im LAN wäre es die falsche Karte.
+  ipcMain.handle(
+    IpcChannels.getGpuStatus,
+    (): Promise<GpuStatus> | GpuStatus =>
+      isLocalServer(getProvider().baseUrl)
+        ? queryGpus()
+        : { available: false, reason: 'remote' },
   );
   registerChatHandlers(getProvider, chats);
 

@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { TriangleAlert } from 'lucide-react';
 import type { RunningModel } from '../../shared/api';
 import { PageHeader } from '../components/PageHeader';
-import { useRunningModels } from '../hooks/useRunningModels';
-import { formatBytes, formatContext } from '../utils/format';
+import { GpuSection } from '../components/status/GpuCard';
+import { useGpuStatus, useRunningModels } from '../hooks/useRunningModels';
+import { formatContext, formatMemory } from '../utils/format';
 import {
   expiresIn,
   gpuSplit,
@@ -18,6 +19,7 @@ const POLL_MS = 2000;
 export function StatusPage() {
   const { t } = useTranslation();
   const result = useRunningModels(POLL_MS);
+  const gpu = useGpuStatus(POLL_MS);
   // Uhr für „wird entladen in …“ – tickt jede Sekunde.
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -28,7 +30,11 @@ export function StatusPage() {
   return (
     <>
       <PageHeader title={t('status.pageTitle')} />
-      <div className="max-w-3xl space-y-6 p-6">
+      <div className="max-w-3xl space-y-8 p-6">
+        <GpuSection
+          status={gpu}
+          ollamaVramBytes={result?.ok ? totalVram(result.value) : 0}
+        />
         <section className="space-y-3">
           <div>
             <h2 className="font-semibold">{t('status.loadedTitle')}</h2>
@@ -61,7 +67,7 @@ export function StatusPage() {
         <p className="font-mono text-xs text-muted">
           {t('status.summary', {
             count: result.value.length,
-            vram: formatBytes(totalVram(result.value)),
+            vram: formatMemory(totalVram(result.value)),
           })}
         </p>
         {result.value.map((model) => (
@@ -102,8 +108,8 @@ function LoadedModelCard({ model, now }: { model: RunningModel; now: number }) {
           <span>{gpuSplitLabel(model)}</span>
           <span className="text-muted">
             {t('status.vramOf', {
-              vram: formatBytes(model.vramBytes),
-              total: formatBytes(model.sizeBytes),
+              vram: formatMemory(model.vramBytes),
+              total: formatMemory(model.sizeBytes),
             })}
           </span>
         </div>
