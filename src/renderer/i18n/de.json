@@ -235,7 +235,20 @@
     "savedAs": "Gespeichert als Vorlage „{{name}}“.",
     "pickerTitle": "Mit Vorlage starten",
     "active": "Vorlage: {{name}}",
-    "clear": "Vorlage entfernen"
+    "clear": "Vorlage entfernen",
+    "mcpServers": "MCP-Server",
+    "mcpServersHint": "Welche Werkzeuge ein Chat mit dieser Vorlage nutzen darf. Später im Chat über den MCP-Button änderbar."
+  },
+  "mcpPicker": {
+    "button": "MCP-Server für diesen Chat",
+    "title": "MCP-Server für diesen Chat",
+    "intro": "Nur die gewählten Server stellen diesem Chat ihre Werkzeuge bereit. Freigaben pro Tool unter Einstellungen.",
+    "none": "Noch keine MCP-Server eingerichtet.",
+    "toSettings": "Zu den Einstellungen",
+    "disabled": "ausgeschaltet – in den Einstellungen einschalten",
+    "tools_one": "{{count}} Tool nutzbar",
+    "tools_other": "{{count}} Tools nutzbar",
+    "modelNoTools": "Das gewählte Modell kann laut Ollama keine Tools nutzen – wähle z. B. qwen3, gpt-oss oder gemma4."
   },
   "settingsPanel": {
     "title": "Chat-Einstellungen",

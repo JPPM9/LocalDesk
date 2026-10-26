@@ -200,6 +200,11 @@ export interface ChatSettings {
   /** Gleicher Seed + gleiche Eingabe = gleiche Antwort (zum Vergleichen). */
   seed?: number;
   think?: ThinkSetting;
+  /**
+   * IDs der MCP-Server, deren Tools dieser Chat nutzen darf (MCP-Button).
+   * Fehlt die Liste, nutzt der Chat keine Tools.
+   */
+  mcpServers?: string[];
 }
 
 export interface ChatRequest {

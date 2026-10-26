@@ -52,6 +52,17 @@ describe('normalizeSettings', () => {
   it('kennt die Denk-Stufen von gpt-oss', () => {
     expect(normalizeSettings({ think: 'low' })).toEqual({ think: 'low' });
   });
+
+  it('übernimmt die gewählten MCP-Server ohne Doppelte und Unsinn', () => {
+    expect(
+      normalizeSettings({ mcpServers: ['fs-1', 'fs-2', 'fs-1', '', 42, null] }),
+    ).toEqual({ mcpServers: ['fs-1', 'fs-2'] });
+  });
+
+  it('lässt eine leere Server-Liste weg (= keine Tools)', () => {
+    expect(normalizeSettings({ mcpServers: [] })).toEqual({});
+    expect(normalizeSettings({ mcpServers: 'fs-1' })).toEqual({});
+  });
 });
 
 describe('buildChatRequest', () => {

@@ -17,6 +17,7 @@ import { ChatList } from '../components/chat/ChatList';
 import { ChatSettingsPanel } from '../components/chat/ChatSettingsPanel';
 import { MessageView } from '../components/chat/MessageView';
 import { ModelSelect } from '../components/chat/ModelSelect';
+import { McpButton } from '../components/mcp/McpButton';
 
 // Nur eine Bequemlichkeit pro Rechner: das zuletzt gewählte Modell für neue Chats.
 // Gespeicherte Chats merken sich ihr Modell in der Datenbank.
@@ -64,7 +65,14 @@ export function ChatPage() {
   useShortcut('stop', () => {
     if (isRunning) stop();
   });
-  const hasCustomSettings = Object.keys(settings).length > 0;
+  // Der Punkt am Einstellungs-Knopf gilt nur für das Panel – MCP-Server zeigt ihr eigener Knopf.
+  const hasCustomSettings = Object.keys(settings).some(
+    (key) => key !== 'mcpServers',
+  );
+  const setMcpServers = (ids: string[]) => {
+    const { mcpServers: _old, ...rest } = settings;
+    updateSettings(ids.length > 0 ? { ...rest, mcpServers: ids } : rest);
+  };
 
   const { models, loaded: modelsLoaded, error: loadError } = useChatModels();
   const [model, setModel] = useState('');
@@ -217,6 +225,13 @@ export function ChatPage() {
           }
           actions={
             <>
+              <McpButton
+                selected={settings.mcpServers ?? []}
+                onChange={setMcpServers}
+                modelSupportsTools={models
+                  .find((m) => m.name === model)
+                  ?.capabilities.includes('tools')}
+              />
               <ModelSelect
                 models={models}
                 value={model}

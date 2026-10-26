@@ -13,6 +13,7 @@ export const CONTEXT_MAX = 1_048_576;
 const SYSTEM_PROMPT_MAX = 20_000;
 const SEED_MAX = 2_147_483_647;
 const THINK_LEVELS = ['low', 'medium', 'high'] as const;
+const MCP_SERVERS_MAX = 20;
 
 /**
  * Prüft Einstellungen aus unsicherer Quelle (Oberfläche, Datenbank) und behält nur
@@ -45,6 +46,18 @@ export function normalizeSettings(raw: unknown): ChatSettings {
   }
   if (isThinkSetting(input.think)) {
     result.think = input.think;
+  }
+  if (Array.isArray(input.mcpServers)) {
+    const ids = [
+      ...new Set(
+        input.mcpServers.filter(
+          (id): id is string =>
+            typeof id === 'string' && id !== '' && id.length <= 100,
+        ),
+      ),
+    ].slice(0, MCP_SERVERS_MAX);
+    // Leere Liste = keine Tools → wie „nicht gesetzt“, damit nichts Unnötiges gespeichert wird.
+    if (ids.length > 0) result.mcpServers = ids;
   }
   return result;
 }

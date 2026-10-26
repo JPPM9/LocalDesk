@@ -7,6 +7,7 @@ import { thinkFitsModel } from '../../shared/settings';
 import { PageHeader } from '../components/PageHeader';
 import { Field, SettingsFields } from '../components/settings/SettingsFields';
 import { useChatModels } from '../hooks/useChatModels';
+import { McpServerPicker } from '../components/mcp/McpServerPicker';
 import { useTemplates } from '../templates/useTemplates';
 
 /** Adresse für eine noch nicht gespeicherte Vorlage. */
@@ -221,6 +222,25 @@ export function TemplatesPage() {
                     </option>
                   ))}
                 </select>
+              </Field>
+
+              <Field
+                label={t('templates.mcpServers')}
+                hint={t('templates.mcpServersHint')}
+              >
+                <McpServerPicker
+                  selected={draft.settings.mcpServers ?? []}
+                  onChange={(ids) => {
+                    const { mcpServers: _old, ...rest } = draft.settings;
+                    update({
+                      settings:
+                        ids.length > 0 ? { ...rest, mcpServers: ids } : rest,
+                    });
+                  }}
+                  modelSupportsTools={selectedModel?.capabilities.includes(
+                    'tools',
+                  )}
+                />
               </Field>
 
               <SettingsFields

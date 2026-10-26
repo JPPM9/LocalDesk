@@ -95,6 +95,10 @@
   gültige Freigabe = `effectivePermission` (`src/shared/permissions.ts`) – Main (Ausführen) und
   Oberfläche (Anzeigen) nutzen dieselbe Funktion. `off` = Tool wird dem Modell nicht angeboten.
   Ein zerstörendes Tool auf `always` zu stellen, verlangt eine zusätzliche Rückfrage.
+- **MCP pro Chat**: `ChatSettings.mcpServers` (Server-IDs, über `normalizeSettings` geprüft; leere Liste =
+  keine Tools = nicht gespeichert). MCP-Button im Chat-Kopf und Auswahl im Vorlagen-Editor nutzen
+  dieselbe Komponente `McpServerPicker`. Gelöschte Server-IDs bleiben in alten Chats stehen und werden
+  beim Ausführen ignoriert.
 - **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
