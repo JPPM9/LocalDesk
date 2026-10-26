@@ -8,9 +8,14 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, actions }: PageHeaderProps) {
   return (
-    <header className="flex h-12 items-center justify-between border-b border-border px-6">
-      <h1 className="text-base font-semibold">{title}</h1>
-      {actions && <div className="flex items-center gap-2">{actions}</div>}
+    <header className="flex h-12 items-center justify-between gap-4 border-b border-border px-6">
+      {/* Lange Titel einzeilig kürzen, der volle Titel steht im Tooltip. */}
+      <h1 className="min-w-0 truncate text-base font-semibold" title={title}>
+        {title}
+      </h1>
+      {actions && (
+        <div className="flex shrink-0 items-center gap-2">{actions}</div>
+      )}
     </header>
   );
 }

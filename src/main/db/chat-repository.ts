@@ -1,17 +1,23 @@
 import type { DatabaseSync } from 'node:sqlite';
 import type {
   ChatDetail,
+  ChatSettings,
   ChatStats,
   ChatSummary,
   MessageRecord,
   MessageStatus,
 } from '../../shared/api';
+import { normalizeSettings } from '../../shared/settings';
 
 interface ChatRow {
   id: string;
   title: string;
   model: string;
   updated_at: number;
+}
+
+interface ChatDetailRow extends ChatRow {
+  settings_json: string;
 }
 
 interface MessageRow {
@@ -55,8 +61,10 @@ export class ChatRepository {
 
   getChat(chatId: string): ChatDetail | null {
     const chat = this.db
-      .prepare('SELECT id, title, model, updated_at FROM chats WHERE id = ?')
-      .get(chatId) as unknown as ChatRow | undefined;
+      .prepare(
+        'SELECT id, title, model, updated_at, settings_json FROM chats WHERE id = ?',
+      )
+      .get(chatId) as unknown as ChatDetailRow | undefined;
     if (!chat) return null;
     const rows = this.db
       .prepare(
@@ -64,7 +72,11 @@ export class ChatRepository {
            FROM messages WHERE chat_id = ? ORDER BY position`,
       )
       .all(chatId) as unknown as MessageRow[];
-    return { ...toSummary(chat), messages: rows.map(toMessage) };
+    return {
+      ...toSummary(chat),
+      settings: parseSettings(chat.settings_json),
+      messages: rows.map(toMessage),
+    };
   }
 
   chatExists(chatId: string): boolean {
@@ -74,13 +86,32 @@ export class ChatRepository {
     );
   }
 
-  createChat(chat: { id: string; title: string; model: string }) {
+  createChat(chat: {
+    id: string;
+    title: string;
+    model: string;
+    settings?: ChatSettings;
+  }) {
     const now = this.now();
     this.db
       .prepare(
-        'INSERT INTO chats (id, title, model, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
+        `INSERT INTO chats (id, title, model, created_at, updated_at, settings_json)
+         VALUES (?, ?, ?, ?, ?, ?)`,
       )
-      .run(chat.id, chat.title, chat.model, now, now);
+      .run(
+        chat.id,
+        chat.title,
+        chat.model,
+        now,
+        now,
+        JSON.stringify(normalizeSettings(chat.settings)),
+      );
+  }
+
+  updateSettings(chatId: string, settings: ChatSettings) {
+    this.db
+      .prepare('UPDATE chats SET settings_json = ? WHERE id = ?')
+      .run(JSON.stringify(normalizeSettings(settings)), chatId);
   }
 
   renameChat(chatId: string, title: string) {
@@ -166,6 +197,15 @@ function toSummary(row: ChatRow): ChatSummary {
     model: row.model,
     updatedAt: row.updated_at,
   };
+}
+
+/** Auch Gespeichertes wird geprüft – eine kaputte Zeile soll die App nicht stoppen. */
+function parseSettings(json: string): ChatSettings {
+  try {
+    return normalizeSettings(JSON.parse(json));
+  } catch {
+    return {};
+  }
 }
 
 function toMessage(row: MessageRow): MessageRecord {

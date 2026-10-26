@@ -109,11 +109,7 @@ export class OllamaProvider implements Provider {
       response = await this.fetchFn(`${this.baseUrl}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: request.model,
-          messages: request.messages,
-          stream: true,
-        }),
+        body: JSON.stringify(toOllamaChatBody(request)),
         signal,
       });
     } catch (error) {
@@ -148,6 +144,30 @@ export class OllamaProvider implements Provider {
   private offline(error: string): ProviderStatus {
     return { online: false, baseUrl: this.baseUrl, error };
   }
+}
+
+/**
+ * Übersetzt unsere Anfrage in Ollamas Format. Nur gesetzte Werte werden
+ * mitgeschickt – fehlt einer, nimmt Ollama seinen Standard (z. B. 4096 Tokens Kontext).
+ */
+export function toOllamaChatBody(request: ChatRequest) {
+  const options: Record<string, number> = {};
+  if (request.options?.temperature !== undefined) {
+    options.temperature = request.options.temperature;
+  }
+  if (request.options?.contextLength !== undefined) {
+    options.num_ctx = request.options.contextLength;
+  }
+  if (request.options?.seed !== undefined) {
+    options.seed = request.options.seed;
+  }
+  return {
+    model: request.model,
+    messages: request.messages,
+    stream: true,
+    ...(Object.keys(options).length > 0 && { options }),
+    ...(request.think !== undefined && { think: request.think }),
+  };
 }
 
 /** Ollama schickt Fehler als `{"error": "..."}` – sonst nehmen wir den HTTP-Status. */

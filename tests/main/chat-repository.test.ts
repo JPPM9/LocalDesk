@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import type { DatabaseSync } from 'node:sqlite';
+import { DatabaseSync } from 'node:sqlite';
 import {
   migrate,
   openDatabase,
@@ -44,6 +44,57 @@ describe('Datenbank-Migrationen', () => {
     };
     expect(user_version).toBe(SCHEMA_VERSION);
     expect(() => migrate(db)).not.toThrow();
+  });
+
+  it('bringt eine Datenbank aus Phase 1 ohne Datenverlust auf den neuen Stand', () => {
+    const old = new DatabaseSync(':memory:');
+    migrate(old, 1); // Stand von Phase 1: noch keine Einstellungen
+    old
+      .prepare(
+        "INSERT INTO chats (id, title, model, created_at, updated_at) VALUES ('alt', 'Alter Chat', 'm', 1, 1)",
+      )
+      .run();
+
+    migrate(old);
+
+    const chat = new ChatRepository(old).getChat('alt');
+    expect(chat?.title).toBe('Alter Chat');
+    expect(chat?.settings).toEqual({});
+  });
+});
+
+describe('Chat-Einstellungen', () => {
+  it('speichert Einstellungen beim Anlegen und beim Ändern', () => {
+    repo.createChat({
+      id: 'c1',
+      title: 'x',
+      model: 'm',
+      settings: { systemPrompt: 'Sei knapp.', contextLength: 8192 },
+    });
+    expect(repo.getChat('c1')?.settings).toEqual({
+      systemPrompt: 'Sei knapp.',
+      contextLength: 8192,
+    });
+
+    repo.updateSettings('c1', { temperature: 0.2, think: 'low' });
+    expect(repo.getChat('c1')?.settings).toEqual({
+      temperature: 0.2,
+      think: 'low',
+    });
+  });
+
+  it('prüft Werte auch beim Speichern', () => {
+    repo.createChat({ id: 'c1', title: 'x', model: 'm' });
+    repo.updateSettings('c1', { temperature: 99 } as never);
+    expect(repo.getChat('c1')?.settings).toEqual({ temperature: 2 });
+  });
+
+  it('übersteht kaputtes JSON in der Datenbank', () => {
+    repo.createChat({ id: 'c1', title: 'x', model: 'm' });
+    db.prepare(
+      "UPDATE chats SET settings_json = '{kaputt' WHERE id = 'c1'",
+    ).run();
+    expect(repo.getChat('c1')?.settings).toEqual({});
   });
 });
 

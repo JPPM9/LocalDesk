@@ -17,6 +17,8 @@ const api: LocalDeskApi = {
   renameChat: (chatId, title) =>
     ipcRenderer.invoke(IpcChannels.renameChat, chatId, title),
   deleteChat: (chatId) => ipcRenderer.invoke(IpcChannels.deleteChat, chatId),
+  updateChatSettings: (chatId, settings) =>
+    ipcRenderer.invoke(IpcChannels.updateChatSettings, chatId, settings),
 
   chatSend: (request) => ipcRenderer.invoke(IpcChannels.chatSend, request),
   chatCancel: (requestId) =>

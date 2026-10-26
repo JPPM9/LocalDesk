@@ -45,9 +45,31 @@ export interface ChatMessage {
   content: string;
 }
 
+/**
+ * Denkmodus: true/false für Modelle wie qwen3 oder gemma4,
+ * Stufen für Modelle wie gpt-oss (die „aus“ nicht kennen).
+ */
+export type ThinkSetting = boolean | 'low' | 'medium' | 'high';
+
+/**
+ * Einstellungen pro Chat. Fehlt ein Wert, gilt der Standard des Modells bzw. von Ollama.
+ */
+export interface ChatSettings {
+  systemPrompt?: string;
+  /** 0 = immer gleiche, vorhersehbare Antworten; höher = kreativer. */
+  temperature?: number;
+  /** Wie viele Tokens (Verlauf + Antwort) das Modell gleichzeitig „sieht“. */
+  contextLength?: number;
+  /** Gleicher Seed + gleiche Eingabe = gleiche Antwort (zum Vergleichen). */
+  seed?: number;
+  think?: ThinkSetting;
+}
+
 export interface ChatRequest {
   model: string;
   messages: ChatMessage[];
+  options?: Pick<ChatSettings, 'temperature' | 'contextLength' | 'seed'>;
+  think?: ThinkSetting;
 }
 
 /** Kennzahlen, die der Server am Ende einer Antwort liefert. */
@@ -101,6 +123,7 @@ export interface ChatSummary {
 }
 
 export interface ChatDetail extends ChatSummary {
+  settings: ChatSettings;
   messages: MessageRecord[];
 }
 
@@ -113,6 +136,8 @@ export interface ChatSendRequest {
   requestId: string;
   model: string;
   content: string;
+  /** Nur für neue Chats: Einstellungen, die vor der ersten Nachricht gewählt wurden. */
+  settings?: ChatSettings;
 }
 
 /** Alles, was die Oberfläche über `window.api` aufrufen darf. */
@@ -125,6 +150,7 @@ export interface LocalDeskApi {
   getChat: (chatId: string) => Promise<ChatDetail | null>;
   renameChat: (chatId: string, title: string) => Promise<void>;
   deleteChat: (chatId: string) => Promise<void>;
+  updateChatSettings: (chatId: string, settings: ChatSettings) => Promise<void>;
 
   /**
    * Speichert die Nachricht und startet die Antwort. Die Teile kommen über
@@ -145,6 +171,7 @@ export const IpcChannels = {
   getChat: 'chats:get',
   renameChat: 'chats:rename',
   deleteChat: 'chats:delete',
+  updateChatSettings: 'chats:update-settings',
   chatSend: 'chat:send',
   chatCancel: 'chat:cancel',
   chatEvent: 'chat:event',

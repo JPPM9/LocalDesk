@@ -1,6 +1,36 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { ChatChunk } from '../../src/shared/api';
-import { OllamaProvider } from '../../src/main/providers/ollama';
+import {
+  OllamaProvider,
+  toOllamaChatBody,
+} from '../../src/main/providers/ollama';
+
+describe('toOllamaChatBody', () => {
+  it('übersetzt Optionen in Ollamas Namen (contextLength → num_ctx)', () => {
+    expect(
+      toOllamaChatBody({
+        model: 'qwen3:14b',
+        messages: [],
+        options: { temperature: 0, contextLength: 16384, seed: 7 },
+        think: false,
+      }),
+    ).toEqual({
+      model: 'qwen3:14b',
+      messages: [],
+      stream: true,
+      options: { temperature: 0, num_ctx: 16384, seed: 7 },
+      think: false,
+    });
+  });
+
+  it('lässt options und think weg, wenn nichts gesetzt ist', () => {
+    expect(toOllamaChatBody({ model: 'm', messages: [] })).toEqual({
+      model: 'm',
+      messages: [],
+      stream: true,
+    });
+  });
+});
 
 const request = {
   model: 'qwen3:14b',

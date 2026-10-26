@@ -29,6 +29,12 @@
   (Zwischenstand jede Sekunde, Endstand bei done/error/aborted). Beim Start werden hängende Antworten
   (`streaming`) als `aborted` markiert. Stream-Logik (`applyChatEvent`) liegt in `src/shared/chat.ts`
   und wird von Oberfläche und Main gemeinsam genutzt.
+- **Chat-Einstellungen** (Systemprompt, Temperatur, Kontextlänge, Seed, Denken) liegen als JSON in
+  `chats.settings_json` (Migration 2). Prüfung immer über `normalizeSettings` (`src/shared/settings.ts`),
+  Anfrage-Aufbau über `buildChatRequest`. Nur gesetzte Werte gehen an Ollama.
+- **Gemessenes Ollama-Verhalten (0.40.11)**: Standard-Kontext ist 4096 Tokens (zu sehen in `/api/ps`).
+  `think: false` wirkt bei qwen3/gemma4; gpt-oss ignoriert es und kennt nur `low`/`medium`/`high`
+  (→ `thinkStyle`, beim Modellwechsel wird eine unpassende Denken-Einstellung entfernt).
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
 - **Netzwerk**: nur Ollama-Server (lokal/LAN), Modell-Downloads über Ollama, Update-Prüfung nur per Knopf.
   Keine Telemetrie.

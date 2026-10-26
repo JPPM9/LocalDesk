@@ -34,6 +34,10 @@ const migrations: string[] = [
   CREATE INDEX messages_by_chat ON messages(chat_id, position);
   CREATE INDEX chats_by_update ON chats(updated_at DESC);
   `,
+  // 2: Einstellungen pro Chat (Systemprompt, Temperatur, Kontextlänge …) als JSON
+  `
+  ALTER TABLE chats ADD COLUMN settings_json TEXT NOT NULL DEFAULT '{}';
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */
@@ -47,11 +51,12 @@ export function openDatabase(path: string): DatabaseSync {
   return db;
 }
 
-export function migrate(db: DatabaseSync) {
+/** `upTo` nur für Tests: simuliert eine ältere Datenbank. */
+export function migrate(db: DatabaseSync, upTo = migrations.length) {
   const { user_version: current } = db.prepare('PRAGMA user_version').get() as {
     user_version: number;
   };
-  for (let version = current; version < migrations.length; version++) {
+  for (let version = current; version < upTo; version++) {
     // Alles oder nichts: Schlägt ein Schritt fehl, bleibt die Datenbank wie vorher.
     db.exec('BEGIN');
     try {

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { ChatDetail, MessageRecord } from '../../shared/api';
+import type { ChatDetail, ChatSettings, MessageRecord } from '../../shared/api';
 import { applyChatEvent } from '../../shared/chat';
 
 interface UseChatOptions {
@@ -21,6 +21,11 @@ export function useChat(
   const [chat, setChat] = useState<ChatDetail | null>(null);
   const [messages, setMessages] = useState<MessageRecord[]>([]);
   const [notFound, setNotFound] = useState(false);
+  // Einstellungen des Chats – bei einem neuen Chat erst lokal, ab der ersten
+  // Nachricht in der Datenbank.
+  const [settings, setSettings] = useState<ChatSettings>({});
+  const settingsRef = useRef(settings);
+  settingsRef.current = settings;
 
   // Refs spiegeln den aktuellen Stand für Rückruf-Funktionen, die nicht neu erzeugt werden.
   const chatIdRef = useRef(chatId);
@@ -38,6 +43,7 @@ export function useChat(
     if (chatIdRef.current !== id) return; // inzwischen anderer Chat geöffnet
     setChat(detail);
     setMessages(detail?.messages ?? []);
+    setSettings(detail?.settings ?? {});
     setNotFound(detail === null);
   }, []);
 
@@ -46,6 +52,7 @@ export function useChat(
     if (chatId === null) {
       setChat(null);
       setMessages([]);
+      setSettings({});
       return;
     }
     if (chatId === createdHereRef.current) return;
@@ -102,6 +109,7 @@ export function useChat(
         requestId: answer.id,
         model,
         content,
+        ...(isNew && { settings: settingsRef.current }),
       })
       .then(() => callbacks.current.onChanged());
 
@@ -117,6 +125,22 @@ export function useChat(
     if (running) void window.api.chatCancel(running.id);
   }, []);
 
+  const updateSettings = useCallback((next: ChatSettings) => {
+    setSettings(next);
+    // Gilt ab der nächsten Nachricht. Gespeichert wird sofort, falls der Chat existiert.
+    const id = chatIdRef.current;
+    if (id) void window.api.updateChatSettings(id, next);
+  }, []);
+
   const isRunning = messages.some((m) => m.status === 'streaming');
-  return { chat, messages, isRunning, notFound, send, stop };
+  return {
+    chat,
+    messages,
+    settings,
+    isRunning,
+    notFound,
+    send,
+    stop,
+    updateSettings,
+  };
 }

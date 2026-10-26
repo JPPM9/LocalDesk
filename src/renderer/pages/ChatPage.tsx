@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { SlidersHorizontal } from 'lucide-react';
 import type { ChatSummary, ModelInfo } from '../../shared/api';
+import { thinkFitsModel } from '../../shared/settings';
 import { useChat } from '../chat/useChat';
 import { useChatList } from '../chat/useChatList';
 import { PageHeader } from '../components/PageHeader';
 import { ChatInput } from '../components/chat/ChatInput';
 import { ChatList } from '../components/chat/ChatList';
+import { ChatSettingsPanel } from '../components/chat/ChatSettingsPanel';
 import { MessageView } from '../components/chat/MessageView';
 import { ModelSelect } from '../components/chat/ModelSelect';
 
@@ -43,10 +46,21 @@ export function ChatPage() {
   const chatId = useParams().chatId ?? null;
 
   const chatList = useChatList();
-  const { chat, messages, isRunning, notFound, send, stop } = useChat(chatId, {
+  const {
+    chat,
+    messages,
+    settings,
+    isRunning,
+    notFound,
+    send,
+    stop,
+    updateSettings,
+  } = useChat(chatId, {
     onCreated: (id) => navigate(`/chat/${id}`),
     onChanged: () => void chatList.refresh(),
   });
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const hasCustomSettings = Object.keys(settings).length > 0;
 
   const [models, setModels] = useState<ModelInfo[]>([]);
   const [model, setModel] = useState('');
@@ -91,6 +105,13 @@ export function ChatPage() {
   const chooseModel = (name: string) => {
     setModel(name);
     saveLastModel(name);
+    // „Denken: Aus“ von qwen3 passt nicht zu gpt-oss (nur Stufen) und umgekehrt –
+    // dann lieber zurück auf den Standard des neuen Modells.
+    const next = models.find((m) => m.name === name);
+    if (!thinkFitsModel(settings.think, next)) {
+      const { think: _dropped, ...rest } = settings;
+      updateSettings(rest);
+    }
   };
 
   const deleteChat = async (target: ChatSummary) => {
@@ -118,12 +139,30 @@ export function ChatPage() {
             t('chat.newChat')
           }
           actions={
-            <ModelSelect
-              models={models}
-              value={model}
-              onChange={chooseModel}
-              disabled={isRunning}
-            />
+            <>
+              <ModelSelect
+                models={models}
+                value={model}
+                onChange={chooseModel}
+                disabled={isRunning}
+              />
+              <button
+                type="button"
+                onClick={() => setSettingsOpen((open) => !open)}
+                title={t('settingsPanel.title')}
+                aria-label={t('settingsPanel.title')}
+                aria-pressed={settingsOpen}
+                className={`relative rounded border px-2 py-1 hover:bg-surface-hover ${
+                  settingsOpen ? 'border-accent text-accent' : 'border-border'
+                }`}
+              >
+                <SlidersHorizontal size={15} />
+                {/* Punkt zeigt: Dieser Chat hat eigene Einstellungen. */}
+                {hasCustomSettings && (
+                  <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-accent" />
+                )}
+              </button>
+            </>
           }
         />
 
@@ -156,6 +195,15 @@ export function ChatPage() {
           </p>
         </div>
       </div>
+
+      {settingsOpen && (
+        <ChatSettingsPanel
+          settings={settings}
+          model={models.find((m) => m.name === model)}
+          onChange={updateSettings}
+          onClose={() => setSettingsOpen(false)}
+        />
+      )}
     </div>
   );
 }

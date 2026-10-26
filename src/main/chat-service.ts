@@ -1,15 +1,13 @@
 import { ipcMain, type WebContents } from 'electron';
 import {
   IpcChannels,
+  type ChatRequest,
   type ChatSendRequest,
   type ChatStreamEvent,
   type MessageRecord,
 } from '../shared/api';
-import {
-  applyChatEvent,
-  titleFromMessage,
-  toRequestMessages,
-} from '../shared/chat';
+import { applyChatEvent, titleFromMessage } from '../shared/chat';
+import { buildChatRequest } from '../shared/settings';
 import type { ChatRepository } from './db/chat-repository';
 import type { Provider } from './providers/provider';
 
@@ -47,6 +45,16 @@ export function registerChatHandlers(
     if (typeof chatId === 'string') chats.deleteChat(chatId);
   });
 
+  // Die Prüfung der Werte übernimmt das Repository (normalizeSettings).
+  ipcMain.handle(
+    IpcChannels.updateChatSettings,
+    (_event, chatId: unknown, settings: unknown) => {
+      if (typeof chatId === 'string') {
+        chats.updateSettings(chatId, settings as object);
+      }
+    },
+  );
+
   ipcMain.handle(IpcChannels.chatSend, (event, request: unknown) => {
     if (!isChatSendRequest(request)) {
       throw new Error('Ungültige Chat-Anfrage');
@@ -58,9 +66,11 @@ export function registerChatHandlers(
         id: request.chatId,
         title: titleFromMessage(request.content),
         model: request.model,
+        settings: request.settings,
       });
     }
-    const history = chats.getChat(request.chatId)?.messages ?? [];
+    const chat = chats.getChat(request.chatId);
+    const history = chat?.messages ?? [];
 
     const userMessage: MessageRecord = {
       id: request.userMessageId,
@@ -83,13 +93,14 @@ export function registerChatHandlers(
     const controller = new AbortController();
     running.set(request.requestId, controller);
     // Bewusst nicht abwarten: Die Oberfläche bekommt die Antwort über Ereignisse.
-    void stream(
-      event.sender,
-      request,
+    const chatRequest = buildChatRequest(
+      request.model,
       [...history, userMessage],
-      answer,
-      controller,
-    ).finally(() => running.delete(request.requestId));
+      chat?.settings ?? {},
+    );
+    void stream(event.sender, chatRequest, answer, controller).finally(() =>
+      running.delete(request.requestId),
+    );
   });
 
   ipcMain.handle(IpcChannels.chatCancel, (_event, requestId: unknown) => {
@@ -98,11 +109,11 @@ export function registerChatHandlers(
 
   async function stream(
     sender: WebContents,
-    request: ChatSendRequest,
-    history: MessageRecord[],
+    chatRequest: ChatRequest,
     initial: MessageRecord,
     controller: AbortController,
   ) {
+    const requestId = initial.id;
     let answer = initial;
     let lastSave = Date.now();
 
@@ -116,20 +127,16 @@ export function registerChatHandlers(
     };
 
     try {
-      const messages = toRequestMessages(history);
-      for await (const chunk of provider.chat(
-        { model: request.model, messages },
-        controller.signal,
-      )) {
-        emit({ requestId: request.requestId, ...chunk });
+      for await (const chunk of provider.chat(chatRequest, controller.signal)) {
+        emit({ requestId, ...chunk });
         if (Date.now() - lastSave > SAVE_INTERVAL_MS) save();
       }
     } catch (error) {
       if (controller.signal.aborted) {
-        emit({ requestId: request.requestId, type: 'aborted' });
+        emit({ requestId, type: 'aborted' });
       } else {
         emit({
-          requestId: request.requestId,
+          requestId,
           type: 'error',
           error: error instanceof Error ? error.message : String(error),
         });
@@ -137,7 +144,7 @@ export function registerChatHandlers(
     }
     // Endet der Stream ohne „done“ (Verbindung weg), gilt die Antwort als abgebrochen.
     if (answer.status === 'streaming') {
-      emit({ requestId: request.requestId, type: 'aborted' });
+      emit({ requestId, type: 'aborted' });
     }
     save();
   }

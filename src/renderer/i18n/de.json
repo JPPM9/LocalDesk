@@ -67,5 +67,32 @@
     "version": "Version",
     "dataPath": "Datenordner",
     "loading": "Lade …"
+  },
+  "settingsPanel": {
+    "title": "Chat-Einstellungen",
+    "close": "Schließen",
+    "default": "Standard",
+    "reset": "Auf Standard zurücksetzen",
+    "systemPrompt": "Systemprompt",
+    "systemPromptPlaceholder": "z. B. „Du bist ein geduldiger Python-Tutor. Erkläre Schritt für Schritt.“",
+    "systemPromptHint": "Feste Anweisung, die das Modell vor jeder Nachricht dieses Chats bekommt.",
+    "contextLength": "Kontextlänge",
+    "contextDefault": "Standard von Ollama ({{size}})",
+    "contextHint": "Wie viel vom Verlauf das Modell sieht. Mehr Kontext braucht mehr VRAM.",
+    "contextHintMax": "Wie viel vom Verlauf das Modell sieht – dieses Modell schafft bis {{max}}. Mehr Kontext braucht mehr VRAM; passt es nicht mehr in die GPU, wird es deutlich langsamer.",
+    "temperature": "Temperatur",
+    "temperatureHint": "0 = sachlich und wiederholbar, ab 1 = kreativer und abwechslungsreicher.",
+    "seed": "Seed",
+    "seedPlaceholder": "zufällig",
+    "seedHint": "Gleicher Seed + gleiche Frage = gleiche Antwort. Praktisch zum Vergleichen.",
+    "think": "Denken",
+    "thinkHint": "Aus = schnellere Antworten ohne Gedanken-Abschnitt.",
+    "thinkHintLevels": "Dieses Modell kennt kein „Aus“, nur Stufen. Niedrig = kürzer und schneller.",
+    "thinkOn": "An",
+    "thinkOff": "Aus",
+    "thinkLow": "Niedrig",
+    "thinkMedium": "Mittel",
+    "thinkHigh": "Hoch",
+    "footer": "Gilt ab der nächsten Nachricht und wird mit dem Chat gespeichert."
   }
 }
