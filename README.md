@@ -3,14 +3,21 @@
 Persönliche Desktop-App für lokale KI-Modelle über [Ollama](https://ollama.com).
 Navigation inspiriert von [mudler/LocalAI](https://github.com/mudler/LocalAI) (MIT) – eigener Code, keine Kopie.
 
-Stand: **Phase 0** – Grundgerüst (Electron + React + TypeScript), noch keine Ollama-Funktionen.
+Stand: **Phase 1** – Statusanzeige für Ollama, Modellliste, Chat mit Streaming
+(Markdown, Code-Hervorhebung, Gedanken von Denkmodellen, Tokens/s) und gespeicherter Verlauf.
 
 ## Voraussetzungen
 
 - Windows 11
 - [Node.js LTS](https://nodejs.org) (getestet mit 24.22.1) – Installation z. B. mit
   `winget install OpenJS.NodeJS.LTS`
-- Ollama läuft lokal (`http://localhost:11434`) – erst ab Phase 1 nötig
+- Ollama läuft lokal (`http://localhost:11434`) mit mindestens einem Modell
+
+## Wo liegen meine Daten?
+
+Alle Chats liegen in einer SQLite-Datei: `%APPDATA%\LocalDesk\localdesk.db`
+(der genaue Ordner steht in der App unter **Einstellungen → Über LocalDesk**).
+Zum Sichern die App schließen und den Ordner kopieren. Nichts davon verlässt den Rechner.
 
 ## Starten
 

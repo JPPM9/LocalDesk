@@ -21,7 +21,14 @@
   `contextIsolation`, `sandbox` an, `nodeIntegration` aus. Fertige App hat eine CSP ohne fremde Verbindungen.
 - IPC-Kanalnamen und gemeinsame Typen liegen in `src/shared/`.
 - **Provider-Schnittstelle**: Ollama zuerst; OpenAI-kompatible Server später als weitere Implementierung.
-- **Speicherung**: SQLite in `%APPDATA%\LocalDesk`, plus Export als Markdown/JSON. Keine Verschlüsselung.
+- **Speicherung**: SQLite in `%APPDATA%\LocalDesk\localdesk.db`, plus Export als Markdown/JSON. Keine Verschlüsselung.
+  Eingebautes `node:sqlite` (kein natives Paket wie better-sqlite3 → kein Neukompilieren je Electron-Version;
+  FTS5 vorhanden, Erweiterungen wie sqlite-vec ladbar). Alle SQL-Zugriffe nur in `src/main/db/`.
+  Schema-Änderungen nur als **neuer** Eintrag in `migrations` (`database.ts`), bestehende nie ändern.
+- **Chat-Speichern im Main-Prozess**: `chat-service.ts` legt Chat/Nachrichten an, streamt und speichert
+  (Zwischenstand jede Sekunde, Endstand bei done/error/aborted). Beim Start werden hängende Antworten
+  (`streaming`) als `aborted` markiert. Stream-Logik (`applyChatEvent`) liegt in `src/shared/chat.ts`
+  und wird von Oberfläche und Main gemeinsam genutzt.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
 - **Netzwerk**: nur Ollama-Server (lokal/LAN), Modell-Downloads über Ollama, Update-Prüfung nur per Knopf.
   Keine Telemetrie.
@@ -41,7 +48,7 @@
 ## Phasen
 
 - Phase 0: Setup ✅
-- Phase 1: Minimal-App (Modellliste, Chat-Streaming, Verlauf)
+- Phase 1: Minimal-App (Modellliste, Chat-Streaming, Verlauf) ✅
 - Phase 2: Organisation & Parameter
 - Phase 3: Modelle & Status
 - Phase 4: MCP

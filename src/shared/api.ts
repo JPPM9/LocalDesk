@@ -8,6 +8,8 @@ export interface AppInfo {
   electron: string;
   node: string;
   chrome: string;
+  /** Ordner, in dem LocalDesk seine Daten (Datenbank) ablegt. */
+  dataPath: string;
 }
 
 /** Ergebnis einer Verbindungsprüfung zu einem KI-Server (z. B. Ollama). */
@@ -73,13 +75,62 @@ export type ChatStreamEvent = { requestId: string } & (
   | { type: 'aborted' }
 );
 
+export type MessageStatus = 'streaming' | 'done' | 'error' | 'aborted';
+
+/** Eine gespeicherte Nachricht – so liegt sie in der Datenbank und so zeigt die Oberfläche sie. */
+export interface MessageRecord {
+  /** Bei Antworten des Modells zugleich die requestId der Anfrage. */
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  /** „Gedanken“ von Denkmodellen (qwen3, gpt-oss …), getrennt von der Antwort. */
+  thinking: string;
+  status: MessageStatus;
+  model?: string;
+  stats?: ChatStats;
+  error?: string;
+}
+
+/** Ein Chat in der Liste (ohne Nachrichten). */
+export interface ChatSummary {
+  id: string;
+  title: string;
+  model: string;
+  /** Zeitpunkt der letzten Nachricht in Millisekunden seit 1970. */
+  updatedAt: number;
+}
+
+export interface ChatDetail extends ChatSummary {
+  messages: MessageRecord[];
+}
+
+/** Eine neue Nachricht in einem (evtl. noch nicht existierenden) Chat. */
+export interface ChatSendRequest {
+  /** Gibt es diesen Chat noch nicht, legt der Main-Prozess ihn an. */
+  chatId: string;
+  userMessageId: string;
+  /** Wird zur ID der Antwort und kennzeichnet die Stream-Ereignisse. */
+  requestId: string;
+  model: string;
+  content: string;
+}
+
 /** Alles, was die Oberfläche über `window.api` aufrufen darf. */
 export interface LocalDeskApi {
   getAppInfo: () => Promise<AppInfo>;
   getOllamaStatus: () => Promise<ProviderStatus>;
   listModels: () => Promise<Result<ModelInfo[]>>;
-  /** Startet eine Antwort; die Teile kommen über `onChatEvent` mit derselben requestId. */
-  chatStart: (requestId: string, request: ChatRequest) => Promise<void>;
+
+  listChats: () => Promise<ChatSummary[]>;
+  getChat: (chatId: string) => Promise<ChatDetail | null>;
+  renameChat: (chatId: string, title: string) => Promise<void>;
+  deleteChat: (chatId: string) => Promise<void>;
+
+  /**
+   * Speichert die Nachricht und startet die Antwort. Die Teile kommen über
+   * `onChatEvent` mit derselben requestId.
+   */
+  chatSend: (request: ChatSendRequest) => Promise<void>;
   chatCancel: (requestId: string) => Promise<void>;
   /** Meldet sich für Chat-Ereignisse an; gibt eine Funktion zum Abmelden zurück. */
   onChatEvent: (listener: (event: ChatStreamEvent) => void) => () => void;
@@ -90,7 +141,11 @@ export const IpcChannels = {
   getAppInfo: 'app:get-info',
   getOllamaStatus: 'ollama:get-status',
   listModels: 'models:list',
-  chatStart: 'chat:start',
+  listChats: 'chats:list',
+  getChat: 'chats:get',
+  renameChat: 'chats:rename',
+  deleteChat: 'chats:delete',
+  chatSend: 'chat:send',
   chatCancel: 'chat:cancel',
   chatEvent: 'chat:event',
 } as const;

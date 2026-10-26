@@ -12,7 +12,10 @@ export function App() {
       <Routes>
         <Route element={<AppLayout />}>
           <Route index element={<Navigate to="/chat" replace />} />
-          <Route path="chat" element={<ChatPage />} />
+          {/* Eine Route mit optionaler ID: So bleibt die Chat-Seite beim Wechsel
+              von „neuer Chat“ zu „gespeicherter Chat“ dieselbe und verliert
+              keine gerade laufende Antwort. */}
+          <Route path="chat/:chatId?" element={<ChatPage />} />
           <Route path="models" element={<ModelsPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/chat" replace />} />

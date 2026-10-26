@@ -1,19 +1,56 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { applyChatEvent, toRequestMessages, type UiMessage } from './chatState';
+import type { ChatDetail, MessageRecord } from '../../shared/api';
+import { applyChatEvent } from '../../shared/chat';
+
+interface UseChatOptions {
+  /** Ein neuer Chat wurde durch die erste Nachricht angelegt. */
+  onCreated: (chatId: string) => void;
+  /** Etwas an der Chat-Liste hat sich geändert (neuer Chat, neue Nachricht). */
+  onChanged: () => void;
+}
 
 /**
- * Hält die Nachrichten eines Chats und spricht über `window.api` mit dem Main-Prozess.
- * Noch nichts wird gespeichert – das kommt im nächsten Schritt (SQLite).
+ * Hält die Nachrichten des geöffneten Chats. Gespeichert wird im Main-Prozess;
+ * hier wird nur angezeigt, gesendet und gestoppt.
+ * `chatId` ist null für einen neuen, noch leeren Chat.
  */
-export function useChat() {
-  const [messages, setMessages] = useState<UiMessage[]>([]);
-  // requestId der Antwort, die gerade läuft (oder null).
-  const [runningId, setRunningId] = useState<string | null>(null);
-  // Refs spiegeln den aktuellen Stand für Funktionen, die nicht neu erzeugt werden.
-  const runningRef = useRef<string | null>(null);
-  runningRef.current = runningId;
-  const messagesRef = useRef<UiMessage[]>(messages);
+export function useChat(
+  chatId: string | null,
+  { onCreated, onChanged }: UseChatOptions,
+) {
+  const [chat, setChat] = useState<ChatDetail | null>(null);
+  const [messages, setMessages] = useState<MessageRecord[]>([]);
+  const [notFound, setNotFound] = useState(false);
+
+  // Refs spiegeln den aktuellen Stand für Rückruf-Funktionen, die nicht neu erzeugt werden.
+  const chatIdRef = useRef(chatId);
+  chatIdRef.current = chatId;
+  const messagesRef = useRef(messages);
   messagesRef.current = messages;
+  const callbacks = useRef({ onCreated, onChanged });
+  callbacks.current = { onCreated, onChanged };
+  // Chat, den wir gerade selbst angelegt haben – den nicht aus der Datenbank
+  // nachladen, sonst überschreibt der Datenbank-Stand die schon gestreamten Wörter.
+  const createdHereRef = useRef<string | null>(null);
+
+  const reload = useCallback(async (id: string) => {
+    const detail = await window.api.getChat(id);
+    if (chatIdRef.current !== id) return; // inzwischen anderer Chat geöffnet
+    setChat(detail);
+    setMessages(detail?.messages ?? []);
+    setNotFound(detail === null);
+  }, []);
+
+  useEffect(() => {
+    setNotFound(false);
+    if (chatId === null) {
+      setChat(null);
+      setMessages([]);
+      return;
+    }
+    if (chatId === createdHereRef.current) return;
+    void reload(chatId);
+  }, [chatId, reload]);
 
   useEffect(() => {
     return window.api.onChatEvent((event) => {
@@ -22,26 +59,34 @@ export function useChat() {
         event.type === 'done' ||
         event.type === 'error' ||
         event.type === 'aborted';
-      if (finished && event.requestId === runningRef.current) {
-        setRunningId(null);
+      if (!finished) return;
+      callbacks.current.onChanged();
+      // Am Ende mit der Datenbank abgleichen – so stimmt die Anzeige auch dann,
+      // wenn man zwischendurch in einen anderen Chat gewechselt ist.
+      const id = chatIdRef.current;
+      if (id && messagesRef.current.some((m) => m.id === event.requestId)) {
+        createdHereRef.current = null;
+        void reload(id);
       }
     });
-  }, []);
+  }, [reload]);
 
   const send = useCallback((text: string, model: string) => {
     const content = text.trim();
-    if (!content || runningRef.current) return;
+    if (!content) return;
+    if (messagesRef.current.some((m) => m.status === 'streaming')) return;
 
-    const requestId = crypto.randomUUID();
-    const userMessage: UiMessage = {
+    const isNew = chatIdRef.current === null;
+    const id = chatIdRef.current ?? crypto.randomUUID();
+    const userMessage: MessageRecord = {
       id: crypto.randomUUID(),
       role: 'user',
       content,
       thinking: '',
       status: 'done',
     };
-    const answer: UiMessage = {
-      id: requestId,
+    const answer: MessageRecord = {
+      id: crypto.randomUUID(),
       role: 'assistant',
       content: '',
       thinking: '',
@@ -49,24 +94,29 @@ export function useChat() {
       model,
     };
 
-    // Die Anfrage startet hier und nicht in setMessages: React darf Update-Funktionen
-    // mehrfach aufrufen (im Entwicklungsmodus absichtlich) – das gäbe doppelte Anfragen.
-    const history = toRequestMessages([...messagesRef.current, userMessage]);
-    runningRef.current = requestId;
-    setRunningId(requestId);
     setMessages((current) => [...current, userMessage, answer]);
-    void window.api.chatStart(requestId, { model, messages: history });
+    void window.api
+      .chatSend({
+        chatId: id,
+        userMessageId: userMessage.id,
+        requestId: answer.id,
+        model,
+        content,
+      })
+      .then(() => callbacks.current.onChanged());
+
+    if (isNew) {
+      createdHereRef.current = id;
+      chatIdRef.current = id;
+      callbacks.current.onCreated(id);
+    }
   }, []);
 
   const stop = useCallback(() => {
-    if (runningRef.current) void window.api.chatCancel(runningRef.current);
+    const running = messagesRef.current.find((m) => m.status === 'streaming');
+    if (running) void window.api.chatCancel(running.id);
   }, []);
 
-  const reset = useCallback(() => {
-    stop();
-    setMessages([]);
-    setRunningId(null);
-  }, [stop]);
-
-  return { messages, isRunning: runningId !== null, send, stop, reset };
+  const isRunning = messages.some((m) => m.status === 'streaming');
+  return { chat, messages, isRunning, notFound, send, stop };
 }

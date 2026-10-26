@@ -11,8 +11,14 @@ const api: LocalDeskApi = {
   getAppInfo: () => ipcRenderer.invoke(IpcChannels.getAppInfo),
   getOllamaStatus: () => ipcRenderer.invoke(IpcChannels.getOllamaStatus),
   listModels: () => ipcRenderer.invoke(IpcChannels.listModels),
-  chatStart: (requestId, request) =>
-    ipcRenderer.invoke(IpcChannels.chatStart, requestId, request),
+
+  listChats: () => ipcRenderer.invoke(IpcChannels.listChats),
+  getChat: (chatId) => ipcRenderer.invoke(IpcChannels.getChat, chatId),
+  renameChat: (chatId, title) =>
+    ipcRenderer.invoke(IpcChannels.renameChat, chatId, title),
+  deleteChat: (chatId) => ipcRenderer.invoke(IpcChannels.deleteChat, chatId),
+
+  chatSend: (request) => ipcRenderer.invoke(IpcChannels.chatSend, request),
   chatCancel: (requestId) =>
     ipcRenderer.invoke(IpcChannels.chatCancel, requestId),
   onChatEvent: (listener) => {

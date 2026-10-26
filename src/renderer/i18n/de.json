@@ -23,7 +23,11 @@
     "modelsError": "Modelle konnten nicht geladen werden: {{error}}",
     "inputPlaceholder": "Nachricht schreiben …",
     "inputNoModel": "Kein Modell verfügbar – läuft Ollama?",
-    "hint": "Enter senden · Umschalt+Enter neue Zeile · Verlauf wird noch nicht gespeichert",
+    "hint": "Enter senden · Umschalt+Enter neue Zeile",
+    "noChats": "Noch keine Chats",
+    "rename": "Umbenennen",
+    "delete": "Löschen",
+    "confirmDelete": "Chat „{{title}}“ endgültig löschen?",
     "send": "Senden",
     "stop": "Stopp",
     "waiting": "Modell wird geladen …",
@@ -61,6 +65,7 @@
     "title": "Einstellungen",
     "about": "Über LocalDesk",
     "version": "Version",
+    "dataPath": "Datenordner",
     "loading": "Lade …"
   }
 }

@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import {
-  applyChatEvent,
-  toRequestMessages,
-  type UiMessage,
-} from '../../src/renderer/chat/chatState';
+import type { MessageRecord as UiMessage } from '../../src/shared/api';
+import { applyChatEvent } from '../../src/shared/chat';
 
 const user: UiMessage = {
   id: 'u1',
@@ -85,31 +82,5 @@ describe('applyChatEvent', () => {
       type: 'aborted',
     });
     expect(aborted.status).toBe('aborted');
-  });
-});
-
-describe('toRequestMessages', () => {
-  it('schickt nur Rolle und Text, ohne Gedanken, Fehler oder leere Antworten', () => {
-    const messages: UiMessage[] = [
-      user,
-      { ...answer, content: 'Hallo!', thinking: 'geheim', status: 'done' },
-      { ...user, id: 'u2', content: 'Und jetzt?' },
-      { ...answer, id: 'r2', status: 'error', error: 'kaputt' },
-      { ...answer, id: 'r3', content: '' },
-    ];
-
-    expect(toRequestMessages(messages)).toEqual([
-      { role: 'user', content: 'Hallo' },
-      { role: 'assistant', content: 'Hallo!' },
-      { role: 'user', content: 'Und jetzt?' },
-    ]);
-  });
-
-  it('behält abgebrochene Antworten mit Text als Kontext', () => {
-    const messages: UiMessage[] = [
-      user,
-      { ...answer, content: 'Teil', status: 'aborted' },
-    ];
-    expect(toRequestMessages(messages)).toHaveLength(2);
   });
 });

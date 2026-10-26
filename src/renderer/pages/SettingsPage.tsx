@@ -26,6 +26,8 @@ export function SettingsPage() {
             <dd>{info.node}</dd>
             <dt className="text-muted">Chromium</dt>
             <dd>{info.chrome}</dd>
+            <dt className="text-muted">{t('settings.dataPath')}</dt>
+            <dd className="break-all">{info.dataPath}</dd>
           </dl>
         ) : (
           <p className="text-muted">{t('settings.loading')}</p>

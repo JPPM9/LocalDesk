@@ -1,34 +1,96 @@
 import { ipcMain, type WebContents } from 'electron';
 import {
   IpcChannels,
-  type ChatRequest,
+  type ChatSendRequest,
   type ChatStreamEvent,
+  type MessageRecord,
 } from '../shared/api';
+import {
+  applyChatEvent,
+  titleFromMessage,
+  toRequestMessages,
+} from '../shared/chat';
+import type { ChatRepository } from './db/chat-repository';
 import type { Provider } from './providers/provider';
 
+/** Wie oft eine laufende Antwort zwischengespeichert wird (falls die App abstürzt). */
+const SAVE_INTERVAL_MS = 1000;
+
 /**
- * Verbindet die Oberfläche mit dem Chat des Providers.
+ * Verbindet die Oberfläche mit Chat und Datenbank.
  * Eine Antwort läuft im Hintergrund weiter; jedes Stück geht als Ereignis an das
- * Fenster, das gefragt hat. Laufende Antworten merken wir uns, damit „Stopp“ sie
- * abbrechen kann.
+ * Fenster, das gefragt hat, und landet in der Datenbank. Laufende Antworten merken
+ * wir uns, damit „Stopp“ sie abbrechen kann.
  */
-export function registerChatHandlers(provider: Provider) {
+export function registerChatHandlers(
+  provider: Provider,
+  chats: ChatRepository,
+) {
   const running = new Map<string, AbortController>();
 
+  ipcMain.handle(IpcChannels.listChats, () => chats.listChats());
+
+  ipcMain.handle(IpcChannels.getChat, (_event, chatId: unknown) =>
+    typeof chatId === 'string' ? chats.getChat(chatId) : null,
+  );
+
   ipcMain.handle(
-    IpcChannels.chatStart,
-    (event, requestId: unknown, request: unknown) => {
-      if (typeof requestId !== 'string' || !isChatRequest(request)) {
-        throw new Error('Ungültige Chat-Anfrage');
-      }
-      const controller = new AbortController();
-      running.set(requestId, controller);
-      // Bewusst nicht abwarten: Die Oberfläche bekommt die Antwort über Ereignisse.
-      void stream(event.sender, requestId, request, controller).finally(() =>
-        running.delete(requestId),
-      );
+    IpcChannels.renameChat,
+    (_event, chatId: unknown, title: unknown) => {
+      if (typeof chatId !== 'string' || typeof title !== 'string') return;
+      const trimmed = title.trim();
+      if (trimmed) chats.renameChat(chatId, trimmed.slice(0, 200));
     },
   );
+
+  ipcMain.handle(IpcChannels.deleteChat, (_event, chatId: unknown) => {
+    if (typeof chatId === 'string') chats.deleteChat(chatId);
+  });
+
+  ipcMain.handle(IpcChannels.chatSend, (event, request: unknown) => {
+    if (!isChatSendRequest(request)) {
+      throw new Error('Ungültige Chat-Anfrage');
+    }
+    if (running.has(request.requestId)) return;
+
+    if (!chats.chatExists(request.chatId)) {
+      chats.createChat({
+        id: request.chatId,
+        title: titleFromMessage(request.content),
+        model: request.model,
+      });
+    }
+    const history = chats.getChat(request.chatId)?.messages ?? [];
+
+    const userMessage: MessageRecord = {
+      id: request.userMessageId,
+      role: 'user',
+      content: request.content,
+      thinking: '',
+      status: 'done',
+    };
+    const answer: MessageRecord = {
+      id: request.requestId,
+      role: 'assistant',
+      content: '',
+      thinking: '',
+      status: 'streaming',
+      model: request.model,
+    };
+    chats.appendMessage(request.chatId, userMessage);
+    chats.appendMessage(request.chatId, answer);
+
+    const controller = new AbortController();
+    running.set(request.requestId, controller);
+    // Bewusst nicht abwarten: Die Oberfläche bekommt die Antwort über Ereignisse.
+    void stream(
+      event.sender,
+      request,
+      [...history, userMessage],
+      answer,
+      controller,
+    ).finally(() => running.delete(request.requestId));
+  });
 
   ipcMain.handle(IpcChannels.chatCancel, (_event, requestId: unknown) => {
     if (typeof requestId === 'string') running.get(requestId)?.abort();
@@ -36,42 +98,63 @@ export function registerChatHandlers(provider: Provider) {
 
   async function stream(
     sender: WebContents,
-    requestId: string,
-    request: ChatRequest,
+    request: ChatSendRequest,
+    history: MessageRecord[],
+    initial: MessageRecord,
     controller: AbortController,
   ) {
-    const send = (event: ChatStreamEvent) => {
+    let answer = initial;
+    let lastSave = Date.now();
+
+    const save = () => {
+      chats.updateMessage(answer.id, answer);
+      lastSave = Date.now();
+    };
+    const emit = (event: ChatStreamEvent) => {
+      answer = applyChatEvent([answer], event)[0];
       if (!sender.isDestroyed()) sender.send(IpcChannels.chatEvent, event);
     };
+
     try {
-      for await (const chunk of provider.chat(request, controller.signal)) {
-        send({ requestId, ...chunk });
+      const messages = toRequestMessages(history);
+      for await (const chunk of provider.chat(
+        { model: request.model, messages },
+        controller.signal,
+      )) {
+        emit({ requestId: request.requestId, ...chunk });
+        if (Date.now() - lastSave > SAVE_INTERVAL_MS) save();
       }
     } catch (error) {
       if (controller.signal.aborted) {
-        send({ requestId, type: 'aborted' });
+        emit({ requestId: request.requestId, type: 'aborted' });
       } else {
-        send({
-          requestId,
+        emit({
+          requestId: request.requestId,
           type: 'error',
           error: error instanceof Error ? error.message : String(error),
         });
       }
     }
+    // Endet der Stream ohne „done“ (Verbindung weg), gilt die Antwort als abgebrochen.
+    if (answer.status === 'streaming') {
+      emit({ requestId: request.requestId, type: 'aborted' });
+    }
+    save();
   }
 }
 
 // Die Oberfläche gilt als nicht vertrauenswürdig: Eingaben vom Renderer prüfen wir.
-function isChatRequest(value: unknown): value is ChatRequest {
+function isChatSendRequest(value: unknown): value is ChatSendRequest {
   if (typeof value !== 'object' || value === null) return false;
-  const { model, messages } = value as Partial<ChatRequest>;
+  const r = value as Partial<ChatSendRequest>;
   return (
-    typeof model === 'string' &&
-    Array.isArray(messages) &&
-    messages.every(
-      (m) =>
-        ['system', 'user', 'assistant'].includes(m?.role) &&
-        typeof m?.content === 'string',
-    )
+    typeof r.chatId === 'string' &&
+    r.chatId !== '' &&
+    typeof r.userMessageId === 'string' &&
+    typeof r.requestId === 'string' &&
+    typeof r.model === 'string' &&
+    r.model !== '' &&
+    typeof r.content === 'string' &&
+    r.content.trim() !== ''
   );
 }

@@ -4,6 +4,8 @@ import started from 'electron-squirrel-startup';
 import { IpcChannels, type AppInfo } from '../shared/api';
 import { OllamaProvider } from './providers/ollama';
 import { registerChatHandlers } from './chat-service';
+import { openDatabase } from './db/database';
+import { ChatRepository } from './db/chat-repository';
 
 // Der Windows-Installer (Squirrel) startet die App kurz beim Installieren,
 // um Verknüpfungen anzulegen – in dem Fall sofort wieder beenden.
@@ -59,10 +61,10 @@ const createWindow = () => {
 // Feste Standard-Adresse; umschaltbare Server-Profile (lokal/LAN) kommen in Phase 2.
 const ollama = new OllamaProvider();
 
-function registerIpcHandlers() {
+function registerIpcHandlers(chats: ChatRepository) {
   ipcMain.handle(IpcChannels.getOllamaStatus, () => ollama.checkStatus());
   ipcMain.handle(IpcChannels.listModels, () => ollama.listModels());
-  registerChatHandlers(ollama);
+  registerChatHandlers(ollama, chats);
 
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({
     name: app.getName(),
@@ -70,11 +72,18 @@ function registerIpcHandlers() {
     electron: process.versions.electron,
     node: process.versions.node,
     chrome: process.versions.chrome,
+    dataPath: app.getPath('userData'),
   }));
 }
 
 app.whenReady().then(() => {
-  registerIpcHandlers();
+  // Die Datenbank liegt im Benutzerordner, z. B. %APPDATA%\LocalDesk\localdesk.db
+  const db = openDatabase(path.join(app.getPath('userData'), 'localdesk.db'));
+  app.on('will-quit', () => db.close());
+  const chats = new ChatRepository(db);
+  chats.markInterrupted();
+
+  registerIpcHandlers(chats);
   createWindow();
 
   app.on('activate', () => {

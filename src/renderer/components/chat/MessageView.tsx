@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import type { UiMessage } from '../../chat/chatState';
+import type { MessageRecord } from '../../../shared/api';
 import { Markdown } from './Markdown';
 
-export function MessageView({ message }: { message: UiMessage }) {
+export function MessageView({ message }: { message: MessageRecord }) {
   const { t } = useTranslation();
 
   if (message.role === 'user') {
