@@ -6,6 +6,7 @@ import {
   type McpServerView,
   type Result,
 } from '../shared/api';
+import { isToolPermission } from '../shared/permissions';
 import type { McpRepository } from './db/mcp-repository';
 import { McpManager } from './mcp/mcp-manager';
 
@@ -15,9 +16,11 @@ import { McpManager } from './mcp/mcp-manager';
  */
 export function registerMcpHandlers(servers: McpRepository) {
   const views = (): McpServerView[] =>
-    servers
-      .listServers()
-      .map((config) => ({ config, status: manager.status(config.id) }));
+    servers.listServers().map((config) => ({
+      config,
+      status: manager.status(config.id),
+      permissions: servers.listPermissions(config.id),
+    }));
 
   const broadcast = () => {
     const list = views();
@@ -72,6 +75,17 @@ export function registerMcpHandlers(servers: McpRepository) {
       if (typeof serverId !== 'string') return;
       await manager.stop(serverId);
       servers.deleteServer(serverId);
+      broadcast();
+    },
+  );
+
+  ipcMain.handle(
+    IpcChannels.setToolPermission,
+    (_event, serverId: unknown, toolName: unknown, permission: unknown) => {
+      if (typeof serverId !== 'string' || typeof toolName !== 'string') return;
+      if (toolName.length === 0 || toolName.length > 128) return;
+      if (permission !== null && !isToolPermission(permission)) return;
+      servers.setPermission(serverId, toolName, permission);
       broadcast();
     },
   );

@@ -68,3 +68,37 @@ describe('McpRepository', () => {
     expect(repo.getServer('s1')).toBeNull();
   });
 });
+
+describe('Tool-Freigaben speichern', () => {
+  beforeEach(() => {
+    repo.saveServer(input());
+  });
+
+  it('speichert, ändert und setzt Freigaben zurück', () => {
+    expect(repo.listPermissions('s1')).toEqual({});
+
+    repo.setPermission('s1', 'write_file', 'always');
+    repo.setPermission('s1', 'read_text_file', 'off');
+    repo.setPermission('s1', 'write_file', 'off');
+    expect(repo.listPermissions('s1')).toEqual({
+      write_file: 'off',
+      read_text_file: 'off',
+    });
+
+    repo.setPermission('s1', 'write_file', null); // zurück auf Standard
+    expect(repo.listPermissions('s1')).toEqual({ read_text_file: 'off' });
+  });
+
+  it('lehnt ungültige Werte und unbekannte Server ab', () => {
+    expect(repo.setPermission('s1', 'write_file', 'yes' as never)).toBe(false);
+    expect(repo.setPermission('fremd', 'write_file', 'always')).toBe(false);
+    expect(repo.listPermissions('s1')).toEqual({});
+  });
+
+  it('löscht die Freigaben mit dem Server', () => {
+    repo.setPermission('s1', 'write_file', 'always');
+    repo.deleteServer('s1');
+    repo.saveServer(input()); // gleicher Name/ID neu angelegt
+    expect(repo.listPermissions('s1')).toEqual({});
+  });
+});

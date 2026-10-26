@@ -69,10 +69,20 @@ export interface McpServerStatus {
   tools: McpToolInfo[];
 }
 
+/**
+ * Was passiert, wenn ein Modell ein Tool benutzen will:
+ * - always: läuft sofort
+ * - ask: LocalDesk fragt dich vorher im Chat
+ * - off: das Modell bekommt das Tool gar nicht erst angeboten
+ */
+export type ToolPermission = 'always' | 'ask' | 'off';
+
 /** Ein MCP-Server mit seinen Einstellungen und seinem aktuellen Zustand. */
 export interface McpServerView {
   config: McpServerConfig;
   status: McpServerStatus;
+  /** Nur von dir geänderte Freigaben (Tool-Name → Freigabe); sonst gilt der Standard. */
+  permissions: Record<string, ToolPermission>;
 }
 
 /** Messwerte einer NVIDIA-Grafikkarte (aus nvidia-smi). Fehlt ein Wert, meldet die Karte ihn nicht. */
@@ -326,6 +336,12 @@ export interface LocalDeskApi {
   setMcpServerEnabled: (serverId: string, enabled: boolean) => Promise<void>;
   restartMcpServer: (serverId: string) => Promise<void>;
   deleteMcpServer: (serverId: string) => Promise<void>;
+  /** Freigabe für ein Tool setzen; `null` = zurück auf Standard. */
+  setToolPermission: (
+    serverId: string,
+    toolName: string,
+    permission: ToolPermission | null,
+  ) => Promise<void>;
   /** Öffnet den Windows-Ordnerdialog; leer = abgebrochen. */
   pickFolders: () => Promise<string[]>;
   onMcpChanged: (listener: (servers: McpServerView[]) => void) => () => void;
@@ -391,6 +407,7 @@ export const IpcChannels = {
   setMcpServerEnabled: 'mcp:set-enabled',
   restartMcpServer: 'mcp:restart',
   deleteMcpServer: 'mcp:delete',
+  setToolPermission: 'mcp:set-permission',
   pickFolders: 'dialog:pick-folders',
   mcpChanged: 'mcp:changed',
   startDownload: 'downloads:start',

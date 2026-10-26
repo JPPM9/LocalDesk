@@ -164,6 +164,16 @@
     "startingHint": "Startet … Beim allerersten Mal lädt npx den Server herunter, das kann bis zu einer Minute dauern.",
     "log": "Meldungen des Servers",
     "toolsSummary": "{{count}} Tools – {{readOnly}} nur lesend, {{writing}} verändernd",
+    "permissionSummary": "{{always}} sofort, {{ask}} fragen, {{off}} aus",
+    "permissionHint": "Immer = läuft ohne Rückfrage · Fragen = du bestätigst jeden Aufruf im Chat · Aus = das Modell bekommt das Tool gar nicht angeboten.",
+    "permissionFor": "Freigabe für {{name}}",
+    "resetPermission": "Zurück auf Standard ({{standard}})",
+    "confirmAlways": "„{{name}}“ kann Dateien überschreiben oder verschieben. Wirklich ohne Rückfrage erlauben?",
+    "permission": {
+      "always": "Immer",
+      "ask": "Fragen",
+      "off": "Aus"
+    },
     "readOnly": "nur lesend",
     "writing": "verändernd",
     "destructive": "kann überschreiben",

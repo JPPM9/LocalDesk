@@ -41,6 +41,13 @@ const api: LocalDeskApi = {
     ipcRenderer.invoke(IpcChannels.restartMcpServer, serverId),
   deleteMcpServer: (serverId) =>
     ipcRenderer.invoke(IpcChannels.deleteMcpServer, serverId),
+  setToolPermission: (serverId, toolName, permission) =>
+    ipcRenderer.invoke(
+      IpcChannels.setToolPermission,
+      serverId,
+      toolName,
+      permission,
+    ),
   pickFolders: () => ipcRenderer.invoke(IpcChannels.pickFolders),
   onMcpChanged: (listener) => {
     const handler = (_event: IpcRendererEvent, list: McpServerView[]) =>

@@ -88,7 +88,13 @@
   Tools (`readOnlyHint`/`destructiveHint` aus den Annotations; ohne Angabe = verändernd) und die letzten
   stderr-Zeilen. Eingeschaltete Server starten mit der App, `will-quit` stoppt alle.
   Unter Windows ist ein Server eine Kette aus 4 Prozessen (cmd → npx → cmd → node); Stoppen und normales
-  Beenden räumen alle auf (geprüft). Offener Punkt: Bei Absturz/hartem Beenden können sie übrig bleiben.
+  Beenden räumen alle auf (geprüft). Auch bei hartem Beenden der App verschwinden sie, weil sich ein
+  stdio-Server beendet, sobald seine Verbindung abreißt (geprüft).
+- **Tool-Freigaben** (Migration 8: `mcp_tool_permissions`, Cascade mit dem Server): gespeichert werden nur
+  Abweichungen vom Standard. Standard = `defaultPermission` (nur lesend → `always`, sonst `ask`),
+  gültige Freigabe = `effectivePermission` (`src/shared/permissions.ts`) – Main (Ausführen) und
+  Oberfläche (Anzeigen) nutzen dieselbe Funktion. `off` = Tool wird dem Modell nicht angeboten.
+  Ein zerstörendes Tool auf `always` zu stellen, verlangt eine zusätzliche Rückfrage.
 - **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.

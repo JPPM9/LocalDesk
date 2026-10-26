@@ -1,7 +1,24 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FolderOpen, Pencil, Plus, RotateCw, Trash2, X } from 'lucide-react';
-import type { McpServerInput, McpServerView } from '../../../shared/api';
+import {
+  FolderOpen,
+  Pencil,
+  Plus,
+  RotateCcw,
+  RotateCw,
+  Trash2,
+  X,
+} from 'lucide-react';
+import type {
+  McpServerInput,
+  McpServerView,
+  McpToolInfo,
+  ToolPermission,
+} from '../../../shared/api';
+import {
+  defaultPermission,
+  effectivePermission,
+} from '../../../shared/permissions';
 import { useMcpServers } from '../../hooks/useMcpServers';
 import { Field } from './SettingsFields';
 
@@ -170,6 +187,11 @@ function ServerCard({
   const { t } = useTranslation();
   const { config, status } = server;
   const readOnlyCount = status.tools.filter((tool) => tool.readOnly).length;
+  // Wie viele Tools laufen sofort / fragen / sind aus (nach deinen Einstellungen)?
+  const counts = { always: 0, ask: 0, off: 0 };
+  for (const tool of status.tools) {
+    counts[effectivePermission(tool, server.permissions)]++;
+  }
 
   return (
     <article className="space-y-3 rounded border border-border bg-surface p-4">
@@ -247,43 +269,140 @@ function ServerCard({
               readOnly: readOnlyCount,
               writing: status.tools.length - readOnlyCount,
             })}
+            {' · '}
+            {t('mcp.permissionSummary', {
+              always: counts.always,
+              ask: counts.ask,
+              off: counts.off,
+            })}
           </summary>
+          <p className="mt-2 text-muted">{t('mcp.permissionHint')}</p>
           <ul className="mt-2 divide-y divide-border rounded border border-border">
             {status.tools.map((tool) => (
-              <li
+              <ToolRow
                 key={tool.name}
-                className="flex items-start gap-2 px-3 py-1.5"
-              >
-                <span className="w-44 shrink-0 font-mono">{tool.name}</span>
-                <span
-                  className="min-w-0 flex-1 text-muted line-clamp-2"
-                  title={tool.description}
-                >
-                  {tool.description}
-                </span>
-                <span
-                  className={`shrink-0 rounded px-1.5 text-[11px] ${
-                    tool.readOnly
-                      ? 'bg-accent-soft text-accent'
-                      : tool.destructive
-                        ? 'bg-error/10 text-error'
-                        : 'bg-warn/10 text-warn'
-                  }`}
-                >
-                  {t(
-                    tool.readOnly
-                      ? 'mcp.readOnly'
-                      : tool.destructive
-                        ? 'mcp.destructive'
-                        : 'mcp.writing',
-                  )}
-                </span>
-              </li>
+                tool={tool}
+                override={server.permissions[tool.name]}
+                onChange={(permission) =>
+                  void window.api.setToolPermission(
+                    config.id,
+                    tool.name,
+                    permission,
+                  )
+                }
+              />
             ))}
           </ul>
         </details>
       )}
     </article>
+  );
+}
+
+const PERMISSION_OPTIONS: ToolPermission[] = ['always', 'ask', 'off'];
+
+/** Ein Tool mit Art (lesend/verändernd) und Auswahl Immer / Fragen / Aus. */
+function ToolRow({
+  tool,
+  override,
+  onChange,
+}: {
+  tool: McpToolInfo;
+  override: ToolPermission | undefined;
+  onChange: (permission: ToolPermission | null) => void;
+}) {
+  const { t } = useTranslation();
+  const current = effectivePermission(
+    tool,
+    override ? { [tool.name]: override } : {},
+  );
+  const standard = defaultPermission(tool);
+
+  const choose = (permission: ToolPermission) => {
+    if (permission === current) return;
+    // Ein Tool, das Dateien überschreiben kann, ohne Rückfrage laufen zu lassen,
+    // ist eine bewusste Entscheidung – deshalb noch einmal nachfragen.
+    if (
+      permission === 'always' &&
+      tool.destructive &&
+      !window.confirm(t('mcp.confirmAlways', { name: tool.name }))
+    ) {
+      return;
+    }
+    onChange(permission === standard ? null : permission);
+  };
+
+  return (
+    <li className="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-0.5 px-3 py-2">
+      <div className="flex min-w-0 items-center gap-2">
+        <span className="truncate font-mono">{tool.name}</span>
+        <span
+          className={`shrink-0 rounded px-1.5 text-[11px] ${
+            tool.readOnly
+              ? 'bg-accent-soft text-accent'
+              : tool.destructive
+                ? 'bg-error/10 text-error'
+                : 'bg-warn/10 text-warn'
+          }`}
+        >
+          {t(
+            tool.readOnly
+              ? 'mcp.readOnly'
+              : tool.destructive
+                ? 'mcp.destructive'
+                : 'mcp.writing',
+          )}
+        </span>
+      </div>
+
+      <div className="row-span-2 flex items-center gap-1">
+        <div
+          role="radiogroup"
+          aria-label={t('mcp.permissionFor', { name: tool.name })}
+          className="flex overflow-hidden rounded border border-border"
+        >
+          {PERMISSION_OPTIONS.map((permission) => (
+            <button
+              key={permission}
+              type="button"
+              role="radio"
+              aria-checked={current === permission}
+              onClick={() => choose(permission)}
+              className={`px-2 py-0.5 ${
+                current === permission
+                  ? permission === 'off'
+                    ? 'bg-surface-hover font-semibold text-text'
+                    : 'bg-accent text-white'
+                  : 'text-muted hover:bg-surface-hover'
+              }`}
+            >
+              {t(`mcp.permission.${permission}`)}
+            </button>
+          ))}
+        </div>
+        {/* Zurück auf Standard – nur sichtbar, wenn du etwas geändert hast */}
+        <button
+          type="button"
+          onClick={() => onChange(null)}
+          title={t('mcp.resetPermission', {
+            standard: t(`mcp.permission.${standard}`),
+          })}
+          aria-label={t('mcp.resetPermission', {
+            standard: t(`mcp.permission.${standard}`),
+          })}
+          className={`rounded p-0.5 text-muted hover:text-text ${override ? '' : 'invisible'}`}
+        >
+          <RotateCcw size={12} />
+        </button>
+      </div>
+
+      <span
+        className="line-clamp-1 min-w-0 text-muted"
+        title={tool.description}
+      >
+        {tool.description}
+      </span>
+    </li>
   );
 }
 

@@ -123,6 +123,17 @@ const migrations: string[] = [
     created_at  INTEGER NOT NULL
   );
   `,
+  // 8: Freigaben pro Tool. Gespeichert werden nur Abweichungen vom Standard
+  // („nur lesend“ → immer, sonst fragen). Wird ein Server gelöscht, verschwinden
+  // seine Freigaben mit.
+  `
+  CREATE TABLE mcp_tool_permissions (
+    server_id  TEXT NOT NULL REFERENCES mcp_servers(id) ON DELETE CASCADE,
+    tool_name  TEXT NOT NULL,
+    permission TEXT NOT NULL CHECK (permission IN ('always', 'ask', 'off')),
+    PRIMARY KEY (server_id, tool_name)
+  );
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */

@@ -1,6 +1,7 @@
 import path from 'node:path';
 import type { DatabaseSync } from 'node:sqlite';
-import type { McpServerConfig, Result } from '../../shared/api';
+import type { McpServerConfig, Result, ToolPermission } from '../../shared/api';
+import { isToolPermission } from '../../shared/permissions';
 
 interface ServerRow {
   id: string;
@@ -61,6 +62,46 @@ export class McpRepository {
 
   deleteServer(serverId: string) {
     this.db.prepare('DELETE FROM mcp_servers WHERE id = ?').run(serverId);
+  }
+
+  /** Deine geänderten Freigaben für einen Server (Tool-Name → Freigabe). */
+  listPermissions(serverId: string): Record<string, ToolPermission> {
+    const rows = this.db
+      .prepare(
+        'SELECT tool_name, permission FROM mcp_tool_permissions WHERE server_id = ?',
+      )
+      .all(serverId) as { tool_name: string; permission: string }[];
+    const result: Record<string, ToolPermission> = {};
+    for (const row of rows) {
+      if (isToolPermission(row.permission))
+        result[row.tool_name] = row.permission;
+    }
+    return result;
+  }
+
+  /** Setzt eine Freigabe; `null` heißt „zurück auf Standard“. */
+  setPermission(
+    serverId: string,
+    toolName: string,
+    permission: ToolPermission | null,
+  ): boolean {
+    if (permission === null) {
+      this.db
+        .prepare(
+          'DELETE FROM mcp_tool_permissions WHERE server_id = ? AND tool_name = ?',
+        )
+        .run(serverId, toolName);
+      return true;
+    }
+    if (!isToolPermission(permission) || !this.getServer(serverId))
+      return false;
+    this.db
+      .prepare(
+        `INSERT INTO mcp_tool_permissions (server_id, tool_name, permission) VALUES (?, ?, ?)
+         ON CONFLICT(server_id, tool_name) DO UPDATE SET permission = excluded.permission`,
+      )
+      .run(serverId, toolName, permission);
+    return true;
   }
 }
 
