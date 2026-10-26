@@ -6,9 +6,12 @@ import {
   type McpServerView,
   type Result,
 } from '../shared/api';
-import { isToolPermission } from '../shared/permissions';
+import { effectivePermission, isToolPermission } from '../shared/permissions';
+import type { NamedTool, OfferedTool } from '../shared/tools';
 import type { McpRepository } from './db/mcp-repository';
 import { McpManager } from './mcp/mcp-manager';
+import { toToolResult } from './mcp/tool-result';
+import type { ToolResult } from './tool-loop';
 
 /**
  * MCP-Server für die Oberfläche: einrichten, ein-/ausschalten, neu starten,
@@ -102,9 +105,69 @@ export function registerMcpHandlers(servers: McpRepository) {
     return result.canceled ? [] : result.filePaths;
   });
 
+  /** Die Tools für den Chat – Freigaben gelten hier, im Main-Prozess. */
+  const tools: McpTools = {
+    offered(serverIds) {
+      const offered: OfferedTool[] = [];
+      for (const serverId of serverIds) {
+        const config = servers.getServer(serverId);
+        const status = manager.status(serverId);
+        if (!config?.enabled || status.state !== 'running') continue;
+        const overrides = servers.listPermissions(serverId);
+        for (const tool of status.tools) {
+          const permission = effectivePermission(tool, overrides);
+          if (permission === 'off') continue;
+          offered.push({
+            serverId,
+            serverName: config.name,
+            toolName: tool.name,
+            description: tool.description,
+            inputSchema: tool.inputSchema,
+            destructive: tool.destructive,
+            permission,
+          });
+        }
+      }
+      return offered;
+    },
+
+    async call(tool, args, signal) {
+      const client = manager.getClient(tool.serverId);
+      if (!client) {
+        return { text: 'Der MCP-Server läuft nicht mehr.', isError: true };
+      }
+      const result = await client.callTool(
+        { name: tool.toolName, arguments: args },
+        undefined,
+        { signal, timeout: TOOL_TIMEOUT_MS },
+      );
+      return toToolResult(result);
+    },
+
+    allowAlways(tool) {
+      servers.setPermission(tool.serverId, tool.toolName, 'always');
+      broadcast();
+    },
+  };
+
   // Eingeschaltete Server mit der App starten, beim Beenden sauber stoppen.
   for (const config of servers.listServers()) startIfEnabled(config);
-  return { manager };
+  return { manager, tools };
+}
+
+/** Wie lange ein einzelner Tool-Aufruf dauern darf. */
+const TOOL_TIMEOUT_MS = 120_000;
+
+/** Was der Chat von den MCP-Servern braucht. */
+export interface McpTools {
+  /** Tools der genannten Server, die laufen – ohne die ausgeschalteten. */
+  offered(serverIds: string[]): OfferedTool[];
+  call(
+    tool: NamedTool,
+    args: Record<string, unknown>,
+    signal: AbortSignal,
+  ): Promise<ToolResult>;
+  allowAlways(tool: NamedTool): void;
 }
 
 /** Gibt den ersten Ordner zurück, den es nicht gibt (oder der keine Ordner ist). */

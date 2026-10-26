@@ -1,8 +1,14 @@
 import { useTranslation } from 'react-i18next';
-import type { MessageRecord } from '../../../shared/api';
+import type { MessageRecord, ToolDecision } from '../../../shared/api';
 import { Markdown } from './Markdown';
+import { ToolCallView } from './ToolCallView';
 
-export function MessageView({ message }: { message: MessageRecord }) {
+interface MessageViewProps {
+  message: MessageRecord;
+  onToolDecision: (callId: string, decision: ToolDecision) => void;
+}
+
+export function MessageView({ message, onToolDecision }: MessageViewProps) {
   const { t } = useTranslation();
 
   if (message.role === 'user') {
@@ -15,8 +21,16 @@ export function MessageView({ message }: { message: MessageRecord }) {
     );
   }
 
+  const toolCalls = message.toolCalls ?? [];
+  const streaming = message.status === 'streaming';
+  const usedTools = toolCalls.length > 0;
+  // Nur der Hinweis „lädt“, solange noch gar nichts da ist – und nicht, während
+  // eine Rückfrage auf dich wartet.
   const waiting =
-    message.status === 'streaming' && !message.content && !message.thinking;
+    streaming &&
+    !message.content &&
+    !toolCalls.some((c) => c.status === 'asking' || c.status === 'running') &&
+    (usedTools || !message.thinking);
 
   return (
     <div className="space-y-2">
@@ -25,7 +39,7 @@ export function MessageView({ message }: { message: MessageRecord }) {
       {message.thinking && (
         <details className="rounded border border-border bg-surface px-3 py-2 text-[13px] text-muted">
           <summary className="cursor-pointer select-none">
-            {message.status === 'streaming' && !message.content
+            {streaming && !message.content && !usedTools
               ? t('chat.thinkingNow')
               : t('chat.thinking')}
           </summary>
@@ -33,8 +47,22 @@ export function MessageView({ message }: { message: MessageRecord }) {
         </details>
       )}
 
+      {usedTools && (
+        <div className="space-y-1.5">
+          {toolCalls.map((call) => (
+            <ToolCallView
+              key={call.id}
+              call={call}
+              onDecision={onToolDecision}
+            />
+          ))}
+        </div>
+      )}
+
       {waiting && (
-        <p className="animate-pulse text-muted">{t('chat.waiting')}</p>
+        <p className="animate-pulse text-muted">
+          {usedTools ? t('chat.toolWorking') : t('chat.waiting')}
+        </p>
       )}
       {message.content && <Markdown text={message.content} />}
 

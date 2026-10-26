@@ -104,11 +104,13 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
         ? queryGpus()
         : { available: false, reason: 'remote' },
   );
-  registerChatHandlers(getProvider, chats);
   registerDownloadHandlers(getProvider);
-  const { manager: mcp } = registerMcpHandlers(new McpRepository(db));
+  const { manager: mcp, tools: mcpTools } = registerMcpHandlers(
+    new McpRepository(db),
+  );
   // MCP-Server sind eigene Programme – beim Beenden der App mit beenden.
   app.on('will-quit', () => void mcp.stopAll());
+  registerChatHandlers(getProvider, chats, mcpTools);
 
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({
     name: app.getName(),

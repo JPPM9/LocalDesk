@@ -91,6 +91,8 @@ const api: LocalDeskApi = {
   chatSend: (request) => ipcRenderer.invoke(IpcChannels.chatSend, request),
   chatCancel: (requestId) =>
     ipcRenderer.invoke(IpcChannels.chatCancel, requestId),
+  chatToolDecision: (callId, decision) =>
+    ipcRenderer.invoke(IpcChannels.chatToolDecision, callId, decision),
   onChatEvent: (listener) => {
     // Das Electron-Ereignisobjekt geben wir nicht weiter – nur die Daten.
     const handler = (_event: IpcRendererEvent, data: ChatStreamEvent) =>

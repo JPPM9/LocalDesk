@@ -99,6 +99,20 @@
   keine Tools = nicht gespeichert). MCP-Button im Chat-Kopf und Auswahl im Vorlagen-Editor nutzen
   dieselbe Komponente `McpServerPicker`. Gelöschte Server-IDs bleiben in alten Chats stehen und werden
   beim Ausführen ignoriert.
+- **Tool-Calling** (`src/main/tool-loop.ts`, `runAnswer`): pro Runde fragt die Schleife die angebotenen
+  Tools neu ab (`McpTools.offered` in `mcp-service.ts`: nur laufende Server des Chats, ohne `off`), schickt
+  sie mit (`ChatRequest.tools`), führt gewünschte Aufrufe nacheinander aus und gibt die Ergebnisse als
+  `role: 'tool'` zurück. Höchstens `MAX_TOOL_ROUNDS` = 8 Tool-Runden, danach eine letzte Runde ohne Tools.
+  Freigabe wird im Main geprüft: nicht angebotene Tools laufen nie (Fehler ans Modell), `ask` wartet auf
+  `chat:tool-decision` (einmal / immer / ablehnen; „immer“ speichert `always`), Stopp = abbrechen.
+  Tool-Fehler und Ablehnungen gehen als Ergebnistext ans Modell. Ergebnisse max. 20 000 Zeichen.
+  Gleiche Tool-Namen mehrerer Server bekommen `_2` usw. (`nameTools`).
+  Ollama-Format geprüft (0.40.11): `tool_calls` kommen fertig in einer Zeile, Argumente als Objekt;
+  Ergebnis als `{role:'tool', tool_name, content}`.
+  Speichern: Migration 9, `messages.tool_calls_json` (Liste `ToolCallRecord` an der Antwort).
+  Für spätere Fragen baut `toRequestMessages` die Tool-Runden vor den Antworttext wieder auf.
+  Wartende/laufende Aufrufe werden bei Stopp, Fehler und App-Absturz `cancelled` (`settleToolCalls`).
+  Kontext: Die 14 Tools des Dateisystem-Servers kosten ~1300–1700 Tokens Eingabe (Ollama-Standard 4096).
 - **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.

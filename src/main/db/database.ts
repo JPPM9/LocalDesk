@@ -134,6 +134,11 @@ const migrations: string[] = [
     PRIMARY KEY (server_id, tool_name)
   );
   `,
+  // 9: Tool-Aufrufe einer Antwort (Liste als JSON). Sie gehören immer zu genau einer
+  // Antwort und werden nie einzeln gesucht – eine eigene Tabelle wäre unnötig.
+  `
+  ALTER TABLE messages ADD COLUMN tool_calls_json TEXT;
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */

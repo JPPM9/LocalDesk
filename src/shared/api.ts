@@ -178,9 +178,65 @@ export interface ModelInfo {
 export type Result<T> = { ok: true; value: T } | { ok: false; error: string };
 
 export interface ChatMessage {
-  role: 'system' | 'user' | 'assistant';
+  role: 'system' | 'user' | 'assistant' | 'tool';
   content: string;
+  /** Nur bei `assistant`: Tools, die das Modell aufrufen wollte. */
+  toolCalls?: ModelToolCall[];
+  /** Nur bei `tool`: zu welchem Tool dieses Ergebnis gehört. */
+  toolName?: string;
 }
+
+/** Ein Tool-Aufruf, wie das Modell ihn formuliert. */
+export interface ModelToolCall {
+  name: string;
+  arguments: Record<string, unknown>;
+}
+
+/** Ein Tool, wie das Modell es angeboten bekommt. */
+export interface ToolDefinition {
+  name: string;
+  description: string;
+  /** Eingaben als JSON-Schema. */
+  parameters: Record<string, unknown>;
+}
+
+/**
+ * Stand eines Tool-Aufrufs:
+ * - asking: wartet auf deine Freigabe
+ * - running: läuft gerade
+ * - done / error: fertig (Fehler gehen als Ergebnis ans Modell zurück)
+ * - denied: von dir abgelehnt
+ * - cancelled: Antwort wurde gestoppt, bevor der Aufruf fertig war
+ */
+export type ToolCallStatus =
+  | 'asking'
+  | 'running'
+  | 'done'
+  | 'error'
+  | 'denied'
+  | 'cancelled';
+
+/** Ein Tool-Aufruf während einer Antwort – so wird er gespeichert und angezeigt. */
+export interface ToolCallRecord {
+  id: string;
+  /** Runde der Antwort (1 = erste Anfrage ans Modell). */
+  round: number;
+  /** Name, unter dem das Modell das Tool kennt. */
+  name: string;
+  /** Name beim MCP-Server (meist gleich, bei Namensgleichheit verschieden). */
+  toolName: string;
+  serverId: string;
+  serverName: string;
+  arguments: Record<string, unknown>;
+  status: ToolCallStatus;
+  /** Laut Server kann das Tool Daten überschreiben oder löschen. */
+  destructive?: boolean;
+  /** Was das Modell als Ergebnis bekommen hat (auch bei Fehler oder Ablehnung). */
+  result?: string;
+}
+
+/** Deine Antwort auf eine Rückfrage. */
+export type ToolDecision = 'once' | 'always' | 'deny';
 
 /**
  * Denkmodus: true/false für Modelle wie qwen3 oder gemma4,
@@ -212,6 +268,8 @@ export interface ChatRequest {
   messages: ChatMessage[];
   options?: Pick<ChatSettings, 'temperature' | 'contextLength' | 'seed'>;
   think?: ThinkSetting;
+  /** Tools, die das Modell benutzen darf; fehlt = keine. */
+  tools?: ToolDefinition[];
 }
 
 /** Kennzahlen, die der Server am Ende einer Antwort liefert. */
@@ -230,11 +288,14 @@ export interface ChatStats {
 export type ChatChunk =
   | { type: 'content'; text: string }
   | { type: 'thinking'; text: string }
+  | { type: 'tool-calls'; calls: ModelToolCall[] }
   | { type: 'done'; stats?: ChatStats };
 
 /** Was der Main-Prozess während einer Antwort an die Oberfläche schickt. */
 export type ChatStreamEvent = { requestId: string } & (
-  | ChatChunk
+  | Exclude<ChatChunk, { type: 'tool-calls' }>
+  /** Neuer oder geänderter Tool-Aufruf (gleiche id = ersetzen). */
+  | { type: 'tool-call'; call: ToolCallRecord }
   | { type: 'error'; error: string }
   | { type: 'aborted' }
 );
@@ -253,6 +314,8 @@ export interface MessageRecord {
   model?: string;
   stats?: ChatStats;
   error?: string;
+  /** Tool-Aufrufe während dieser Antwort, in Reihenfolge. */
+  toolCalls?: ToolCallRecord[];
 }
 
 /** Ein Chat in der Liste (ohne Nachrichten). */
@@ -395,6 +458,8 @@ export interface LocalDeskApi {
    */
   chatSend: (request: ChatSendRequest) => Promise<void>;
   chatCancel: (requestId: string) => Promise<void>;
+  /** Antwort auf eine Rückfrage zu einem Tool-Aufruf. */
+  chatToolDecision: (callId: string, decision: ToolDecision) => Promise<void>;
   /** Meldet sich für Chat-Ereignisse an; gibt eine Funktion zum Abmelden zurück. */
   onChatEvent: (listener: (event: ChatStreamEvent) => void) => () => void;
 }
@@ -441,5 +506,6 @@ export const IpcChannels = {
   deleteTemplate: 'templates:delete',
   chatSend: 'chat:send',
   chatCancel: 'chat:cancel',
+  chatToolDecision: 'chat:tool-decision',
   chatEvent: 'chat:event',
 } as const;

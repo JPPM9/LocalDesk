@@ -1,6 +1,8 @@
 import type {
   ChatChunk,
+  ChatMessage,
   ChatRequest,
+  ModelToolCall,
   ChatStats,
   ModelInfo,
   ProviderStatus,
@@ -43,7 +45,7 @@ interface OllamaRunning {
 
 /** Eine Zeile aus dem Stream von `POST /api/chat`. */
 interface OllamaChatLine {
-  message?: { content?: unknown; thinking?: unknown };
+  message?: { content?: unknown; thinking?: unknown; tool_calls?: unknown };
   done?: unknown;
   error?: unknown;
   eval_count?: unknown;
@@ -163,6 +165,11 @@ export class OllamaProvider implements Provider {
       if (typeof content === 'string' && content !== '') {
         yield { type: 'content', text: content };
       }
+      // Ollama schickt Tool-Aufrufe fertig in einer Zeile, nicht Stück für Stück.
+      const calls = toToolCalls(line.message?.tool_calls);
+      if (calls.length > 0) {
+        yield { type: 'tool-calls', calls };
+      }
       if (line.done === true) {
         yield { type: 'done', stats: toChatStats(line) };
         return;
@@ -241,11 +248,65 @@ export function toOllamaChatBody(request: ChatRequest) {
   }
   return {
     model: request.model,
-    messages: request.messages,
+    messages: request.messages.map(toOllamaMessage),
     stream: true,
+    ...(request.tools?.length && {
+      tools: request.tools.map((tool) => ({
+        type: 'function',
+        function: {
+          name: tool.name,
+          description: tool.description,
+          parameters: tool.parameters,
+        },
+      })),
+    }),
     ...(Object.keys(options).length > 0 && { options }),
     ...(request.think !== undefined && { think: request.think }),
   };
+}
+
+/** Ollama nennt die Felder tool_calls und tool_name. */
+function toOllamaMessage(message: ChatMessage) {
+  return {
+    role: message.role,
+    content: message.content,
+    ...(message.toolCalls?.length && {
+      tool_calls: message.toolCalls.map((call) => ({
+        function: { name: call.name, arguments: call.arguments },
+      })),
+    }),
+    ...(message.toolName !== undefined && { tool_name: message.toolName }),
+  };
+}
+
+/**
+ * Liest Tool-Aufrufe aus Ollamas Antwort. Die Argumente kommen als Objekt;
+ * manche Modelle liefern sie als JSON-Text – den versuchen wir zu lesen.
+ */
+function toToolCalls(raw: unknown): ModelToolCall[] {
+  if (!Array.isArray(raw)) return [];
+  const calls: ModelToolCall[] = [];
+  for (const entry of raw) {
+    const fn = (entry as { function?: { name?: unknown; arguments?: unknown } })
+      ?.function;
+    if (typeof fn?.name !== 'string' || fn.name === '') continue;
+    calls.push({ name: fn.name, arguments: toArguments(fn.arguments) });
+  }
+  return calls;
+}
+
+function toArguments(raw: unknown): Record<string, unknown> {
+  let value = raw;
+  if (typeof value === 'string') {
+    try {
+      value = JSON.parse(value);
+    } catch {
+      return {};
+    }
+  }
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
 }
 
 /** Ollama schickt Fehler als `{"error": "..."}` – sonst nehmen wir den HTTP-Status. */

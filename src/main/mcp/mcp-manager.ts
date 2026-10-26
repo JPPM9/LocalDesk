@@ -112,7 +112,7 @@ export class McpManager {
     await Promise.all([...this.sessions.keys()].map((id) => this.stop(id)));
   }
 
-  /** Für Schritt 4 (Tool-Calling): ein Tool auf einem laufenden Server aufrufen. */
+  /** Verbindung zu einem laufenden Server, um Tools aufzurufen. */
   getClient(serverId: string): Client | null {
     const session = this.sessions.get(serverId);
     return session?.status.state === 'running' ? session.client : null;

@@ -287,7 +287,12 @@ export function ChatPage() {
                     : ''
                 }`}
               >
-                <MessageView message={message} />
+                <MessageView
+                  message={message}
+                  onToolDecision={(callId, decision) =>
+                    void window.api.chatToolDecision(callId, decision)
+                  }
+                />
               </div>
             ))}
             <div ref={bottomRef} />

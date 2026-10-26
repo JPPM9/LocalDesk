@@ -8,6 +8,7 @@ import type {
   MessageStatus,
   SearchHit,
   SearchResult,
+  ToolCallRecord,
 } from '../../shared/api';
 import {
   buildFtsQuery,
@@ -16,6 +17,7 @@ import {
   searchTerms,
 } from '../../shared/search';
 import { normalizeSettings } from '../../shared/settings';
+import { parseToolCalls, settleToolCalls } from '../../shared/tools';
 
 const MAX_SEARCH_HITS = 50;
 /** Wie viele Wörter der Textausschnitt um einen Treffer ungefähr zeigt. */
@@ -42,6 +44,7 @@ interface MessageRow {
   model: string | null;
   error: string | null;
   stats_json: string | null;
+  tool_calls_json: string | null;
 }
 
 /** Felder einer Antwort, die sich nach dem Anlegen noch ändern. */
@@ -51,6 +54,7 @@ export interface MessageUpdate {
   status: MessageStatus;
   error?: string;
   stats?: ChatStats;
+  toolCalls?: ToolCallRecord[];
 }
 
 /**
@@ -81,7 +85,7 @@ export class ChatRepository {
     if (!chat) return null;
     const rows = this.db
       .prepare(
-        `SELECT id, role, content, thinking, status, model, error, stats_json
+        `SELECT id, role, content, thinking, status, model, error, stats_json, tool_calls_json
            FROM messages WHERE chat_id = ? ORDER BY position`,
       )
       .all(chatId) as unknown as MessageRow[];
@@ -165,8 +169,9 @@ export class ChatRepository {
     this.db
       .prepare(
         `INSERT INTO messages
-           (id, chat_id, position, role, content, thinking, status, model, error, stats_json, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+           (id, chat_id, position, role, content, thinking, status, model, error, stats_json,
+            tool_calls_json, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .run(
         message.id,
@@ -179,6 +184,7 @@ export class ChatRepository {
         message.model ?? null,
         message.error ?? null,
         message.stats ? JSON.stringify(message.stats) : null,
+        toolCallsJson(message.toolCalls),
         now,
       );
     const model = message.model ?? null;
@@ -192,7 +198,8 @@ export class ChatRepository {
   updateMessage(messageId: string, update: MessageUpdate) {
     this.db
       .prepare(
-        `UPDATE messages SET content = ?, thinking = ?, status = ?, error = ?, stats_json = ?
+        `UPDATE messages
+            SET content = ?, thinking = ?, status = ?, error = ?, stats_json = ?, tool_calls_json = ?
           WHERE id = ?`,
       )
       .run(
@@ -201,6 +208,7 @@ export class ChatRepository {
         update.status,
         update.error ?? null,
         update.stats ? JSON.stringify(update.stats) : null,
+        toolCallsJson(update.toolCalls),
         messageId,
       );
   }
@@ -276,7 +284,12 @@ function parseSettings(json: string): ChatSettings {
   }
 }
 
+function toolCallsJson(calls: ToolCallRecord[] | undefined): string | null {
+  return calls && calls.length > 0 ? JSON.stringify(calls) : null;
+}
+
 function toMessage(row: MessageRow): MessageRecord {
+  const toolCalls = parseToolCalls(row.tool_calls_json);
   return {
     id: row.id,
     role: row.role,
@@ -288,5 +301,10 @@ function toMessage(row: MessageRow): MessageRecord {
     stats: row.stats_json
       ? (JSON.parse(row.stats_json) as ChatStats)
       : undefined,
+    // Wurde die App mitten in einer Antwort beendet, wartet kein Aufruf mehr.
+    ...(toolCalls.length > 0 && {
+      toolCalls:
+        row.status === 'streaming' ? toolCalls : settleToolCalls(toolCalls),
+    }),
   };
 }

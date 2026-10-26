@@ -195,3 +195,45 @@ describe('ChatRepository', () => {
     );
   });
 });
+
+describe('Tool-Aufrufe', () => {
+  const toolCall = {
+    id: 'c1',
+    round: 1,
+    name: 'read_text_file',
+    toolName: 'read_text_file',
+    serverId: 's1',
+    serverName: 'Notizen',
+    arguments: { path: 'C:/notizen/ä.md' },
+    status: 'running' as const,
+  };
+
+  it('speichert Aufrufe mit der Antwort', () => {
+    repo.createChat({ id: 'c', title: 'T', model: 'qwen3:14b' });
+    repo.appendMessage('c', answer('r1'));
+    repo.updateMessage('r1', {
+      content: 'Fertig',
+      thinking: '',
+      status: 'done',
+      toolCalls: [{ ...toolCall, status: 'done', result: 'Inhalt' }],
+    });
+    expect(repo.getChat('c')?.messages[0].toolCalls).toEqual([
+      { ...toolCall, status: 'done', result: 'Inhalt' },
+    ]);
+  });
+
+  it('zeigt nach einem Absturz laufende Aufrufe als abgebrochen', () => {
+    repo.createChat({ id: 'c', title: 'T', model: 'qwen3:14b' });
+    repo.appendMessage('c', { ...answer('r1'), toolCalls: [toolCall] });
+    repo.markInterrupted();
+    expect(repo.getChat('c')?.messages[0].toolCalls?.[0].status).toBe(
+      'cancelled',
+    );
+  });
+
+  it('lässt Nachrichten ohne Aufrufe ohne toolCalls', () => {
+    repo.createChat({ id: 'c', title: 'T', model: 'qwen3:14b' });
+    repo.appendMessage('c', answer('r1'));
+    expect(repo.getChat('c')?.messages[0]).not.toHaveProperty('toolCalls');
+  });
+});

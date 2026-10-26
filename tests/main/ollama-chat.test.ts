@@ -153,3 +153,106 @@ describe('OllamaProvider.chat', () => {
     );
   });
 });
+
+describe('Tool-Calling', () => {
+  it('schickt Tools und Tool-Verlauf in Ollamas Format', () => {
+    const body = toOllamaChatBody({
+      model: 'qwen3:14b',
+      messages: [
+        { role: 'user', content: 'Was liegt in C:/test?' },
+        {
+          role: 'assistant',
+          content: '',
+          toolCalls: [
+            { name: 'list_directory', arguments: { path: 'C:/test' } },
+          ],
+        },
+        { role: 'tool', toolName: 'list_directory', content: '[FILE] a.txt' },
+      ],
+      tools: [
+        {
+          name: 'list_directory',
+          description: 'Listet einen Ordner',
+          parameters: { type: 'object', properties: {} },
+        },
+      ],
+    });
+    expect(body.messages).toEqual([
+      { role: 'user', content: 'Was liegt in C:/test?' },
+      {
+        role: 'assistant',
+        content: '',
+        tool_calls: [
+          {
+            function: {
+              name: 'list_directory',
+              arguments: { path: 'C:/test' },
+            },
+          },
+        ],
+      },
+      { role: 'tool', content: '[FILE] a.txt', tool_name: 'list_directory' },
+    ]);
+    expect(body.tools).toEqual([
+      {
+        type: 'function',
+        function: {
+          name: 'list_directory',
+          description: 'Listet einen Ordner',
+          parameters: { type: 'object', properties: {} },
+        },
+      },
+    ]);
+  });
+
+  it('lässt tools weg, wenn die Liste leer ist', () => {
+    expect(
+      toOllamaChatBody({ model: 'm', messages: [], tools: [] }),
+    ).not.toHaveProperty('tools');
+  });
+
+  it('liest Tool-Aufrufe aus dem Stream (Format von Ollama 0.40.11)', async () => {
+    const provider = new OllamaProvider({
+      fetch: (async () =>
+        ndjsonResponse([
+          {
+            message: {
+              role: 'assistant',
+              content: '',
+              tool_calls: [
+                {
+                  id: 'call_etm3kdrb',
+                  function: {
+                    index: 0,
+                    name: 'list_directory',
+                    arguments: { path: 'C:/test' },
+                  },
+                },
+                // Argumente als JSON-Text, kaputter Eintrag ohne Namen
+                {
+                  function: {
+                    name: 'read_text_file',
+                    arguments: '{"path":"a.md"}',
+                  },
+                },
+                { function: { arguments: {} } },
+              ],
+            },
+            done: false,
+          },
+          streamLines[3],
+        ])) as unknown as typeof fetch,
+    });
+
+    const chunks = await collect(provider);
+
+    expect(chunks[0]).toEqual({
+      type: 'tool-calls',
+      calls: [
+        { name: 'list_directory', arguments: { path: 'C:/test' } },
+        { name: 'read_text_file', arguments: { path: 'a.md' } },
+      ],
+    });
+    expect(chunks[1].type).toBe('done');
+  });
+});

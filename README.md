@@ -3,7 +3,7 @@
 Persönliche Desktop-App für lokale KI-Modelle über [Ollama](https://ollama.com).
 Navigation inspiriert von [mudler/LocalAI](https://github.com/mudler/LocalAI) (MIT) – eigener Code, keine Kopie.
 
-Stand: **Phase 3 abgeschlossen** (Modelle & Status)
+Stand: **Phase 3 abgeschlossen**, Phase 4 (MCP & Tool-Calling) in Arbeit
 
 - Statusanzeige für Ollama, Liste der installierten Modelle
 - Chat mit Streaming: Markdown, Code-Hervorhebung, Gedanken von Denkmodellen, Tokens/s
@@ -16,6 +16,21 @@ Stand: **Phase 3 abgeschlossen** (Modelle & Status)
 - Modelle herunterladen (mit Fortschritt, Tempo, Restzeit) und löschen – Seite „Installierte Modelle“
 - Status-Seite: Grafikkarte (Auslastung, VRAM nach Ollama/andere/frei, Temperatur, Strom –
   nur bei Ollama auf diesem PC mit NVIDIA-Karte) und geladene Modelle mit Anteil GPU/CPU
+- MCP-Dateisystem-Server mit Freigaben pro Tool; Modelle können im Chat Dateien in den
+  freigegebenen Ordnern lesen und – nach Rückfrage – schreiben
+
+## Dateien im Chat benutzen (MCP)
+
+1. **Einstellungen → MCP-Server**: einen Dateisystem-Server anlegen und die Ordner wählen,
+   auf die er zugreifen darf. Beim ersten Start lädt `npx` den offiziellen Server herunter.
+2. Im Chat oben auf das **Stecker-Symbol** klicken und den Server für diesen Chat einschalten.
+   Das Modell muss Tools unterstützen (z. B. qwen3, gpt-oss, gemma4).
+3. Lesende Tools laufen sofort. Bei allen anderen fragt LocalDesk im Chat nach:
+   **Einmal erlauben**, **Immer erlauben** oder **Ablehnen**. Jeder Aufruf steht einklappbar
+   in der Antwort, mit Eingabe und Ergebnis.
+
+Tipp: Die Tool-Beschreibungen belegen schon rund 1500 Tokens. Bei längeren Dateien in den
+Chat-Einstellungen die Kontextlänge erhöhen (z. B. 16 384).
 
 ## Ollama auf einem anderen Rechner nutzen
 
