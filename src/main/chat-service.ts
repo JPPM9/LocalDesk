@@ -10,6 +10,7 @@ import {
 } from '../shared/api';
 import { applyChatEvent, titleFromMessage } from '../shared/chat';
 import { buildChatRequest } from '../shared/settings';
+import { describeChatError } from './chat-errors';
 import type { ChatRepository } from './db/chat-repository';
 import type { McpTools } from './mcp-service';
 import type { Provider } from './providers/provider';
@@ -214,15 +215,6 @@ export function registerChatHandlers(
     }
     save();
   }
-}
-
-function describeChatError(error: unknown): string {
-  const message = error instanceof Error ? error.message : String(error);
-  // Ollama: "registry.ollama.ai/library/<modell> does not support tools"
-  if (message.includes('does not support tools')) {
-    return 'Dieses Modell kann keine Tools benutzen – schalte die MCP-Server für diesen Chat aus (Stecker-Symbol oben).';
-  }
-  return message;
 }
 
 // Die Oberfläche gilt als nicht vertrauenswürdig: Eingaben vom Renderer prüfen wir.

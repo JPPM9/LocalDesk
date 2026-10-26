@@ -3,7 +3,7 @@
 Persönliche Desktop-App für lokale KI-Modelle über [Ollama](https://ollama.com).
 Navigation inspiriert von [mudler/LocalAI](https://github.com/mudler/LocalAI) (MIT) – eigener Code, keine Kopie.
 
-Stand: **Phase 3 abgeschlossen**, Phase 4 (MCP & Tool-Calling) in Arbeit
+Stand: **Phase 4 abgeschlossen** (MCP & Tool-Calling)
 
 - Statusanzeige für Ollama, Liste der installierten Modelle
 - Chat mit Streaming: Markdown, Code-Hervorhebung, Gedanken von Denkmodellen, Tokens/s
@@ -31,6 +31,10 @@ Stand: **Phase 3 abgeschlossen**, Phase 4 (MCP & Tool-Calling) in Arbeit
 
 Tipp: Die Tool-Beschreibungen belegen schon rund 1500 Tokens. Bei längeren Dateien in den
 Chat-Einstellungen die Kontextlänge erhöhen (z. B. 16 384).
+
+Getestet mit qwen3:14b, gpt-oss:20b und gemma4:12b. Meldet Ollama, dass ein Modell nicht
+geladen werden konnte, ist meist der Grafikspeicher noch von einem anderen Modell belegt –
+auf der Status-Seite nachsehen.
 
 ## Ollama auf einem anderen Rechner nutzen
 

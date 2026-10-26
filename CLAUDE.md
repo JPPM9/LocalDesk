@@ -113,6 +113,13 @@
   Für spätere Fragen baut `toRequestMessages` die Tool-Runden vor den Antworttext wieder auf.
   Wartende/laufende Aufrufe werden bei Stopp, Fehler und App-Absturz `cancelled` (`settleToolCalls`).
   Kontext: Die 14 Tools des Dateisystem-Servers kosten ~1300–1700 Tokens Eingabe (Ollama-Standard 4096).
+  Relative Pfade löst der Dateisystem-Server im freigegebenen Ordner auf, nicht im Arbeitsordner (geprüft).
+  Fehlertexte von Ollama übersetzt `describeChatError` (`src/main/chat-errors.ts`); Ladeabstürze
+  (z. B. CUDA-Fehler bei vollem VRAM) bekommen einen Hinweis, die Originalmeldung bleibt angehängt.
+  Abschlusstest Phase 4 (Ollama 0.40.11): qwen3:14b, gpt-oss:20b, gemma4:12b je Lesen/Schreiben mit
+  Freigabe/Ablehnen ✓; Stopp während Rückfrage, „Immer erlauben“, Folgefrage mit Tool-Verlauf,
+  hartes Beenden während Rückfrage (→ `cancelled`, kein Prozessrest) ✓.
+  Noch nicht von Hand geprüft: Windows-Ordnerdialog beim Einrichten, MCP-Start in der installierten App.
 - **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
@@ -137,7 +144,7 @@
 - Phase 1: Minimal-App (Modellliste, Chat-Streaming, Verlauf) ✅
 - Phase 2: Organisation & Parameter ✅
 - Phase 3: Modelle & Status ✅
-- Phase 4: MCP
+- Phase 4: MCP & Tool-Calling ✅
 - Phase 5: RAG
 - Phase 6: Memory/Obsidian
 - Phase 7: Installer & Update-Check
