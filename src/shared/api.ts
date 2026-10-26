@@ -85,6 +85,77 @@ export interface McpServerView {
   permissions: Record<string, ToolPermission>;
 }
 
+/** Woher eine Sammlung ihre Dateien bekommt. Die Dateien bleiben, wo sie sind. */
+export interface KnowledgeSource {
+  kind: 'folder' | 'file';
+  path: string;
+}
+
+/** Eine Wissenssammlung, z. B. „Studium“ oder „Verträge“. */
+export interface CollectionConfig {
+  id: string;
+  name: string;
+  sources: KnowledgeSource[];
+  /** Mit diesem Modell wurden die Fingerabdrücke berechnet – Suche muss dasselbe nutzen. */
+  embeddingModel: string;
+}
+
+export type CollectionInput = Pick<CollectionConfig, 'id' | 'name' | 'sources'>;
+
+/**
+ * Stand einer Datei in der Sammlung:
+ * - ok: eingelesen
+ * - empty: kein Text gefunden
+ * - skipped: übersprungen (zu groß, keine Textdatei …), Grund in `error`
+ * - error: Lesen oder Einbetten fehlgeschlagen
+ */
+export type DocumentStatus = 'ok' | 'empty' | 'skipped' | 'error';
+
+export interface KnowledgeDocument {
+  id: string;
+  path: string;
+  sizeBytes: number;
+  status: DocumentStatus;
+  error?: string;
+  chunkCount: number;
+  indexedAt: number;
+}
+
+export interface CollectionStats {
+  documents: number;
+  chunks: number;
+  /** Dateien mit Status error oder skipped. */
+  problems: number;
+  /** Letztes Einlesen (ms seit 1970); fehlt = noch nie. */
+  indexedAt?: number;
+}
+
+export type IndexPhase = 'scanning' | 'indexing' | 'done' | 'error' | 'aborted';
+
+/** Fortschritt beim Einlesen einer Sammlung. */
+export interface IndexProgress {
+  collectionId: string;
+  phase: IndexPhase;
+  /** Dateien, die (neu) eingelesen werden müssen, und wie viele davon fertig sind. */
+  total: number;
+  done: number;
+  /** Datei, die gerade dran ist. */
+  current?: string;
+  /** Ergebnis am Ende. */
+  added?: number;
+  updated?: number;
+  removed?: number;
+  unchanged?: number;
+  error?: string;
+}
+
+export interface CollectionView {
+  config: CollectionConfig;
+  stats: CollectionStats;
+  /** Läuft gerade oder lief zuletzt (bis die App neu startet). */
+  progress?: IndexProgress;
+}
+
 /** Messwerte einer NVIDIA-Grafikkarte (aus nvidia-smi). Fehlt ein Wert, meldet die Karte ihn nicht. */
 export interface GpuInfo {
   index: number;
@@ -414,6 +485,21 @@ export interface LocalDeskApi {
   pickFolders: () => Promise<string[]>;
   onMcpChanged: (listener: (servers: McpServerView[]) => void) => () => void;
 
+  listCollections: () => Promise<CollectionView[]>;
+  /** Legt an oder ändert; prüft, ob die Quellen existieren. */
+  saveCollection: (input: CollectionInput) => Promise<Result<CollectionConfig>>;
+  /** Löscht die Sammlung mit allen Abschnitten (die Dateien selbst bleiben). */
+  deleteCollection: (collectionId: string) => Promise<void>;
+  /** Liest neue und geänderte Dateien ein; der Fortschritt kommt über `onCollectionsChanged`. */
+  indexCollection: (collectionId: string) => Promise<Result<void>>;
+  cancelIndexing: (collectionId: string) => Promise<void>;
+  listDocuments: (collectionId: string) => Promise<KnowledgeDocument[]>;
+  /** Öffnet den Windows-Dateidialog; leer = abgebrochen. */
+  pickFiles: () => Promise<string[]>;
+  onCollectionsChanged: (
+    listener: (collections: CollectionView[]) => void,
+  ) => () => void;
+
   /** Startet einen Download; der Fortschritt kommt über `onDownloadsChanged`. */
   startDownload: (model: string) => Promise<Result<void>>;
   cancelDownload: (model: string) => Promise<void>;
@@ -480,6 +566,14 @@ export const IpcChannels = {
   setToolPermission: 'mcp:set-permission',
   pickFolders: 'dialog:pick-folders',
   mcpChanged: 'mcp:changed',
+  listCollections: 'knowledge:list',
+  saveCollection: 'knowledge:save',
+  deleteCollection: 'knowledge:delete',
+  indexCollection: 'knowledge:index',
+  cancelIndexing: 'knowledge:cancel',
+  listDocuments: 'knowledge:documents',
+  pickFiles: 'dialog:pick-files',
+  collectionsChanged: 'knowledge:changed',
   startDownload: 'downloads:start',
   cancelDownload: 'downloads:cancel',
   dismissDownload: 'downloads:dismiss',

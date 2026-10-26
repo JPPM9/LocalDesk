@@ -155,7 +155,7 @@ export function checkInput(
   };
 }
 
-function isDriveRoot(folder: string): boolean {
+export function isDriveRoot(folder: string): boolean {
   const normalized = path.win32.normalize(folder);
   return path.win32.parse(normalized).root === normalized;
 }

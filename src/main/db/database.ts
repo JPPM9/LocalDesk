@@ -139,6 +139,45 @@ const migrations: string[] = [
   `
   ALTER TABLE messages ADD COLUMN tool_calls_json TEXT;
   `,
+  // 10: Wissenssammlungen. Dokumente merken sich Größe, Änderungszeit und Prüfsumme,
+  // damit „Neu einlesen“ nur Geändertes neu berechnet. Abschnitte tragen ihren
+  // Fingerabdruck als Float32-BLOB. Löschen einer Sammlung räumt alles darunter mit ab.
+  `
+  CREATE TABLE collections (
+    id              TEXT PRIMARY KEY,
+    name            TEXT NOT NULL,
+    sources_json    TEXT NOT NULL DEFAULT '[]',
+    embedding_model TEXT NOT NULL,
+    indexed_at      INTEGER,
+    created_at      INTEGER NOT NULL
+  );
+
+  CREATE TABLE documents (
+    id            TEXT PRIMARY KEY,
+    collection_id TEXT NOT NULL REFERENCES collections(id) ON DELETE CASCADE,
+    path          TEXT NOT NULL,
+    size          INTEGER NOT NULL,
+    mtime         INTEGER NOT NULL,
+    hash          TEXT NOT NULL,
+    status        TEXT NOT NULL CHECK (status IN ('ok', 'empty', 'skipped', 'error')),
+    error         TEXT,
+    chunk_count   INTEGER NOT NULL DEFAULT 0,
+    indexed_at    INTEGER NOT NULL,
+    UNIQUE (collection_id, path)
+  );
+
+  CREATE TABLE chunks (
+    id          INTEGER PRIMARY KEY,
+    document_id TEXT NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+    position    INTEGER NOT NULL,
+    start       INTEGER NOT NULL,
+    end         INTEGER NOT NULL,
+    heading     TEXT,
+    text        TEXT NOT NULL,
+    vector      BLOB NOT NULL
+  );
+  CREATE INDEX chunks_by_document ON chunks(document_id);
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */

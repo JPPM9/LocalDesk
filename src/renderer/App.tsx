@@ -1,6 +1,7 @@
 import { HashRouter, Navigate, Route, Routes } from 'react-router';
 import { AppLayout } from './components/AppLayout';
 import { ChatPage } from './pages/ChatPage';
+import { KnowledgePage } from './pages/KnowledgePage';
 import { ModelsPage } from './pages/ModelsPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { StatusPage } from './pages/StatusPage';
@@ -19,6 +20,7 @@ export function App() {
               keine gerade laufende Antwort. */}
           <Route path="chat/:chatId?" element={<ChatPage />} />
           <Route path="templates/:templateId?" element={<TemplatesPage />} />
+          <Route path="knowledge/:collectionId?" element={<KnowledgePage />} />
           <Route path="models" element={<ModelsPage />} />
           <Route path="status" element={<StatusPage />} />
           <Route path="settings" element={<SettingsPage />} />

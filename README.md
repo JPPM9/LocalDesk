@@ -3,7 +3,7 @@
 Persönliche Desktop-App für lokale KI-Modelle über [Ollama](https://ollama.com).
 Navigation inspiriert von [mudler/LocalAI](https://github.com/mudler/LocalAI) (MIT) – eigener Code, keine Kopie.
 
-Stand: **Phase 4 abgeschlossen** (MCP & Tool-Calling)
+Stand: **Phase 4 abgeschlossen** (MCP & Tool-Calling), Phase 5 (Wissen & Projekte) in Arbeit
 
 - Statusanzeige für Ollama, Liste der installierten Modelle
 - Chat mit Streaming: Markdown, Code-Hervorhebung, Gedanken von Denkmodellen, Tokens/s
@@ -18,6 +18,9 @@ Stand: **Phase 4 abgeschlossen** (MCP & Tool-Calling)
   nur bei Ollama auf diesem PC mit NVIDIA-Karte) und geladene Modelle mit Anteil GPU/CPU
 - MCP-Dateisystem-Server mit Freigaben pro Tool; Modelle können im Chat Dateien in den
   freigegebenen Ordnern lesen und – nach Rückfrage – schreiben
+- Seite „Wissen“: Sammlungen aus Ordnern und Dateien (Text, Markdown, Quellcode) einlesen;
+  „Neu einlesen“ berechnet nur Geändertes neu. Braucht das Embedding-Modell
+  `qwen3-embedding:0.6b` (unter „Installierte Modelle“ herunterladen). Die Suche im Chat folgt.
 
 ## Dateien im Chat benutzen (MCP)
 

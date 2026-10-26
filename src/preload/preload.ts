@@ -4,6 +4,7 @@ import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron';
 import {
   IpcChannels,
   type ChatStreamEvent,
+  type CollectionView,
   type DownloadState,
   type LocalDeskApi,
   type McpServerView,
@@ -54,6 +55,26 @@ const api: LocalDeskApi = {
       listener(list);
     ipcRenderer.on(IpcChannels.mcpChanged, handler);
     return () => ipcRenderer.removeListener(IpcChannels.mcpChanged, handler);
+  },
+
+  listCollections: () => ipcRenderer.invoke(IpcChannels.listCollections),
+  saveCollection: (input) =>
+    ipcRenderer.invoke(IpcChannels.saveCollection, input),
+  deleteCollection: (collectionId) =>
+    ipcRenderer.invoke(IpcChannels.deleteCollection, collectionId),
+  indexCollection: (collectionId) =>
+    ipcRenderer.invoke(IpcChannels.indexCollection, collectionId),
+  cancelIndexing: (collectionId) =>
+    ipcRenderer.invoke(IpcChannels.cancelIndexing, collectionId),
+  listDocuments: (collectionId) =>
+    ipcRenderer.invoke(IpcChannels.listDocuments, collectionId),
+  pickFiles: () => ipcRenderer.invoke(IpcChannels.pickFiles),
+  onCollectionsChanged: (listener) => {
+    const handler = (_event: IpcRendererEvent, list: CollectionView[]) =>
+      listener(list);
+    ipcRenderer.on(IpcChannels.collectionsChanged, handler);
+    return () =>
+      ipcRenderer.removeListener(IpcChannels.collectionsChanged, handler);
   },
 
   listChats: () => ipcRenderer.invoke(IpcChannels.listChats),

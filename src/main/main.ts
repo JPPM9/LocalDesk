@@ -13,6 +13,8 @@ import { isLocalServer } from '../shared/server';
 import { queryGpus } from './system/gpu';
 import { registerChatHandlers } from './chat-service';
 import { registerDownloadHandlers } from './download-service';
+import { KnowledgeRepository } from './db/knowledge-repository';
+import { registerKnowledgeHandlers } from './knowledge-service';
 import { McpRepository } from './db/mcp-repository';
 import { registerMcpHandlers } from './mcp-service';
 import { openDatabase } from './db/database';
@@ -111,6 +113,11 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
   // MCP-Server sind eigene Programme – beim Beenden der App mit beenden.
   app.on('will-quit', () => void mcp.stopAll());
   registerChatHandlers(getProvider, chats, mcpTools);
+  const knowledge = registerKnowledgeHandlers(
+    new KnowledgeRepository(db),
+    getProvider,
+  );
+  app.on('will-quit', () => knowledge.stop());
 
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({
     name: app.getName(),

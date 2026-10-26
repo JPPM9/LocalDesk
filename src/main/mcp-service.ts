@@ -96,7 +96,7 @@ export function registerMcpHandlers(servers: McpRepository) {
   ipcMain.handle(IpcChannels.pickFolders, async (event): Promise<string[]> => {
     const window = BrowserWindow.fromWebContents(event.sender);
     const options: Electron.OpenDialogOptions = {
-      title: 'Ordner für den MCP-Server freigeben',
+      title: 'Ordner wählen',
       properties: ['openDirectory', 'multiSelections'],
     };
     const result = window

@@ -131,6 +131,17 @@
   Suchfragen bekommen bei Qwen3-Embedding die Anweisung des Herstellers vorangestellt (`queryText`),
   Dokumente nicht (Test: 8/8 mit und ohne, mittlerer Abstand 0,274 statt 0,235).
   Schwache Treffer (z. B. 0,45, wenn die Antwort im Text gar nicht steht) später per Schwelle weglassen.
+- **Wissenssammlungen** (Migration 10: `collections`, `documents`, `chunks`; Cascade): Quellen = Ordner
+  oder Dateien am Ort (`KnowledgeRepository`, Prüfung wie MCP: absolut, kein Laufwerk, max. 20). Jede
+  Sammlung merkt sich ihr Embedding-Modell (nur beim Anlegen gesetzt). Dateisuche (`src/main/rag/files.ts`):
+  Unterordner ja, Symlinks nein, ohne `node_modules`/`dist`/`build`/versteckte Ordner, Lock-Dateien und
+  `.min.js`; nur bekannte Endungen; max. 2 MB/Datei, 10 000 Dateien; Null-Byte = Binärdatei; kein
+  gültiges UTF-8 → Windows-1252. Einlesen (`src/main/rag/indexer.ts`): unverändert = gleiche Größe +
+  Zeit; nur Zeit neu → SHA-256 vergleichen; Datei mit allen Abschnitten in einer Transaktion
+  (nie halb); Fehler einer Datei → Status bei der Datei; Embedding-Fehler (Ollama aus, Modell fehlt) →
+  ganzes Einlesen stoppt; nicht erreichbare Quelle → ihre Dokumente bleiben. Dateiname steht vorne im
+  Überschriften-Pfad. Nur eine Sammlung gleichzeitig (`knowledge-service.ts`), Fortschritt gedrosselt
+  wie Downloads. Gemessen: 100 Dateien/367 Abschnitte in 10,7 s; Neu einlesen mit 3 Änderungen 0,4 s.
 - **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
@@ -162,7 +173,7 @@
   Dateien bleiben am Ort, „Neu einlesen“ per Knopf (nur Geänderte) · Suche automatisch vor jeder Antwort ·
   Quellen als [1] + Liste, Öffnen im Standardprogramm · Seitenbereich: Quellen / Projekt-Dateien /
   Kontext-Füllstand · zu voll → warnen + Knopf „Kontextlänge erhöhen“.
-  Schritte: 1 Grundlage ✅ · 2 Sammlungen (Text/MD/Code) · 3 PDF/Word · 4 Wissen im Chat · 5 Projekte ·
+  Schritte: 1 Grundlage ✅ · 2 Sammlungen (Text/MD/Code) ✅ · 3 PDF/Word · 4 Wissen im Chat · 5 Projekte ·
   6 Seitenbereich · 7 Abschlusstest
 - Phase 6: Memory/Obsidian
 - Phase 7: Installer & Update-Check

@@ -4,6 +4,7 @@ import {
   Activity,
   BookMarked,
   Boxes,
+  Library,
   MessageSquare,
   PanelLeftClose,
   PanelLeftOpen,
@@ -32,6 +33,7 @@ const sections: NavSection[] = [
     items: [
       { to: '/chat', labelKey: 'nav.chat', icon: MessageSquare },
       { to: '/templates', labelKey: 'nav.templates', icon: BookMarked },
+      { to: '/knowledge', labelKey: 'nav.knowledge', icon: Library },
     ],
   },
   {
