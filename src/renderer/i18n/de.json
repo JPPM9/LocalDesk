@@ -15,6 +15,14 @@
     "online": "Ollama {{version}}",
     "offline": "Ollama offline"
   },
+  "search": {
+    "placeholder": "Chats durchsuchen …",
+    "clear": "Suche leeren",
+    "noResults": "Nichts gefunden",
+    "chats": "Chats",
+    "messages_one": "{{count}} Nachricht",
+    "messages_other": "{{count}} Nachrichten"
+  },
   "chat": {
     "title": "Chat",
     "model": "Modell",

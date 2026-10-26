@@ -127,6 +127,26 @@ export interface ChatDetail extends ChatSummary {
   messages: MessageRecord[];
 }
 
+/** Ein Suchtreffer in einer Nachricht. */
+export interface SearchHit {
+  chatId: string;
+  chatTitle: string;
+  messageId: string;
+  role: 'user' | 'assistant';
+  /**
+   * Textausschnitt um den Treffer. Gefundene Wörter stehen zwischen den Zeichen
+   * HIGHLIGHT_START und HIGHLIGHT_END (siehe shared/search.ts) – bewusst kein HTML.
+   */
+  snippet: string;
+}
+
+export interface SearchResult {
+  /** Chats, deren Titel alle Suchwörter enthält. */
+  chats: ChatSummary[];
+  /** Treffer in Nachrichten, die besten zuerst. */
+  hits: SearchHit[];
+}
+
 /** Eine neue Nachricht in einem (evtl. noch nicht existierenden) Chat. */
 export interface ChatSendRequest {
   /** Gibt es diesen Chat noch nicht, legt der Main-Prozess ihn an. */
@@ -166,6 +186,7 @@ export interface LocalDeskApi {
   renameChat: (chatId: string, title: string) => Promise<void>;
   deleteChat: (chatId: string) => Promise<void>;
   updateChatSettings: (chatId: string, settings: ChatSettings) => Promise<void>;
+  searchChats: (query: string) => Promise<SearchResult>;
 
   listTemplates: () => Promise<ChatTemplate[]>;
   /** Legt an oder überschreibt (gleiche id). Gibt die gespeicherte Fassung zurück. */
@@ -192,6 +213,7 @@ export const IpcChannels = {
   renameChat: 'chats:rename',
   deleteChat: 'chats:delete',
   updateChatSettings: 'chats:update-settings',
+  searchChats: 'chats:search',
   listTemplates: 'templates:list',
   saveTemplate: 'templates:save',
   deleteTemplate: 'templates:delete',

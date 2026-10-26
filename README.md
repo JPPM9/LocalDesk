@@ -6,7 +6,7 @@ Navigation inspiriert von [mudler/LocalAI](https://github.com/mudler/LocalAI) (M
 Stand: **Phase 2 läuft** – Statusanzeige für Ollama, Modellliste, Chat mit Streaming
 (Markdown, Code-Hervorhebung, Gedanken von Denkmodellen, Tokens/s), gespeicherter Verlauf
 und Einstellungen pro Chat (Systemprompt, Kontextlänge, Temperatur, Seed, Denken)
-sowie Vorlagen für wiederkehrende Aufgaben.
+sowie Vorlagen für wiederkehrende Aufgaben und Volltextsuche über alle Chats.
 
 ## Voraussetzungen
 

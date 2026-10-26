@@ -45,6 +45,12 @@ export function registerChatHandlers(
     if (typeof chatId === 'string') chats.deleteChat(chatId);
   });
 
+  ipcMain.handle(IpcChannels.searchChats, (_event, query: unknown) =>
+    typeof query === 'string'
+      ? chats.search(query.slice(0, 500))
+      : { chats: [], hits: [] },
+  );
+
   // Die Prüfung der Werte übernimmt das Repository (normalizeSettings).
   ipcMain.handle(
     IpcChannels.updateChatSettings,

@@ -6,8 +6,20 @@ import type {
   ChatSummary,
   MessageRecord,
   MessageStatus,
+  SearchHit,
+  SearchResult,
 } from '../../shared/api';
+import {
+  buildFtsQuery,
+  HIGHLIGHT_END,
+  HIGHLIGHT_START,
+  searchTerms,
+} from '../../shared/search';
 import { normalizeSettings } from '../../shared/settings';
+
+const MAX_SEARCH_HITS = 50;
+/** Wie viele Wörter der Textausschnitt um einen Treffer ungefähr zeigt. */
+const SNIPPET_WORDS = 16;
 
 interface ChatRow {
   id: string;
@@ -174,6 +186,44 @@ export class ChatRepository {
         update.stats ? JSON.stringify(update.stats) : null,
         messageId,
       );
+  }
+
+  /**
+   * Volltextsuche über alle Nachrichten (FTS5-Index, beste Treffer zuerst)
+   * plus Chats, deren Titel alle Suchwörter enthält.
+   */
+  search(input: string): SearchResult {
+    const query = buildFtsQuery(input);
+    if (!query) return { chats: [], hits: [] };
+
+    const hits = this.db
+      .prepare(
+        `SELECT m.id AS messageId, m.role AS role, c.id AS chatId, c.title AS chatTitle,
+                snippet(messages_fts, 0, ?, ?, '…', ?) AS snippet
+           FROM messages_fts
+           JOIN messages m ON m.rowid = messages_fts.rowid
+           JOIN chats c ON c.id = m.chat_id
+          WHERE messages_fts MATCH ?
+          ORDER BY rank
+          LIMIT ?`,
+      )
+      .all(
+        HIGHLIGHT_START,
+        HIGHLIGHT_END,
+        SNIPPET_WORDS,
+        query,
+        MAX_SEARCH_HITS,
+      ) as unknown as SearchHit[];
+
+    // Titel sind kurz – hier reicht ein einfacher Vergleich in JavaScript,
+    // der auch Umlaute richtig klein schreibt (SQL-LIKE kann das nicht).
+    const terms = searchTerms(input).map((t) => t.toLocaleLowerCase('de'));
+    const chats = this.listChats().filter((chat) => {
+      const title = chat.title.toLocaleLowerCase('de');
+      return terms.every((term) => title.includes(term));
+    });
+
+    return { chats, hits };
   }
 
   /**

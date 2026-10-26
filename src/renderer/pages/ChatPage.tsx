@@ -136,6 +136,30 @@ export function ChatPage() {
     bottomRef.current?.scrollIntoView({ block: 'end' });
   }, [messages]);
 
+  // Suchtreffer: /chat/<id>?m=<Nachricht> springt zur Nachricht und hebt sie kurz hervor.
+  // Steht bewusst NACH dem Mitscrollen – so gewinnt der Sprung, wenn beides zugleich passiert.
+  const jumpTo = searchParams.get('m');
+  const [highlightId, setHighlightId] = useState<string | null>(null);
+  useEffect(() => {
+    if (!jumpTo) return;
+    const element = document.getElementById(`msg-${jumpTo}`);
+    if (!element) return; // Nachrichten noch nicht geladen – läuft erneut, wenn sie da sind
+    element.scrollIntoView({ block: 'center' });
+    setHighlightId(jumpTo);
+    setSearchParams(
+      (params) => {
+        params.delete('m');
+        return params;
+      },
+      { replace: true },
+    );
+  }, [jumpTo, messages, setSearchParams]);
+  useEffect(() => {
+    if (!highlightId) return;
+    const timer = setTimeout(() => setHighlightId(null), 2500);
+    return () => clearTimeout(timer);
+  }, [highlightId]);
+
   const chooseModel = (name: string) => {
     setModel(name);
     saveLastModel(name);
@@ -220,7 +244,17 @@ export function ChatPage() {
               </div>
             )}
             {messages.map((message) => (
-              <MessageView key={message.id} message={message} />
+              <div
+                key={message.id}
+                id={`msg-${message.id}`}
+                className={`rounded-lg transition-shadow duration-500 ${
+                  highlightId === message.id
+                    ? 'ring-2 ring-accent ring-offset-4 ring-offset-bg'
+                    : ''
+                }`}
+              >
+                <MessageView message={message} />
+              </div>
             ))}
             <div ref={bottomRef} />
           </div>

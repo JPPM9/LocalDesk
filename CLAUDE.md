@@ -40,6 +40,12 @@
   spätere Änderungen an der Vorlage ändern bestehende Chats nicht. Sortierung nach deutschen Regeln
   in JS (`localeCompare('de')`), weil SQLite Umlaute falsch einsortiert. Einstellungsfelder sind eine
   gemeinsame Komponente (`components/settings/SettingsFields.tsx`) für Chat-Panel und Vorlagen-Editor.
+- **Suche** (Migration 4): FTS5-Tabelle `messages_fts` als externer Index auf `messages`, gepflegt per
+  Triggern (Insert/Update of content/Delete – auch bei Chat-Löschung per Cascade). Tokenizer
+  `unicode61 remove_diacritics 2` („koln“ findet „Köln“). Bekannte Grenze: ß ≠ ss.
+  Benutzereingaben gehen **nur** über `buildFtsQuery` (jedes Wort gequotet + Präfix-`*`), nie roh in
+  MATCH. Treffer-Markierung über Steuerzeichen (`HIGHLIGHT_START/END`), nicht über HTML.
+  Sprung zur Nachricht: `/chat/<id>?m=<messageId>`.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
 - **Netzwerk**: nur Ollama-Server (lokal/LAN), Modell-Downloads über Ollama, Update-Prüfung nur per Knopf.
   Keine Telemetrie.

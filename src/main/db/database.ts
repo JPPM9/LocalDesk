@@ -49,6 +49,36 @@ const migrations: string[] = [
     updated_at    INTEGER NOT NULL
   );
   `,
+  // 4: Volltextsuche über alle Nachrichten (FTS5). Der Index verweist auf die
+  // Tabelle messages und wird über Trigger automatisch mitgepflegt – auch beim
+  // Zwischenspeichern laufender Antworten und beim Löschen ganzer Chats.
+  // remove_diacritics: „koln“ findet auch „Köln“.
+  `
+  CREATE VIRTUAL TABLE messages_fts USING fts5(
+    content,
+    content = 'messages',
+    content_rowid = 'rowid',
+    tokenize = 'unicode61 remove_diacritics 2'
+  );
+
+  CREATE TRIGGER messages_fts_insert AFTER INSERT ON messages BEGIN
+    INSERT INTO messages_fts(rowid, content) VALUES (new.rowid, new.content);
+  END;
+
+  CREATE TRIGGER messages_fts_delete AFTER DELETE ON messages BEGIN
+    INSERT INTO messages_fts(messages_fts, rowid, content)
+      VALUES ('delete', old.rowid, old.content);
+  END;
+
+  CREATE TRIGGER messages_fts_update AFTER UPDATE OF content ON messages BEGIN
+    INSERT INTO messages_fts(messages_fts, rowid, content)
+      VALUES ('delete', old.rowid, old.content);
+    INSERT INTO messages_fts(rowid, content) VALUES (new.rowid, new.content);
+  END;
+
+  -- Bereits vorhandene Nachrichten einmalig in den Index aufnehmen
+  INSERT INTO messages_fts(messages_fts) VALUES ('rebuild');
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */
