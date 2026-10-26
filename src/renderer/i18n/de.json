@@ -129,8 +129,12 @@
       "size": "Größe",
       "context": "Max. Kontext",
       "capabilities": "Fähigkeiten",
-      "modified": "Geändert"
+      "modified": "Geändert",
+      "actions": "Aktionen"
     },
+    "delete": "„{{name}}“ löschen",
+    "confirmDelete": "Modell „{{name}}“ ({{size}}) endgültig von der Festplatte löschen?\n\nFür eine spätere Nutzung muss es erneut heruntergeladen werden. Deine Chats mit diesem Modell bleiben erhalten.",
+    "deleteError": "„{{name}}“ konnte nicht gelöscht werden: {{error}}",
     "capability": {
       "vision": "Bilder",
       "audio": "Audio",

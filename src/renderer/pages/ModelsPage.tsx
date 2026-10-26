@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, Trash2 } from 'lucide-react';
 import type { ModelInfo, Result } from '../../shared/api';
 import { PageHeader } from '../components/PageHeader';
 import { DownloadPanel } from '../components/models/DownloadPanel';
@@ -27,6 +27,23 @@ export function ModelsPage() {
 
   // Ist ein Download fertig, erscheint das neue Modell sofort in der Tabelle.
   const downloads = useDownloads(() => void load());
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  /** Löschen ist endgültig – deshalb immer mit Rückfrage, die Größe und Folgen nennt. */
+  const deleteModel = async (model: ModelInfo) => {
+    const question = t('models.confirmDelete', {
+      name: model.name,
+      size: formatBytes(model.sizeBytes),
+    });
+    if (!window.confirm(question)) return;
+    const result = await window.api.deleteModel(model.name);
+    setDeleteError(
+      result.ok
+        ? null
+        : t('models.deleteError', { name: model.name, error: result.error }),
+    );
+    await load();
+  };
 
   const refreshButton = (
     <button
@@ -45,6 +62,11 @@ export function ModelsPage() {
       <PageHeader title={t('models.title')} actions={refreshButton} />
       <div className="space-y-6 p-6">
         <DownloadPanel downloads={downloads} />
+        {deleteError && (
+          <p className="rounded border border-error/40 bg-error/10 px-3 py-2 text-error">
+            {deleteError}
+          </p>
+        )}
         {renderBody()}
       </div>
     </>
@@ -65,11 +87,22 @@ export function ModelsPage() {
     if (result.value.length === 0) {
       return <p className="text-muted">{t('models.empty')}</p>;
     }
-    return <ModelTable models={result.value} />;
+    return (
+      <ModelTable
+        models={result.value}
+        onDelete={(model) => void deleteModel(model)}
+      />
+    );
   }
 }
 
-function ModelTable({ models }: { models: ModelInfo[] }) {
+function ModelTable({
+  models,
+  onDelete,
+}: {
+  models: ModelInfo[];
+  onDelete: (model: ModelInfo) => void;
+}) {
   const { t } = useTranslation();
   const columns = [
     'name',
@@ -94,6 +127,7 @@ function ModelTable({ models }: { models: ModelInfo[] }) {
                 {t(`models.columns.${column}`)}
               </th>
             ))}
+            <th className="w-10" aria-label={t('models.columns.actions')} />
           </tr>
         </thead>
         <tbody>
@@ -135,6 +169,17 @@ function ModelTable({ models }: { models: ModelInfo[] }) {
               </td>
               <td className="px-3 py-2 font-mono whitespace-nowrap text-muted">
                 {formatDate(model.modifiedAt)}
+              </td>
+              <td className="px-2 py-2 text-right">
+                <button
+                  type="button"
+                  onClick={() => onDelete(model)}
+                  title={t('models.delete', { name: model.name })}
+                  aria-label={t('models.delete', { name: model.name })}
+                  className="rounded p-1 text-muted hover:bg-error/10 hover:text-error"
+                >
+                  <Trash2 size={14} />
+                </button>
               </td>
             </tr>
           ))}

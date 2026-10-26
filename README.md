@@ -3,7 +3,7 @@
 Persönliche Desktop-App für lokale KI-Modelle über [Ollama](https://ollama.com).
 Navigation inspiriert von [mudler/LocalAI](https://github.com/mudler/LocalAI) (MIT) – eigener Code, keine Kopie.
 
-Stand: **Phase 3 läuft** (Modelle & Status)
+Stand: **Phase 3 abgeschlossen** (Modelle & Status)
 
 - Statusanzeige für Ollama, Liste der installierten Modelle
 - Chat mit Streaming: Markdown, Code-Hervorhebung, Gedanken von Denkmodellen, Tokens/s
@@ -13,7 +13,7 @@ Stand: **Phase 3 läuft** (Modelle & Status)
 - Volltextsuche über alle Chats
 - Umschaltbare Ollama-Server (dieser PC oder ein anderer Rechner im LAN)
 - Tastenkürzel (Übersicht mit **Strg+/** oder **F1**)
-- Modelle herunterladen mit Fortschritt, Tempo und Restzeit (Seite „Installierte Modelle“)
+- Modelle herunterladen (mit Fortschritt, Tempo, Restzeit) und löschen – Seite „Installierte Modelle“
 - Status-Seite: Grafikkarte (Auslastung, VRAM nach Ollama/andere/frei, Temperatur, Strom –
   nur bei Ollama auf diesem PC mit NVIDIA-Karte) und geladene Modelle mit Anteil GPU/CPU
 

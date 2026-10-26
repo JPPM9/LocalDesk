@@ -2,7 +2,13 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'node:path';
 import type { DatabaseSync } from 'node:sqlite';
 import started from 'electron-squirrel-startup';
-import { IpcChannels, type AppInfo, type GpuStatus } from '../shared/api';
+import {
+  IpcChannels,
+  type AppInfo,
+  type GpuStatus,
+  type Result,
+} from '../shared/api';
+import { isValidModelName } from '../shared/download';
 import { isLocalServer } from '../shared/server';
 import { queryGpus } from './system/gpu';
 import { registerChatHandlers } from './chat-service';
@@ -78,6 +84,14 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
   ipcMain.handle(IpcChannels.listModels, () => getProvider().listModels());
   ipcMain.handle(IpcChannels.listRunningModels, () =>
     getProvider().listRunning(),
+  );
+  // Löschen ist endgültig – deshalb nur mit gültigem Namen (die Rückfrage stellt die Oberfläche).
+  ipcMain.handle(
+    IpcChannels.deleteModel,
+    (_event, model: unknown): Promise<Result<void>> | Result<void> =>
+      typeof model === 'string' && isValidModelName(model)
+        ? getProvider().deleteModel(model)
+        : { ok: false, error: 'Ungültiger Modellname' },
   );
   // Die Grafikkarte lässt sich nur messen, wenn Ollama auf diesem PC rechnet –
   // bei einem Server im LAN wäre es die falsche Karte.

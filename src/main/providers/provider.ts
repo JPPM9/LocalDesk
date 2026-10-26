@@ -25,6 +25,8 @@ export interface Provider {
    * Wirft einen Fehler mit lesbarer Meldung; `signal` bricht ab.
    */
   pull(model: string, signal: AbortSignal): AsyncGenerator<PullChunk>;
+  /** Löscht ein installiertes Modell vom Server (endgültig). */
+  deleteModel(model: string): Promise<Result<void>>;
   /**
    * Liefert die Antwort Stück für Stück. Wirft einen Fehler mit lesbarer Meldung,
    * wenn etwas schiefgeht; `signal` bricht die Antwort ab.

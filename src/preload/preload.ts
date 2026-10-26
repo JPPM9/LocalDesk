@@ -13,6 +13,7 @@ const api: LocalDeskApi = {
   getOllamaStatus: () => ipcRenderer.invoke(IpcChannels.getOllamaStatus),
   listModels: () => ipcRenderer.invoke(IpcChannels.listModels),
   listRunningModels: () => ipcRenderer.invoke(IpcChannels.listRunningModels),
+  deleteModel: (model) => ipcRenderer.invoke(IpcChannels.deleteModel, model),
   getGpuStatus: () => ipcRenderer.invoke(IpcChannels.getGpuStatus),
 
   startDownload: (model) =>

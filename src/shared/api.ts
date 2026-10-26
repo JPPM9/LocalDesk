@@ -274,6 +274,8 @@ export interface LocalDeskApi {
   getOllamaStatus: () => Promise<ProviderStatus>;
   listModels: () => Promise<Result<ModelInfo[]>>;
   listRunningModels: () => Promise<Result<RunningModel[]>>;
+  /** Löscht ein Modell endgültig vom aktiven Server. */
+  deleteModel: (model: string) => Promise<Result<void>>;
   getGpuStatus: () => Promise<GpuStatus>;
 
   /** Startet einen Download; der Fortschritt kommt über `onDownloadsChanged`. */
@@ -330,6 +332,7 @@ export const IpcChannels = {
   getOllamaStatus: 'ollama:get-status',
   listModels: 'models:list',
   listRunningModels: 'models:list-running',
+  deleteModel: 'models:delete',
   getGpuStatus: 'system:gpu-status',
   startDownload: 'downloads:start',
   cancelDownload: 'downloads:cancel',

@@ -202,6 +202,23 @@ export class OllamaProvider implements Provider {
     }
   }
 
+  async deleteModel(model: string): Promise<Result<void>> {
+    try {
+      const response = await this.fetchFn(`${this.baseUrl}/api/delete`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model }),
+        signal: AbortSignal.timeout(LIST_TIMEOUT_MS),
+      });
+      if (!response.ok) {
+        return { ok: false, error: await readErrorMessage(response) };
+      }
+      return { ok: true, value: undefined };
+    } catch (error) {
+      return { ok: false, error: describeError(error) };
+    }
+  }
+
   private offline(error: string): ProviderStatus {
     return { online: false, baseUrl: this.baseUrl, error };
   }

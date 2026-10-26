@@ -80,7 +80,8 @@
   (`src/shared/download.ts`). Modellnamen nur über `isValidModelName`. Tempo/Restzeit rechnet die
   Oberfläche (`utils/downloadSpeed.ts`, 5-s-Fenster). Abbruch lässt evtl. Teildaten bei Ollama
   liegen; ein erneuter Download setzt dort fort.
-- Testmodell `all-minilm` (46 MB) liegt aus dem Download-Test noch da – für den Lösch-Test in Schritt 4.
+- **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
+  (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
 - **Netzwerk**: nur Ollama-Server (lokal/LAN), Modell-Downloads über Ollama, Update-Prüfung nur per Knopf.
   Keine Telemetrie.
@@ -102,7 +103,7 @@
 - Phase 0: Setup ✅
 - Phase 1: Minimal-App (Modellliste, Chat-Streaming, Verlauf) ✅
 - Phase 2: Organisation & Parameter ✅
-- Phase 3: Modelle & Status
+- Phase 3: Modelle & Status ✅
 - Phase 4: MCP
 - Phase 5: RAG
 - Phase 6: Memory/Obsidian
