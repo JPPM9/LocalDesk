@@ -5,6 +5,7 @@ import type {
   ModelInfo,
   ProviderStatus,
   Result,
+  RunningModel,
 } from '../../shared/api';
 import { readNdjson } from './ndjson';
 import type { Provider } from './provider';
@@ -27,6 +28,16 @@ interface OllamaTag {
     context_length?: unknown;
   };
   capabilities?: unknown;
+}
+
+/** So liefert Ollama ein geladenes Modell in `GET /api/ps`. */
+interface OllamaRunning {
+  name?: unknown;
+  size?: unknown;
+  size_vram?: unknown;
+  context_length?: unknown;
+  expires_at?: unknown;
+  details?: { parameter_size?: unknown; quantization_level?: unknown };
 }
 
 /** Eine Zeile aus dem Stream von `POST /api/chat`. */
@@ -76,8 +87,29 @@ export class OllamaProvider implements Provider {
   }
 
   async listModels(): Promise<Result<ModelInfo[]>> {
+    const result = await this.fetchModelList('/api/tags');
+    if (!result.ok) return result;
+    const models = result.value
+      .map((tag) => toModelInfo(tag as OllamaTag))
+      .filter((model): model is ModelInfo => model !== null)
+      .sort((a, b) => a.name.localeCompare(b.name));
+    return { ok: true, value: models };
+  }
+
+  async listRunning(): Promise<Result<RunningModel[]>> {
+    const result = await this.fetchModelList('/api/ps');
+    if (!result.ok) return result;
+    const models = result.value
+      .map((entry) => toRunningModel(entry as OllamaRunning))
+      .filter((model): model is RunningModel => model !== null)
+      .sort((a, b) => a.name.localeCompare(b.name));
+    return { ok: true, value: models };
+  }
+
+  /** Holt `{ models: [...] }` von Ollama – gemeinsamer Teil von /api/tags und /api/ps. */
+  private async fetchModelList(path: string): Promise<Result<unknown[]>> {
     try {
-      const response = await this.fetchFn(`${this.baseUrl}/api/tags`, {
+      const response = await this.fetchFn(`${this.baseUrl}${path}`, {
         signal: AbortSignal.timeout(LIST_TIMEOUT_MS),
       });
       if (!response.ok) {
@@ -90,11 +122,7 @@ export class OllamaProvider implements Provider {
           error: 'Unerwartete Antwort – ist das wirklich Ollama?',
         };
       }
-      const models = body.models
-        .map((tag) => toModelInfo(tag as OllamaTag))
-        .filter((model): model is ModelInfo => model !== null)
-        .sort((a, b) => a.name.localeCompare(b.name));
-      return { ok: true, value: models };
+      return { ok: true, value: body.models };
     } catch (error) {
       return { ok: false, error: describeError(error) };
     }
@@ -207,6 +235,25 @@ function toChatStats(line: OllamaChatLine): ChatStats | undefined {
  * unerwarteten Typ haben, lassen wir weg, statt abzustürzen – ältere oder neuere
  * Ollama-Versionen liefern nicht immer dieselben Felder.
  */
+function toRunningModel(entry: OllamaRunning): RunningModel | null {
+  if (typeof entry.name !== 'string') return null;
+  const size = typeof entry.size === 'number' ? entry.size : 0;
+  const vram = typeof entry.size_vram === 'number' ? entry.size_vram : 0;
+  return {
+    name: entry.name,
+    sizeBytes: size,
+    // Mehr VRAM als Gesamtgröße ergibt keinen Sinn – sicherheitshalber begrenzen.
+    vramBytes: Math.min(vram, size),
+    contextLength:
+      typeof entry.context_length === 'number'
+        ? entry.context_length
+        : undefined,
+    parameterSize: asString(entry.details?.parameter_size),
+    quantization: asString(entry.details?.quantization_level),
+    expiresAt: asString(entry.expires_at),
+  };
+}
+
 function toModelInfo(tag: OllamaTag): ModelInfo | null {
   if (typeof tag.name !== 'string') return null;
   const details = tag.details ?? {};

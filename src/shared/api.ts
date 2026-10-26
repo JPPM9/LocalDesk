@@ -33,6 +33,21 @@ export type ProviderStatus =
   | { online: true; baseUrl: string; version: string }
   | { online: false; baseUrl: string; error: string };
 
+/** Ein Modell, das gerade im Speicher geladen ist (GPU und/oder CPU). */
+export interface RunningModel {
+  name: string;
+  /** Gesamter Speicherbedarf inkl. Kontext, in Bytes. */
+  sizeBytes: number;
+  /** Davon im Grafikspeicher (VRAM); der Rest liegt im Arbeitsspeicher. */
+  vramBytes: number;
+  /** Kontextlänge, mit der das Modell geladen wurde. */
+  contextLength?: number;
+  parameterSize?: string;
+  quantization?: string;
+  /** Wann Ollama das Modell wieder entlädt (ISO-Datum), sofern nicht weiter benutzt. */
+  expiresAt?: string;
+}
+
 /** Ein installiertes Modell, unabhängig davon, von welchem Server es kommt. */
 export interface ModelInfo {
   name: string;
@@ -204,6 +219,7 @@ export interface LocalDeskApi {
   getAppInfo: () => Promise<AppInfo>;
   getOllamaStatus: () => Promise<ProviderStatus>;
   listModels: () => Promise<Result<ModelInfo[]>>;
+  listRunningModels: () => Promise<Result<RunningModel[]>>;
 
   listChats: () => Promise<ChatSummary[]>;
   getChat: (chatId: string) => Promise<ChatDetail | null>;
@@ -248,6 +264,7 @@ export const IpcChannels = {
   getAppInfo: 'app:get-info',
   getOllamaStatus: 'ollama:get-status',
   listModels: 'models:list',
+  listRunningModels: 'models:list-running',
   listChats: 'chats:list',
   getChat: 'chats:get',
   renameChat: 'chats:rename',

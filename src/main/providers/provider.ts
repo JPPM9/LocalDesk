@@ -4,6 +4,7 @@ import type {
   ModelInfo,
   ProviderStatus,
   Result,
+  RunningModel,
 } from '../../shared/api';
 
 /**
@@ -14,6 +15,8 @@ import type {
 export interface Provider {
   checkStatus(): Promise<ProviderStatus>;
   listModels(): Promise<Result<ModelInfo[]>>;
+  /** Modelle, die gerade im Speicher geladen sind. */
+  listRunning(): Promise<Result<RunningModel[]>>;
   /**
    * Liefert die Antwort Stück für Stück. Wirft einen Fehler mit lesbarer Meldung,
    * wenn etwas schiefgeht; `signal` bricht die Antwort ab.

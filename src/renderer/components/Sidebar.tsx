@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
+  Activity,
   BookMarked,
   Boxes,
   MessageSquare,
@@ -39,7 +40,10 @@ const sections: NavSection[] = [
   },
   {
     titleKey: 'nav.sectionSystem',
-    items: [{ to: '/settings', labelKey: 'nav.settings', icon: Settings }],
+    items: [
+      { to: '/status', labelKey: 'nav.status', icon: Activity },
+      { to: '/settings', labelKey: 'nav.settings', icon: Settings },
+    ],
   },
 ];
 

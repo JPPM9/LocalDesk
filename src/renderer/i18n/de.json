@@ -6,6 +6,7 @@
     "sectionModels": "Modelle",
     "models": "Installierte Modelle",
     "sectionSystem": "System",
+    "status": "Status",
     "settings": "Einstellungen",
     "collapse": "Seitenleiste einklappen",
     "expand": "Seitenleiste ausklappen"
@@ -13,7 +14,20 @@
   "status": {
     "checking": "Ollama: prüfe Verbindung …",
     "online": "Ollama {{version}}",
-    "offline": "Ollama offline"
+    "offline": "Ollama offline",
+    "pageTitle": "Status",
+    "loadedTitle": "Geladene Modelle",
+    "loadedIntro": "Ollama lädt ein Modell beim ersten Chat in den Speicher und entlädt es nach einer Weile ohne Anfrage (Standard: 5 Minuten). Die Größe hängt stark von der Kontextlänge ab.",
+    "loading": "Frage Ollama …",
+    "noneLoaded": "Gerade ist kein Modell geladen. Sobald du chattest, erscheint es hier.",
+    "summary_one": "{{count}} Modell geladen · {{vram}} VRAM belegt",
+    "summary_other": "{{count}} Modelle geladen · {{vram}} VRAM belegt",
+    "vramOf": "{{vram}} von {{total}} im VRAM",
+    "context": "Kontextlänge",
+    "unloadIn": "Wird entladen in",
+    "cpuWarning": "Ein Teil des Modells passt nicht in den Grafikspeicher und läuft auf dem Prozessor – Antworten werden dadurch deutlich langsamer. Abhilfe: kleinere Kontextlänge, kleineres Modell oder andere geladene Modelle entladen lassen.",
+    "loadedShort": "{{name}} · {{vram}}",
+    "loadedMore": "+{{count}} weitere"
   },
   "shortcuts": {
     "title": "Tastenkürzel",

@@ -3,6 +3,7 @@ import { AppLayout } from './components/AppLayout';
 import { ChatPage } from './pages/ChatPage';
 import { ModelsPage } from './pages/ModelsPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { StatusPage } from './pages/StatusPage';
 import { TemplatesPage } from './pages/TemplatesPage';
 
 // HashRouter statt BrowserRouter: Die fertige App wird als Datei (file://) geladen,
@@ -19,6 +20,7 @@ export function App() {
           <Route path="chat/:chatId?" element={<ChatPage />} />
           <Route path="templates/:templateId?" element={<TemplatesPage />} />
           <Route path="models" element={<ModelsPage />} />
+          <Route path="status" element={<StatusPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/chat" replace />} />
         </Route>

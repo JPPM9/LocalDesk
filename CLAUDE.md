@@ -64,6 +64,10 @@
   Unterordner. Ordner löschen behält die Chats („Ohne Ordner“). Verschieben per Ziehen
   (`CHAT_DRAG_TYPE`) oder Menü „Verschieben nach …“. Zugeklappte Ordner sind nur eine Ansichts-
   Vorliebe und liegen in localStorage, nicht in der Datenbank. Zuordnung in `groupChatsByFolder`.
+- **Status-Seite** (`/status`): geladene Modelle über Ollama `/api/ps` (`Provider.listRunning`).
+  GPU/CPU-Anteil = `size_vram / size` (wie `ollama ps`, geprüft: muse-glimmer:30b 78 % GPU auf 16 GB).
+  Gemessen: qwen3:14b braucht mit 4K Kontext 9,7 GB, mit 32K 14,4 GB. Statusleiste unten zeigt das
+  geladene Modell (orange, wenn teilweise auf CPU) und führt per Klick zur Status-Seite.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
 - **Netzwerk**: nur Ollama-Server (lokal/LAN), Modell-Downloads über Ollama, Update-Prüfung nur per Knopf.
   Keine Telemetrie.

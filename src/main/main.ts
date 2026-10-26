@@ -73,6 +73,9 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
     getProvider().checkStatus(),
   );
   ipcMain.handle(IpcChannels.listModels, () => getProvider().listModels());
+  ipcMain.handle(IpcChannels.listRunningModels, () =>
+    getProvider().listRunning(),
+  );
   registerChatHandlers(getProvider, chats);
 
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({
