@@ -120,6 +120,17 @@
   Freigabe/Ablehnen ✓; Stopp während Rückfrage, „Immer erlauben“, Folgefrage mit Tool-Verlauf,
   hartes Beenden während Rückfrage (→ `cancelled`, kein Prozessrest) ✓.
   Noch nicht von Hand geprüft: Windows-Ordnerdialog beim Einrichten, MCP-Start in der installierten App.
+- **RAG-Grundlage** (Phase 5): Embedding-Modell `qwen3-embedding:0.6b` (639 MB, 1024 Zahlen, von Ollama
+  schon auf Länge 1 normiert). `Provider.embed` → Ollama `/api/embed` mit `keep_alive: '1m'` (VRAM schnell
+  wieder frei für das Chat-Modell; erstes Laden dauerte 12 s). Abschnitte (`src/main/rag/chunk.ts`):
+  ~1500 Zeichen, 200 Überlappung, Schnitt an Absatz > Zeile > Satz > Wort. Markdown wird zuerst an
+  Überschriften getrennt (`chunkMarkdown`), sonst mischen Abschnitte Themen und werden „verwaschen“
+  (gemessen: „Wo liegen meine Daten?“ fiel aus den Top 6, danach Platz 1); die Überschriften kommen beim
+  Einbetten vor den Text (`embeddingText`). Vektoren als Float32-BLOB (4 KB/Abschnitt), Suche per
+  Skalarprodukt in JS (`src/main/rag/vectors.ts`): 20 000 Abschnitte in ~30 ms – keine Vektor-DB nötig.
+  Suchfragen bekommen bei Qwen3-Embedding die Anweisung des Herstellers vorangestellt (`queryText`),
+  Dokumente nicht (Test: 8/8 mit und ohne, mittlerer Abstand 0,274 statt 0,235).
+  Schwache Treffer (z. B. 0,45, wenn die Antwort im Text gar nicht steht) später per Schwelle weglassen.
 - **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
@@ -145,7 +156,14 @@
 - Phase 2: Organisation & Parameter ✅
 - Phase 3: Modelle & Status ✅
 - Phase 4: MCP & Tool-Calling ✅
-- Phase 5: RAG
+- Phase 5: Wissen (RAG) & Projekte – in Arbeit. Entschieden: Dateiarten txt/md, PDF (Text, kein OCR),
+  docx, Quellcode · Ordner werden Projekte (Anweisungen + eigene Dokumente; Projekt-Anweisungen und
+  Chat-Systemprompt gelten beide) · zusätzlich Sammlungen per Wissen-Knopf pro Chat (auch in Vorlagen) ·
+  Dateien bleiben am Ort, „Neu einlesen“ per Knopf (nur Geänderte) · Suche automatisch vor jeder Antwort ·
+  Quellen als [1] + Liste, Öffnen im Standardprogramm · Seitenbereich: Quellen / Projekt-Dateien /
+  Kontext-Füllstand · zu voll → warnen + Knopf „Kontextlänge erhöhen“.
+  Schritte: 1 Grundlage ✅ · 2 Sammlungen (Text/MD/Code) · 3 PDF/Word · 4 Wissen im Chat · 5 Projekte ·
+  6 Seitenbereich · 7 Abschlusstest
 - Phase 6: Memory/Obsidian
 - Phase 7: Installer & Update-Check
 

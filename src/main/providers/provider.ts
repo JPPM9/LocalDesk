@@ -32,4 +32,13 @@ export interface Provider {
    * wenn etwas schiefgeht; `signal` bricht die Antwort ab.
    */
   chat(request: ChatRequest, signal: AbortSignal): AsyncGenerator<ChatChunk>;
+  /**
+   * Berechnet für jeden Text einen Vektor („Bedeutungs-Fingerabdruck“) mit einem
+   * Embedding-Modell. Reihenfolge der Ergebnisse = Reihenfolge der Texte.
+   */
+  embed(
+    model: string,
+    inputs: string[],
+    signal?: AbortSignal,
+  ): Promise<Result<number[][]>>;
 }

@@ -18,6 +18,9 @@ export const DEFAULT_OLLAMA_URL = 'http://localhost:11434';
 /** Wie lange wir auf eine Antwort warten, bevor Ollama als „offline“ gilt. */
 const STATUS_TIMEOUT_MS = 2000;
 const LIST_TIMEOUT_MS = 5000;
+/** Erstes Laden des Embedding-Modells dauerte im Test 12 s – großzügig bemessen. */
+const EMBED_TIMEOUT_MS = 120_000;
+const EMBED_KEEP_ALIVE = '1m';
 
 /** So liefert Ollama ein Modell in `GET /api/tags` (nur die Felder, die wir nutzen). */
 interface OllamaTag {
@@ -226,6 +229,49 @@ export class OllamaProvider implements Provider {
     }
   }
 
+  async embed(
+    model: string,
+    inputs: string[],
+    signal?: AbortSignal,
+  ): Promise<Result<number[][]>> {
+    if (inputs.length === 0) return { ok: true, value: [] };
+    try {
+      const response = await this.fetchFn(`${this.baseUrl}/api/embed`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        // keep_alive kurz: Das Embedding-Modell soll den Grafikspeicher bald wieder
+        // für das Chat-Modell freigeben. Aufrufe kurz hintereinander halten es geladen.
+        body: JSON.stringify({
+          model,
+          input: inputs,
+          keep_alive: EMBED_KEEP_ALIVE,
+        }),
+        signal: signal
+          ? AbortSignal.any([signal, AbortSignal.timeout(EMBED_TIMEOUT_MS)])
+          : AbortSignal.timeout(EMBED_TIMEOUT_MS),
+      });
+      if (!response.ok) {
+        return { ok: false, error: await readErrorMessage(response) };
+      }
+      const body = (await response.json()) as { embeddings?: unknown };
+      const vectors = body.embeddings;
+      if (
+        !Array.isArray(vectors) ||
+        vectors.length !== inputs.length ||
+        !vectors.every(isNumberArray)
+      ) {
+        return {
+          ok: false,
+          error: 'Unerwartete Antwort – ist das ein Embedding-Modell?',
+        };
+      }
+      return { ok: true, value: vectors };
+    } catch (error) {
+      if (signal?.aborted) return { ok: false, error: 'Abgebrochen' };
+      return { ok: false, error: describeError(error) };
+    }
+  }
+
   private offline(error: string): ProviderStatus {
     return { online: false, baseUrl: this.baseUrl, error };
   }
@@ -383,6 +429,14 @@ function toModelInfo(tag: OllamaTag): ModelInfo | null {
       ? tag.capabilities.filter((c): c is string => typeof c === 'string')
       : [],
   };
+}
+
+function isNumberArray(value: unknown): value is number[] {
+  return (
+    Array.isArray(value) &&
+    value.length > 0 &&
+    value.every((n) => typeof n === 'number')
+  );
 }
 
 function asString(value: unknown): string | undefined {
