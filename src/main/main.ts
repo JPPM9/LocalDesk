@@ -6,7 +6,9 @@ import { IpcChannels, type AppInfo } from '../shared/api';
 import { registerChatHandlers } from './chat-service';
 import { openDatabase } from './db/database';
 import { ChatRepository } from './db/chat-repository';
+import { FolderRepository } from './db/folder-repository';
 import { ServerRepository } from './db/server-repository';
+import { registerFolderHandlers } from './folder-service';
 import { TemplateRepository } from './db/template-repository';
 import { registerServerHandlers } from './server-service';
 import { registerTemplateHandlers } from './template-service';
@@ -64,6 +66,7 @@ const createWindow = () => {
 
 function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
   registerTemplateHandlers(new TemplateRepository(db));
+  registerFolderHandlers(new FolderRepository(db), chats);
   // Welcher Ollama-Server gerade gilt, entscheidet das aktive Server-Profil.
   const { getProvider } = registerServerHandlers(new ServerRepository(db));
   ipcMain.handle(IpcChannels.getOllamaStatus, () =>

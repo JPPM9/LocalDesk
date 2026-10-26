@@ -1,33 +1,46 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { ChatSummary } from '../../shared/api';
+import type { ChatFolder, ChatSummary, Result } from '../../shared/api';
 
-/** Die Liste aller gespeicherten Chats, neueste zuerst. */
+/** Alle gespeicherten Chats (neueste zuerst) und alle Ordner (alphabetisch). */
 export function useChatList() {
   const [chats, setChats] = useState<ChatSummary[]>([]);
+  const [folders, setFolders] = useState<ChatFolder[]>([]);
 
   const refresh = useCallback(async () => {
-    setChats(await window.api.listChats());
+    const [nextChats, nextFolders] = await Promise.all([
+      window.api.listChats(),
+      window.api.listFolders(),
+    ]);
+    setChats(nextChats);
+    setFolders(nextFolders);
   }, []);
 
   useEffect(() => {
     void refresh();
   }, [refresh]);
 
-  const rename = useCallback(
-    async (chatId: string, title: string) => {
-      await window.api.renameChat(chatId, title);
-      await refresh();
-    },
+  // Jede Änderung lädt danach die Liste neu – so zeigt sie immer den Datenbank-Stand.
+  const andRefresh = useCallback(
+    <A extends unknown[], R>(action: (...args: A) => Promise<R>) =>
+      async (...args: A): Promise<R> => {
+        const result = await action(...args);
+        await refresh();
+        return result;
+      },
     [refresh],
   );
 
-  const remove = useCallback(
-    async (chatId: string) => {
-      await window.api.deleteChat(chatId);
-      await refresh();
-    },
-    [refresh],
-  );
-
-  return { chats, refresh, rename, remove };
+  return {
+    chats,
+    folders,
+    refresh,
+    rename: andRefresh(window.api.renameChat),
+    remove: andRefresh(window.api.deleteChat),
+    moveChat: andRefresh(window.api.moveChat),
+    createFolder: andRefresh(
+      window.api.createFolder as (name: string) => Promise<Result<ChatFolder>>,
+    ),
+    renameFolder: andRefresh(window.api.renameFolder),
+    deleteFolder: andRefresh(window.api.deleteFolder),
+  };
 }

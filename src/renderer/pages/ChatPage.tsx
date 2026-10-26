@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { SlidersHorizontal, X } from 'lucide-react';
-import type { ChatSummary, ChatTemplate } from '../../shared/api';
+import type { ChatFolder, ChatSummary, ChatTemplate } from '../../shared/api';
 import { thinkFitsModel } from '../../shared/settings';
 import { useChat } from '../chat/useChat';
 import { useChatList } from '../chat/useChatList';
@@ -187,13 +187,24 @@ export function ChatPage() {
     if (target.id === chatId) navigate('/chat');
   };
 
+  const deleteFolder = async (folder: ChatFolder) => {
+    if (!window.confirm(t('folders.confirmDelete', { name: folder.name })))
+      return;
+    await chatList.deleteFolder(folder.id);
+  };
+
   return (
     <div className="flex h-full">
       <ChatList
         chats={chatList.chats}
+        folders={chatList.folders}
         onNew={() => navigate('/chat')}
         onRename={(id, title) => void chatList.rename(id, title)}
         onDelete={(target) => void deleteChat(target)}
+        onMove={(id, folderId) => void chatList.moveChat(id, folderId)}
+        onCreateFolder={chatList.createFolder}
+        onRenameFolder={(id, name) => void chatList.renameFolder(id, name)}
+        onDeleteFolder={(folder) => void deleteFolder(folder)}
       />
 
       <div className="flex min-w-0 flex-1 flex-col">

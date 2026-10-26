@@ -28,6 +28,17 @@
     "help": "Diese Übersicht",
     "footer": "Im Chat: Enter sendet, Umschalt+Enter macht eine neue Zeile."
   },
+  "folders": {
+    "new": "Neuer Ordner",
+    "namePlaceholder": "Ordnername, Enter zum Anlegen",
+    "unfiled": "Ohne Ordner",
+    "empty": "Leer – Chats hierher ziehen",
+    "rename": "Ordner umbenennen",
+    "delete": "Ordner löschen",
+    "confirmDelete": "Ordner „{{name}}“ löschen? Die Chats darin bleiben erhalten und landen bei „Ohne Ordner“.",
+    "moveTo": "Verschieben nach …",
+    "noneYet": "Noch keine Ordner – oben mit dem Ordner-Symbol anlegen."
+  },
   "search": {
     "placeholder": "Chats durchsuchen …",
     "clear": "Suche leeren",

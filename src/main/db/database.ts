@@ -98,6 +98,18 @@ const migrations: string[] = [
     VALUES ('local', 'Dieser PC', 'http://localhost:11434', 0);
   INSERT INTO app_settings (key, value) VALUES ('activeServerId', 'local');
   `,
+  // 6: Ordner für Chats (eine Ebene, keine Unterordner). Wird ein Ordner gelöscht,
+  // bleiben seine Chats erhalten und landen wieder bei „ohne Ordner“ (SET NULL).
+  `
+  CREATE TABLE folders (
+    id         TEXT PRIMARY KEY,
+    name       TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  );
+
+  ALTER TABLE chats ADD COLUMN folder_id TEXT REFERENCES folders(id) ON DELETE SET NULL;
+  CREATE INDEX chats_by_folder ON chats(folder_id);
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */

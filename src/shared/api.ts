@@ -136,6 +136,14 @@ export interface ChatSummary {
   model: string;
   /** Zeitpunkt der letzten Nachricht in Millisekunden seit 1970. */
   updatedAt: number;
+  /** Ordner, in dem der Chat liegt; fehlt = „ohne Ordner“. */
+  folderId?: string;
+}
+
+/** Ein Ordner für Chats (eine Ebene, keine Unterordner). */
+export interface ChatFolder {
+  id: string;
+  name: string;
 }
 
 export interface ChatDetail extends ChatSummary {
@@ -204,6 +212,14 @@ export interface LocalDeskApi {
   updateChatSettings: (chatId: string, settings: ChatSettings) => Promise<void>;
   searchChats: (query: string) => Promise<SearchResult>;
 
+  listFolders: () => Promise<ChatFolder[]>;
+  createFolder: (name: string) => Promise<Result<ChatFolder>>;
+  renameFolder: (folderId: string, name: string) => Promise<Result<ChatFolder>>;
+  /** Löscht nur den Ordner – seine Chats bleiben und sind danach „ohne Ordner“. */
+  deleteFolder: (folderId: string) => Promise<void>;
+  /** `folderId` null = aus dem Ordner herausnehmen. */
+  moveChat: (chatId: string, folderId: string | null) => Promise<void>;
+
   listServers: () => Promise<ServerProfile[]>;
   /** Legt an oder ändert (gleiche id); die Adresse wird geprüft und ergänzt. */
   saveServer: (input: ServerProfileInput) => Promise<Result<ServerProfile>>;
@@ -238,6 +254,11 @@ export const IpcChannels = {
   deleteChat: 'chats:delete',
   updateChatSettings: 'chats:update-settings',
   searchChats: 'chats:search',
+  listFolders: 'folders:list',
+  createFolder: 'folders:create',
+  renameFolder: 'folders:rename',
+  deleteFolder: 'folders:delete',
+  moveChat: 'chats:move',
   listServers: 'servers:list',
   saveServer: 'servers:save',
   deleteServer: 'servers:delete',

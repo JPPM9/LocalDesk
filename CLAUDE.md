@@ -60,6 +60,10 @@
   deutscher Tastatur → @, €, { müssen tippbar bleiben). Eingabefelder, die Esc selbst nutzen,
   rufen `preventDefault()` – dann stoppt Esc keine Antwort. Electron-Standardmenü belegt bereits
   Strg+R/W/Z/A/0/+/-; nicht überschreiben.
+- **Ordner** (Migration 6: `folders`, `chats.folder_id` mit `ON DELETE SET NULL`): eine Ebene, keine
+  Unterordner. Ordner löschen behält die Chats („Ohne Ordner“). Verschieben per Ziehen
+  (`CHAT_DRAG_TYPE`) oder Menü „Verschieben nach …“. Zugeklappte Ordner sind nur eine Ansichts-
+  Vorliebe und liegen in localStorage, nicht in der Datenbank. Zuordnung in `groupChatsByFolder`.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
 - **Netzwerk**: nur Ollama-Server (lokal/LAN), Modell-Downloads über Ollama, Update-Prüfung nur per Knopf.
   Keine Telemetrie.
@@ -80,7 +84,7 @@
 
 - Phase 0: Setup ✅
 - Phase 1: Minimal-App (Modellliste, Chat-Streaming, Verlauf) ✅
-- Phase 2: Organisation & Parameter
+- Phase 2: Organisation & Parameter ✅
 - Phase 3: Modelle & Status
 - Phase 4: MCP
 - Phase 5: RAG

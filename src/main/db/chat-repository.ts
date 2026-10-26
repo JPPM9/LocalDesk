@@ -26,6 +26,7 @@ interface ChatRow {
   title: string;
   model: string;
   updated_at: number;
+  folder_id: string | null;
 }
 
 interface ChatDetailRow extends ChatRow {
@@ -65,7 +66,7 @@ export class ChatRepository {
   listChats(): ChatSummary[] {
     const rows = this.db
       .prepare(
-        'SELECT id, title, model, updated_at FROM chats ORDER BY updated_at DESC',
+        'SELECT id, title, model, updated_at, folder_id FROM chats ORDER BY updated_at DESC',
       )
       .all() as unknown as ChatRow[];
     return rows.map(toSummary);
@@ -74,7 +75,7 @@ export class ChatRepository {
   getChat(chatId: string): ChatDetail | null {
     const chat = this.db
       .prepare(
-        'SELECT id, title, model, updated_at, settings_json FROM chats WHERE id = ?',
+        'SELECT id, title, model, updated_at, folder_id, settings_json FROM chats WHERE id = ?',
       )
       .get(chatId) as unknown as ChatDetailRow | undefined;
     if (!chat) return null;
@@ -135,6 +136,22 @@ export class ChatRepository {
   deleteChat(chatId: string) {
     // Die Nachrichten löscht SQLite automatisch mit (ON DELETE CASCADE).
     this.db.prepare('DELETE FROM chats WHERE id = ?').run(chatId);
+  }
+
+  /**
+   * Legt einen Chat in einen Ordner (oder mit null wieder heraus).
+   * Einen nicht existierenden Ordner lehnt die Datenbank ab (Fremdschlüssel) –
+   * dann bleibt der Chat, wo er war.
+   */
+  moveChat(chatId: string, folderId: string | null): boolean {
+    try {
+      this.db
+        .prepare('UPDATE chats SET folder_id = ? WHERE id = ?')
+        .run(folderId, chatId);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   /** Hängt eine Nachricht hinten an und schiebt den Chat in der Liste nach oben. */
@@ -246,6 +263,7 @@ function toSummary(row: ChatRow): ChatSummary {
     title: row.title,
     model: row.model,
     updatedAt: row.updated_at,
+    ...(row.folder_id && { folderId: row.folder_id }),
   };
 }
 

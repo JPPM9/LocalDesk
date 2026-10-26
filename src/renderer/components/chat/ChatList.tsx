@@ -1,51 +1,47 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
-import { NavLink } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Pencil, Search, SquarePen, Trash2, X } from 'lucide-react';
-import type { ChatSummary } from '../../../shared/api';
+import { FolderPlus, Search, SquarePen, X } from 'lucide-react';
+import type { ChatFolder, ChatSummary, Result } from '../../../shared/api';
+import { groupChatsByFolder } from '../../chat/folders';
 import { useChatSearch } from '../../chat/useChatSearch';
+import { useCollapsedFolders } from '../../chat/useCollapsedFolders';
 import { shortcutLabel } from '../../shortcuts/keymap';
 import { useShortcut } from '../../shortcuts/useShortcut';
+import { ChatRow } from './ChatRow';
+import { FolderSection } from './FolderSection';
 import { SearchResults } from './SearchResults';
+
+/** Schlüssel für den Bereich „ohne Ordner“ beim Ein-/Ausklappen. */
+const UNFILED_KEY = '__unfiled__';
 
 interface ChatListProps {
   chats: ChatSummary[];
+  folders: ChatFolder[];
   onNew: () => void;
   onRename: (chatId: string, title: string) => void;
   onDelete: (chat: ChatSummary) => void;
+  onMove: (chatId: string, folderId: string | null) => void;
+  onCreateFolder: (name: string) => Promise<Result<ChatFolder>>;
+  onRenameFolder: (folderId: string, name: string) => void;
+  onDeleteFolder: (folder: ChatFolder) => void;
 }
 
-export function ChatList({ chats, onNew, onRename, onDelete }: ChatListProps) {
+export function ChatList(props: ChatListProps) {
+  const { chats, folders, onNew } = props;
   const { t } = useTranslation();
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [draft, setDraft] = useState('');
   const [query, setQuery] = useState('');
   const searchResult = useChatSearch(query);
   const searchRef = useRef<HTMLInputElement>(null);
+  const { isCollapsed, toggle } = useCollapsedFolders();
+  // Eingabe für einen neuen Ordner; null = geschlossen.
+  const [newFolder, setNewFolder] = useState<string | null>(null);
+  const [folderError, setFolderError] = useState<string | null>(null);
 
   // Strg+K: ins Suchfeld springen; vorhandener Suchtext wird markiert.
   useShortcut('search', () => {
     searchRef.current?.focus();
     searchRef.current?.select();
   });
-
-  const startEdit = (chat: ChatSummary) => {
-    setEditingId(chat.id);
-    setDraft(chat.title);
-  };
-
-  const finishEdit = (save: boolean) => {
-    if (save && editingId && draft.trim()) onRename(editingId, draft);
-    setEditingId(null);
-  };
-
-  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') finishEdit(true);
-    if (event.key === 'Escape') {
-      event.preventDefault(); // Esc gehört dem Umbenennen, nicht dem „Stopp“-Kürzel
-      finishEdit(false);
-    }
-  };
 
   const onSearchKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Escape' && query) {
@@ -54,18 +50,65 @@ export function ChatList({ chats, onNew, onRename, onDelete }: ChatListProps) {
     }
   };
 
+  const createFolder = async () => {
+    if (newFolder === null) return;
+    if (!newFolder.trim()) {
+      setNewFolder(null);
+      return;
+    }
+    const result = await props.onCreateFolder(newFolder);
+    if (result.ok) {
+      setNewFolder(null);
+      setFolderError(null);
+    } else {
+      setFolderError(result.error);
+    }
+  };
+
+  const onNewFolderKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') void createFolder();
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      setNewFolder(null);
+      setFolderError(null);
+    }
+  };
+
+  const { groups, unfiled } = groupChatsByFolder(chats, folders);
+  const row = (chat: ChatSummary) => (
+    <ChatRow
+      key={chat.id}
+      chat={chat}
+      folders={folders}
+      onRename={props.onRename}
+      onDelete={props.onDelete}
+      onMove={props.onMove}
+    />
+  );
+
   return (
     <aside className="flex w-64 shrink-0 flex-col border-r border-border">
       <div className="space-y-2 p-2">
-        <button
-          type="button"
-          onClick={onNew}
-          title={shortcutLabel('newChat')}
-          className="flex w-full items-center gap-2 rounded border border-border px-3 py-1.5 hover:bg-surface-hover"
-        >
-          <SquarePen size={15} />
-          {t('chat.newChat')}
-        </button>
+        <div className="flex gap-1.5">
+          <button
+            type="button"
+            onClick={onNew}
+            title={shortcutLabel('newChat')}
+            className="flex min-w-0 flex-1 items-center gap-2 rounded border border-border px-3 py-1.5 hover:bg-surface-hover"
+          >
+            <SquarePen size={15} />
+            {t('chat.newChat')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setNewFolder('')}
+            title={t('folders.new')}
+            aria-label={t('folders.new')}
+            className="rounded border border-border px-2 hover:bg-surface-hover"
+          >
+            <FolderPlus size={15} />
+          </button>
+        </div>
         <div className="flex items-center gap-1.5 rounded border border-border bg-surface px-2 focus-within:border-accent">
           <Search size={14} className="shrink-0 text-muted" />
           <input
@@ -91,89 +134,67 @@ export function ChatList({ chats, onNew, onRename, onDelete }: ChatListProps) {
             </button>
           )}
         </div>
+        {newFolder !== null && (
+          <div>
+            <input
+              autoFocus
+              value={newFolder}
+              onChange={(e) => setNewFolder(e.target.value)}
+              onKeyDown={onNewFolderKeyDown}
+              onBlur={() => void createFolder()}
+              placeholder={t('folders.namePlaceholder')}
+              aria-label={t('folders.new')}
+              className="w-full rounded border border-accent bg-surface px-2 py-1.5 outline-none"
+            />
+            {folderError && (
+              <p className="mt-1 text-xs text-error">{folderError}</p>
+            )}
+          </div>
+        )}
       </div>
 
       {searchResult ? (
         <SearchResults result={searchResult} />
       ) : (
-        <nav className="min-h-0 flex-1 overflow-y-auto px-2 pb-2">
-          {chats.length === 0 && (
+        <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto px-2 pb-2">
+          {chats.length === 0 && folders.length === 0 && (
             <p className="px-2 py-4 text-center text-xs text-muted">
               {t('chat.noChats')}
             </p>
           )}
-          {chats.map((chat) =>
-            editingId === chat.id ? (
-              <input
-                key={chat.id}
-                autoFocus
-                value={draft}
-                onChange={(e) => setDraft(e.target.value)}
-                onKeyDown={onKeyDown}
-                onBlur={() => finishEdit(true)}
-                aria-label={t('chat.rename')}
-                className="my-0.5 w-full rounded border border-accent bg-surface px-2 py-1.5 outline-none"
-              />
-            ) : (
-              <NavLink
-                key={chat.id}
-                to={`/chat/${chat.id}`}
-                title={new Date(chat.updatedAt).toLocaleString('de-DE')}
-                className={({ isActive }) =>
-                  `group my-0.5 flex items-center gap-1 rounded px-2 py-1.5 ${
-                    isActive
-                      ? 'bg-accent-soft text-accent'
-                      : 'hover:bg-surface-hover'
-                  }`
-                }
+
+          {folders.length === 0 ? (
+            // Ohne Ordner: schlichte Liste wie bisher.
+            unfiled.map(row)
+          ) : (
+            <>
+              {groups.map(({ folder, chats: folderChats }) => (
+                <FolderSection
+                  key={folder.id}
+                  folder={folder}
+                  count={folderChats.length}
+                  collapsed={isCollapsed(folder.id)}
+                  onToggle={() => toggle(folder.id)}
+                  onDropChat={(chatId) => props.onMove(chatId, folder.id)}
+                  onRename={(name) => props.onRenameFolder(folder.id, name)}
+                  onDelete={() => props.onDeleteFolder(folder)}
+                >
+                  {folderChats.map(row)}
+                </FolderSection>
+              ))}
+              <FolderSection
+                folder={null}
+                count={unfiled.length}
+                collapsed={isCollapsed(UNFILED_KEY)}
+                onToggle={() => toggle(UNFILED_KEY)}
+                onDropChat={(chatId) => props.onMove(chatId, null)}
               >
-                <span className="min-w-0 flex-1 truncate">{chat.title}</span>
-                <span className="hidden shrink-0 gap-0.5 group-hover:flex">
-                  <IconButton
-                    label={t('chat.rename')}
-                    onClick={() => startEdit(chat)}
-                  >
-                    <Pencil size={13} />
-                  </IconButton>
-                  <IconButton
-                    label={t('chat.delete')}
-                    onClick={() => onDelete(chat)}
-                  >
-                    <Trash2 size={13} />
-                  </IconButton>
-                </span>
-              </NavLink>
-            ),
+                {unfiled.map(row)}
+              </FolderSection>
+            </>
           )}
         </nav>
       )}
     </aside>
-  );
-}
-
-function IconButton({
-  label,
-  onClick,
-  children,
-}: {
-  label: string;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      title={label}
-      aria-label={label}
-      onClick={(event) => {
-        // Der Knopf liegt im Link – ohne das würde der Klick auch den Chat öffnen.
-        event.preventDefault();
-        event.stopPropagation();
-        onClick();
-      }}
-      className="rounded p-1 text-muted hover:bg-surface hover:text-text"
-    >
-      {children}
-    </button>
   );
 }

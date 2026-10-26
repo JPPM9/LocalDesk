@@ -3,12 +3,16 @@
 Persönliche Desktop-App für lokale KI-Modelle über [Ollama](https://ollama.com).
 Navigation inspiriert von [mudler/LocalAI](https://github.com/mudler/LocalAI) (MIT) – eigener Code, keine Kopie.
 
-Stand: **Phase 2 läuft** – Statusanzeige für Ollama, Modellliste, Chat mit Streaming
-(Markdown, Code-Hervorhebung, Gedanken von Denkmodellen, Tokens/s), gespeicherter Verlauf
-und Einstellungen pro Chat (Systemprompt, Kontextlänge, Temperatur, Seed, Denken)
-sowie Vorlagen für wiederkehrende Aufgaben, Volltextsuche über alle Chats und
-umschaltbare Ollama-Server (dieser PC oder ein anderer Rechner im LAN) und Tastenkürzel
-(Übersicht mit **Strg+/** oder **F1**).
+Stand: **Phase 2 abgeschlossen**
+
+- Statusanzeige für Ollama, Liste der installierten Modelle
+- Chat mit Streaming: Markdown, Code-Hervorhebung, Gedanken von Denkmodellen, Tokens/s
+- Gespeicherter Verlauf mit Ordnern (Chats per Ziehen oder Menü verschieben)
+- Einstellungen pro Chat: Systemprompt, Kontextlänge, Temperatur, Seed, Denken
+- Vorlagen für wiederkehrende Aufgaben
+- Volltextsuche über alle Chats
+- Umschaltbare Ollama-Server (dieser PC oder ein anderer Rechner im LAN)
+- Tastenkürzel (Übersicht mit **Strg+/** oder **F1**)
 
 ## Ollama auf einem anderen Rechner nutzen
 

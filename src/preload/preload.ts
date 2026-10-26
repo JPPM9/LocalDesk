@@ -21,6 +21,15 @@ const api: LocalDeskApi = {
     ipcRenderer.invoke(IpcChannels.updateChatSettings, chatId, settings),
   searchChats: (query) => ipcRenderer.invoke(IpcChannels.searchChats, query),
 
+  listFolders: () => ipcRenderer.invoke(IpcChannels.listFolders),
+  createFolder: (name) => ipcRenderer.invoke(IpcChannels.createFolder, name),
+  renameFolder: (folderId, name) =>
+    ipcRenderer.invoke(IpcChannels.renameFolder, folderId, name),
+  deleteFolder: (folderId) =>
+    ipcRenderer.invoke(IpcChannels.deleteFolder, folderId),
+  moveChat: (chatId, folderId) =>
+    ipcRenderer.invoke(IpcChannels.moveChat, chatId, folderId),
+
   listServers: () => ipcRenderer.invoke(IpcChannels.listServers),
   saveServer: (input) => ipcRenderer.invoke(IpcChannels.saveServer, input),
   deleteServer: (profileId) =>
