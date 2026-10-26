@@ -140,6 +140,21 @@ export interface ChatSendRequest {
   settings?: ChatSettings;
 }
 
+/**
+ * Vorlage für neue Chats. Beim Auswählen werden Modell und Einstellungen in den
+ * Chat kopiert – spätere Änderungen an der Vorlage ändern bestehende Chats nicht.
+ */
+export interface ChatTemplate {
+  id: string;
+  name: string;
+  /** Fehlt es, bleibt beim Auswählen das gerade gewählte Modell. */
+  model?: string;
+  settings: ChatSettings;
+  updatedAt: number;
+}
+
+export type TemplateInput = Omit<ChatTemplate, 'updatedAt'>;
+
 /** Alles, was die Oberfläche über `window.api` aufrufen darf. */
 export interface LocalDeskApi {
   getAppInfo: () => Promise<AppInfo>;
@@ -151,6 +166,11 @@ export interface LocalDeskApi {
   renameChat: (chatId: string, title: string) => Promise<void>;
   deleteChat: (chatId: string) => Promise<void>;
   updateChatSettings: (chatId: string, settings: ChatSettings) => Promise<void>;
+
+  listTemplates: () => Promise<ChatTemplate[]>;
+  /** Legt an oder überschreibt (gleiche id). Gibt die gespeicherte Fassung zurück. */
+  saveTemplate: (template: TemplateInput) => Promise<Result<ChatTemplate>>;
+  deleteTemplate: (templateId: string) => Promise<void>;
 
   /**
    * Speichert die Nachricht und startet die Antwort. Die Teile kommen über
@@ -172,6 +192,9 @@ export const IpcChannels = {
   renameChat: 'chats:rename',
   deleteChat: 'chats:delete',
   updateChatSettings: 'chats:update-settings',
+  listTemplates: 'templates:list',
+  saveTemplate: 'templates:save',
+  deleteTemplate: 'templates:delete',
   chatSend: 'chat:send',
   chatCancel: 'chat:cancel',
   chatEvent: 'chat:event',

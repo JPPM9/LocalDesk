@@ -6,6 +6,8 @@ import { OllamaProvider } from './providers/ollama';
 import { registerChatHandlers } from './chat-service';
 import { openDatabase } from './db/database';
 import { ChatRepository } from './db/chat-repository';
+import { TemplateRepository } from './db/template-repository';
+import { registerTemplateHandlers } from './template-service';
 
 // Der Windows-Installer (Squirrel) startet die App kurz beim Installieren,
 // um Verknüpfungen anzulegen – in dem Fall sofort wieder beenden.
@@ -61,7 +63,11 @@ const createWindow = () => {
 // Feste Standard-Adresse; umschaltbare Server-Profile (lokal/LAN) kommen in Phase 2.
 const ollama = new OllamaProvider();
 
-function registerIpcHandlers(chats: ChatRepository) {
+function registerIpcHandlers(
+  chats: ChatRepository,
+  templates: TemplateRepository,
+) {
+  registerTemplateHandlers(templates);
   ipcMain.handle(IpcChannels.getOllamaStatus, () => ollama.checkStatus());
   ipcMain.handle(IpcChannels.listModels, () => ollama.listModels());
   registerChatHandlers(ollama, chats);
@@ -83,7 +89,7 @@ app.whenReady().then(() => {
   const chats = new ChatRepository(db);
   chats.markInterrupted();
 
-  registerIpcHandlers(chats);
+  registerIpcHandlers(chats, new TemplateRepository(db));
   createWindow();
 
   app.on('activate', () => {

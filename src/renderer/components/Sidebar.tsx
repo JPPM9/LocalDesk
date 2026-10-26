@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
+  BookMarked,
   Boxes,
   MessageSquare,
   PanelLeftClose,
@@ -26,7 +27,10 @@ interface NavSection {
 const sections: NavSection[] = [
   {
     titleKey: 'nav.sectionChat',
-    items: [{ to: '/chat', labelKey: 'nav.chat', icon: MessageSquare }],
+    items: [
+      { to: '/chat', labelKey: 'nav.chat', icon: MessageSquare },
+      { to: '/templates', labelKey: 'nav.templates', icon: BookMarked },
+    ],
   },
   {
     titleKey: 'nav.sectionModels',

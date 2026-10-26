@@ -20,6 +20,12 @@ const api: LocalDeskApi = {
   updateChatSettings: (chatId, settings) =>
     ipcRenderer.invoke(IpcChannels.updateChatSettings, chatId, settings),
 
+  listTemplates: () => ipcRenderer.invoke(IpcChannels.listTemplates),
+  saveTemplate: (template) =>
+    ipcRenderer.invoke(IpcChannels.saveTemplate, template),
+  deleteTemplate: (templateId) =>
+    ipcRenderer.invoke(IpcChannels.deleteTemplate, templateId),
+
   chatSend: (request) => ipcRenderer.invoke(IpcChannels.chatSend, request),
   chatCancel: (requestId) =>
     ipcRenderer.invoke(IpcChannels.chatCancel, requestId),

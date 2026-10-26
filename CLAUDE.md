@@ -35,6 +35,11 @@
 - **Gemessenes Ollama-Verhalten (0.40.11)**: Standard-Kontext ist 4096 Tokens (zu sehen in `/api/ps`).
   `think: false` wirkt bei qwen3/gemma4; gpt-oss ignoriert es und kennt nur `low`/`medium`/`high`
   (→ `thinkStyle`, beim Modellwechsel wird eine unpassende Denken-Einstellung entfernt).
+- **Vorlagen** (Tabelle `templates`, Migration 3): Name + optionales Modell + Chat-Einstellungen.
+  **Kopie, keine Verknüpfung**: Beim Auswählen werden Modell/Einstellungen in den neuen Chat kopiert;
+  spätere Änderungen an der Vorlage ändern bestehende Chats nicht. Sortierung nach deutschen Regeln
+  in JS (`localeCompare('de')`), weil SQLite Umlaute falsch einsortiert. Einstellungsfelder sind eine
+  gemeinsame Komponente (`components/settings/SettingsFields.tsx`) für Chat-Panel und Vorlagen-Editor.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
 - **Netzwerk**: nur Ollama-Server (lokal/LAN), Modell-Downloads über Ollama, Update-Prüfung nur per Knopf.
   Keine Telemetrie.

@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { SlidersHorizontal } from 'lucide-react';
-import type { ChatSummary, ModelInfo } from '../../shared/api';
+import { SlidersHorizontal, X } from 'lucide-react';
+import type { ChatSummary, ChatTemplate } from '../../shared/api';
 import { thinkFitsModel } from '../../shared/settings';
 import { useChat } from '../chat/useChat';
 import { useChatList } from '../chat/useChatList';
+import { useChatModels } from '../hooks/useChatModels';
+import { useTemplates } from '../templates/useTemplates';
+import { TemplatePicker } from '../components/chat/TemplatePicker';
 import { PageHeader } from '../components/PageHeader';
 import { ChatInput } from '../components/chat/ChatInput';
 import { ChatList } from '../components/chat/ChatList';
@@ -33,13 +36,6 @@ function saveLastModel(model: string) {
   }
 }
 
-/** Reine Embedding-Modelle können nicht chatten und gehören nicht in die Auswahl. */
-function canChat(model: ModelInfo) {
-  return (
-    model.capabilities.length === 0 || model.capabilities.includes('completion')
-  );
-}
-
 export function ChatPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -62,27 +58,65 @@ export function ChatPage() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const hasCustomSettings = Object.keys(settings).length > 0;
 
-  const [models, setModels] = useState<ModelInfo[]>([]);
+  const { models, loaded: modelsLoaded, error: loadError } = useChatModels();
   const [model, setModel] = useState('');
-  const [loadError, setLoadError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  const {
+    templates,
+    loaded: templatesLoaded,
+    refresh: refreshTemplates,
+  } = useTemplates();
+  // Vorlage, die in diesem (noch leeren) Chat gewählt wurde – nur zur Anzeige.
+  const [activeTemplate, setActiveTemplate] = useState<ChatTemplate | null>(
+    null,
+  );
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Startmodell: das zuletzt gewählte, sonst das erste installierte.
   useEffect(() => {
-    void window.api.listModels().then((result) => {
-      if (!result.ok) {
-        setLoadError(result.error);
-        return;
-      }
-      const chatModels = result.value.filter(canChat);
-      setModels(chatModels);
-      const last = readLastModel();
-      setModel(
-        chatModels.find((m) => m.name === last)?.name ??
-          chatModels[0]?.name ??
-          '',
-      );
-    });
-  }, []);
+    if (!modelsLoaded) return;
+    const last = readLastModel();
+    setModel(
+      (current) =>
+        current ||
+        (models.find((m) => m.name === last)?.name ?? models[0]?.name ?? ''),
+    );
+  }, [models, modelsLoaded]);
+
+  useEffect(() => {
+    setActiveTemplate(null);
+  }, [chatId]);
+
+  /**
+   * Kopiert Modell und Einstellungen der Vorlage in den neuen Chat.
+   * Ohne festes (oder installiertes) Modell bleibt das gewählte Modell.
+   */
+  const applyTemplate = (template: ChatTemplate) => {
+    const templateModel = models.find((m) => m.name === template.model);
+    const targetModel = templateModel ?? models.find((m) => m.name === model);
+    if (templateModel) setModel(templateModel.name);
+    const { think, ...rest } = template.settings;
+    updateSettings(
+      thinkFitsModel(think, targetModel) ? template.settings : rest,
+    );
+    setActiveTemplate(template);
+  };
+
+  const clearTemplate = () => {
+    updateSettings({});
+    setActiveTemplate(null);
+  };
+
+  // „Chat damit starten“ auf der Vorlagen-Seite öffnet /chat?template=<id>.
+  const templateFromUrl = searchParams.get('template');
+  useEffect(() => {
+    if (!templateFromUrl || !templatesLoaded || !modelsLoaded) return;
+    const template = templates.find((tpl) => tpl.id === templateFromUrl);
+    if (template && chatId === null) applyTemplate(template);
+    setSearchParams({}, { replace: true });
+    // applyTemplate nutzt den aktuellen Stand; neu auslösen soll nur die Adresse.
+  }, [templateFromUrl, templatesLoaded, modelsLoaded]);
 
   // Ein gespeicherter Chat öffnet mit dem Modell, mit dem er zuletzt lief –
   // sofern es noch installiert ist.
@@ -174,7 +208,16 @@ export function ChatPage() {
               </p>
             )}
             {messages.length === 0 && !loadError && (
-              <p className="pt-16 text-center text-muted">{t('chat.empty')}</p>
+              <div className="space-y-8 pt-12">
+                <p className="text-center text-muted">{t('chat.empty')}</p>
+                {chatId === null && (
+                  <TemplatePicker
+                    templates={templates}
+                    activeId={activeTemplate?.id}
+                    onPick={applyTemplate}
+                  />
+                )}
+              </div>
             )}
             {messages.map((message) => (
               <MessageView key={message.id} message={message} />
@@ -184,6 +227,22 @@ export function ChatPage() {
         </div>
 
         <div className="mx-auto w-full max-w-3xl px-6 pb-5">
+          {activeTemplate && messages.length === 0 && (
+            <div className="mb-2 flex">
+              <span className="flex items-center gap-1.5 rounded-full bg-accent-soft px-3 py-1 text-xs text-accent">
+                {t('templates.active', { name: activeTemplate.name })}
+                <button
+                  type="button"
+                  onClick={clearTemplate}
+                  title={t('templates.clear')}
+                  aria-label={t('templates.clear')}
+                  className="rounded-full hover:text-text"
+                >
+                  <X size={12} />
+                </button>
+              </span>
+            </div>
+          )}
           <ChatInput
             disabled={!model}
             isRunning={isRunning}
@@ -202,6 +261,7 @@ export function ChatPage() {
           model={models.find((m) => m.name === model)}
           onChange={updateSettings}
           onClose={() => setSettingsOpen(false)}
+          onTemplateSaved={() => void refreshTemplates()}
         />
       )}
     </div>

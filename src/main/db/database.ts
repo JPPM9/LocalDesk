@@ -38,6 +38,17 @@ const migrations: string[] = [
   `
   ALTER TABLE chats ADD COLUMN settings_json TEXT NOT NULL DEFAULT '{}';
   `,
+  // 3: Vorlagen – gespeicherte Kombination aus Modell und Einstellungen für neue Chats
+  `
+  CREATE TABLE templates (
+    id            TEXT PRIMARY KEY,
+    name          TEXT NOT NULL,
+    model         TEXT,
+    settings_json TEXT NOT NULL DEFAULT '{}',
+    created_at    INTEGER NOT NULL,
+    updated_at    INTEGER NOT NULL
+  );
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */
