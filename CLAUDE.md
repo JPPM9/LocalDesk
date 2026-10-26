@@ -46,6 +46,13 @@
   Benutzereingaben gehen **nur** über `buildFtsQuery` (jedes Wort gequotet + Präfix-`*`), nie roh in
   MATCH. Treffer-Markierung über Steuerzeichen (`HIGHLIGHT_START/END`), nicht über HTML.
   Sprung zur Nachricht: `/chat/<id>?m=<messageId>`.
+- **Server-Profile** (Migration 5: `server_profiles`, `app_settings` mit `activeServerId`): Startprofil
+  „Dieser PC“ = http://localhost:11434. Adressen immer über `normalizeServerUrl` (`src/shared/server.ts`):
+  ergänzt http:// und Port 11434, erlaubt nur http/https ohne Pfad/Zugangsdaten. Der Main-Prozess
+  hält den Provider des aktiven Servers (`server-service.ts`); alle Aufrufe holen ihn über
+  `getProvider()`. Eine laufende Antwort bleibt auf dem Server, auf dem sie gestartet wurde.
+  Der letzte Server kann nicht gelöscht werden. Oberfläche signalisiert Wechsel per
+  `notifyServerChanged()` → Statusanzeige prüft sofort.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
 - **Netzwerk**: nur Ollama-Server (lokal/LAN), Modell-Downloads über Ollama, Update-Prüfung nur per Knopf.
   Keine Telemetrie.

@@ -1,12 +1,14 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'node:path';
+import type { DatabaseSync } from 'node:sqlite';
 import started from 'electron-squirrel-startup';
 import { IpcChannels, type AppInfo } from '../shared/api';
-import { OllamaProvider } from './providers/ollama';
 import { registerChatHandlers } from './chat-service';
 import { openDatabase } from './db/database';
 import { ChatRepository } from './db/chat-repository';
+import { ServerRepository } from './db/server-repository';
 import { TemplateRepository } from './db/template-repository';
+import { registerServerHandlers } from './server-service';
 import { registerTemplateHandlers } from './template-service';
 
 // Der Windows-Installer (Squirrel) startet die App kurz beim Installieren,
@@ -60,17 +62,15 @@ const createWindow = () => {
   }
 };
 
-// Feste Standard-Adresse; umschaltbare Server-Profile (lokal/LAN) kommen in Phase 2.
-const ollama = new OllamaProvider();
-
-function registerIpcHandlers(
-  chats: ChatRepository,
-  templates: TemplateRepository,
-) {
-  registerTemplateHandlers(templates);
-  ipcMain.handle(IpcChannels.getOllamaStatus, () => ollama.checkStatus());
-  ipcMain.handle(IpcChannels.listModels, () => ollama.listModels());
-  registerChatHandlers(ollama, chats);
+function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
+  registerTemplateHandlers(new TemplateRepository(db));
+  // Welcher Ollama-Server gerade gilt, entscheidet das aktive Server-Profil.
+  const { getProvider } = registerServerHandlers(new ServerRepository(db));
+  ipcMain.handle(IpcChannels.getOllamaStatus, () =>
+    getProvider().checkStatus(),
+  );
+  ipcMain.handle(IpcChannels.listModels, () => getProvider().listModels());
+  registerChatHandlers(getProvider, chats);
 
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({
     name: app.getName(),
@@ -89,7 +89,7 @@ app.whenReady().then(() => {
   const chats = new ChatRepository(db);
   chats.markInterrupted();
 
-  registerIpcHandlers(chats, new TemplateRepository(db));
+  registerIpcHandlers(db, chats);
   createWindow();
 
   app.on('activate', () => {

@@ -6,7 +6,17 @@ Navigation inspiriert von [mudler/LocalAI](https://github.com/mudler/LocalAI) (M
 Stand: **Phase 2 läuft** – Statusanzeige für Ollama, Modellliste, Chat mit Streaming
 (Markdown, Code-Hervorhebung, Gedanken von Denkmodellen, Tokens/s), gespeicherter Verlauf
 und Einstellungen pro Chat (Systemprompt, Kontextlänge, Temperatur, Seed, Denken)
-sowie Vorlagen für wiederkehrende Aufgaben und Volltextsuche über alle Chats.
+sowie Vorlagen für wiederkehrende Aufgaben, Volltextsuche über alle Chats und
+umschaltbare Ollama-Server (dieser PC oder ein anderer Rechner im LAN).
+
+## Ollama auf einem anderen Rechner nutzen
+
+1. Auf dem anderen Rechner Ollama im Netzwerk lauschen lassen: Umgebungsvariable
+   `OLLAMA_HOST=0.0.0.0` setzen und Ollama neu starten.
+2. Dort in der Windows-Firewall eingehende Verbindungen auf Port 11434 erlauben
+   (nur für das private Netzwerk).
+3. In LocalDesk unter **Einstellungen → Ollama-Server** die IP-Adresse eintragen,
+   **Testen**, speichern und auswählen.
 
 ## Voraussetzungen
 

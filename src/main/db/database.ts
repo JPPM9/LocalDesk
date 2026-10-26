@@ -79,6 +79,25 @@ const migrations: string[] = [
   -- Bereits vorhandene Nachrichten einmalig in den Index aufnehmen
   INSERT INTO messages_fts(messages_fts) VALUES ('rebuild');
   `,
+  // 5: Server-Profile (lokal, anderer Rechner im LAN) und allgemeine App-Einstellungen.
+  // Startwert: „Dieser PC“ mit der bisherigen festen Adresse.
+  `
+  CREATE TABLE server_profiles (
+    id         TEXT PRIMARY KEY,
+    name       TEXT NOT NULL,
+    base_url   TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  );
+
+  CREATE TABLE app_settings (
+    key   TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+  );
+
+  INSERT INTO server_profiles (id, name, base_url, created_at)
+    VALUES ('local', 'Dieser PC', 'http://localhost:11434', 0);
+  INSERT INTO app_settings (key, value) VALUES ('activeServerId', 'local');
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */

@@ -12,6 +12,22 @@ export interface AppInfo {
   dataPath: string;
 }
 
+/** Ein gespeicherter Ollama-Server, z. B. „Dieser PC“ oder „Rechner im Wohnzimmer“. */
+export interface ServerProfile {
+  id: string;
+  name: string;
+  /** Vollständige Adresse, z. B. http://192.168.1.20:11434 */
+  baseUrl: string;
+  active: boolean;
+}
+
+export interface ServerProfileInput {
+  id: string;
+  name: string;
+  /** Eingabe wie „192.168.1.20“ – wird zur vollständigen Adresse ergänzt. */
+  address: string;
+}
+
 /** Ergebnis einer Verbindungsprüfung zu einem KI-Server (z. B. Ollama). */
 export type ProviderStatus =
   | { online: true; baseUrl: string; version: string }
@@ -188,6 +204,14 @@ export interface LocalDeskApi {
   updateChatSettings: (chatId: string, settings: ChatSettings) => Promise<void>;
   searchChats: (query: string) => Promise<SearchResult>;
 
+  listServers: () => Promise<ServerProfile[]>;
+  /** Legt an oder ändert (gleiche id); die Adresse wird geprüft und ergänzt. */
+  saveServer: (input: ServerProfileInput) => Promise<Result<ServerProfile>>;
+  deleteServer: (profileId: string) => Promise<Result<void>>;
+  setActiveServer: (profileId: string) => Promise<Result<ServerProfile>>;
+  /** Prüft eine Adresse, ohne sie zu speichern. */
+  testServer: (address: string) => Promise<ProviderStatus>;
+
   listTemplates: () => Promise<ChatTemplate[]>;
   /** Legt an oder überschreibt (gleiche id). Gibt die gespeicherte Fassung zurück. */
   saveTemplate: (template: TemplateInput) => Promise<Result<ChatTemplate>>;
@@ -214,6 +238,11 @@ export const IpcChannels = {
   deleteChat: 'chats:delete',
   updateChatSettings: 'chats:update-settings',
   searchChats: 'chats:search',
+  listServers: 'servers:list',
+  saveServer: 'servers:save',
+  deleteServer: 'servers:delete',
+  setActiveServer: 'servers:set-active',
+  testServer: 'servers:test',
   listTemplates: 'templates:list',
   saveTemplate: 'templates:save',
   deleteTemplate: 'templates:delete',

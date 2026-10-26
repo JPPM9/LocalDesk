@@ -70,6 +70,29 @@
       "insert": "Einfügen"
     }
   },
+  "servers": {
+    "title": "Ollama-Server",
+    "intro": "Mit welchem Ollama-Server LocalDesk spricht. Umschalten gilt sofort für Status, Modelle und neue Antworten.",
+    "active": "aktiv",
+    "useThis": "„{{name}}“ verwenden",
+    "add": "Server hinzufügen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "confirmDelete": "Server „{{name}}“ löschen? Chats bleiben erhalten.",
+    "name": "Name",
+    "namePlaceholder": "z. B. Rechner im Wohnzimmer",
+    "address": "Adresse",
+    "addressHint": "IP-Adresse oder Rechnername, z. B. 192.168.1.20 – ohne Port wird 11434 angenommen.",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "test": "Testen",
+    "testing": "Teste …",
+    "testOk": "Erreichbar – Ollama {{version}}",
+    "lanHelpTitle": "Was muss auf dem anderen Rechner eingestellt sein?",
+    "lanHelp1": "Ollama muss im Netzwerk lauschen: Umgebungsvariable OLLAMA_HOST=0.0.0.0 setzen und Ollama neu starten.",
+    "lanHelp2": "Die Windows-Firewall dort muss eingehende Verbindungen auf Port 11434 erlauben (nur im privaten Netzwerk).",
+    "lanHelp3": "Hier die IP-Adresse dieses Rechners eintragen und mit „Testen“ prüfen. Hinweis: Die GPU-Auslastung kann LocalDesk nur bei einem Server auf diesem PC anzeigen."
+  },
   "settings": {
     "title": "Einstellungen",
     "about": "Über LocalDesk",

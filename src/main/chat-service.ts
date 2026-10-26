@@ -21,7 +21,8 @@ const SAVE_INTERVAL_MS = 1000;
  * wir uns, damit „Stopp“ sie abbrechen kann.
  */
 export function registerChatHandlers(
-  provider: Provider,
+  /** Liefert den Provider des gerade aktiven Servers (umschaltbar). */
+  getProvider: () => Provider,
   chats: ChatRepository,
 ) {
   const running = new Map<string, AbortController>();
@@ -104,9 +105,15 @@ export function registerChatHandlers(
       [...history, userMessage],
       chat?.settings ?? {},
     );
-    void stream(event.sender, chatRequest, answer, controller).finally(() =>
-      running.delete(request.requestId),
-    );
+    // Der Server wird beim Absenden festgelegt – ein Umschalten während der
+    // Antwort lässt diese Antwort auf ihrem Server zu Ende laufen.
+    void stream(
+      getProvider(),
+      event.sender,
+      chatRequest,
+      answer,
+      controller,
+    ).finally(() => running.delete(request.requestId));
   });
 
   ipcMain.handle(IpcChannels.chatCancel, (_event, requestId: unknown) => {
@@ -114,6 +121,7 @@ export function registerChatHandlers(
   });
 
   async function stream(
+    provider: Provider,
     sender: WebContents,
     chatRequest: ChatRequest,
     initial: MessageRecord,
