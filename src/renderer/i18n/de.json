@@ -15,6 +15,19 @@
     "online": "Ollama {{version}}",
     "offline": "Ollama offline"
   },
+  "shortcuts": {
+    "title": "Tastenkürzel",
+    "close": "Schließen",
+    "newChat": "Neuer Chat",
+    "search": "Chats durchsuchen",
+    "focusInput": "Ins Eingabefeld springen",
+    "chatSettings": "Chat-Einstellungen öffnen/schließen",
+    "toggleSidebar": "Seitenleiste ein-/ausklappen",
+    "settings": "Einstellungen",
+    "stop": "Laufende Antwort stoppen",
+    "help": "Diese Übersicht",
+    "footer": "Im Chat: Enter sendet, Umschalt+Enter macht eine neue Zeile."
+  },
   "search": {
     "placeholder": "Chats durchsuchen …",
     "clear": "Suche leeren",
@@ -32,7 +45,7 @@
     "modelsError": "Modelle konnten nicht geladen werden: {{error}}",
     "inputPlaceholder": "Nachricht schreiben …",
     "inputNoModel": "Kein Modell verfügbar – läuft Ollama?",
-    "hint": "Enter senden · Umschalt+Enter neue Zeile",
+    "hint": "Enter senden · Umschalt+Enter neue Zeile · Strg+/ alle Tastenkürzel",
     "noChats": "Noch keine Chats",
     "rename": "Umbenennen",
     "delete": "Löschen",

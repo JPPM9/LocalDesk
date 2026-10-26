@@ -9,6 +9,7 @@ import {
   Settings,
   type LucideIcon,
 } from 'lucide-react';
+import { shortcutLabel } from '../shortcuts/keymap';
 import { StatusPill } from './StatusPill';
 
 interface NavItem {
@@ -64,7 +65,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         <button
           type="button"
           onClick={onToggle}
-          title={t(collapsed ? 'nav.expand' : 'nav.collapse')}
+          title={`${t(collapsed ? 'nav.expand' : 'nav.collapse')} (${shortcutLabel('toggleSidebar')})`}
           aria-label={t(collapsed ? 'nav.expand' : 'nav.collapse')}
           className="rounded p-1.5 text-muted hover:bg-surface-hover hover:text-text"
         >

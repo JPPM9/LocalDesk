@@ -1,6 +1,7 @@
-import { useState, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SendHorizontal, Square } from 'lucide-react';
+import { useShortcut } from '../../shortcuts/useShortcut';
 
 interface ChatInputProps {
   disabled: boolean;
@@ -17,6 +18,20 @@ export function ChatInput({
 }: ChatInputProps) {
   const { t } = useTranslation();
   const [text, setText] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  // Fokus-Wunsch, solange das Feld noch gesperrt ist (Modelle laden noch) –
+  // ein gesperrtes Feld kann keinen Cursor bekommen.
+  const [focusWanted, setFocusWanted] = useState(false);
+
+  // Strg+L (und Strg+N für einen neuen Chat): Cursor ins Eingabefeld.
+  useShortcut('focusInput', () => setFocusWanted(true));
+
+  useEffect(() => {
+    if (focusWanted && !disabled) {
+      textareaRef.current?.focus();
+      setFocusWanted(false);
+    }
+  }, [focusWanted, disabled]);
 
   const submit = () => {
     if (disabled || isRunning || !text.trim()) return;
@@ -39,6 +54,7 @@ export function ChatInput({
   return (
     <div className="flex items-end gap-2 rounded-lg border border-border bg-surface p-2 focus-within:border-accent">
       <textarea
+        ref={textareaRef}
         value={text}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={onKeyDown}

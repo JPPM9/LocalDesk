@@ -7,7 +7,8 @@ Stand: **Phase 2 läuft** – Statusanzeige für Ollama, Modellliste, Chat mit S
 (Markdown, Code-Hervorhebung, Gedanken von Denkmodellen, Tokens/s), gespeicherter Verlauf
 und Einstellungen pro Chat (Systemprompt, Kontextlänge, Temperatur, Seed, Denken)
 sowie Vorlagen für wiederkehrende Aufgaben, Volltextsuche über alle Chats und
-umschaltbare Ollama-Server (dieser PC oder ein anderer Rechner im LAN).
+umschaltbare Ollama-Server (dieser PC oder ein anderer Rechner im LAN) und Tastenkürzel
+(Übersicht mit **Strg+/** oder **F1**).
 
 ## Ollama auf einem anderen Rechner nutzen
 

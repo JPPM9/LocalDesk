@@ -1,9 +1,11 @@
-import { useState, type KeyboardEvent } from 'react';
+import { useRef, useState, type KeyboardEvent } from 'react';
 import { NavLink } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Pencil, Search, SquarePen, Trash2, X } from 'lucide-react';
 import type { ChatSummary } from '../../../shared/api';
 import { useChatSearch } from '../../chat/useChatSearch';
+import { shortcutLabel } from '../../shortcuts/keymap';
+import { useShortcut } from '../../shortcuts/useShortcut';
 import { SearchResults } from './SearchResults';
 
 interface ChatListProps {
@@ -19,6 +21,13 @@ export function ChatList({ chats, onNew, onRename, onDelete }: ChatListProps) {
   const [draft, setDraft] = useState('');
   const [query, setQuery] = useState('');
   const searchResult = useChatSearch(query);
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  // Strg+K: ins Suchfeld springen; vorhandener Suchtext wird markiert.
+  useShortcut('search', () => {
+    searchRef.current?.focus();
+    searchRef.current?.select();
+  });
 
   const startEdit = (chat: ChatSummary) => {
     setEditingId(chat.id);
@@ -32,7 +41,17 @@ export function ChatList({ chats, onNew, onRename, onDelete }: ChatListProps) {
 
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') finishEdit(true);
-    if (event.key === 'Escape') finishEdit(false);
+    if (event.key === 'Escape') {
+      event.preventDefault(); // Esc gehört dem Umbenennen, nicht dem „Stopp“-Kürzel
+      finishEdit(false);
+    }
+  };
+
+  const onSearchKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Escape' && query) {
+      event.preventDefault(); // erst die Suche leeren; ein zweites Esc darf stoppen
+      setQuery('');
+    }
   };
 
   return (
@@ -41,6 +60,7 @@ export function ChatList({ chats, onNew, onRename, onDelete }: ChatListProps) {
         <button
           type="button"
           onClick={onNew}
+          title={shortcutLabel('newChat')}
           className="flex w-full items-center gap-2 rounded border border-border px-3 py-1.5 hover:bg-surface-hover"
         >
           <SquarePen size={15} />
@@ -49,11 +69,13 @@ export function ChatList({ chats, onNew, onRename, onDelete }: ChatListProps) {
         <div className="flex items-center gap-1.5 rounded border border-border bg-surface px-2 focus-within:border-accent">
           <Search size={14} className="shrink-0 text-muted" />
           <input
+            ref={searchRef}
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => e.key === 'Escape' && setQuery('')}
+            onKeyDown={onSearchKeyDown}
             placeholder={t('search.placeholder')}
+            title={shortcutLabel('search')}
             aria-label={t('search.placeholder')}
             className="min-w-0 flex-1 bg-transparent py-1.5 outline-none [&::-webkit-search-cancel-button]:hidden"
           />

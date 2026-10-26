@@ -9,6 +9,8 @@ import { useChatList } from '../chat/useChatList';
 import { useChatModels } from '../hooks/useChatModels';
 import { useTemplates } from '../templates/useTemplates';
 import { TemplatePicker } from '../components/chat/TemplatePicker';
+import { shortcutLabel } from '../shortcuts/keymap';
+import { useShortcut } from '../shortcuts/useShortcut';
 import { PageHeader } from '../components/PageHeader';
 import { ChatInput } from '../components/chat/ChatInput';
 import { ChatList } from '../components/chat/ChatList';
@@ -56,6 +58,12 @@ export function ChatPage() {
     onChanged: () => void chatList.refresh(),
   });
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  useShortcut('chatSettings', () => setSettingsOpen((open) => !open));
+  // Esc stoppt nur, wenn gerade eine Antwort läuft – sonst passiert nichts.
+  useShortcut('stop', () => {
+    if (isRunning) stop();
+  });
   const hasCustomSettings = Object.keys(settings).length > 0;
 
   const { models, loaded: modelsLoaded, error: loadError } = useChatModels();
@@ -207,7 +215,7 @@ export function ChatPage() {
               <button
                 type="button"
                 onClick={() => setSettingsOpen((open) => !open)}
-                title={t('settingsPanel.title')}
+                title={`${t('settingsPanel.title')} (${shortcutLabel('chatSettings')})`}
                 aria-label={t('settingsPanel.title')}
                 aria-pressed={settingsOpen}
                 className={`relative rounded border px-2 py-1 hover:bg-surface-hover ${

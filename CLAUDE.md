@@ -53,6 +53,13 @@
   `getProvider()`. Eine laufende Antwort bleibt auf dem Server, auf dem sie gestartet wurde.
   Der letzte Server kann nicht gelöscht werden. Oberfläche signalisiert Wechsel per
   `notifyServerChanged()` → Statusanzeige prüft sofort.
+- **Tastenkürzel**: Belegung und Erkennung in `src/renderer/shortcuts/keymap.ts` (reine Funktion
+  `matchShortcut`, getestet). Ein globaler Handler in `AppLayout` verteilt sie; Komponenten melden sich
+  mit `useShortcut(id, handler)` an. Kürzel für die Chat-Seite wechseln erst dorthin, der Auftrag
+  wartet bis zu 1 s auf den Empfänger. Regeln: Strg-Kürzel nie mit Alt (AltGr = Strg+Alt bei
+  deutscher Tastatur → @, €, { müssen tippbar bleiben). Eingabefelder, die Esc selbst nutzen,
+  rufen `preventDefault()` – dann stoppt Esc keine Antwort. Electron-Standardmenü belegt bereits
+  Strg+R/W/Z/A/0/+/-; nicht überschreiben.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
 - **Netzwerk**: nur Ollama-Server (lokal/LAN), Modell-Downloads über Ollama, Update-Prüfung nur per Knopf.
   Keine Telemetrie.
