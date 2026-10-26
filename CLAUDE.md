@@ -71,3 +71,5 @@
 
 - `npm start` – Entwicklungsmodus · `npm test` – Vitest (Tests in `tests/`) · `npm run typecheck` · `npm run lint` · `npm run make` – Installer
 - Shell-Hinweis: Nach der Node-Installation kennt eine alte Shell `node` evtl. noch nicht (PATH neu laden).
+- Commit-Nachrichten mit deutschen Anführungszeichen („…“) oder Umlauten über die Bash mit
+  `git commit -F -` und Heredoc schreiben – PowerShell 5.1 verstümmelt sie bzw. der Commit schlägt fehl.
