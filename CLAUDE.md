@@ -74,6 +74,13 @@
 - **Einheiten**: Arbeitsspeicher/VRAM binär mit `formatMemory` (1 GB = 1024³, wie Task-Manager → 16-GB-Karte
   zeigt 16,0 GB). Dateigrößen der Modelle dezimal mit `formatBytes` (wie `ollama list`).
 - Regelmäßige Abfragen über `usePolling` (neueste Antwort gewinnt, sofort nach Serverwechsel).
+- **Modell-Download** (`download-service.ts`): Downloads laufen im Main-Prozess weiter, auch beim
+  Seitenwechsel; Stand geht gedrosselt (max. alle 250 ms) per `downloads:changed` an alle Fenster.
+  Ollama `/api/pull` meldet mehrere Schichten durcheinander → Summe in `applyPullChunk`
+  (`src/shared/download.ts`). Modellnamen nur über `isValidModelName`. Tempo/Restzeit rechnet die
+  Oberfläche (`utils/downloadSpeed.ts`, 5-s-Fenster). Abbruch lässt evtl. Teildaten bei Ollama
+  liegen; ein erneuter Download setzt dort fort.
+- Testmodell `all-minilm` (46 MB) liegt aus dem Download-Test noch da – für den Lösch-Test in Schritt 4.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
 - **Netzwerk**: nur Ollama-Server (lokal/LAN), Modell-Downloads über Ollama, Update-Prüfung nur per Knopf.
   Keine Telemetrie.

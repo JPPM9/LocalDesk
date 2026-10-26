@@ -58,6 +58,35 @@ export type GpuStatus =
       error?: string;
     };
 
+/** Eine Fortschrittsmeldung von Ollama beim Herunterladen (eine Zeile aus /api/pull). */
+export interface PullChunk {
+  status: string;
+  /** Kennung der Schicht (Gewichte, Vorlage, Lizenz …), falls es um eine geht. */
+  digest?: string;
+  total?: number;
+  completed?: number;
+}
+
+export type DownloadPhase =
+  | 'starting'
+  | 'downloading'
+  | 'verifying'
+  | 'done'
+  | 'error'
+  | 'aborted';
+
+/** Stand eines Downloads, wie ihn die Oberfläche anzeigt. */
+export interface DownloadState {
+  model: string;
+  phase: DownloadPhase;
+  /** Bytes je Schicht – Ollama meldet die Schichten durcheinander. */
+  layers: Record<string, { total: number; completed: number }>;
+  completedBytes: number;
+  totalBytes: number;
+  error?: string;
+  startedAt: number;
+}
+
 /** Ein Modell, das gerade im Speicher geladen ist (GPU und/oder CPU). */
 export interface RunningModel {
   name: string;
@@ -247,6 +276,16 @@ export interface LocalDeskApi {
   listRunningModels: () => Promise<Result<RunningModel[]>>;
   getGpuStatus: () => Promise<GpuStatus>;
 
+  /** Startet einen Download; der Fortschritt kommt über `onDownloadsChanged`. */
+  startDownload: (model: string) => Promise<Result<void>>;
+  cancelDownload: (model: string) => Promise<void>;
+  /** Nimmt einen beendeten Download aus der Liste. */
+  dismissDownload: (model: string) => Promise<void>;
+  listDownloads: () => Promise<DownloadState[]>;
+  onDownloadsChanged: (
+    listener: (downloads: DownloadState[]) => void,
+  ) => () => void;
+
   listChats: () => Promise<ChatSummary[]>;
   getChat: (chatId: string) => Promise<ChatDetail | null>;
   renameChat: (chatId: string, title: string) => Promise<void>;
@@ -292,6 +331,11 @@ export const IpcChannels = {
   listModels: 'models:list',
   listRunningModels: 'models:list-running',
   getGpuStatus: 'system:gpu-status',
+  startDownload: 'downloads:start',
+  cancelDownload: 'downloads:cancel',
+  dismissDownload: 'downloads:dismiss',
+  listDownloads: 'downloads:list',
+  downloadsChanged: 'downloads:changed',
   listChats: 'chats:list',
   getChat: 'chats:get',
   renameChat: 'chats:rename',

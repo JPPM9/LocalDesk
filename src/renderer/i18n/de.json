@@ -99,12 +99,29 @@
     "error": "Fehler: {{error}}",
     "stats": "{{tokens}} Tokens · {{speed}} Tokens/s · {{seconds}} s"
   },
+  "downloads": {
+    "placeholder": "Modellname, z. B. qwen3:8b",
+    "start": "Herunterladen",
+    "hint": "Namen findest du in der Ollama-Bibliothek:",
+    "invalidName": "Das ist kein gültiger Modellname (z. B. „qwen3:8b“ oder „nomic-embed-text“).",
+    "bytes": "{{done}} von {{total}}",
+    "cancel": "Download abbrechen",
+    "dismiss": "Aus der Liste entfernen",
+    "phase": {
+      "starting": "verbinde …",
+      "downloading": "lädt",
+      "verifying": "prüfe …",
+      "done": "fertig",
+      "error": "Fehler",
+      "aborted": "abgebrochen"
+    }
+  },
   "models": {
     "title": "Installierte Modelle",
     "refresh": "Aktualisieren",
     "loading": "Lade Modelle …",
     "error": "Modellliste konnte nicht geladen werden",
-    "empty": "Keine Modelle installiert. Lade eines mit „ollama pull <name>“ herunter.",
+    "empty": "Keine Modelle installiert. Lade oben eines herunter, z. B. „qwen3:8b“.",
     "columns": {
       "name": "Name",
       "parameters": "Parameter",

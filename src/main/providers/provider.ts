@@ -3,6 +3,7 @@ import type {
   ChatRequest,
   ModelInfo,
   ProviderStatus,
+  PullChunk,
   Result,
   RunningModel,
 } from '../../shared/api';
@@ -19,6 +20,11 @@ export interface Provider {
   listModels(): Promise<Result<ModelInfo[]>>;
   /** Modelle, die gerade im Speicher geladen sind. */
   listRunning(): Promise<Result<RunningModel[]>>;
+  /**
+   * Lädt ein Modell herunter und meldet den Fortschritt Stück für Stück.
+   * Wirft einen Fehler mit lesbarer Meldung; `signal` bricht ab.
+   */
+  pull(model: string, signal: AbortSignal): AsyncGenerator<PullChunk>;
   /**
    * Liefert die Antwort Stück für Stück. Wirft einen Fehler mit lesbarer Meldung,
    * wenn etwas schiefgeht; `signal` bricht die Antwort ab.

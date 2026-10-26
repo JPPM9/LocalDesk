@@ -4,6 +4,7 @@ import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron';
 import {
   IpcChannels,
   type ChatStreamEvent,
+  type DownloadState,
   type LocalDeskApi,
 } from '../shared/api';
 
@@ -13,6 +14,21 @@ const api: LocalDeskApi = {
   listModels: () => ipcRenderer.invoke(IpcChannels.listModels),
   listRunningModels: () => ipcRenderer.invoke(IpcChannels.listRunningModels),
   getGpuStatus: () => ipcRenderer.invoke(IpcChannels.getGpuStatus),
+
+  startDownload: (model) =>
+    ipcRenderer.invoke(IpcChannels.startDownload, model),
+  cancelDownload: (model) =>
+    ipcRenderer.invoke(IpcChannels.cancelDownload, model),
+  dismissDownload: (model) =>
+    ipcRenderer.invoke(IpcChannels.dismissDownload, model),
+  listDownloads: () => ipcRenderer.invoke(IpcChannels.listDownloads),
+  onDownloadsChanged: (listener) => {
+    const handler = (_event: IpcRendererEvent, list: DownloadState[]) =>
+      listener(list);
+    ipcRenderer.on(IpcChannels.downloadsChanged, handler);
+    return () =>
+      ipcRenderer.removeListener(IpcChannels.downloadsChanged, handler);
+  },
 
   listChats: () => ipcRenderer.invoke(IpcChannels.listChats),
   getChat: (chatId) => ipcRenderer.invoke(IpcChannels.getChat, chatId),

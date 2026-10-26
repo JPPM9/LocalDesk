@@ -13,6 +13,7 @@ Stand: **Phase 3 läuft** (Modelle & Status)
 - Volltextsuche über alle Chats
 - Umschaltbare Ollama-Server (dieser PC oder ein anderer Rechner im LAN)
 - Tastenkürzel (Übersicht mit **Strg+/** oder **F1**)
+- Modelle herunterladen mit Fortschritt, Tempo und Restzeit (Seite „Installierte Modelle“)
 - Status-Seite: Grafikkarte (Auslastung, VRAM nach Ollama/andere/frei, Temperatur, Strom –
   nur bei Ollama auf diesem PC mit NVIDIA-Karte) und geladene Modelle mit Anteil GPU/CPU
 

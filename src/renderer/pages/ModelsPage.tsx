@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { RefreshCw } from 'lucide-react';
 import type { ModelInfo, Result } from '../../shared/api';
 import { PageHeader } from '../components/PageHeader';
+import { DownloadPanel } from '../components/models/DownloadPanel';
+import { useDownloads } from '../hooks/useDownloads';
 import { formatBytes, formatContext, formatDate } from '../utils/format';
 
 // "completion" (Text erzeugen) können alle Chat-Modelle – das Abzeichen wäre nur Rauschen.
@@ -23,6 +25,9 @@ export function ModelsPage() {
     void load();
   }, [load]);
 
+  // Ist ein Download fertig, erscheint das neue Modell sofort in der Tabelle.
+  const downloads = useDownloads(() => void load());
+
   const refreshButton = (
     <button
       type="button"
@@ -38,7 +43,10 @@ export function ModelsPage() {
   return (
     <>
       <PageHeader title={t('models.title')} actions={refreshButton} />
-      <div className="p-6">{renderBody()}</div>
+      <div className="space-y-6 p-6">
+        <DownloadPanel downloads={downloads} />
+        {renderBody()}
+      </div>
     </>
   );
 

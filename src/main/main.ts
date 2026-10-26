@@ -6,6 +6,7 @@ import { IpcChannels, type AppInfo, type GpuStatus } from '../shared/api';
 import { isLocalServer } from '../shared/server';
 import { queryGpus } from './system/gpu';
 import { registerChatHandlers } from './chat-service';
+import { registerDownloadHandlers } from './download-service';
 import { openDatabase } from './db/database';
 import { ChatRepository } from './db/chat-repository';
 import { FolderRepository } from './db/folder-repository';
@@ -88,6 +89,7 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
         : { available: false, reason: 'remote' },
   );
   registerChatHandlers(getProvider, chats);
+  registerDownloadHandlers(getProvider);
 
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({
     name: app.getName(),

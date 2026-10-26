@@ -4,6 +4,7 @@ import type {
   ChatStats,
   ModelInfo,
   ProviderStatus,
+  PullChunk,
   Result,
   RunningModel,
 } from '../../shared/api';
@@ -166,6 +167,38 @@ export class OllamaProvider implements Provider {
         yield { type: 'done', stats: toChatStats(line) };
         return;
       }
+    }
+  }
+
+  async *pull(model: string, signal: AbortSignal): AsyncGenerator<PullChunk> {
+    let response: Response;
+    try {
+      response = await this.fetchFn(`${this.baseUrl}/api/pull`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model, stream: true }),
+        signal,
+      });
+    } catch (error) {
+      if (signal.aborted) throw error; // Abbruch durch den Nutzer – kein Fehler
+      throw new Error(describeError(error));
+    }
+    if (!response.ok || !response.body) {
+      throw new Error(await readErrorMessage(response));
+    }
+
+    for await (const raw of readNdjson(response.body)) {
+      const line = raw as Record<string, unknown>;
+      if (typeof line.error === 'string') throw new Error(line.error);
+      if (typeof line.status !== 'string') continue;
+      yield {
+        status: line.status,
+        ...(typeof line.digest === 'string' && { digest: line.digest }),
+        ...(typeof line.total === 'number' && { total: line.total }),
+        ...(typeof line.completed === 'number' && {
+          completed: line.completed,
+        }),
+      };
     }
   }
 
