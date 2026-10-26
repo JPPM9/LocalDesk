@@ -110,6 +110,19 @@ const migrations: string[] = [
   ALTER TABLE chats ADD COLUMN folder_id TEXT REFERENCES folders(id) ON DELETE SET NULL;
   CREATE INDEX chats_by_folder ON chats(folder_id);
   `,
+  // 7: MCP-Server. Gespeichert wird nur die Art (z. B. „filesystem“) und ihre
+  // Einstellungen – den Befehl baut der Main-Prozess selbst. So kann nie ein
+  // beliebiges Programm über die Datenbank oder die Oberfläche gestartet werden.
+  `
+  CREATE TABLE mcp_servers (
+    id          TEXT PRIMARY KEY,
+    name        TEXT NOT NULL,
+    kind        TEXT NOT NULL,
+    config_json TEXT NOT NULL DEFAULT '{}',
+    enabled     INTEGER NOT NULL DEFAULT 1,
+    created_at  INTEGER NOT NULL
+  );
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */

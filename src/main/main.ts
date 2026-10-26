@@ -13,6 +13,8 @@ import { isLocalServer } from '../shared/server';
 import { queryGpus } from './system/gpu';
 import { registerChatHandlers } from './chat-service';
 import { registerDownloadHandlers } from './download-service';
+import { McpRepository } from './db/mcp-repository';
+import { registerMcpHandlers } from './mcp-service';
 import { openDatabase } from './db/database';
 import { ChatRepository } from './db/chat-repository';
 import { FolderRepository } from './db/folder-repository';
@@ -104,6 +106,9 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
   );
   registerChatHandlers(getProvider, chats);
   registerDownloadHandlers(getProvider);
+  const { manager: mcp } = registerMcpHandlers(new McpRepository(db));
+  // MCP-Server sind eigene Programme – beim Beenden der App mit beenden.
+  app.on('will-quit', () => void mcp.stopAll());
 
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({
     name: app.getName(),

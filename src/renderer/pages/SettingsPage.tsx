@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AppInfo } from '../../shared/api';
 import { PageHeader } from '../components/PageHeader';
+import { McpSettings } from '../components/settings/McpSettings';
 import { ServerSettings } from '../components/settings/ServerSettings';
 
 export function SettingsPage() {
@@ -17,6 +18,7 @@ export function SettingsPage() {
       <PageHeader title={t('settings.title')} />
       <div className="max-w-2xl space-y-8 p-6">
         <ServerSettings />
+        <McpSettings />
         <section>
           <h2 className="mb-3 font-semibold">{t('settings.about')}</h2>
           {info ? (

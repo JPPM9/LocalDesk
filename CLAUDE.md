@@ -80,6 +80,15 @@
   (`src/shared/download.ts`). Modellnamen nur über `isValidModelName`. Tempo/Restzeit rechnet die
   Oberfläche (`utils/downloadSpeed.ts`, 5-s-Fenster). Abbruch lässt evtl. Teildaten bei Ollama
   liegen; ein erneuter Download setzt dort fort.
+- **MCP-Server** (Migration 7: `mcp_servers` mit `kind` + `config_json`): In der DB steht nur die Art
+  (bisher `filesystem`) und ihre Ordner – den Startbefehl baut `buildCommand` (`src/main/mcp/server-kinds.ts`)
+  in fester Version (`@modelcontextprotocol/server-filesystem@2.0.1` via npx). Kein frei eintragbarer Befehl.
+  Ordner: absolut, existierend (Prüfung in `mcp-service.ts`), kein ganzes Laufwerk, max. 10.
+  `McpManager` startet/stoppt über das offizielle SDK (`@modelcontextprotocol/sdk` 1.32.2, stdio), merkt sich
+  Tools (`readOnlyHint`/`destructiveHint` aus den Annotations; ohne Angabe = verändernd) und die letzten
+  stderr-Zeilen. Eingeschaltete Server starten mit der App, `will-quit` stoppt alle.
+  Unter Windows ist ein Server eine Kette aus 4 Prozessen (cmd → npx → cmd → node); Stoppen und normales
+  Beenden räumen alle auf (geprüft). Offener Punkt: Bei Absturz/hartem Beenden können sie übrig bleiben.
 - **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.

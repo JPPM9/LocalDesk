@@ -33,6 +33,48 @@ export type ProviderStatus =
   | { online: true; baseUrl: string; version: string }
   | { online: false; baseUrl: string; error: string };
 
+/** Ein eingerichteter MCP-Server. Bisher gibt es nur die Art „filesystem“. */
+export interface McpServerConfig {
+  id: string;
+  name: string;
+  kind: 'filesystem';
+  /** Ordner, auf die der Dateisystem-Server zugreifen darf – nur diese. */
+  folders: string[];
+  enabled: boolean;
+}
+
+export type McpServerInput = Omit<McpServerConfig, 'enabled'>;
+
+/** Ein Werkzeug, das ein MCP-Server anbietet. */
+export interface McpToolInfo {
+  name: string;
+  description: string;
+  /** Laut Server nur lesend (ändert nichts) – Grundlage für die Standard-Freigabe. */
+  readOnly: boolean;
+  /** Laut Server kann es Daten überschreiben oder löschen. */
+  destructive: boolean;
+  /** Beschreibung der Eingaben als JSON-Schema (für das Modell). */
+  inputSchema: Record<string, unknown>;
+}
+
+export type McpServerState = 'stopped' | 'starting' | 'running' | 'error';
+
+/** Laufzeit-Zustand eines MCP-Servers. */
+export interface McpServerStatus {
+  id: string;
+  state: McpServerState;
+  error?: string;
+  /** Letzte Meldungen des Servers (stderr) – hilft bei Fehlern. */
+  log: string[];
+  tools: McpToolInfo[];
+}
+
+/** Ein MCP-Server mit seinen Einstellungen und seinem aktuellen Zustand. */
+export interface McpServerView {
+  config: McpServerConfig;
+  status: McpServerStatus;
+}
+
 /** Messwerte einer NVIDIA-Grafikkarte (aus nvidia-smi). Fehlt ein Wert, meldet die Karte ihn nicht. */
 export interface GpuInfo {
   index: number;
@@ -278,6 +320,16 @@ export interface LocalDeskApi {
   deleteModel: (model: string) => Promise<Result<void>>;
   getGpuStatus: () => Promise<GpuStatus>;
 
+  listMcpServers: () => Promise<McpServerView[]>;
+  /** Legt an oder ändert; prüft, ob die Ordner existieren, und startet den Server neu. */
+  saveMcpServer: (input: McpServerInput) => Promise<Result<McpServerConfig>>;
+  setMcpServerEnabled: (serverId: string, enabled: boolean) => Promise<void>;
+  restartMcpServer: (serverId: string) => Promise<void>;
+  deleteMcpServer: (serverId: string) => Promise<void>;
+  /** Öffnet den Windows-Ordnerdialog; leer = abgebrochen. */
+  pickFolders: () => Promise<string[]>;
+  onMcpChanged: (listener: (servers: McpServerView[]) => void) => () => void;
+
   /** Startet einen Download; der Fortschritt kommt über `onDownloadsChanged`. */
   startDownload: (model: string) => Promise<Result<void>>;
   cancelDownload: (model: string) => Promise<void>;
@@ -334,6 +386,13 @@ export const IpcChannels = {
   listRunningModels: 'models:list-running',
   deleteModel: 'models:delete',
   getGpuStatus: 'system:gpu-status',
+  listMcpServers: 'mcp:list',
+  saveMcpServer: 'mcp:save',
+  setMcpServerEnabled: 'mcp:set-enabled',
+  restartMcpServer: 'mcp:restart',
+  deleteMcpServer: 'mcp:delete',
+  pickFolders: 'dialog:pick-folders',
+  mcpChanged: 'mcp:changed',
   startDownload: 'downloads:start',
   cancelDownload: 'downloads:cancel',
   dismissDownload: 'downloads:dismiss',

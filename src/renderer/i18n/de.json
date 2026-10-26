@@ -144,6 +144,36 @@
       "insert": "Einfügen"
     }
   },
+  "mcp": {
+    "title": "MCP-Server",
+    "intro": "MCP-Server geben Modellen Werkzeuge – z. B. Dateien lesen. Jeder Server ist ein eigenes Programm, das mit deinen Rechten auf diesem PC läuft. Der Dateisystem-Server sieht nur die Ordner, die du hier freigibst.",
+    "addFilesystem": "Dateisystem-Server hinzufügen",
+    "defaultName": "Dateien",
+    "name": "Name",
+    "folders": "Freigegebene Ordner",
+    "foldersHint": "Nur diese Ordner (mit Unterordnern) sind erreichbar. Ein ganzes Laufwerk ist nicht erlaubt.",
+    "addFolder": "Ordner hinzufügen",
+    "removeFolder": "Ordner entfernen",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "restart": "Neu starten",
+    "enabled": "eingeschaltet",
+    "confirmDelete": "MCP-Server „{{name}}“ löschen? Dateien in den Ordnern bleiben unberührt.",
+    "startingHint": "Startet … Beim allerersten Mal lädt npx den Server herunter, das kann bis zu einer Minute dauern.",
+    "log": "Meldungen des Servers",
+    "toolsSummary": "{{count}} Tools – {{readOnly}} nur lesend, {{writing}} verändernd",
+    "readOnly": "nur lesend",
+    "writing": "verändernd",
+    "destructive": "kann überschreiben",
+    "state": {
+      "stopped": "aus",
+      "starting": "startet …",
+      "running": "läuft",
+      "error": "Fehler"
+    }
+  },
   "servers": {
     "title": "Ollama-Server",
     "intro": "Mit welchem Ollama-Server LocalDesk spricht. Umschalten gilt sofort für Status, Modelle und neue Antworten.",

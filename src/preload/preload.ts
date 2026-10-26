@@ -6,6 +6,7 @@ import {
   type ChatStreamEvent,
   type DownloadState,
   type LocalDeskApi,
+  type McpServerView,
 } from '../shared/api';
 
 const api: LocalDeskApi = {
@@ -29,6 +30,23 @@ const api: LocalDeskApi = {
     ipcRenderer.on(IpcChannels.downloadsChanged, handler);
     return () =>
       ipcRenderer.removeListener(IpcChannels.downloadsChanged, handler);
+  },
+
+  listMcpServers: () => ipcRenderer.invoke(IpcChannels.listMcpServers),
+  saveMcpServer: (input) =>
+    ipcRenderer.invoke(IpcChannels.saveMcpServer, input),
+  setMcpServerEnabled: (serverId, enabled) =>
+    ipcRenderer.invoke(IpcChannels.setMcpServerEnabled, serverId, enabled),
+  restartMcpServer: (serverId) =>
+    ipcRenderer.invoke(IpcChannels.restartMcpServer, serverId),
+  deleteMcpServer: (serverId) =>
+    ipcRenderer.invoke(IpcChannels.deleteMcpServer, serverId),
+  pickFolders: () => ipcRenderer.invoke(IpcChannels.pickFolders),
+  onMcpChanged: (listener) => {
+    const handler = (_event: IpcRendererEvent, list: McpServerView[]) =>
+      listener(list);
+    ipcRenderer.on(IpcChannels.mcpChanged, handler);
+    return () => ipcRenderer.removeListener(IpcChannels.mcpChanged, handler);
   },
 
   listChats: () => ipcRenderer.invoke(IpcChannels.listChats),
