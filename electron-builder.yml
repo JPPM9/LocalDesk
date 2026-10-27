@@ -1,0 +1,39 @@
+# Windows-Installer (NSIS) für LocalDesk.
+# Gebaut wird die App von Electron Forge (npm run package); electron-builder verpackt nur
+# den fertigen Ordner out/LocalDesk-win32-x64 zum Installer (--prepackaged, siehe npm run dist).
+appId: io.github.jppm9.localdesk
+productName: LocalDesk
+copyright: Copyright © 2026 JPPM9
+
+directories:
+  output: out/installer
+
+win:
+  target: nsis
+  icon: assets/icon.ico
+
+nsis:
+  # Assistent mit Ordnerwahl statt Ein-Klick-Installation.
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  # Standard: nur für dich, ohne Admin-Rechte (%LOCALAPPDATA%\Programs\LocalDesk).
+  # Wählst du einen Ordner wie „Programme“, fragt Windows nach Admin-Rechten.
+  perMachine: false
+  allowElevation: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: LocalDesk
+  # Deine Chats und Einstellungen (%APPDATA%\LocalDesk) bleiben beim Deinstallieren erhalten.
+  deleteAppDataOnUninstall: false
+  installerIcon: assets/icon.ico
+  uninstallerIcon: assets/icon.ico
+  installerLanguages: [de_DE]
+  language: '1031'
+  artifactName: LocalDesk-Setup-${version}.${ext}
+
+# Wohin Releases gehören – daraus entsteht latest.yml für den Update-Knopf.
+# Hochgeladen wird nie automatisch (immer --publish never); das macht `gh release` nach Freigabe.
+publish:
+  provider: github
+  owner: JPPM9
+  repo: LocalDesk

@@ -123,15 +123,26 @@ npm start
 eigenen Fenster). Änderungen an der Oberfläche erscheinen sofort; Änderungen am
 Main-Prozess brauchen einen Neustart (im Terminal Taste `r`; beenden mit `q`).
 
+## Installieren
+
+`npm run dist` baut `out/installer/LocalDesk-Setup-<Version>.exe`. Der Installer fragt nach dem
+Zielordner (Standard: `%LOCALAPPDATA%\Programs\LocalDesk`, ohne Admin-Rechte) und legt Startmenü-
+und Desktop-Verknüpfung an. Deinstallieren über Windows-Einstellungen → Apps; deine Chats und
+Einstellungen in `%APPDATA%\LocalDesk` bleiben dabei erhalten.
+
+Die App ist nicht signiert. Beim ersten Start der Setup-Datei zeigt Windows deshalb „Der Computer
+wurde durch Windows geschützt“ – über „Weitere Informationen → Trotzdem ausführen“ geht es weiter.
+
 ## Weitere Befehle
 
-| Befehl              | Zweck                                           |
-| ------------------- | ----------------------------------------------- |
-| `npm test`          | Automatische Tests ausführen (Vitest)           |
-| `npm run typecheck` | TypeScript prüft alle Typen                     |
-| `npm run lint`      | Code-Regeln und Formatierung prüfen             |
-| `npm run lint:fix`  | Formatierung automatisch korrigieren            |
-| `npm run make`      | Windows-Installer bauen (Ausgabe in `out/make`) |
+| Befehl              | Zweck                                                                   |
+| ------------------- | ----------------------------------------------------------------------- |
+| `npm test`          | Automatische Tests ausführen (Vitest)                                   |
+| `npm run typecheck` | TypeScript prüft alle Typen                                             |
+| `npm run lint`      | Code-Regeln und Formatierung prüfen                                     |
+| `npm run lint:fix`  | Formatierung automatisch korrigieren                                    |
+| `npm run dist`      | Windows-Installer bauen (`out/installer/LocalDesk-Setup-<Version>.exe`) |
+| `npm run make`      | Portable ZIP-Version bauen (Ausgabe in `out/make`)                      |
 
 ## Aufbau
 

@@ -1,5 +1,4 @@
 import type { ForgeConfig } from '@electron-forge/shared-types';
-import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { VitePlugin } from '@electron-forge/plugin-vite';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
@@ -14,8 +13,7 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers: [
-    // Nur Windows: Squirrel baut die Setup.exe, ZIP eine portable Version.
-    new MakerSquirrel({}),
+    // Portable ZIP-Version (npm run make). Den Installer baut electron-builder: npm run dist.
     new MakerZIP({}, ['win32']),
   ],
   plugins: [

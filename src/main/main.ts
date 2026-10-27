@@ -1,7 +1,6 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'node:path';
 import type { DatabaseSync } from 'node:sqlite';
-import started from 'electron-squirrel-startup';
 import {
   IpcChannels,
   type AppInfo,
@@ -33,11 +32,9 @@ import { TemplateRepository } from './db/template-repository';
 import { registerServerHandlers } from './server-service';
 import { registerTemplateHandlers } from './template-service';
 
-// Der Windows-Installer (Squirrel) startet die App kurz beim Installieren,
-// um Verknüpfungen anzulegen – in dem Fall sofort wieder beenden.
-if (started) {
-  app.quit();
-}
+// Gleiche Kennung wie im Installer (electron-builder.yml, appId): Taskleiste und
+// Verknüpfungen gehören so zusammen.
+app.setAppUserModelId('io.github.jppm9.localdesk');
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({

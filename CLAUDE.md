@@ -224,7 +224,7 @@
   ID (überlebt Umbenennen/Verschieben). Gelesen wird bei jeder Anfrage frisch (Änderungen in Obsidian
   gelten sofort); Notizen ohne Kopf gehen auch. Max. 500 Zeichen pro Fakt. Löschen nur in
   Erinnerungs-Ordnern (`isMemoryPath`). Im Chat (`ChatMemory.forChat` in `obsidian-service.ts`): globale
-  + die des Projekts; passen alle in ~1500 Tokens (`MEMORY_TOKEN_BUDGET`), alle, sonst nach Ähnlichkeit
+  und die des Projekts; passen alle in ~1500 Tokens (`MEMORY_TOKEN_BUDGET`), alle, sonst nach Ähnlichkeit
   zur Frage (Fingerabdrücke pro Text zwischengespeichert), ohne Ollama die neuesten (`selectMemories`).
   Kommen VORNE in die System-Nachricht (`withMemories`, vor Projekt-Anweisungen und Systemprompt), mit
   dem Hinweis, sie zu nutzen, aber nicht ungefragt aufzuzählen; die Wissenssuche baut darauf auf
@@ -351,7 +351,7 @@
   Update nur per Knopf, gefunden → auf Klick laden und installieren (electron-updater 6.8.10) ·
   eigenes Symbol. Unsigniert → SmartScreen-Hinweis beim ersten Start. Vor „öffentlich“: Commits tragen
   die Gmail-Adresse des Nutzers – Entscheidung offen (lassen / ab jetzt noreply / Historie umschreiben).
-  Schritte: 1 Symbol ✅ · 2 Installer · 3 Versionen & Releases · 4 Update-Knopf · 5 Test ohne
+  Schritte: 1 Symbol ✅ · 2 Installer ✅ · 3 Versionen & Releases · 4 Update-Knopf · 5 Test ohne
   Veröffentlichung · 6 Repo öffentlich + erstes Release · 7 Abschlusstest & Doku
 - **App-Symbol**: `assets/icon.svg` (Sprechblase mit „>_“ auf Akzent-Blau) ist die Quelle;
   `node scripts/build-icons.mjs` erzeugt `assets/icon.png` (512 px) und `assets/icon.ico`
@@ -359,10 +359,21 @@
   `.exe`-Symbol über `packagerConfig.icon` (Forge), Fenster im Dev-Modus über `BrowserWindow.icon`
   (gebaut nimmt Windows das .exe-Symbol). Geprüft: Symbol aus LocalDesk.exe und aus dem Dev-Fenster
   zurückgelesen ✓.
+- **Installer** (`electron-builder.yml`, `npm run dist` = `forge package` + `electron-builder --win
+  --prepackaged out/LocalDesk-win32-x64 --publish never`): NSIS mit Assistent, `perMachine: false`
+  (Standard `%LOCALAPPDATA%\Programs\LocalDesk`, anderer Ordner möglich, Admin nur falls nötig),
+  Desktop + Startmenü, Deutsch, `deleteAppDataOnUninstall: false`. appId `io.github.jppm9.localdesk`,
+  gleich in `app.setAppUserModelId` (main.ts). Ausgabe `out/installer/`: Setup.exe, `.blockmap`,
+  `latest.yml` (sha512, für electron-updater). Squirrel komplett entfernt (Maker, Pakete, Startcode);
+  `npm run make` baut nur noch die ZIP. Das Install-Skript von `electron-winstaller` (nur Squirrel,
+  kommt über electron-builder mit) bleibt von npm blockiert – wird nicht gebraucht.
+  Geprüft: still installiert (`/S /currentuser /D=…`) → Ordner, Eintrag unter Apps, Verknüpfungen;
+  installierte App startet (0.1.0, Ollama, Symbol); still deinstalliert → alles weg, Datenbank bleibt ✓.
+  Den Assistenten selbst (Ordnerwahl-Dialog) hat der Nutzer von Hand zu prüfen.
 
 ## Befehle
 
-- `npm start` – Entwicklungsmodus · `npm test` – Vitest (Tests in `tests/`) · `npm run typecheck` · `npm run lint` · `npm run make` – Installer
+- `npm start` – Entwicklungsmodus · `npm test` – Vitest (Tests in `tests/`) · `npm run typecheck` · `npm run lint` · `npm run dist` – Installer · `npm run make` – portable ZIP
 - Shell-Hinweis: Nach der Node-Installation kennt eine alte Shell `node` evtl. noch nicht (PATH neu laden).
 - Commit-Nachrichten mit deutschen Anführungszeichen („…“) oder Umlauten über die Bash mit
   `git commit -F -` und Heredoc schreiben – PowerShell 5.1 verstümmelt sie bzw. der Commit schlägt fehl.
