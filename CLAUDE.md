@@ -232,14 +232,23 @@
 - Phase 2: Organisation & Parameter ✅
 - Phase 3: Modelle & Status ✅
 - Phase 4: MCP & Tool-Calling ✅
-- Phase 5: Wissen (RAG) & Projekte – in Arbeit. Entschieden: Dateiarten txt/md, PDF (Text, kein OCR),
+- Phase 5: Wissen (RAG) & Projekte ✅. Entschieden: Dateiarten txt/md, PDF (Text, kein OCR),
   docx, Quellcode · Ordner werden Projekte (Anweisungen + eigene Dokumente; Projekt-Anweisungen und
   Chat-Systemprompt gelten beide) · zusätzlich Sammlungen per Wissen-Knopf pro Chat (auch in Vorlagen) ·
   Dateien bleiben am Ort, „Neu einlesen“ per Knopf (nur Geänderte) · Suche automatisch vor jeder Antwort ·
   Quellen als [1] + Liste, Öffnen im Standardprogramm · Seitenbereich: Quellen / Projekt-Dateien /
   Kontext-Füllstand · zu voll → warnen + Knopf „Kontextlänge erhöhen“.
   Schritte: 1 Grundlage ✅ · 2 Sammlungen (Text/MD/Code) ✅ · 3 PDF/Word ✅ · 4 Wissen im Chat ✅ · 5 Projekte ✅ ·
-  6 Seitenbereich ✅ · 7 Abschlusstest
+  6 Seitenbereich ✅ · 7 Abschlusstest ✅
+  Abschlusstest (Ollama 0.40.11): 9 Dateien (2 PDF, Word, Markdown, 3 × Code, Text) in 3 s; qwen3,
+  gpt-oss, gemma4 je 6 Fragen aus Projekt-Dokumenten + Wissenssammlung + eine ohne Antwort → 18/18
+  richtige Quellen und Zitate. Gebaute App: Einlesen im Worker aus app.asar, Projekt-Chat mit Quellen aus
+  beiden, Seitenbereich ✓. Anweisung vor Suchfragen nachgeprüft (16 Fragen inkl. Code): mit 13/16 auf
+  Platz 1, 16/16 unter den ersten 3, Abstand 0,100 – ohne 13/16, 16/16, 0,091 → bleibt.
+  Beobachtet: Verlangt eine Projekt-Anweisung „immer Quelle nennen“, schreiben Modelle auch ohne Quellen
+  Nummern wie [1] (werden dann keine Knöpfe; Hinweis „keine passenden Stellen“ steht darunter).
+  gpt-oss erfand bei einer Code-Frage ein Detail, obwohl die richtige Stelle unter den Quellen war.
+  Noch nicht von Hand geprüft: Windows-Datei-/Ordnerdialoge, „Öffnen“-Knopf einer Quelle.
 - Phase 6: Memory/Obsidian
 - Phase 7: Installer & Update-Check
 

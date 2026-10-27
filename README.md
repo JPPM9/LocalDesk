@@ -3,7 +3,7 @@
 Persönliche Desktop-App für lokale KI-Modelle über [Ollama](https://ollama.com).
 Navigation inspiriert von [mudler/LocalAI](https://github.com/mudler/LocalAI) (MIT) – eigener Code, keine Kopie.
 
-Stand: **Phase 4 abgeschlossen** (MCP & Tool-Calling), Phase 5 (Wissen & Projekte) in Arbeit
+Stand: **Phase 5 abgeschlossen** (Wissen & Projekte)
 
 - Statusanzeige für Ollama, Liste der installierten Modelle
 - Chat mit Streaming: Markdown, Code-Hervorhebung, Gedanken von Denkmodellen, Tokens/s
@@ -46,6 +46,24 @@ Chat-Einstellungen die Kontextlänge erhöhen (z. B. 16 384).
 Getestet mit qwen3:14b, gpt-oss:20b und gemma4:12b. Meldet Ollama, dass ein Modell nicht
 geladen werden konnte, ist meist der Grafikspeicher noch von einem anderen Modell belegt –
 auf der Status-Seite nachsehen.
+
+## Wissen und Projekte benutzen
+
+1. Einmalig das Embedding-Modell `qwen3-embedding:0.6b` (639 MB) unter **Installierte Modelle**
+   herunterladen – es berechnet die „Fingerabdrücke“ der Textabschnitte, lokal über Ollama.
+2. **Wissen** (Seitenleiste): Sammlung anlegen, Ordner oder Dateien hinzufügen (PDF, Word, Text,
+   Markdown, Quellcode), **Einlesen**. Die Dateien bleiben, wo sie sind; nach Änderungen
+   **Neu einlesen** – das rechnet nur Neues und Geändertes.
+3. Im Chat über das Bücher-Symbol Sammlungen einschalten. Vor jeder Antwort sucht LocalDesk
+   passende Stellen; das Modell zitiert sie mit [1], [2] …
+4. **Projekte**: In der Chat-Liste ein Projekt anlegen und über das Zahnrad öffnen. Anweisungen
+   und Projekt-Dokumente gelten automatisch für jeden Chat im Projekt.
+5. Wird es eng im Kontext, färbt sich der Seitenbereich-Knopf (rechts im Chat-Kopf) gelb oder
+   rot – dort lässt sich die Kontextlänge erhöhen, mit Angabe des ungefähren Grafikspeichers.
+
+Getestet mit qwen3:14b, gpt-oss:20b und gemma4:12b. Gescannte PDFs (nur Bilder) gehen nicht –
+Texterkennung gibt es nicht. Tipp: Anweisungen wie „nenne immer eine Quelle“ verleiten Modelle
+dazu, auch ohne passende Stelle Nummern zu schreiben.
 
 ## Ollama auf einem anderen Rechner nutzen
 
