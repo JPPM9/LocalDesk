@@ -8,6 +8,9 @@ import { FuseV1Options, FuseVersion } from '@electron/fuses';
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
+    // Symbol der LocalDesk.exe (Endung ergänzt Forge: .ico unter Windows).
+    // Neu erzeugen aus assets/icon.svg: node scripts/build-icons.mjs
+    icon: 'assets/icon',
   },
   rebuildConfig: {},
   makers: [

@@ -345,7 +345,20 @@
   Schritt 3 nichts vor. gpt-oss stürzte in Schritt 3 in Ollama ab (CUDA), lief im Abschlusstest wieder.
   Gefunden und behoben: Erinnerungen trugen das Datum in UTC (kurz nach Mitternacht der Vortag) → Ortszeit.
   Noch von Hand zu prüfen: „Öffnen“ einer Vault-Quelle in Obsidian (mit deinem echten Vault).
-- Phase 7: Installer & Update-Check
+- Phase 7: Installer & Update-Check – in Arbeit. Entschieden (2026-10-27): Installer mit Assistent
+  und Ordnerwahl (NSIS über electron-builder 26.17.0 `--prepackaged` auf den Forge-Build; Squirrel
+  entfällt) · Update-Quelle GitHub-Releases, Repo wird dafür öffentlich (macht der Nutzer selbst) ·
+  Update nur per Knopf, gefunden → auf Klick laden und installieren (electron-updater 6.8.10) ·
+  eigenes Symbol. Unsigniert → SmartScreen-Hinweis beim ersten Start. Vor „öffentlich“: Commits tragen
+  die Gmail-Adresse des Nutzers – Entscheidung offen (lassen / ab jetzt noreply / Historie umschreiben).
+  Schritte: 1 Symbol ✅ · 2 Installer · 3 Versionen & Releases · 4 Update-Knopf · 5 Test ohne
+  Veröffentlichung · 6 Repo öffentlich + erstes Release · 7 Abschlusstest & Doku
+- **App-Symbol**: `assets/icon.svg` (Sprechblase mit „>_“ auf Akzent-Blau) ist die Quelle;
+  `node scripts/build-icons.mjs` erzeugt `assets/icon.png` (512 px) und `assets/icon.ico`
+  (16–256 px, PNG-Einträge) – ohne Pakete, gezeichnet mit Edge headless (transparenter Hintergrund).
+  `.exe`-Symbol über `packagerConfig.icon` (Forge), Fenster im Dev-Modus über `BrowserWindow.icon`
+  (gebaut nimmt Windows das .exe-Symbol). Geprüft: Symbol aus LocalDesk.exe und aus dem Dev-Fenster
+  zurückgelesen ✓.
 
 ## Befehle
 

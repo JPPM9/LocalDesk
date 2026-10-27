@@ -46,6 +46,11 @@ const createWindow = () => {
     minWidth: 900,
     minHeight: 600,
     title: 'LocalDesk',
+    // In der gebauten App nimmt Windows das Symbol der LocalDesk.exe; beim Entwickeln
+    // trüge das Fenster sonst das Electron-Symbol.
+    ...(!app.isPackaged && {
+      icon: path.join(app.getAppPath(), 'assets', 'icon.ico'),
+    }),
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       // Sicherheit: Die Oberfläche bekommt keinen direkten Zugriff auf Node/Dateien.
