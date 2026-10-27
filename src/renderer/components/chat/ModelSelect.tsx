@@ -21,7 +21,9 @@ export function ModelSelect({
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled || models.length === 0}
       aria-label={t('chat.model')}
-      className="rounded border border-border bg-surface px-2 py-1 font-mono text-xs outline-none focus:border-accent disabled:opacity-50"
+      // Darf schmaler werden (Name wird gekürzt), damit bei offenem Seitenbereich
+      // der Chat-Titel sichtbar bleibt.
+      className="min-w-24 shrink rounded border border-border bg-surface px-2 py-1 font-mono text-xs outline-none focus:border-accent disabled:opacity-50"
     >
       {models.length === 0 && <option value="">{t('chat.noModels')}</option>}
       {models.map((model) => (

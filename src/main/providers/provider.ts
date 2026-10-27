@@ -41,4 +41,6 @@ export interface Provider {
     inputs: string[],
     signal?: AbortSignal,
   ): Promise<Result<number[][]>>;
+  /** Technische Angaben zum Modell (Schichten, KV-Köpfe …) für die Speicher-Schätzung. */
+  modelInfo(model: string): Promise<Result<Record<string, unknown>>>;
 }

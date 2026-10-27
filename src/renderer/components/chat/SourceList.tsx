@@ -8,12 +8,16 @@ interface SourceListProps {
   sources: SourceRef[];
   /** Diese Quelle aufklappen (Klick auf [n] im Text); ändert sich mit jedem Klick. */
   focus: { n: number; at: number } | null;
+  /** Alle Textstellen gleich aufgeklappt zeigen (Seitenbereich). */
+  expanded?: boolean;
 }
 
 /** Quellen unter einer Antwort: Nummer, Datei, Seite – aufklappbar mit Textstelle. */
-export function SourceList({ sources, focus }: SourceListProps) {
+export function SourceList({ sources, focus, expanded }: SourceListProps) {
   const { t } = useTranslation();
-  const [open, setOpen] = useState<Set<number>>(new Set());
+  const [open, setOpen] = useState<Set<number>>(
+    () => new Set(expanded ? sources.map((s) => s.n) : []),
+  );
   const [error, setError] = useState<string | null>(null);
   const refs = useRef(new Map<number, HTMLLIElement>());
 

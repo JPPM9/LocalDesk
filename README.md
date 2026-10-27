@@ -26,6 +26,9 @@ Stand: **Phase 4 abgeschlossen** (MCP & Tool-Calling), Phase 5 (Wissen & Projekt
 - Wissen im Chat: Über den Wissen-Knopf (Bücher-Symbol im Chat-Kopf, auch in Vorlagen) Sammlungen
   wählen – vor jeder Antwort sucht LocalDesk passende Stellen, das Modell zitiert sie mit [1], [2] …
   Klick auf die Nummer zeigt die Textstelle, „Öffnen“ die Datei.
+- Seitenbereich neben dem Chat (Knopf ganz rechts im Chat-Kopf): Quellen der letzten Antwort,
+  Projekt (Anweisungen, Dokumente) und Kontext-Füllstand. Wird der Kontext knapp, färbt sich der
+  Knopf gelb/rot; „Kontextlänge erhöhen“ zeigt, wie viel Grafikspeicher das ungefähr kostet.
 
 ## Dateien im Chat benutzen (MCP)
 

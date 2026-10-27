@@ -8,6 +8,7 @@ import {
   type GpuStatus,
   type Result,
 } from '../shared/api';
+import { kvBytesPerToken } from '../shared/context';
 import { isValidModelName } from '../shared/download';
 import { isLocalServer } from '../shared/server';
 import { queryGpus } from './system/gpu';
@@ -105,6 +106,15 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
       isLocalServer(getProvider().baseUrl)
         ? queryGpus()
         : { available: false, reason: 'remote' },
+  );
+  // Für „Kontextlänge erhöhen“: wie viel Grafikspeicher kostet ein Token mehr?
+  ipcMain.handle(
+    IpcChannels.getKvBytesPerToken,
+    async (_event, model: unknown): Promise<number | null> => {
+      if (typeof model !== 'string' || !isValidModelName(model)) return null;
+      const info = await getProvider().modelInfo(model);
+      return info.ok ? kvBytesPerToken(info.value) : null;
+    },
   );
   registerDownloadHandlers(getProvider);
   const { manager: mcp, tools: mcpTools } = registerMcpHandlers(

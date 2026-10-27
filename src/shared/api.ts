@@ -507,6 +507,11 @@ export interface LocalDeskApi {
   /** Löscht ein Modell endgültig vom aktiven Server. */
   deleteModel: (model: string) => Promise<Result<void>>;
   getGpuStatus: () => Promise<GpuStatus>;
+  /**
+   * Grafikspeicher pro Token Kontext (KV-Cache, geschätzt); null = für dieses
+   * Modell nicht vorhersagbar.
+   */
+  getKvBytesPerToken: (model: string) => Promise<number | null>;
 
   listMcpServers: () => Promise<McpServerView[]>;
   /** Legt an oder ändert; prüft, ob die Ordner existieren, und startet den Server neu. */
@@ -613,6 +618,7 @@ export const IpcChannels = {
   listRunningModels: 'models:list-running',
   deleteModel: 'models:delete',
   getGpuStatus: 'system:gpu-status',
+  getKvBytesPerToken: 'models:kv-bytes',
   listMcpServers: 'mcp:list',
   saveMcpServer: 'mcp:save',
   setMcpServerEnabled: 'mcp:set-enabled',

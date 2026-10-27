@@ -1,10 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { FolderOpen, SlidersHorizontal, X } from 'lucide-react';
+import { FolderOpen, PanelRight, SlidersHorizontal, X } from 'lucide-react';
 import type { ChatFolder, ChatSummary, ChatTemplate } from '../../shared/api';
 import { thinkFitsModel } from '../../shared/settings';
 import { useChat } from '../chat/useChat';
+import { useContextUsage } from '../chat/useContextUsage';
+import {
+  LevelDot,
+  SidePanel,
+  type SidePanelTab,
+} from '../components/chat/SidePanel';
 import { useChatList } from '../chat/useChatList';
 import { useChatModels } from '../hooks/useChatModels';
 import { useTemplates } from '../templates/useTemplates';
@@ -59,7 +65,19 @@ export function ChatPage() {
     onCreated: (id) => navigate(`/chat/${id}`),
     onChanged: () => void chatList.refresh(),
   });
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  // Rechts ist Platz für genau ein Panel: Einstellungen ODER Seitenbereich.
+  const [settingsOpen, setSettingsOpenState] = useState(false);
+  const [sideTab, setSideTabState] = useState<SidePanelTab | null>(null);
+  const setSettingsOpen = (update: (open: boolean) => boolean) =>
+    setSettingsOpenState((open) => {
+      const next = update(open);
+      if (next) setSideTabState(null);
+      return next;
+    });
+  const setSideTab = (tab: SidePanelTab | null) => {
+    setSideTabState(tab);
+    if (tab) setSettingsOpenState(false);
+  };
 
   useShortcut('chatSettings', () => setSettingsOpen((open) => !open));
   // Esc stoppt nur, wenn gerade eine Antwort läuft – sonst passiert nichts.
@@ -132,6 +150,8 @@ export function ChatPage() {
       ? searchParams.get('project')
       : chatList.chats.find((c) => c.id === chatId)?.folderId;
   const project = chatList.folders.find((f) => f.id === projectId);
+  const contextUsage = useContextUsage(messages, settings, project);
+  const contextLevel = contextUsage.level;
 
   // „Chat damit starten“ auf der Vorlagen-Seite öffnet /chat?template=<id>.
   const templateFromUrl = searchParams.get('template');
@@ -279,6 +299,32 @@ export function ChatPage() {
                   <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-accent" />
                 )}
               </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setSideTab(
+                    sideTab
+                      ? null
+                      : contextLevel === 'ok'
+                        ? 'sources'
+                        : 'context',
+                  )
+                }
+                title={t('sidePanel.button')}
+                aria-label={t('sidePanel.button')}
+                aria-pressed={sideTab !== null}
+                className={`relative rounded border px-2 py-1 hover:bg-surface-hover ${
+                  sideTab ? 'border-accent text-accent' : 'border-border'
+                }`}
+              >
+                <PanelRight size={15} />
+                {/* Gelb/rot: Der Kontext wird knapp – auch bei geschlossenem Seitenbereich sichtbar. */}
+                {contextLevel !== 'ok' && (
+                  <span className="absolute -top-1 -right-1">
+                    <LevelDot level={contextLevel} />
+                  </span>
+                )}
+              </button>
             </>
           }
         />
@@ -356,12 +402,25 @@ export function ChatPage() {
         </div>
       </div>
 
+      {sideTab && (
+        <SidePanel
+          tab={sideTab}
+          onTab={setSideTab}
+          onClose={() => setSideTab(null)}
+          messages={messages}
+          project={project}
+          usage={contextUsage}
+          model={models.find((m) => m.name === model)}
+          settings={settings}
+          onChangeSettings={updateSettings}
+        />
+      )}
       {settingsOpen && (
         <ChatSettingsPanel
           settings={settings}
           model={models.find((m) => m.name === model)}
           onChange={updateSettings}
-          onClose={() => setSettingsOpen(false)}
+          onClose={() => setSettingsOpen(() => false)}
           onTemplateSaved={() => void refreshTemplates()}
         />
       )}

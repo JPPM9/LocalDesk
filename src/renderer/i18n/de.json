@@ -165,6 +165,42 @@
     "stats": "{{tokens}} Tokens · {{speed}} Tokens/s · {{seconds}} s",
     "toolWorking": "Arbeitet mit Tools …"
   },
+  "sidePanel": {
+    "button": "Seitenbereich (Quellen, Projekt, Kontext)",
+    "close": "Seitenbereich schließen",
+    "tab": {
+      "sources": "Quellen",
+      "project": "Projekt",
+      "context": "Kontext"
+    },
+    "noSources": "Noch keine Quellen – sie erscheinen hier, sobald eine Antwort Wissen benutzt hat.",
+    "sourcesOf": "Textstellen, die das Modell für die letzte Antwort mit Wissen bekommen hat.",
+    "noProject": "Dieser Chat gehört zu keinem Projekt. Zieh ihn in der Chat-Liste in ein Projekt, damit dessen Anweisungen und Dokumente gelten.",
+    "editProject": "Projekt bearbeiten",
+    "noInstructions": "Keine Anweisungen.",
+    "noDocuments": "Keine Projekt-Dokumente.",
+    "used": "{{used}} von {{total}} Tokens",
+    "part": {
+      "instructions": "Anweisungen",
+      "history": "Verlauf",
+      "knowledge": "Wissen",
+      "tools": "Tools"
+    },
+    "estimateHint": "Geschätzt für die nächste Anfrage (ohne deine neue Nachricht) – genau zählt erst Ollama.",
+    "level": {
+      "tight": "Es bleibt wenig Platz für die Antwort – sie könnte mitten im Satz abbrechen.",
+      "full": "Passt nicht mehr: Ollama lässt dann den Anfang des Verlaufs weg, das Modell „vergisst“ ihn."
+    },
+    "increase": "Kontextlänge auf {{size}} erhöhen",
+    "vramEstimate": "Braucht ca. {{extra}} mehr Grafikspeicher.",
+    "vramFree": "Frei sind gerade {{free}}.",
+    "vramTooMuch": "Frei sind gerade nur {{free}} – ein Teil des Modells liefe dann auf der CPU (langsamer).",
+    "vramUnknown": "Wie viel Grafikspeicher das zusätzlich braucht, lässt sich für dieses Modell nicht vorab schätzen.",
+    "atMaximum": "Das Modell kann keinen längeren Kontext. Starte einen neuen Chat oder nimm weniger Wissen/Tools dazu.",
+    "measured": "Letzte Antwort (gemessen)",
+    "measuredValue": "{{prompt}} Tokens Eingabe + {{output}} Tokens Antwort",
+    "probablyCut": "Das war am Limit – vermutlich wurde etwas abgeschnitten."
+  },
   "sources": {
     "title_one": "{{count}} Quelle",
     "title_other": "{{count}} Quellen",

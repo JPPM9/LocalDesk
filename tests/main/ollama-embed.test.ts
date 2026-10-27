@@ -82,3 +82,36 @@ describe('OllamaProvider.embed', () => {
     });
   });
 });
+
+describe('OllamaProvider.modelInfo', () => {
+  it('liefert model_info aus /api/show', async () => {
+    const { fetch, ollama } = provider(() =>
+      Response.json({
+        capabilities: ['completion'],
+        model_info: {
+          'general.architecture': 'qwen3',
+          'qwen3.block_count': 40,
+        },
+      }),
+    );
+    expect(await ollama.modelInfo('qwen3:14b')).toEqual({
+      ok: true,
+      value: { 'general.architecture': 'qwen3', 'qwen3.block_count': 40 },
+    });
+    const [url, init] = fetch.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe('http://localhost:11434/api/show');
+    expect(JSON.parse(init.body as string)).toEqual({ model: 'qwen3:14b' });
+  });
+
+  it('meldet Fehler und fehlende Angaben', async () => {
+    const missing = provider(() =>
+      Response.json({ error: "model 'x' not found" }, { status: 404 }),
+    );
+    expect(await missing.ollama.modelInfo('x')).toEqual({
+      ok: false,
+      error: "model 'x' not found",
+    });
+    const empty = provider(() => Response.json({}));
+    expect((await empty.ollama.modelInfo('x')).ok).toBe(false);
+  });
+});

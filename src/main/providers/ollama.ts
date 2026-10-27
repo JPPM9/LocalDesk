@@ -272,6 +272,27 @@ export class OllamaProvider implements Provider {
     }
   }
 
+  async modelInfo(model: string): Promise<Result<Record<string, unknown>>> {
+    try {
+      const response = await this.fetchFn(`${this.baseUrl}/api/show`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model }),
+        signal: AbortSignal.timeout(LIST_TIMEOUT_MS),
+      });
+      if (!response.ok) {
+        return { ok: false, error: await readErrorMessage(response) };
+      }
+      const body = (await response.json()) as { model_info?: unknown };
+      const info = body.model_info;
+      return typeof info === 'object' && info !== null
+        ? { ok: true, value: info as Record<string, unknown> }
+        : { ok: false, error: 'Keine Modell-Angaben' };
+    } catch (error) {
+      return { ok: false, error: describeError(error) };
+    }
+  }
+
   private offline(error: string): ProviderStatus {
     return { online: false, baseUrl: this.baseUrl, error };
   }

@@ -190,6 +190,23 @@
   Seitenleiste einen Punkt bei Projekten mit Anweisungen/Dokumenten. Löschen bricht ein laufendes
   Einlesen der Projekt-Sammlung ab. Live (gemma4): Anweisungen + Chat-Systemprompt wirken beide,
   Projekt-Dokumente werden zitiert, Umbenennen/Löschen wie beschrieben.
+- **Seitenbereich** (`SidePanel.tsx`, Knopf im Chat-Kopf; schließt sich gegenseitig mit dem
+  Einstellungs-Panel aus): Reiter Quellen (letzte Antwort mit Wissen, aufgeklappt), Projekt (Anweisungen,
+  Projekt-Dokumente mit Stand und „Neu einlesen“), Kontext. Kontext-Füllstand (`src/shared/context.ts`,
+  `useContextUsage`): Schätzung je Teil (Anweisungen, Verlauf inkl. Tool-Runden, Wissen = Auszüge der
+  letzten Antwort bzw. typische 6 × 1500 Zeichen, Tools = JSON der angebotenen MCP-Tools) gegen
+  `settings.contextLength` bzw. Ollama-Standard 4096. Faktoren gemessen mit qwen3: Text ~4 Zeichen/Token,
+  JSON ~5,5 (mit 3,5 für alles lag die Schätzung bis 50 % zu hoch → Fehlalarm); danach 1856 geschätzt vs.
+  1917 gemessen. Stufen: ok / tight (< 1024 frei für die Antwort) / full; Punkt am Kopf-Knopf auch bei
+  geschlossenem Bereich. „Kontextlänge erhöhen“ → nächste Stufe (`suggestContextLength`, gedeckelt auf
+  das Modell-Maximum), dazu Speicher-Schätzung: KV-Cache pro Token aus Ollama `/api/show` `model_info`
+  (`kvBytesPerToken`: Schichten × KV-Köpfe × (Schlüssel + Wert) × 2 Byte × 1,2; Sliding-Window-Schichten
+  zählen nicht). Gemessen 4K→16K: qwen3 174 KB/Token (Schätzung 192), gemma4 21 KB (19), gpt-oss ~1 KB
+  (Sliding Window ohne Schicht-Angabe → „nicht vorhersagbar“). Freier Grafikspeicher aus nvidia-smi.
+  Gemessene Tokens der letzten Antwort werden daneben angezeigt; am Limit → Hinweis „abgeschnitten“.
+  Kopfzeile: Titel `min-w-24 flex-1`, Modellauswahl darf schrumpfen – sonst verschwand der Titel bei
+  offenem Seitenbereich. `/api/ps` meldet bei gemma4 nur ~1,1 GB Größe (Gewichte anders gezählt) – nicht
+  für Schätzungen verwenden.
 - **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
@@ -222,7 +239,7 @@
   Quellen als [1] + Liste, Öffnen im Standardprogramm · Seitenbereich: Quellen / Projekt-Dateien /
   Kontext-Füllstand · zu voll → warnen + Knopf „Kontextlänge erhöhen“.
   Schritte: 1 Grundlage ✅ · 2 Sammlungen (Text/MD/Code) ✅ · 3 PDF/Word ✅ · 4 Wissen im Chat ✅ · 5 Projekte ✅ ·
-  6 Seitenbereich · 7 Abschlusstest
+  6 Seitenbereich ✅ · 7 Abschlusstest
 - Phase 6: Memory/Obsidian
 - Phase 7: Installer & Update-Check
 
