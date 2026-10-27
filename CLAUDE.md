@@ -217,6 +217,22 @@
   über Zwischendatei + Umbenennen (Sync-Dienste sehen keine halbe Datei). Löschen/Ändern nur eigener
   `.md` im Unterordner. Einrichten schreibt nichts in den Vault; der Unterordner entsteht beim ersten
   Speichern. Entwicklung/Tests nur mit Test-Vault im Scratchpad – nie den echten Vault des Nutzers.
+  Dateinamen beginnen nie mit Punkt (Obsidian blendet solche Dateien/Ordner aus).
+- **Erinnerungen** (`src/main/obsidian/memories.ts`, `MemoryStore`): eine Notiz pro Fakt, global in
+  `<Unterordner>/Erinnerungen/`, pro Projekt in `Projekte/<Name>/Erinnerungen/`. Frontmatter: Tag
+  `localdesk/erinnerung`, `erstellt`, bei Projekten `projekt` + `projekt-id` – zugeordnet wird über die
+  ID (überlebt Umbenennen/Verschieben). Gelesen wird bei jeder Anfrage frisch (Änderungen in Obsidian
+  gelten sofort); Notizen ohne Kopf gehen auch. Max. 500 Zeichen pro Fakt. Löschen nur in
+  Erinnerungs-Ordnern (`isMemoryPath`). Im Chat (`ChatMemory.forChat` in `obsidian-service.ts`): globale
+  + die des Projekts; passen alle in ~1500 Tokens (`MEMORY_TOKEN_BUDGET`), alle, sonst nach Ähnlichkeit
+  zur Frage (Fingerabdrücke pro Text zwischengespeichert), ohne Ollama die neuesten (`selectMemories`).
+  Kommen VORNE in die System-Nachricht (`withMemories`, vor Projekt-Anweisungen und Systemprompt), mit
+  dem Hinweis, sie zu nutzen, aber nicht ungefragt aufzuzählen; die Wissenssuche baut darauf auf
+  (Fehler gefunden: sie baute zuerst auf der Anfrage OHNE Erinnerungen auf). Kein Vault / nicht
+  erreichbar → Chat läuft ohne Erinnerungen. Einstellungen → Obsidian: Liste (global / je Projekt),
+  hinzufügen, öffnen, löschen. Kontext-Füllstand: Anteil „Erinnerungen“. Live (gemma4): globale ohne
+  Projekt ✓, Projekt-Erinnerung nur im Projekt ✓, Änderung der Notiz wirkt sofort ✓, 64 Erinnerungen →
+  gefragte ausgewählt, 1416 Tokens gemessen (geschätzt 1451) ✓.
 - **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
@@ -264,7 +280,7 @@
   schreiben nur eigener Unterordner · Merken: Modell schlägt vor (Werkzeug), du bestätigst · Fakten immer
   alle im Chat solange ≤ ~1500 Tokens, sonst nur passende · Erinnerungen global + pro Projekt ·
   Zusammenfassung als Vorschlag-Karte · Vault als Sammlung per Wissen-Knopf.
-  Schritte: 1 Vault & sicheres Schreiben ✅ · 2 Erinnerungen · 3 Merken im Chat · 4 Chats speichern ·
+  Schritte: 1 Vault & sicheres Schreiben ✅ · 2 Erinnerungen ✅ · 3 Merken im Chat · 4 Chats speichern ·
   5 Zusammenfassungen · 6 Vault als Wissen · 7 Abschlusstest
 - Phase 7: Installer & Update-Check
 

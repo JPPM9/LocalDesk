@@ -29,6 +29,10 @@ Stand: **Phase 5 abgeschlossen** (Wissen & Projekte)
 - Seitenbereich neben dem Chat (Knopf ganz rechts im Chat-Kopf): Quellen der letzten Antwort,
   Projekt (Anweisungen, Dokumente) und Kontext-Füllstand. Wird der Kontext knapp, färbt sich der
   Knopf gelb/rot; „Kontextlänge erhöhen“ zeigt, wie viel Grafikspeicher das ungefähr kostet.
+- Obsidian (Einstellungen → Obsidian): Vault wählen; LocalDesk schreibt nur in einen eigenen
+  Unterordner (Standard `LocalDesk`). Erinnerungen (Fakten über dich) liegen dort als Notizen –
+  global oder pro Projekt – und gelten automatisch in jedem passenden Chat. In Obsidian bearbeitete
+  Erinnerungen wirken sofort.
 
 ## Dateien im Chat benutzen (MCP)
 
