@@ -244,6 +244,15 @@
   gespeichert ✓; gemma4 im Projekt schlägt Ziel „projekt“ vor ✓; Merken-Knopf ✓; ohne Vault kein
   Werkzeug, kein Knopf ✓. muse-glimmer schlug bei einem Klausurdatum nichts vor (Modellsache).
   gpt-oss:20b stürzt derzeit in Ollama selbst ab (CUDA-Fehler auch bei leerem VRAM), nicht getestet.
+- **Chats speichern** (`src/main/obsidian/chat-notes.ts`, IPC `saveChatNote(chatId, answerId?)`): Main
+  liest den Chat aus der DB (nicht vom Renderer) und schreibt über `VaultWriter.writeNote` nach
+  `<Unterordner>/Chats/<JJJJ-MM-TT> <Titel>.md` – nie überschreiben, gleicher Name → „(2)“. Inhalt:
+  Frontmatter (`tags: [localdesk/chat]`, `erstellt` in Ortszeit, `modell`, `projekt`, `chat-id`),
+  `# Titel`, je „## Frage“ / „## Antwort (Modell)“, unter jeder Antwort ihre Quellen (eigene
+  Nummerierung pro Antwort). Gedanken und Tool-Aufrufe bleiben draußen; ein „…“ am Ende gekürzter
+  Titel fällt im Dateinamen weg. Knöpfe: „In Obsidian speichern“ unter jeder Antwort (Antwort + Frage,
+  beim Überfahren), Notiz-Symbol im Chat-Kopf (ganzer Chat); Rückmeldung unten rechts (`fixed`, weil
+  der Kopf `overflow-hidden` hat). Nur mit Vault. Live (gemma4, mit Quellen) ✓, „(2)“/„(3)“ ✓.
 - **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
@@ -291,7 +300,7 @@
   schreiben nur eigener Unterordner · Merken: Modell schlägt vor (Werkzeug), du bestätigst · Fakten immer
   alle im Chat solange ≤ ~1500 Tokens, sonst nur passende · Erinnerungen global + pro Projekt ·
   Zusammenfassung als Vorschlag-Karte · Vault als Sammlung per Wissen-Knopf.
-  Schritte: 1 Vault & sicheres Schreiben ✅ · 2 Erinnerungen ✅ · 3 Merken im Chat ✅ · 4 Chats speichern ·
+  Schritte: 1 Vault & sicheres Schreiben ✅ · 2 Erinnerungen ✅ · 3 Merken im Chat ✅ · 4 Chats speichern ✅ ·
   5 Zusammenfassungen · 6 Vault als Wissen · 7 Abschlusstest
 - Phase 7: Installer & Update-Check
 

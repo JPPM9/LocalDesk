@@ -580,6 +580,11 @@ export interface LocalDeskApi {
   deleteMemory: (id: string) => Promise<Result<void>>;
   /** Öffnet die Notiz im Standardprogramm (z. B. Obsidian). */
   openMemory: (id: string) => Promise<Result<void>>;
+  /**
+   * Speichert den Chat (oder mit `answerId` nur diese Antwort samt Frage) als Notiz
+   * in `<Unterordner>/Chats/`. Liefert den Pfad der Notiz relativ zum Vault.
+   */
+  saveChatNote: (chatId: string, answerId?: string) => Promise<Result<string>>;
   onMcpChanged: (listener: (servers: McpServerView[]) => void) => () => void;
 
   listCollections: () => Promise<CollectionView[]>;
@@ -693,6 +698,7 @@ export const IpcChannels = {
   addMemory: 'memories:add',
   deleteMemory: 'memories:delete',
   openMemory: 'memories:open',
+  saveChatNote: 'obsidian:save-chat',
   mcpChanged: 'mcp:changed',
   listCollections: 'knowledge:list',
   saveCollection: 'knowledge:save',

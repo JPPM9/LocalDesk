@@ -61,6 +61,8 @@ const api: LocalDeskApi = {
     ipcRenderer.invoke(IpcChannels.addMemory, text, projectId),
   deleteMemory: (id) => ipcRenderer.invoke(IpcChannels.deleteMemory, id),
   openMemory: (id) => ipcRenderer.invoke(IpcChannels.openMemory, id),
+  saveChatNote: (chatId, answerId) =>
+    ipcRenderer.invoke(IpcChannels.saveChatNote, chatId, answerId),
   onMcpChanged: (listener) => {
     const handler = (_event: IpcRendererEvent, list: McpServerView[]) =>
       listener(list);

@@ -22,6 +22,7 @@ import { ChatInput } from '../components/chat/ChatInput';
 import { ChatList } from '../components/chat/ChatList';
 import { ChatSettingsPanel } from '../components/chat/ChatSettingsPanel';
 import { MessageView } from '../components/chat/MessageView';
+import { SaveNoteButton } from '../components/chat/SaveNoteButton';
 import { ModelSelect } from '../components/chat/ModelSelect';
 import { KnowledgeButton } from '../components/knowledge/CollectionPicker';
 import { McpButton } from '../components/mcp/McpButton';
@@ -272,6 +273,12 @@ export function ChatPage() {
                   </span>
                 </Link>
               )}
+              {vaultReady &&
+                chatId &&
+                !isRunning &&
+                messages.some((m) => m.role === 'assistant' && m.content) && (
+                  <SaveNoteButton chatId={chatId} variant="icon" />
+                )}
               <KnowledgeButton
                 selected={settings.collections ?? []}
                 onChange={(ids) => setList('collections', ids)}
@@ -371,6 +378,7 @@ export function ChatPage() {
                   }
                   project={project && { id: project.id, name: project.name }}
                   canRemember={vaultReady}
+                  chatId={chatId ?? undefined}
                   usesKnowledge={Boolean(
                     settings.collections?.length || project?.collectionId,
                   )}

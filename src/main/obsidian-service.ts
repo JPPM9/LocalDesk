@@ -1,6 +1,7 @@
 import { ipcMain, shell } from 'electron';
 import {
   IpcChannels,
+  type ChatDetail,
   type ChatFolder,
   type MemoryView,
   type ObsidianStatus,
@@ -8,6 +9,7 @@ import {
 } from '../shared/api';
 import { selectMemories } from '../shared/memory';
 import type { AppSettingsRepository } from './db/app-settings-repository';
+import { CHATS_DIR, formatChatNote } from './obsidian/chat-notes';
 import { isMemoryPath, MemoryStore } from './obsidian/memories';
 import {
   checkFolderName,
@@ -26,6 +28,8 @@ export interface ObsidianDeps {
   /** Projekte (für Projekt-Erinnerungen und ihre Namen). */
   projects: () => ChatFolder[];
   embeddingModel: string;
+  /** Chats aus der Datenbank – gespeichert wird, was dort steht, nicht was die Oberfläche schickt. */
+  getChat: (chatId: string) => ChatDetail | null;
 }
 
 /** Was der Chat von den Erinnerungen braucht. */
@@ -173,6 +177,41 @@ export function registerObsidianHandlers(
       }
       const error = await shell.openPath(w.resolve(id));
       return error ? { ok: false, error } : { ok: true, value: undefined };
+    },
+  );
+
+  // Chat oder Antwort als Notiz – neue Datei, bei gleichem Namen mit „(2)“.
+  ipcMain.handle(
+    IpcChannels.saveChatNote,
+    async (
+      _event,
+      chatId: unknown,
+      answerId: unknown,
+    ): Promise<Result<string>> => {
+      const w = writer();
+      if (!w) return noVault;
+      const chat = typeof chatId === 'string' ? deps.getChat(chatId) : null;
+      if (!chat) return { ok: false, error: 'Chat nicht gefunden' };
+      const note = formatChatNote(chat, new Date(), {
+        ...(typeof answerId === 'string' && { answerId }),
+        projectName: deps.projects().find((p) => p.id === chat.folderId)?.name,
+      });
+      if (!note)
+        return {
+          ok: false,
+          error: 'Nichts zu speichern (noch keine fertige Antwort).',
+        };
+      try {
+        return {
+          ok: true,
+          value: await w.writeNote(CHATS_DIR, note.title, note.content),
+        };
+      } catch (error) {
+        return {
+          ok: false,
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
     },
   );
 

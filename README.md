@@ -37,6 +37,9 @@ Stand: **Phase 5 abgeschlossen** (Wissen & Projekte)
   eine Erinnerung vorschlagen. Du siehst sie als Karte, kannst den Text ändern und speicherst oder
   lehnst ab – ohne deine Bestätigung wird nichts gespeichert. Geht nur mit Modellen, die Werkzeuge
   können. Zusätzlich hat jede Nachricht beim Überfahren einen Knopf „Merken“.
+- Chats in Obsidian speichern: Unter jeder Antwort „In Obsidian speichern“ (Antwort mit Frage),
+  im Chat-Kopf das Notiz-Symbol (ganzer Chat). Die Notiz landet in `LocalDesk/Chats/` mit Datum,
+  Modell, Projekt und Quellen; vorhandene Notizen werden nie überschrieben.
 
 ## Dateien im Chat benutzen (MCP)
 

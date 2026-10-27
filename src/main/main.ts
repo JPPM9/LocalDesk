@@ -93,6 +93,7 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
     getProvider,
     projects: () => folders.listFolders(),
     embeddingModel: DEFAULT_EMBEDDING_MODEL,
+    getChat: (chatId) => chats.getChat(chatId),
   });
   ipcMain.handle(IpcChannels.getOllamaStatus, () =>
     getProvider().checkStatus(),

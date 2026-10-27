@@ -4,6 +4,7 @@ import { TriangleAlert } from 'lucide-react';
 import type { MessageRecord, ToolDecision } from '../../../shared/api';
 import { Markdown } from './Markdown';
 import { RememberButton } from './RememberButton';
+import { SaveNoteButton } from './SaveNoteButton';
 import { SourceList } from './SourceList';
 import { ToolCallView } from './ToolCallView';
 
@@ -16,8 +17,10 @@ interface MessageViewProps {
   ) => void;
   /** Projekt des Chats (für Erinnerungen nur im Projekt). */
   project?: { id: string; name: string };
-  /** Vault eingerichtet → Knopf „Merken“ an Nachrichten. */
+  /** Vault eingerichtet → Knöpfe „Merken“ und „In Obsidian speichern“. */
   canRemember?: boolean;
+  /** Gespeicherter Chat, zu dem die Nachricht gehört (für „In Obsidian speichern“). */
+  chatId?: string;
   /** Dieser Chat durchsucht Wissen – solange Quellen fehlen, läuft die Suche noch. */
   usesKnowledge?: boolean;
 }
@@ -27,6 +30,7 @@ export function MessageView({
   onToolDecision,
   project,
   canRemember = false,
+  chatId,
   usesKnowledge = false,
 }: MessageViewProps) {
   const { t } = useTranslation();
@@ -148,7 +152,16 @@ export function MessageView({
         </p>
       )}
       {canRemember && !streaming && message.content && (
-        <RememberButton text={message.content} project={project} />
+        <div className="flex flex-wrap items-start gap-1">
+          {chatId && (
+            <SaveNoteButton
+              chatId={chatId}
+              answerId={message.id}
+              variant="text"
+            />
+          )}
+          <RememberButton text={message.content} project={project} />
+        </div>
       )}
     </div>
   );

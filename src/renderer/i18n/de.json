@@ -457,5 +457,12 @@
     "thinkMedium": "Mittel",
     "thinkHigh": "Hoch",
     "footer": "Gilt ab der nächsten Nachricht und wird mit dem Chat gespeichert."
+  },
+  "chatNote": {
+    "saveChat": "Ganzen Chat in Obsidian speichern",
+    "saveAnswer": "Diese Antwort mit Frage als Notiz in Obsidian speichern",
+    "toObsidian": "In Obsidian speichern",
+    "saved": "Gespeichert: {{path}}",
+    "error": "Nicht gespeichert: {{error}}"
   }
 }
