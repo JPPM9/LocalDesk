@@ -87,6 +87,8 @@ export function sanitizeFileName(title: string): string {
     .replace(/[\\/:*?"<>|#^[\]\u0000-\u001f]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
+    // Kein Punkt am Anfang: Obsidian blendet solche Dateien und Ordner aus.
+    .replace(/^[. ]+/, '')
     .slice(0, FILE_NAME_MAX)
     .replace(/[. ]+$/, '');
   if (!name) name = 'Notiz';
@@ -183,6 +185,19 @@ export class VaultWriter {
       });
     }
     return notes.sort((a, b) => a.file.localeCompare(b.file, 'de'));
+  }
+
+  /** Unterordner eines Ordners im Unterordner (keine Verknüpfungen); fehlt er, leer. */
+  async subfolders(dir: string): Promise<string[]> {
+    const folderPath = this.resolve(dir);
+    try {
+      const entries = await readdir(folderPath, { withFileTypes: true });
+      return entries
+        .filter((e) => e.isDirectory() && !e.isSymbolicLink())
+        .map((e) => path.join(dir, e.name));
+    } catch {
+      return [];
+    }
   }
 
   /** Legt Ordner an – erst nachdem geprüft ist, dass keiner davon eine Verknüpfung ist. */

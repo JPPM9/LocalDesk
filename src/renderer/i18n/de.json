@@ -181,6 +181,7 @@
     "noDocuments": "Keine Projekt-Dokumente.",
     "used": "{{used}} von {{total}} Tokens",
     "part": {
+      "memory": "Erinnerungen",
       "instructions": "Anweisungen",
       "history": "Verlauf",
       "knowledge": "Wissen",
@@ -336,6 +337,20 @@
     "lanHelp1": "Ollama muss im Netzwerk lauschen: Umgebungsvariable OLLAMA_HOST=0.0.0.0 setzen und Ollama neu starten.",
     "lanHelp2": "Die Windows-Firewall dort muss eingehende Verbindungen auf Port 11434 erlauben (nur im privaten Netzwerk).",
     "lanHelp3": "Hier die IP-Adresse dieses Rechners eintragen und mit „Testen“ prüfen. Hinweis: Die GPU-Auslastung kann LocalDesk nur bei einem Server auf diesem PC anzeigen."
+  },
+  "memories": {
+    "title_one": "{{count}} Erinnerung",
+    "title_other": "{{count}} Erinnerungen",
+    "intro": "Fakten über dich, die jedes Modell kennt – jede als Notiz im Vault (bearbeitbar in Obsidian). Projekt-Erinnerungen gelten nur in Chats dieses Projekts.",
+    "reload": "Neu laden",
+    "global": "Für alle Chats",
+    "project": "Projekt „{{name}}“",
+    "placeholder": "Neue Erinnerung, z. B. „Ich studiere Statistik im 3. Semester.“",
+    "scope": "Gilt für",
+    "add": "Merken",
+    "open": "Notiz öffnen",
+    "delete": "Erinnerung löschen",
+    "confirmDelete": "Erinnerung „{{text}}“ löschen? Die Notiz wird aus dem Vault entfernt."
   },
   "obsidian": {
     "title": "Obsidian",

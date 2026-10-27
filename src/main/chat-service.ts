@@ -11,11 +11,13 @@ import {
 } from '../shared/api';
 import { applyChatEvent, titleFromMessage } from '../shared/chat';
 import { knowledgeQuery, withKnowledge } from '../shared/knowledge';
+import { withMemories } from '../shared/memory';
 import { buildChatRequest } from '../shared/settings';
 import { describeChatError } from './chat-errors';
 import type { ChatRepository } from './db/chat-repository';
 import type { ChatKnowledge } from './knowledge-service';
 import type { McpTools } from './mcp-service';
+import type { ChatMemory } from './obsidian-service';
 import type { Provider } from './providers/provider';
 import { runAnswer, type ToolRuntime } from './tool-loop';
 
@@ -38,6 +40,8 @@ export function registerChatHandlers(
   knowledge: ChatKnowledge,
   /** Projekt eines Chats (Anweisungen, Projekt-Dokumente). */
   projectOf: (folderId: string) => ChatFolder | null,
+  /** Erinnerungen über dich aus dem Obsidian-Vault. */
+  memory: ChatMemory,
 ) {
   const running = new Map<string, AbortController>();
   /** Rückfragen, auf deren Antwort ein Tool-Aufruf wartet (Aufruf-ID → Antwort). */
@@ -144,6 +148,7 @@ export function registerChatHandlers(
       chatRequest,
       runtime,
       knowledgeSearch,
+      { projectId: project?.id, question: request.content },
       answer,
       controller,
     ).finally(() => running.delete(request.requestId));
@@ -190,6 +195,7 @@ export function registerChatHandlers(
     chatRequest: ChatRequest,
     runtime: ToolRuntime,
     knowledgeSearch: { collectionIds: string[]; query: string } | null,
+    memoryContext: { projectId: string | undefined; question: string },
     initial: MessageRecord,
     controller: AbortController,
   ) {
@@ -215,9 +221,13 @@ export function registerChatHandlers(
     };
 
     try {
-      // Erst im Wissen suchen, dann antworten. Geht die Suche schief, kommt die
+      // Erinnerungen über dich (frisch aus dem Vault) vorne in die System-Nachricht.
+      let request = withMemories(
+        chatRequest,
+        await memory.forChat(memoryContext.projectId, memoryContext.question),
+      );
+      // Dann im Wissen suchen und antworten. Geht die Suche schief, kommt die
       // Antwort ohne Wissen – mit Hinweis, statt gar nicht.
-      let request = chatRequest;
       if (knowledgeSearch) {
         const found = await knowledge.search(
           knowledgeSearch.collectionIds,
@@ -226,7 +236,7 @@ export function registerChatHandlers(
         controller.signal.throwIfAborted();
         if (found.ok) {
           emit({ requestId, type: 'sources', sources: found.value });
-          request = withKnowledge(chatRequest, found.value);
+          request = withKnowledge(request, found.value);
         } else {
           emit({ requestId, type: 'sources', sources: [], error: found.error });
         }

@@ -99,6 +99,18 @@ export interface ObsidianStatus {
   error?: string;
 }
 
+/** Ein gemerkter Fakt über dich – eine Notiz im eigenen Unterordner des Vaults. */
+export interface MemoryView {
+  /** Pfad der Notiz relativ zum LocalDesk-Unterordner. */
+  id: string;
+  text: string;
+  /** Datum (JJJJ-MM-TT), falls in der Notiz vermerkt. */
+  created?: string;
+  /** Gehört zu diesem Projekt; fehlt = gilt in allen Chats. */
+  projectId?: string;
+  projectName?: string;
+}
+
 /** Woher eine Sammlung ihre Dateien bekommt. Die Dateien bleiben, wo sie sind. */
 export interface KnowledgeSource {
   kind: 'folder' | 'file';
@@ -548,6 +560,17 @@ export interface LocalDeskApi {
   setObsidian: (vaultPath: string, folder: string) => Promise<ObsidianStatus>;
   /** Vergisst den Vault – im Vault selbst wird nichts gelöscht. */
   clearObsidian: () => Promise<void>;
+  /** Alle Erinnerungen (global und aus Projekten), frisch aus dem Vault gelesen. */
+  listMemories: () => Promise<Result<MemoryView[]>>;
+  /** Neue Erinnerung; `projectId` null = gilt in allen Chats. */
+  addMemory: (
+    text: string,
+    projectId: string | null,
+  ) => Promise<Result<MemoryView>>;
+  /** Löscht die Notiz einer Erinnerung im eigenen Unterordner. */
+  deleteMemory: (id: string) => Promise<Result<void>>;
+  /** Öffnet die Notiz im Standardprogramm (z. B. Obsidian). */
+  openMemory: (id: string) => Promise<Result<void>>;
   onMcpChanged: (listener: (servers: McpServerView[]) => void) => () => void;
 
   listCollections: () => Promise<CollectionView[]>;
@@ -650,6 +673,10 @@ export const IpcChannels = {
   getObsidian: 'obsidian:get',
   setObsidian: 'obsidian:set',
   clearObsidian: 'obsidian:clear',
+  listMemories: 'memories:list',
+  addMemory: 'memories:add',
+  deleteMemory: 'memories:delete',
+  openMemory: 'memories:open',
   mcpChanged: 'mcp:changed',
   listCollections: 'knowledge:list',
   saveCollection: 'knowledge:save',

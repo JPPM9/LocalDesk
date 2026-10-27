@@ -25,12 +25,19 @@ export function estimateTokens(
   return Math.ceil(text.length / charsPerToken);
 }
 
-export type ContextPart = 'instructions' | 'history' | 'knowledge' | 'tools';
+export type ContextPart =
+  | 'memory'
+  | 'instructions'
+  | 'history'
+  | 'knowledge'
+  | 'tools';
 
 /** Auszüge mit Hinweistext, wenn noch keine Wissenssuche gelaufen ist: 6 × ~1500 Zeichen. */
 const TYPICAL_KNOWLEDGE_CHARS = 6 * 1500 + 300;
 
 export interface ContextInput {
+  /** Der Erinnerungs-Teil der System-Nachricht (leer = keine). */
+  memoryText: string;
   /** Projekt-Anweisungen und Systemprompt. */
   instructions: string;
   /** Verlauf, wie er ans Modell geht (inkl. Tool-Runden). */
@@ -69,6 +76,7 @@ export function estimateContextParts(
       )
     : 0;
   return {
+    memory: input.memoryText ? estimateTokens(input.memoryText) : 0,
     instructions: input.instructions ? estimateTokens(input.instructions) : 0,
     history,
     knowledge,

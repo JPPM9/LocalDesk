@@ -91,6 +91,7 @@ describe('sanitizeFileName', () => {
     );
     expect(sanitizeFileName('  Ende mit Punkt...  ')).toBe('Ende mit Punkt');
     expect(sanitizeFileName('CON')).toBe('CON_');
+    expect(sanitizeFileName('.versteckt')).toBe('versteckt');
     expect(sanitizeFileName('???')).toBe('Notiz');
     expect(sanitizeFileName('x'.repeat(300))).toHaveLength(100);
   });

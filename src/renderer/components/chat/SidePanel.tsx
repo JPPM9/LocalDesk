@@ -173,6 +173,7 @@ function ProjectTab({ project }: { project: ChatFolder | undefined }) {
 }
 
 const PART_COLORS: Record<ContextPart, string> = {
+  memory: 'bg-accent/50',
   instructions: 'bg-muted',
   history: 'bg-accent',
   knowledge: 'bg-ok',

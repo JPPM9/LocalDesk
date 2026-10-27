@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type {
   ChatFolder,
   ChatSettings,
+  MemoryView,
   MessageRecord,
   ToolDefinition,
 } from '../../shared/api';
@@ -12,6 +13,7 @@ import {
   OLLAMA_DEFAULT_CONTEXT,
   type ContextUsage,
 } from '../../shared/context';
+import { memoryPrompt, selectMemories } from '../../shared/memory';
 import { effectivePermission } from '../../shared/permissions';
 import { useMcpServers } from '../hooks/useMcpServers';
 
@@ -25,6 +27,14 @@ export function useContextUsage(
   project: ChatFolder | undefined,
 ): ContextUsage {
   const servers = useMcpServers();
+  const [memories, setMemories] = useState<MemoryView[]>([]);
+
+  // Erinnerungen neu lesen, wenn sich der Chat-Verlauf ändert (neue Erinnerung möglich).
+  useEffect(() => {
+    void window.api
+      .listMemories()
+      .then((result) => setMemories(result.ok ? result.value : []));
+  }, [messages.length]);
 
   return useMemo(() => {
     // Nur Tools laufender Server dieses Chats, ohne die ausgeschalteten.
@@ -46,7 +56,12 @@ export function useContextUsage(
     const lastSources = [...messages]
       .reverse()
       .find((m) => m.sources && m.sources.length > 0)?.sources;
+    // Wie im Main-Prozess: globale + Projekt-Erinnerungen, höchstens im Budget.
+    const chatMemories = selectMemories(
+      memories.filter((m) => !m.projectId || m.projectId === project?.id),
+    );
     const parts = estimateContextParts({
+      memoryText: memoryPrompt(chatMemories.map((m) => m.text)),
       instructions: [project?.instructions, settings.systemPrompt]
         .filter(Boolean)
         .join('\n\n'),
@@ -63,5 +78,5 @@ export function useContextUsage(
       parts,
       settings.contextLength ?? OLLAMA_DEFAULT_CONTEXT,
     );
-  }, [messages, settings, project, servers]);
+  }, [messages, settings, project, servers, memories]);
 }

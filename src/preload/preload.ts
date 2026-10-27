@@ -56,6 +56,11 @@ const api: LocalDeskApi = {
   setObsidian: (vaultPath, folder) =>
     ipcRenderer.invoke(IpcChannels.setObsidian, vaultPath, folder),
   clearObsidian: () => ipcRenderer.invoke(IpcChannels.clearObsidian),
+  listMemories: () => ipcRenderer.invoke(IpcChannels.listMemories),
+  addMemory: (text, projectId) =>
+    ipcRenderer.invoke(IpcChannels.addMemory, text, projectId),
+  deleteMemory: (id) => ipcRenderer.invoke(IpcChannels.deleteMemory, id),
+  openMemory: (id) => ipcRenderer.invoke(IpcChannels.openMemory, id),
   onMcpChanged: (listener) => {
     const handler = (_event: IpcRendererEvent, list: McpServerView[]) =>
       listener(list);

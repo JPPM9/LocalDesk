@@ -16,7 +16,13 @@ describe('estimateTokens', () => {
 });
 
 describe('contextUsage', () => {
-  const parts = { instructions: 100, history: 1500, knowledge: 1800, tools: 0 };
+  const parts = {
+    memory: 0,
+    instructions: 100,
+    history: 1500,
+    knowledge: 1800,
+    tools: 0,
+  };
 
   it('summiert die Anteile und bewertet den freien Platz', () => {
     expect(contextUsage(parts, 8192)).toMatchObject({
@@ -97,6 +103,7 @@ describe('kvBytesPerToken', () => {
 
 describe('estimateContextParts', () => {
   const base = {
+    memoryText: '',
     instructions: '',
     history: [],
     knowledgeActive: false,
@@ -119,7 +126,10 @@ describe('estimateContextParts', () => {
     });
     expect(parts.instructions).toBe(10);
     expect(parts.history).toBeGreaterThan(100 + 4);
-    expect(parts).toMatchObject({ knowledge: 0, tools: 0 });
+    expect(parts).toMatchObject({ memory: 0, knowledge: 0, tools: 0 });
+    expect(
+      estimateContextParts({ ...base, memoryText: 'x'.repeat(80) }).memory,
+    ).toBe(20);
   });
 
   it('nimmt für Wissen die Auszüge der letzten Antwort, sonst einen typischen Wert', () => {

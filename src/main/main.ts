@@ -17,7 +17,10 @@ import { registerDownloadHandlers } from './download-service';
 import { AppSettingsRepository } from './db/app-settings-repository';
 import { KnowledgeRepository } from './db/knowledge-repository';
 import { registerObsidianHandlers } from './obsidian-service';
-import { registerKnowledgeHandlers } from './knowledge-service';
+import {
+  DEFAULT_EMBEDDING_MODEL,
+  registerKnowledgeHandlers,
+} from './knowledge-service';
 import { McpRepository } from './db/mcp-repository';
 import { registerMcpHandlers } from './mcp-service';
 import { openDatabase } from './db/database';
@@ -82,11 +85,15 @@ const createWindow = () => {
 
 function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
   registerTemplateHandlers(new TemplateRepository(db));
-  // Obsidian-Vault (Phase 6): Erinnerungen, gespeicherte Chats, Zusammenfassungen.
-  registerObsidianHandlers(new AppSettingsRepository(db));
   // Welcher Ollama-Server gerade gilt, entscheidet das aktive Server-Profil.
   const { getProvider } = registerServerHandlers(new ServerRepository(db));
   const folders = new FolderRepository(db);
+  // Obsidian-Vault (Phase 6): Erinnerungen, gespeicherte Chats, Zusammenfassungen.
+  const obsidian = registerObsidianHandlers(new AppSettingsRepository(db), {
+    getProvider,
+    projects: () => folders.listFolders(),
+    embeddingModel: DEFAULT_EMBEDDING_MODEL,
+  });
   ipcMain.handle(IpcChannels.getOllamaStatus, () =>
     getProvider().checkStatus(),
   );
@@ -139,6 +146,7 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
     mcpTools,
     knowledge.knowledge,
     (folderId) => folders.getFolder(folderId),
+    obsidian.chatMemory,
   );
 
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({

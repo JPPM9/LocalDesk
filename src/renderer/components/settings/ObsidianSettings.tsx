@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CircleCheck, FolderOpen, TriangleAlert } from 'lucide-react';
 import type { ObsidianStatus } from '../../../shared/api';
+import { MemoryList } from './MemoryList';
 import { Field } from './SettingsFields';
 
 const DEFAULT_FOLDER = 'LocalDesk';
@@ -97,6 +98,8 @@ export function ObsidianSettings() {
           </div>
         </div>
       )}
+
+      {status?.ok && !editing && <MemoryList />}
 
       {(editing || status === null) &&
         (editing ? (
