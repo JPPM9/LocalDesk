@@ -153,6 +153,12 @@ export function ChatPage() {
   const contextUsage = useContextUsage(messages, settings, project);
   const contextLevel = contextUsage.level;
 
+  // „Merken“ gibt es nur mit eingerichtetem Vault (beim Öffnen des Chats geprüft).
+  const [vaultReady, setVaultReady] = useState(false);
+  useEffect(() => {
+    void window.api.getObsidian().then((status) => setVaultReady(!!status?.ok));
+  }, [chatId]);
+
   // „Chat damit starten“ auf der Vorlagen-Seite öffnet /chat?template=<id>.
   const templateFromUrl = searchParams.get('template');
   useEffect(() => {
@@ -360,9 +366,11 @@ export function ChatPage() {
               >
                 <MessageView
                   message={message}
-                  onToolDecision={(callId, decision) =>
-                    void window.api.chatToolDecision(callId, decision)
+                  onToolDecision={(callId, decision, args) =>
+                    void window.api.chatToolDecision(callId, decision, args)
                   }
+                  project={project && { id: project.id, name: project.name }}
+                  canRemember={vaultReady}
                   usesKnowledge={Boolean(
                     settings.collections?.length || project?.collectionId,
                   )}

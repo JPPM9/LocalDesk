@@ -7,16 +7,18 @@ import {
   type ChatSendRequest,
   type ChatStreamEvent,
   type MessageRecord,
+  type ToolAnswer,
   type ToolDecision,
 } from '../shared/api';
 import { applyChatEvent, titleFromMessage } from '../shared/chat';
 import { knowledgeQuery, withKnowledge } from '../shared/knowledge';
-import { withMemories } from '../shared/memory';
+import { MEMORY_TOOL_SERVER, withMemories } from '../shared/memory';
 import { buildChatRequest } from '../shared/settings';
 import { describeChatError } from './chat-errors';
 import type { ChatRepository } from './db/chat-repository';
 import type { ChatKnowledge } from './knowledge-service';
 import type { McpTools } from './mcp-service';
+import { checkMemoryArguments, memoryTool } from './obsidian/memory-tool';
 import type { ChatMemory } from './obsidian-service';
 import type { Provider } from './providers/provider';
 import { runAnswer, type ToolRuntime } from './tool-loop';
@@ -45,7 +47,7 @@ export function registerChatHandlers(
 ) {
   const running = new Map<string, AbortController>();
   /** Rückfragen, auf deren Antwort ein Tool-Aufruf wartet (Aufruf-ID → Antwort). */
-  const pendingDecisions = new Map<string, (decision: ToolDecision) => void>();
+  const pendingDecisions = new Map<string, (answer: ToolAnswer) => void>();
 
   ipcMain.handle(IpcChannels.listChats, () => chats.listChats());
 
@@ -129,7 +131,6 @@ export function registerChatHandlers(
       settings,
       project?.instructions,
     );
-    const runtime = toolRuntime(settings.mcpServers ?? [], controller.signal);
     // Projekt-Dokumente werden immer durchsucht, dazu die per Wissen-Knopf gewählten.
     const collectionIds = [
       ...(project?.collectionId ? [project.collectionId] : []),
@@ -146,7 +147,7 @@ export function registerChatHandlers(
       getProvider(),
       event.sender,
       chatRequest,
-      runtime,
+      settings.mcpServers ?? [],
       knowledgeSearch,
       { projectId: project?.id, question: request.content },
       answer,
@@ -161,28 +162,62 @@ export function registerChatHandlers(
   // Nur Antworten auf Rückfragen, die wirklich offen sind, zählen.
   ipcMain.handle(
     IpcChannels.chatToolDecision,
-    (_event, callId: unknown, decision: unknown) => {
+    (_event, callId: unknown, decision: unknown, args: unknown) => {
       if (typeof callId !== 'string') return;
       if (!(TOOL_DECISIONS as readonly unknown[]).includes(decision)) return;
-      pendingDecisions.get(callId)?.(decision as ToolDecision);
+      // Geänderte Eingaben prüft später das Werkzeug selbst (checkArguments).
+      const changed =
+        typeof args === 'object' && args !== null && !Array.isArray(args)
+          ? (args as Record<string, unknown>)
+          : undefined;
+      pendingDecisions.get(callId)?.({
+        decision: decision as ToolDecision,
+        ...(changed && { arguments: changed }),
+      });
     },
   );
 
-  /** Verbindet die Tool-Schleife mit den MCP-Servern dieses Chats und den Rückfragen. */
-  function toolRuntime(serverIds: string[], signal: AbortSignal): ToolRuntime {
+  /**
+   * Verbindet die Tool-Schleife mit den MCP-Servern dieses Chats und den Rückfragen.
+   * Mit `memoryProject` (gesetzt, wenn ein Vault eingerichtet ist und das Modell
+   * Tools kann) kommt „Erinnerung speichern“ dazu – im Projekt mit Wahl des Ziels.
+   */
+  function toolRuntime(
+    serverIds: string[],
+    signal: AbortSignal,
+    memoryTarget: { projectId: string | undefined } | null,
+  ): ToolRuntime {
     return {
-      tools: () => mcpTools.offered(serverIds),
-      call: (tool, args, callSignal) => mcpTools.call(tool, args, callSignal),
+      tools: () => [
+        ...(memoryTarget
+          ? [memoryTool(memoryTarget.projectId !== undefined)]
+          : []),
+        ...mcpTools.offered(serverIds),
+      ],
+      call: async (tool, args, callSignal) => {
+        if (tool.serverId !== MEMORY_TOOL_SERVER) {
+          return mcpTools.call(tool, args, callSignal);
+        }
+        const checked = checkMemoryArguments(args);
+        if (!checked) return { text: 'Ungültige Erinnerung.', isError: true };
+        const projectId =
+          checked.scope === 'projekt' ? memoryTarget?.projectId : undefined;
+        const saved = await memory.save(checked.text, projectId);
+        return {
+          text: `Erinnerung gespeichert${saved.projectName ? ` (Projekt ${saved.projectName})` : ''}: ${saved.text}`,
+          isError: false,
+        };
+      },
       allowAlways: (tool) => mcpTools.allowAlways(tool),
       ask: (call) =>
-        new Promise<ToolDecision>((resolve) => {
-          const finish = (decision: ToolDecision) => {
+        new Promise<ToolAnswer>((resolve) => {
+          const finish = (answer: ToolAnswer) => {
             pendingDecisions.delete(call.id);
             signal.removeEventListener('abort', onAbort);
-            resolve(decision);
+            resolve(answer);
           };
           // „Stopp“ während der Rückfrage = nicht ausführen.
-          const onAbort = () => finish('deny');
+          const onAbort = () => finish({ decision: 'deny' });
           pendingDecisions.set(call.id, finish);
           signal.addEventListener('abort', onAbort, { once: true });
         }),
@@ -193,7 +228,7 @@ export function registerChatHandlers(
     provider: Provider,
     sender: WebContents,
     chatRequest: ChatRequest,
-    runtime: ToolRuntime,
+    serverIds: string[],
     knowledgeSearch: { collectionIds: string[]; query: string } | null,
     memoryContext: { projectId: string | undefined; question: string },
     initial: MessageRecord,
@@ -241,6 +276,15 @@ export function registerChatHandlers(
           emit({ requestId, type: 'sources', sources: [], error: found.error });
         }
       }
+      // „Erinnerung speichern“ nur mit Vault und nur für Modelle, die Tools können.
+      const offerMemory =
+        memory.available() && (await supportsTools(provider, request.model));
+      controller.signal.throwIfAborted();
+      const runtime = toolRuntime(
+        serverIds,
+        controller.signal,
+        offerMemory ? { projectId: memoryContext.projectId } : null,
+      );
       await runAnswer({
         provider,
         request,
@@ -263,6 +307,20 @@ export function registerChatHandlers(
     }
     save();
   }
+}
+
+/** Kann das Modell Tools aufrufen? Im Zweifel (Liste nicht ladbar) nein. */
+async function supportsTools(
+  provider: Provider,
+  model: string,
+): Promise<boolean> {
+  const models = await provider.listModels();
+  return (
+    models.ok &&
+    models.value.some(
+      (m) => m.name === model && m.capabilities.includes('tools'),
+    )
+  );
 }
 
 // Die Oberfläche gilt als nicht vertrauenswürdig: Eingaben vom Renderer prüfen wir.

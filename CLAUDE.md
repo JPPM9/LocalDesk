@@ -233,6 +233,17 @@
   hinzufügen, öffnen, löschen. Kontext-Füllstand: Anteil „Erinnerungen“. Live (gemma4): globale ohne
   Projekt ✓, Projekt-Erinnerung nur im Projekt ✓, Änderung der Notiz wirkt sofort ✓, 64 Erinnerungen →
   gefragte ausgewählt, 1416 Tokens gemessen (geschätzt 1451) ✓.
+- **Merken im Chat** (`src/main/obsidian/memory-tool.ts`): eingebautes Werkzeug `save_memory`
+  (Server-ID `localdesk:memory`, kein MCP), nur angeboten, wenn ein Vault eingerichtet ist UND das
+  Modell laut Ollama `tools` kann. Fragt immer nach (`permission: 'ask'`); über `editable` darfst du
+  den Text (und im Projekt das Ziel global/projekt) in der Karte ändern – die Tool-Schleife prüft die
+  geänderten Eingaben mit `checkArguments`, ignoriert sie bei normalen Werkzeugen und kennt bei
+  bearbeitbaren kein „Immer erlauben“. IPC `chatToolDecision(callId, decision, args?)`. Dazu Knopf
+  „Merken“ (beim Überfahren) an jeder Nachricht → Editor mit dem Nachrichtentext zum Kürzen.
+  Live: gemma4 schlägt vor, bearbeiteter Text gespeichert ✓; qwen3 „Merk dir“ → Ablehnen, nichts
+  gespeichert ✓; gemma4 im Projekt schlägt Ziel „projekt“ vor ✓; Merken-Knopf ✓; ohne Vault kein
+  Werkzeug, kein Knopf ✓. muse-glimmer schlug bei einem Klausurdatum nichts vor (Modellsache).
+  gpt-oss:20b stürzt derzeit in Ollama selbst ab (CUDA-Fehler auch bei leerem VRAM), nicht getestet.
 - **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
@@ -280,7 +291,7 @@
   schreiben nur eigener Unterordner · Merken: Modell schlägt vor (Werkzeug), du bestätigst · Fakten immer
   alle im Chat solange ≤ ~1500 Tokens, sonst nur passende · Erinnerungen global + pro Projekt ·
   Zusammenfassung als Vorschlag-Karte · Vault als Sammlung per Wissen-Knopf.
-  Schritte: 1 Vault & sicheres Schreiben ✅ · 2 Erinnerungen ✅ · 3 Merken im Chat · 4 Chats speichern ·
+  Schritte: 1 Vault & sicheres Schreiben ✅ · 2 Erinnerungen ✅ · 3 Merken im Chat ✅ · 4 Chats speichern ·
   5 Zusammenfassungen · 6 Vault als Wissen · 7 Abschlusstest
 - Phase 7: Installer & Update-Check
 

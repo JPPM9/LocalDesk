@@ -9,20 +9,51 @@ import {
   Wrench,
 } from 'lucide-react';
 import type { ToolCallRecord, ToolDecision } from '../../../shared/api';
+import { MEMORY_TOOL_SERVER } from '../../../shared/memory';
 import { summarizeArguments } from '../../../shared/tools';
+import { MemoryEditor } from './MemoryEditor';
 
 interface ToolCallViewProps {
   call: ToolCallRecord;
-  onDecision: (callId: string, decision: ToolDecision) => void;
+  onDecision: (
+    callId: string,
+    decision: ToolDecision,
+    args?: Record<string, unknown>,
+  ) => void;
+  /** Projekt des Chats – dann darf eine Erinnerung nur für das Projekt gelten. */
+  projectName?: string;
 }
 
 /**
  * Ein Tool-Aufruf im Chat. Wartet er auf Freigabe, erscheint eine Karte mit
  * Knöpfen; sonst eine eingeklappte Zeile, die Eingabe und Ergebnis zeigt.
  */
-export function ToolCallView({ call, onDecision }: ToolCallViewProps) {
+export function ToolCallView({
+  call,
+  onDecision,
+  projectName,
+}: ToolCallViewProps) {
   const { t } = useTranslation();
   const summary = summarizeArguments(call.arguments);
+  const isMemory = call.serverId === MEMORY_TOOL_SERVER;
+
+  // „Erinnerung speichern“: Vorschlag bearbeiten, dann speichern oder ablehnen.
+  if (isMemory && call.status === 'asking') {
+    const { text, scope } = call.arguments;
+    return (
+      <MemoryEditor
+        title={t('toolCall.memoryAsk')}
+        initialText={typeof text === 'string' ? text : ''}
+        initialScope={scope === 'projekt' ? 'projekt' : 'global'}
+        projectName={projectName}
+        onSave={(newText, newScope) =>
+          onDecision(call.id, 'once', { text: newText, scope: newScope })
+        }
+        onCancel={() => onDecision(call.id, 'deny')}
+        cancelLabel={t('toolCall.deny')}
+      />
+    );
+  }
 
   if (call.status === 'asking') {
     return (
@@ -77,14 +108,20 @@ export function ToolCallView({ call, onDecision }: ToolCallViewProps) {
     <details className="group rounded border border-border bg-surface text-[13px]">
       <summary className="flex cursor-pointer items-center gap-2 px-3 py-1.5 select-none">
         <StatusIcon status={call.status} />
-        <span className="font-mono">{call.toolName}</span>
+        {isMemory ? (
+          <span>{t('toolCall.memoryTool')}</span>
+        ) : (
+          <span className="font-mono">{call.toolName}</span>
+        )}
         {summary && (
           <span className="min-w-0 truncate font-mono text-muted">
             {summary}
           </span>
         )}
         <span className="ml-auto shrink-0 text-[11px] text-muted">
-          {t(`toolCall.status.${call.status}`)}
+          {isMemory && call.status === 'done'
+            ? t('toolCall.memorySaved')
+            : t(`toolCall.status.${call.status}`)}
         </span>
       </summary>
       <div className="space-y-2 border-t border-border px-3 py-2">

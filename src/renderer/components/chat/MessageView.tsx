@@ -3,12 +3,21 @@ import { useTranslation } from 'react-i18next';
 import { TriangleAlert } from 'lucide-react';
 import type { MessageRecord, ToolDecision } from '../../../shared/api';
 import { Markdown } from './Markdown';
+import { RememberButton } from './RememberButton';
 import { SourceList } from './SourceList';
 import { ToolCallView } from './ToolCallView';
 
 interface MessageViewProps {
   message: MessageRecord;
-  onToolDecision: (callId: string, decision: ToolDecision) => void;
+  onToolDecision: (
+    callId: string,
+    decision: ToolDecision,
+    args?: Record<string, unknown>,
+  ) => void;
+  /** Projekt des Chats (für Erinnerungen nur im Projekt). */
+  project?: { id: string; name: string };
+  /** Vault eingerichtet → Knopf „Merken“ an Nachrichten. */
+  canRemember?: boolean;
   /** Dieser Chat durchsucht Wissen – solange Quellen fehlen, läuft die Suche noch. */
   usesKnowledge?: boolean;
 }
@@ -16,6 +25,8 @@ interface MessageViewProps {
 export function MessageView({
   message,
   onToolDecision,
+  project,
+  canRemember = false,
   usesKnowledge = false,
 }: MessageViewProps) {
   const { t } = useTranslation();
@@ -25,10 +36,19 @@ export function MessageView({
 
   if (message.role === 'user') {
     return (
-      <div className="flex justify-end">
-        <div className="max-w-[80%] rounded-lg bg-accent-soft px-4 py-2.5 whitespace-pre-wrap">
-          {message.content}
+      <div className="group space-y-1">
+        <div className="flex justify-end">
+          <div className="max-w-[80%] rounded-lg bg-accent-soft px-4 py-2.5 whitespace-pre-wrap">
+            {message.content}
+          </div>
         </div>
+        {canRemember && (
+          <RememberButton
+            text={message.content}
+            project={project}
+            align="end"
+          />
+        )}
       </div>
     );
   }
@@ -51,7 +71,7 @@ export function MessageView({
   const sources = message.sources ?? [];
 
   return (
-    <div className="space-y-2">
+    <div className="group space-y-2">
       <div className="font-mono text-[11px] text-muted">{message.model}</div>
 
       {message.thinking && (
@@ -72,6 +92,7 @@ export function MessageView({
               key={call.id}
               call={call}
               onDecision={onToolDecision}
+              projectName={project?.name}
             />
           ))}
         </div>
@@ -125,6 +146,9 @@ export function MessageView({
             }),
           })}
         </p>
+      )}
+      {canRemember && !streaming && message.content && (
+        <RememberButton text={message.content} project={project} />
       )}
     </div>
   );

@@ -338,6 +338,15 @@ export interface ToolCallRecord {
 export type ToolDecision = 'once' | 'always' | 'deny';
 
 /**
+ * Antwort auf eine Rückfrage – bei bearbeitbaren Werkzeugen (Erinnerung speichern)
+ * mit deinen geänderten Eingaben.
+ */
+export interface ToolAnswer {
+  decision: ToolDecision;
+  arguments?: Record<string, unknown>;
+}
+
+/**
  * Denkmodus: true/false für Modelle wie qwen3 oder gemma4,
  * Stufen für Modelle wie gpt-oss (die „aus“ nicht kennen).
  */
@@ -648,8 +657,15 @@ export interface LocalDeskApi {
    */
   chatSend: (request: ChatSendRequest) => Promise<void>;
   chatCancel: (requestId: string) => Promise<void>;
-  /** Antwort auf eine Rückfrage zu einem Tool-Aufruf. */
-  chatToolDecision: (callId: string, decision: ToolDecision) => Promise<void>;
+  /**
+   * Antwort auf eine Rückfrage zu einem Tool-Aufruf; `args` nur bei bearbeitbaren
+   * Werkzeugen (Erinnerung speichern) – der Main-Prozess prüft sie.
+   */
+  chatToolDecision: (
+    callId: string,
+    decision: ToolDecision,
+    args?: Record<string, unknown>,
+  ) => Promise<void>;
   /** Meldet sich für Chat-Ereignisse an; gibt eine Funktion zum Abmelden zurück. */
   onChatEvent: (listener: (event: ChatStreamEvent) => void) => () => void;
 }

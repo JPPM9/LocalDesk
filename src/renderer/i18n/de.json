@@ -228,7 +228,10 @@
     "allowOnce": "Einmal erlauben",
     "allowAlways": "Immer erlauben",
     "allowAlwaysHint": "Gilt für dieses Tool auf diesem Server, auch in anderen Chats. Ändern unter Einstellungen → MCP-Server.",
-    "deny": "Ablehnen"
+    "deny": "Ablehnen",
+    "memoryAsk": "Das Modell möchte sich etwas über dich merken",
+    "memoryTool": "Erinnerung",
+    "memorySaved": "gespeichert"
   },
   "downloads": {
     "placeholder": "Modellname, z. B. qwen3:8b",
@@ -350,7 +353,13 @@
     "add": "Merken",
     "open": "Notiz öffnen",
     "delete": "Erinnerung löschen",
-    "confirmDelete": "Erinnerung „{{text}}“ löschen? Die Notiz wird aus dem Vault entfernt."
+    "confirmDelete": "Erinnerung „{{text}}“ löschen? Die Notiz wird aus dem Vault entfernt.",
+    "text": "Text der Erinnerung",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "saved": "Gemerkt",
+    "rememberTitle": "Als Erinnerung speichern – kürze den Text auf den Fakt",
+    "rememberHint": "Einen Fakt aus dieser Nachricht als Erinnerung speichern"
   },
   "obsidian": {
     "title": "Obsidian",

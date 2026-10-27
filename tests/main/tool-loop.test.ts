@@ -61,7 +61,7 @@ function fakeRuntime(
       calls.push(`${tool.toolName}(${JSON.stringify(args)})`);
       return { text: `Ergebnis von ${tool.toolName}`, isError: false };
     },
-    ask: vi.fn(async () => decision),
+    ask: vi.fn(async () => ({ decision })),
     allowAlways: (tool) => allowed.push(tool.toolName),
   };
 }
@@ -261,7 +261,7 @@ describe('runAnswer', () => {
     const runtime = fakeRuntime([writeTool]);
     runtime.ask = async () => {
       controller.abort();
-      return 'deny';
+      return { decision: 'deny' };
     };
     await expect(
       run(
@@ -320,5 +320,86 @@ describe('toToolResult', () => {
       text: '(kein Ergebnis)',
       isError: false,
     });
+  });
+});
+
+describe('bearbeitbare Werkzeuge (Erinnerung speichern)', () => {
+  const memory: OfferedTool = {
+    ...writeTool,
+    toolName: 'save_memory',
+    destructive: false,
+    editable: {
+      checkArguments: (args) => {
+        const text = (args as { text?: unknown }).text;
+        return typeof text === 'string' && text.trim()
+          ? { text: text.trim() }
+          : null;
+      },
+    },
+  };
+  const wants: ChatChunk[] = [
+    {
+      type: 'tool-calls',
+      calls: [{ name: 'save_memory', arguments: { text: 'Ich mag Tee' } }],
+    },
+  ];
+
+  it('führt mit deinem geänderten Text aus und speichert ihn im Verlauf', async () => {
+    const runtime = fakeRuntime([memory]);
+    runtime.ask = vi.fn(async () => ({
+      decision: 'once' as const,
+      arguments: { text: '  Ich trinke gern grünen Tee.  ' },
+    }));
+    const { events, requests } = await run([wants, []], runtime);
+    expect(runtime.calls).toEqual([
+      'save_memory({"text":"Ich trinke gern grünen Tee."})',
+    ]);
+    const last = events.filter((e) => e.type === 'tool-call').at(-1);
+    expect(last?.type === 'tool-call' && last.call.arguments).toEqual({
+      text: 'Ich trinke gern grünen Tee.',
+    });
+    // Auch das Modell erfährt, was wirklich gespeichert wurde.
+    expect(requests[1].messages.at(-2)?.toolCalls?.[0].arguments).toEqual({
+      text: 'Ich trinke gern grünen Tee.',
+    });
+  });
+
+  it('lehnt ungültige Änderungen ab und führt nichts aus', async () => {
+    const runtime = fakeRuntime([memory]);
+    runtime.ask = vi.fn(async () => ({
+      decision: 'once' as const,
+      arguments: { text: '  ' },
+    }));
+    const { events } = await run([wants, []], runtime);
+    expect(runtime.calls).toEqual([]);
+    expect(toolCallStatuses(events).at(-1)).toBe('save_memory:error');
+  });
+
+  it('merkt sich bei „Immer erlauben“ nichts – jede Erinnerung wird bestätigt', async () => {
+    const runtime = fakeRuntime([memory], 'always');
+    await run([wants, []], runtime);
+    expect(runtime.allowed).toEqual([]);
+    expect(runtime.calls).toHaveLength(1);
+  });
+
+  it('ignoriert geänderte Eingaben bei normalen Werkzeugen', async () => {
+    const runtime = fakeRuntime([writeTool]);
+    runtime.ask = vi.fn(async () => ({
+      decision: 'once' as const,
+      arguments: { path: 'C:/Windows/system.ini' },
+    }));
+    await run(
+      [
+        [
+          {
+            type: 'tool-calls',
+            calls: [{ name: 'write_file', arguments: { path: 'a.md' } }],
+          },
+        ],
+        [],
+      ],
+      runtime,
+    );
+    expect(runtime.calls).toEqual(['write_file({"path":"a.md"})']);
   });
 });

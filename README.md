@@ -33,6 +33,10 @@ Stand: **Phase 5 abgeschlossen** (Wissen & Projekte)
   Unterordner (Standard `LocalDesk`). Erinnerungen (Fakten über dich) liegen dort als Notizen –
   global oder pro Projekt – und gelten automatisch in jedem passenden Chat. In Obsidian bearbeitete
   Erinnerungen wirken sofort.
+- Merken im Chat: Erzählst du etwas über dich („Ich studiere …“, „Merk dir …“), kann das Modell
+  eine Erinnerung vorschlagen. Du siehst sie als Karte, kannst den Text ändern und speicherst oder
+  lehnst ab – ohne deine Bestätigung wird nichts gespeichert. Geht nur mit Modellen, die Werkzeuge
+  können. Zusätzlich hat jede Nachricht beim Überfahren einen Knopf „Merken“.
 
 ## Dateien im Chat benutzen (MCP)
 

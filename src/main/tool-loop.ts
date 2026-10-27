@@ -4,7 +4,7 @@ import type {
   ChatStreamEvent,
   ModelToolCall,
   ToolCallRecord,
-  ToolDecision,
+  ToolAnswer,
 } from '../shared/api';
 import { combineStats } from '../shared/chat';
 import {
@@ -36,7 +36,7 @@ export interface ToolRuntime {
     signal: AbortSignal,
   ): Promise<ToolResult>;
   /** Fragt dich im Chat; liefert „deny“, wenn die Antwort vorher gestoppt wird. */
-  ask(call: ToolCallRecord): Promise<ToolDecision>;
+  ask(call: ToolCallRecord): Promise<ToolAnswer>;
   allowAlways(tool: NamedTool): void;
 }
 
@@ -155,21 +155,38 @@ async function runToolCall(
     return record;
   }
 
+  let args = call.arguments;
   if (tool.permission === 'ask') {
     update({ status: 'asking' });
-    const decision = await runtime.ask(record);
+    const answer = await runtime.ask(record);
     signal.throwIfAborted();
-    if (decision === 'deny') {
+    if (answer.decision === 'deny') {
       update({ status: 'denied', result: DENIED_RESULT });
       return record;
     }
-    if (decision === 'always') runtime.allowAlways(tool);
+    // Geänderte Eingaben gelten nur bei bearbeitbaren Werkzeugen – und nur geprüft.
+    if (tool.editable && answer.arguments) {
+      const checked = tool.editable.checkArguments(answer.arguments);
+      if (!checked) {
+        update({
+          status: 'error',
+          result: 'Ungültige Eingabe in der Rückfrage.',
+        });
+        return record;
+      }
+      args = checked;
+      update({ arguments: args });
+    }
+    // „Immer erlauben“ gibt es bei bearbeitbaren Werkzeugen nicht.
+    if (answer.decision === 'always' && !tool.editable) {
+      runtime.allowAlways(tool);
+    }
   }
 
   update({ status: 'running' });
   let result: ToolResult;
   try {
-    result = await runtime.call(tool, call.arguments, signal);
+    result = await runtime.call(tool, args, signal);
   } catch (error) {
     signal.throwIfAborted();
     result = {

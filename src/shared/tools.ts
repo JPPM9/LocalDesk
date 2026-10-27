@@ -27,6 +27,13 @@ export interface OfferedTool {
   destructive: boolean;
   /** 'off' wird gar nicht erst angeboten. */
   permission: 'always' | 'ask';
+  /**
+   * Du darfst die Eingaben in der Rückfrage ändern (Erinnerung speichern) –
+   * „Immer erlauben“ gibt es dafür nicht. Geprüft werden die Änderungen mit `checkArguments`.
+   */
+  editable?: {
+    checkArguments: (args: unknown) => Record<string, unknown> | null;
+  };
 }
 
 /** Ein angebotenes Tool mit dem Namen, unter dem das Modell es kennt. */

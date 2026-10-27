@@ -1,6 +1,12 @@
 import type { ChatMessage, ChatRequest, MemoryView } from './api';
 import { estimateTokens } from './context';
 
+/** Kennung des eingebauten Werkzeugs „Erinnerung speichern“ (statt eines MCP-Servers). */
+export const MEMORY_TOOL_SERVER = 'localdesk:memory';
+export const MEMORY_TOOL_NAME = 'save_memory';
+/** Längste Erinnerung (wie im Main-Prozess). */
+export const MEMORY_TEXT_MAX = 500;
+
 /** So viel Kontext dürfen Erinnerungen höchstens belegen (vereinbart: ~1500 Tokens). */
 export const MEMORY_TOKEN_BUDGET = 1500;
 

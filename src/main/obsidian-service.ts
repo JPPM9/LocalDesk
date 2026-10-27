@@ -32,6 +32,10 @@ export interface ObsidianDeps {
 export interface ChatMemory {
   /** Texte der Erinnerungen für einen Chat (global + Projekt), im Budget. */
   forChat(projectId: string | undefined, question: string): Promise<string[]>;
+  /** Ist ein Vault eingerichtet? Sonst wird „Erinnerung speichern“ nicht angeboten. */
+  available(): boolean;
+  /** Speichert eine bestätigte Erinnerung (mit Projekt: nur für dieses Projekt). */
+  save(text: string, projectId?: string): Promise<MemoryView>;
 }
 
 /**
@@ -189,6 +193,15 @@ export function registerObsidianHandlers(
       if (all.length === list.length) return list.map((m) => m.text);
       const scores = await scoreMemories(list, question).catch(() => undefined);
       return selectMemories(list, undefined, scores).map((m) => m.text);
+    },
+    available: () => configured() !== null,
+    async save(text, projectId) {
+      const store = memories();
+      if (!store) throw new Error(noVault.error);
+      const project = projectId
+        ? projects().find((p) => p.id === projectId)
+        : undefined;
+      return store.add(text, project);
     },
   };
 
