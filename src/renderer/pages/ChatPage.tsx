@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { SlidersHorizontal, X } from 'lucide-react';
+import { FolderOpen, SlidersHorizontal, X } from 'lucide-react';
 import type { ChatFolder, ChatSummary, ChatTemplate } from '../../shared/api';
 import { thinkFitsModel } from '../../shared/settings';
 import { useChat } from '../chat/useChat';
@@ -126,6 +126,13 @@ export function ChatPage() {
     setActiveTemplate(null);
   };
 
+  // Projekt dieses Chats – bei einem neuen Chat aus „Neuer Chat im Projekt“ (/chat?project=<id>).
+  const projectId =
+    chatId === null
+      ? searchParams.get('project')
+      : chatList.chats.find((c) => c.id === chatId)?.folderId;
+  const project = chatList.folders.find((f) => f.id === projectId);
+
   // „Chat damit starten“ auf der Vorlagen-Seite öffnet /chat?template=<id>.
   const templateFromUrl = searchParams.get('template');
   useEffect(() => {
@@ -227,6 +234,18 @@ export function ChatPage() {
           }
           actions={
             <>
+              {project && (
+                <Link
+                  to={`/projects/${project.id}`}
+                  title={t('folders.open')}
+                  className="flex max-w-48 items-center gap-1 rounded-full bg-accent-soft px-2.5 py-0.5 text-xs text-accent hover:underline"
+                >
+                  <FolderOpen size={12} className="shrink-0" />
+                  <span className="truncate">
+                    {t('projects.badge', { name: project.name })}
+                  </span>
+                </Link>
+              )}
               <KnowledgeButton
                 selected={settings.collections ?? []}
                 onChange={(ids) => setList('collections', ids)}
@@ -298,7 +317,9 @@ export function ChatPage() {
                   onToolDecision={(callId, decision) =>
                     void window.api.chatToolDecision(callId, decision)
                   }
-                  usesKnowledge={Boolean(settings.collections?.length)}
+                  usesKnowledge={Boolean(
+                    settings.collections?.length || project?.collectionId,
+                  )}
                 />
               </div>
             ))}
@@ -326,7 +347,7 @@ export function ChatPage() {
           <ChatInput
             disabled={!model}
             isRunning={isRunning}
-            onSend={(text) => send(text, model)}
+            onSend={(text) => send(text, model, project?.id)}
             onStop={stop}
           />
           <p className="mt-1.5 text-center text-[11px] text-muted">

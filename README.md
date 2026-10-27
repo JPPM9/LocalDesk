@@ -7,7 +7,9 @@ Stand: **Phase 4 abgeschlossen** (MCP & Tool-Calling), Phase 5 (Wissen & Projekt
 
 - Statusanzeige für Ollama, Liste der installierten Modelle
 - Chat mit Streaming: Markdown, Code-Hervorhebung, Gedanken von Denkmodellen, Tokens/s
-- Gespeicherter Verlauf mit Ordnern (Chats per Ziehen oder Menü verschieben)
+- Gespeicherter Verlauf mit Projekten (Chats per Ziehen oder Menü verschieben). Ein Projekt kann
+  Anweisungen und eigene Dokumente haben, die in jedem seiner Chats gelten – öffnen über das
+  Zahnrad am Projekt in der Chat-Liste.
 - Einstellungen pro Chat: Systemprompt, Kontextlänge, Temperatur, Seed, Denken
 - Vorlagen für wiederkehrende Aufgaben
 - Volltextsuche über alle Chats

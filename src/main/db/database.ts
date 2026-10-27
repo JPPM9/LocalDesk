@@ -206,6 +206,14 @@ const migrations: string[] = [
 
   ALTER TABLE messages ADD COLUMN sources_json TEXT;
   `,
+  // 13: Ordner werden Projekte: Anweisungen für alle Chats darin und eigene Dokumente.
+  // Die Dokumente sind eine normale Sammlung mit project_id – wird das Projekt
+  // gelöscht, verschwindet sie (samt Abschnitten) mit; die Dateien selbst bleiben.
+  `
+  ALTER TABLE folders ADD COLUMN instructions TEXT NOT NULL DEFAULT '';
+  ALTER TABLE collections ADD COLUMN project_id TEXT REFERENCES folders(id) ON DELETE CASCADE;
+  CREATE UNIQUE INDEX collections_by_project ON collections(project_id) WHERE project_id IS NOT NULL;
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */

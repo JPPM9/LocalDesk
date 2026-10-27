@@ -4,6 +4,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from 'react';
+import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
   ChevronRight,
@@ -11,6 +12,7 @@ import {
   FolderOpen,
   Inbox,
   Pencil,
+  Settings2,
   Trash2,
 } from 'lucide-react';
 import type { ChatFolder } from '../../../shared/api';
@@ -41,6 +43,7 @@ export function FolderSection({
   children,
 }: FolderSectionProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [dragOver, setDragOver] = useState(false);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState('');
@@ -115,11 +118,24 @@ export function FolderSection({
           />
           <FolderIcon size={14} className="shrink-0" />
           <span className="min-w-0 flex-1 truncate">{name}</span>
+          {/* Punkt: Dieses Projekt hat Anweisungen oder eigene Dokumente. */}
+          {(folder?.instructions || folder?.collectionId) && (
+            <span
+              title={t('folders.hasSetup')}
+              className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent group-hover:hidden"
+            />
+          )}
           <span className="font-mono font-normal group-hover:hidden">
             {count}
           </span>
           {folder && (
             <span className="hidden shrink-0 gap-0.5 group-hover:flex">
+              <IconButton
+                label={t('folders.open')}
+                onClick={() => navigate(`/projects/${folder.id}`)}
+              >
+                <Settings2 size={12} />
+              </IconButton>
               <IconButton
                 label={t('folders.rename')}
                 onClick={() => {

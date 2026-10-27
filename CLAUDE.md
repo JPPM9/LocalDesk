@@ -176,6 +176,20 @@
   Dateien aus Sammlungen; PDF/Word/Text im Standardprogramm, alles andere nur im Explorer zeigen
   (Skripte würden sonst ausgeführt). Live: qwen3, gpt-oss, gemma4 zitieren korrekt; ~1850 Prompt-Tokens
   bei 6 Quellen. „Öffnen“ selbst nicht automatisch getestet (öffnet echte Programme).
+- **Projekte** (Migration 13): Die Ordner sind jetzt Projekte – derselbe Datensatz (`folders`) mit
+  `instructions` und optional einer eigenen Sammlung (`collections.project_id`, eindeutig, CASCADE beim
+  Löschen des Projekts; Chats bleiben wie bisher per SET NULL). Ohne Anweisungen/Dokumente = Ordner wie
+  vorher, nichts wurde umgewandelt. Projekt-Sammlungen entstehen erst beim ersten Hinzufügen von Quellen
+  (`ensureProjectCollection`), heißen wie das Projekt (Umbenennen zieht nach) und erscheinen nicht auf
+  der Seite „Wissen“ oder im Wissen-Knopf (Filter `projectId`). Im Chat: `buildChatRequest` stellt die
+  Projekt-Anweisungen vor den Systemprompt des Chats – in EINER System-Nachricht (manche Modelle
+  beachten nur die erste); die Projekt-Sammlung wird immer durchsucht, plus die per Wissen-Knopf
+  gewählten. Projekt-Seite `/projects/:id` (Name, Anweisungen speichern beim Verlassen, Dokumente mit
+  denselben Bausteinen wie die Wissen-Seite aus `CollectionEditor.tsx`, Chats, „Neuer Chat im
+  Projekt“ → `/chat?project=<id>` → `ChatSendRequest.folderId`). Chat-Kopf zeigt „Projekt: …“,
+  Seitenleiste einen Punkt bei Projekten mit Anweisungen/Dokumenten. Löschen bricht ein laufendes
+  Einlesen der Projekt-Sammlung ab. Live (gemma4): Anweisungen + Chat-Systemprompt wirken beide,
+  Projekt-Dokumente werden zitiert, Umbenennen/Löschen wie beschrieben.
 - **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
@@ -207,7 +221,7 @@
   Dateien bleiben am Ort, „Neu einlesen“ per Knopf (nur Geänderte) · Suche automatisch vor jeder Antwort ·
   Quellen als [1] + Liste, Öffnen im Standardprogramm · Seitenbereich: Quellen / Projekt-Dateien /
   Kontext-Füllstand · zu voll → warnen + Knopf „Kontextlänge erhöhen“.
-  Schritte: 1 Grundlage ✅ · 2 Sammlungen (Text/MD/Code) ✅ · 3 PDF/Word ✅ · 4 Wissen im Chat ✅ · 5 Projekte ·
+  Schritte: 1 Grundlage ✅ · 2 Sammlungen (Text/MD/Code) ✅ · 3 PDF/Word ✅ · 4 Wissen im Chat ✅ · 5 Projekte ✅ ·
   6 Seitenbereich · 7 Abschlusstest
 - Phase 6: Memory/Obsidian
 - Phase 7: Installer & Update-Check

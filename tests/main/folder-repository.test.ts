@@ -3,6 +3,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { migrate, openDatabase } from '../../src/main/db/database';
 import { ChatRepository } from '../../src/main/db/chat-repository';
 import { FolderRepository } from '../../src/main/db/folder-repository';
+import { KnowledgeRepository } from '../../src/main/db/knowledge-repository';
 
 let chats: ChatRepository;
 let folders: FolderRepository;
@@ -91,5 +92,100 @@ describe('Ordner', () => {
     const [chat] = new ChatRepository(old).listChats();
     expect(chat).toMatchObject({ id: 'alt', title: 'Alter Chat' });
     expect(chat.folderId).toBeUndefined();
+  });
+});
+
+describe('Projekte', () => {
+  let db: DatabaseSync;
+  let knowledge: KnowledgeRepository;
+
+  beforeEach(() => {
+    db = openDatabase(':memory:');
+    nextId = 1;
+    chats = new ChatRepository(db);
+    folders = new FolderRepository(
+      db,
+      () => 1_000,
+      () => `f${nextId++}`,
+    );
+    knowledge = new KnowledgeRepository(db);
+    chats.createChat({ id: 'c1', title: 'Klausur', model: 'm' });
+  });
+
+  it('speichert Anweisungen (gekürzt auf das Wesentliche)', () => {
+    folders.createFolder('Studium');
+    folders.setInstructions('f1', '  Antworte als Tutor.  ');
+    expect(folders.getFolder('f1')).toEqual({
+      id: 'f1',
+      name: 'Studium',
+      instructions: 'Antworte als Tutor.',
+    });
+    folders.setInstructions('f1', '');
+    expect(folders.getFolder('f1')).not.toHaveProperty('instructions');
+  });
+
+  it('legt die Projekt-Sammlung nur einmal an und benennt sie mit um', () => {
+    folders.createFolder('Studium');
+    const first = knowledge.ensureProjectCollection(
+      'f1',
+      'Studium',
+      'qwen3-embedding:0.6b',
+    );
+    const second = knowledge.ensureProjectCollection(
+      'f1',
+      'Studium',
+      'qwen3-embedding:0.6b',
+    );
+    expect(second.id).toBe(first.id);
+    expect(first).toMatchObject({
+      projectId: 'f1',
+      name: 'Studium',
+      sources: [],
+    });
+    expect(folders.getFolder('f1')?.collectionId).toBe(first.id);
+
+    folders.renameFolder('f1', 'Uni');
+    expect(knowledge.getCollection(first.id)?.name).toBe('Uni');
+  });
+
+  it('behält beim Speichern der Quellen die Zugehörigkeit zum Projekt', () => {
+    folders.createFolder('Studium');
+    const collection = knowledge.ensureProjectCollection('f1', 'Studium', 'm');
+    knowledge.saveCollection(
+      {
+        id: collection.id,
+        name: 'Studium',
+        sources: [{ kind: 'folder', path: 'C:\Uni' }],
+      },
+      'm',
+    );
+    expect(knowledge.getCollection(collection.id)?.projectId).toBe('f1');
+  });
+
+  it('löscht mit dem Projekt seine Dokumente, aber nicht seine Chats', () => {
+    folders.createFolder('Studium');
+    chats.moveChat('c1', 'f1');
+    const collection = knowledge.ensureProjectCollection('f1', 'Studium', 'm');
+    knowledge.saveDocument(
+      collection.id,
+      { path: 'C:\Uni\skript.md', size: 1, mtime: 1, hash: 'h', status: 'ok' },
+      [
+        {
+          chunk: { text: 'Median', start: 0, end: 6 },
+          vector: new Float32Array([1]),
+        },
+      ],
+    );
+
+    folders.deleteFolder('f1');
+
+    expect(knowledge.getCollection(collection.id)).toBeNull();
+    const count = (table: string) =>
+      (db.prepare(`SELECT COUNT(*) AS n FROM ${table}`).get() as { n: number })
+        .n;
+    expect(count('chunks')).toBe(0);
+    expect(count('documents')).toBe(0);
+    expect(chats.getChat('c1')).not.toBeNull();
+    expect(folderOf('c1')).toBeUndefined();
   });
 });

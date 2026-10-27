@@ -16,7 +16,8 @@ export function CollectionPicker({
   onChange,
 }: CollectionPickerProps) {
   const { t } = useTranslation();
-  const collections = useCollections();
+  // Projekt-Dokumente gehören zum Projekt und werden dort automatisch durchsucht.
+  const collections = useCollections()?.filter((c) => !c.config.projectId);
 
   if (!collections)
     return <p className="text-xs text-muted">{t('status.loading')}</p>;

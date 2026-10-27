@@ -10,6 +10,7 @@ import {
   type SourceRef,
 } from '../shared/api';
 import type { KnowledgeRepository } from './db/knowledge-repository';
+import type { ProjectKnowledge } from './folder-service';
 import type { Provider } from './providers/provider';
 import { WorkerExtractor } from './rag/extractor';
 import { indexCollection } from './rag/indexer';
@@ -236,8 +237,26 @@ export function registerKnowledgeHandlers(
     },
   };
 
+  /** Für Projekte: deren Dokumente sind eine Sammlung mit project_id. */
+  const projects: ProjectKnowledge = {
+    ensureCollection: (projectId, projectName) =>
+      repo.ensureProjectCollection(
+        projectId,
+        projectName,
+        DEFAULT_EMBEDDING_MODEL,
+      ),
+    cancel: (collectionId) => {
+      const current = running;
+      if (current && current.collectionId === collectionId) {
+        current.controller.abort();
+      }
+      progress.delete(collectionId);
+    },
+    changed: () => broadcast(true),
+  };
+
   // Läuft beim Beenden noch ein Einlesen, sauber abbrechen.
-  return { stop: () => running?.controller.abort(), knowledge };
+  return { stop: () => running?.controller.abort(), knowledge, projects };
 }
 
 /** Erste Quelle, die es nicht gibt (die Formprüfung macht das Repository). */

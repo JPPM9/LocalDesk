@@ -96,6 +96,14 @@ const api: LocalDeskApi = {
     ipcRenderer.invoke(IpcChannels.deleteFolder, folderId),
   moveChat: (chatId, folderId) =>
     ipcRenderer.invoke(IpcChannels.moveChat, chatId, folderId),
+  setProjectInstructions: (folderId, instructions) =>
+    ipcRenderer.invoke(
+      IpcChannels.setProjectInstructions,
+      folderId,
+      instructions,
+    ),
+  ensureProjectCollection: (folderId) =>
+    ipcRenderer.invoke(IpcChannels.ensureProjectCollection, folderId),
 
   listServers: () => ipcRenderer.invoke(IpcChannels.listServers),
   saveServer: (input) => ipcRenderer.invoke(IpcChannels.saveServer, input),

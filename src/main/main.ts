@@ -79,9 +79,9 @@ const createWindow = () => {
 
 function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
   registerTemplateHandlers(new TemplateRepository(db));
-  registerFolderHandlers(new FolderRepository(db), chats);
   // Welcher Ollama-Server gerade gilt, entscheidet das aktive Server-Profil.
   const { getProvider } = registerServerHandlers(new ServerRepository(db));
+  const folders = new FolderRepository(db);
   ipcMain.handle(IpcChannels.getOllamaStatus, () =>
     getProvider().checkStatus(),
   );
@@ -117,7 +117,15 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
     getProvider,
   );
   app.on('will-quit', () => knowledge.stop());
-  registerChatHandlers(getProvider, chats, mcpTools, knowledge.knowledge);
+  // Projekte = Ordner mit Anweisungen und eigenen Dokumenten (eine Sammlung).
+  registerFolderHandlers(folders, chats, knowledge.projects);
+  registerChatHandlers(
+    getProvider,
+    chats,
+    mcpTools,
+    knowledge.knowledge,
+    (folderId) => folders.getFolder(folderId),
+  );
 
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({
     name: app.getName(),

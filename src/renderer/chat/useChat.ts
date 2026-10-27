@@ -78,7 +78,8 @@ export function useChat(
     });
   }, [reload]);
 
-  const send = useCallback((text: string, model: string) => {
+  /** `folderId`: nur für einen neuen Chat – gleich in diesem Projekt anlegen. */
+  const send = useCallback((text: string, model: string, folderId?: string) => {
     const content = text.trim();
     if (!content) return;
     if (messagesRef.current.some((m) => m.status === 'streaming')) return;
@@ -110,6 +111,7 @@ export function useChat(
         model,
         content,
         ...(isNew && { settings: settingsRef.current }),
+        ...(isNew && folderId && { folderId }),
       })
       .then(() => callbacks.current.onChanged());
 

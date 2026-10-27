@@ -68,16 +68,25 @@ function idList(raw: unknown): string[] {
   ].slice(0, ID_LIST_MAX);
 }
 
-/** Baut aus Verlauf und Einstellungen die Anfrage an den Server. */
+/**
+ * Baut aus Verlauf und Einstellungen die Anfrage an den Server.
+ * `projectInstructions` (Chat liegt in einem Projekt) kommen vor den Systemprompt
+ * des Chats – beides in einer System-Nachricht, weil manche Modelle nur die
+ * erste beachten.
+ */
 export function buildChatRequest(
   model: string,
   history: MessageRecord[],
   settings: ChatSettings,
+  projectInstructions?: string,
 ): ChatRequest {
   const messages = toRequestMessages(history);
-  if (settings.systemPrompt) {
+  const system = [projectInstructions?.trim(), settings.systemPrompt?.trim()]
+    .filter(Boolean)
+    .join('\n\n');
+  if (system) {
     // Der Systemprompt steht immer ganz vorne, unsichtbar für den Verlauf.
-    messages.unshift({ role: 'system', content: settings.systemPrompt });
+    messages.unshift({ role: 'system', content: system });
   }
   const options: ChatRequest['options'] = {};
   if (settings.temperature !== undefined)

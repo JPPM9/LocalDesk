@@ -105,15 +105,33 @@
     "footer": "Im Chat: Enter sendet, Umschalt+Enter macht eine neue Zeile."
   },
   "folders": {
-    "new": "Neuer Ordner",
-    "namePlaceholder": "Ordnername, Enter zum Anlegen",
-    "unfiled": "Ohne Ordner",
+    "new": "Neues Projekt",
+    "namePlaceholder": "Projektname, Enter zum Anlegen",
+    "unfiled": "Ohne Projekt",
     "empty": "Leer – Chats hierher ziehen",
-    "rename": "Ordner umbenennen",
-    "delete": "Ordner löschen",
-    "confirmDelete": "Ordner „{{name}}“ löschen? Die Chats darin bleiben erhalten und landen bei „Ohne Ordner“.",
+    "rename": "Projekt umbenennen",
+    "open": "Projekt öffnen (Anweisungen, Dokumente)",
+    "delete": "Projekt löschen",
+    "confirmDelete": "Projekt „{{name}}“ löschen? Die Chats darin bleiben erhalten und landen bei „Ohne Projekt“. Anweisungen und eingelesene Projekt-Dokumente werden entfernt – deine Dateien bleiben unverändert.",
     "moveTo": "Verschieben nach …",
-    "noneYet": "Noch keine Ordner – oben mit dem Ordner-Symbol anlegen."
+    "noneYet": "Noch keine Projekte – oben mit dem Ordner-Symbol anlegen.",
+    "hasSetup": "Mit Anweisungen oder Dokumenten"
+  },
+  "projects": {
+    "name": "Name",
+    "newChat": "Neuer Chat im Projekt",
+    "delete": "Projekt löschen",
+    "confirmDelete": "Projekt „{{name}}“ löschen? Die Chats darin bleiben erhalten und landen bei „Ohne Projekt“. Anweisungen und eingelesene Projekt-Dokumente werden entfernt – deine Dateien bleiben unverändert.",
+    "instructions": "Anweisungen",
+    "instructionsPlaceholder": "z. B. „Du bist mein Tutor für Statistik. Erkläre Schritt für Schritt und frag nach, wenn etwas unklar ist.“",
+    "instructionsHint": "Gelten für jeden Chat in diesem Projekt – vor dem eigenen Systemprompt eines Chats. Gespeichert, sobald du das Feld verlässt.",
+    "saved": "gespeichert",
+    "documents": "Projekt-Dokumente",
+    "documentsHint": "Werden in jedem Chat dieses Projekts automatisch durchsucht – zusätzlich zu Sammlungen, die ein Chat über den Wissen-Knopf wählt.",
+    "chats_one": "{{count}} Chat",
+    "chats_other": "{{count}} Chats",
+    "noChats": "Noch keine Chats in diesem Projekt.",
+    "badge": "Projekt: {{name}}"
   },
   "search": {
     "placeholder": "Chats durchsuchen …",

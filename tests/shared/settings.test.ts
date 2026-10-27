@@ -77,6 +77,26 @@ describe('buildChatRequest', () => {
     { id: 'u1', role: 'user', content: 'Hallo', thinking: '', status: 'done' },
   ];
 
+  it('stellt Projekt-Anweisungen vor den Systemprompt des Chats – in einer Nachricht', () => {
+    const request = buildChatRequest(
+      'qwen3:14b',
+      history,
+      { systemPrompt: 'Antworte kurz.' },
+      'Du bist Tutor für Statistik.',
+    );
+    expect(request.messages[0]).toEqual({
+      role: 'system',
+      content: 'Du bist Tutor für Statistik.\n\nAntworte kurz.',
+    });
+    expect(request.messages).toHaveLength(2);
+    expect(
+      buildChatRequest('m', history, {}, 'Nur Projekt').messages[0].content,
+    ).toBe('Nur Projekt');
+    expect(buildChatRequest('m', history, {}, '  ').messages[0].role).toBe(
+      'user',
+    );
+  });
+
   it('setzt den Systemprompt an den Anfang', () => {
     const request = buildChatRequest('qwen3:14b', history, {
       systemPrompt: 'Antworte kurz.',

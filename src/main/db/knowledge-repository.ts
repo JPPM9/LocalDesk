@@ -22,6 +22,7 @@ interface CollectionRow {
   sources_json: string;
   embedding_model: string;
   indexed_at: number | null;
+  project_id: string | null;
 }
 
 interface DocumentRow {
@@ -117,7 +118,7 @@ export class KnowledgeRepository {
   listCollections(): CollectionConfig[] {
     const rows = this.db
       .prepare(
-        'SELECT id, name, sources_json, embedding_model, indexed_at FROM collections',
+        'SELECT id, name, sources_json, embedding_model, indexed_at, project_id FROM collections',
       )
       .all() as unknown as CollectionRow[];
     return rows
@@ -128,7 +129,7 @@ export class KnowledgeRepository {
   getCollection(collectionId: string): CollectionConfig | null {
     const row = this.db
       .prepare(
-        'SELECT id, name, sources_json, embedding_model, indexed_at FROM collections WHERE id = ?',
+        'SELECT id, name, sources_json, embedding_model, indexed_at, project_id FROM collections WHERE id = ?',
       )
       .get(collectionId) as unknown as CollectionRow | undefined;
     return row ? toConfig(row) : null;
@@ -153,6 +154,29 @@ export class KnowledgeRepository {
       )
       .run(id, name, JSON.stringify(sources), embeddingModel, this.now());
     return { ok: true, value: this.getCollection(id)! };
+  }
+
+  /**
+   * Die Sammlung für die Dokumente eines Projekts – wird beim ersten Mal angelegt.
+   * Sie heißt wie das Projekt und erscheint nicht auf der Seite „Wissen“.
+   */
+  ensureProjectCollection(
+    projectId: string,
+    projectName: string,
+    embeddingModel: string,
+  ): CollectionConfig {
+    const existing = this.db
+      .prepare('SELECT id FROM collections WHERE project_id = ?')
+      .get(projectId) as { id: string } | undefined;
+    if (existing) return this.getCollection(existing.id)!;
+    const id = randomUUID();
+    this.db
+      .prepare(
+        `INSERT INTO collections (id, name, sources_json, embedding_model, created_at, project_id)
+         VALUES (?, ?, '[]', ?, ?, ?)`,
+      )
+      .run(id, projectName, embeddingModel, this.now(), projectId);
+    return this.getCollection(id)!;
   }
 
   deleteCollection(collectionId: string) {
@@ -401,5 +425,6 @@ function toConfig(row: CollectionRow): CollectionConfig {
     name: row.name,
     sources,
     embeddingModel: row.embedding_model,
+    ...(row.project_id && { projectId: row.project_id }),
   };
 }

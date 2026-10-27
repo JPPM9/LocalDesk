@@ -2,8 +2,20 @@ import type { DatabaseSync } from 'node:sqlite';
 import type { ChatFolder, Result } from '../../shared/api';
 
 const NAME_MAX_LENGTH = 80;
+/** Wie beim Systemprompt eines Chats. */
+const INSTRUCTIONS_MAX_LENGTH = 20_000;
 
-/** Ordner für Chats. Welcher Chat in welchem Ordner liegt, steht in chats.folder_id. */
+interface FolderRow {
+  id: string;
+  name: string;
+  instructions: string;
+  collection_id: string | null;
+}
+
+/**
+ * Projekte (früher „Ordner“) für Chats. Welcher Chat in welchem Projekt liegt,
+ * steht in chats.folder_id; die Projekt-Dokumente sind eine Sammlung mit project_id.
+ */
 export class FolderRepository {
   constructor(
     private readonly db: DatabaseSync,
@@ -14,13 +26,20 @@ export class FolderRepository {
   /** Alphabetisch nach deutschen Regeln (Ü bei U). */
   listFolders(): ChatFolder[] {
     const rows = this.db
-      .prepare('SELECT id, name FROM folders')
-      .all() as unknown as ChatFolder[];
+      .prepare(
+        `SELECT f.id, f.name, f.instructions, c.id AS collection_id
+           FROM folders f LEFT JOIN collections c ON c.project_id = f.id`,
+      )
+      .all() as unknown as FolderRow[];
     return rows
-      .map((row) => ({ id: row.id, name: row.name }))
+      .map(toFolder)
       .sort((a, b) =>
         a.name.localeCompare(b.name, 'de', { sensitivity: 'base' }),
       );
+  }
+
+  getFolder(folderId: string): ChatFolder | null {
+    return this.listFolders().find((f) => f.id === folderId) ?? null;
   }
 
   createFolder(name: unknown): Result<ChatFolder> {
@@ -40,20 +59,43 @@ export class FolderRepository {
       .prepare('UPDATE folders SET name = ? WHERE id = ?')
       .run(checked.value, folderId);
     if (Number(result.changes) === 0) {
-      return { ok: false, error: 'Ordner nicht gefunden' };
+      return { ok: false, error: 'Projekt nicht gefunden' };
     }
-    return { ok: true, value: { id: folderId, name: checked.value } };
+    // Die Projekt-Dokumente heißen wie das Projekt (so stehen sie bei den Quellen).
+    this.db
+      .prepare('UPDATE collections SET name = ? WHERE project_id = ?')
+      .run(checked.value, folderId);
+    return { ok: true, value: this.getFolder(folderId)! };
   }
 
-  /** Die Chats im Ordner bleiben erhalten (ON DELETE SET NULL → „ohne Ordner“). */
+  setInstructions(folderId: string, instructions: unknown) {
+    if (typeof instructions !== 'string') return;
+    this.db
+      .prepare('UPDATE folders SET instructions = ? WHERE id = ?')
+      .run(instructions.trim().slice(0, INSTRUCTIONS_MAX_LENGTH), folderId);
+  }
+
+  /**
+   * Die Chats im Projekt bleiben erhalten (ON DELETE SET NULL → „ohne Projekt“);
+   * die Projekt-Dokumente (Sammlung, Abschnitte) verschwinden mit (CASCADE).
+   */
   deleteFolder(folderId: string) {
     this.db.prepare('DELETE FROM folders WHERE id = ?').run(folderId);
   }
 }
 
+function toFolder(row: FolderRow): ChatFolder {
+  return {
+    id: row.id,
+    name: row.name,
+    ...(row.instructions && { instructions: row.instructions }),
+    ...(row.collection_id && { collectionId: row.collection_id }),
+  };
+}
+
 function checkName(name: unknown): Result<string> {
   const trimmed = typeof name === 'string' ? name.trim() : '';
   if (!trimmed)
-    return { ok: false, error: 'Bitte gib dem Ordner einen Namen.' };
+    return { ok: false, error: 'Bitte gib dem Projekt einen Namen.' };
   return { ok: true, value: trimmed.slice(0, NAME_MAX_LENGTH) };
 }

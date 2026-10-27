@@ -98,6 +98,8 @@ export interface CollectionConfig {
   sources: KnowledgeSource[];
   /** Mit diesem Modell wurden die Fingerabdrücke berechnet – Suche muss dasselbe nutzen. */
   embeddingModel: string;
+  /** Gehört zu diesem Projekt (Projekt-Dokumente) – erscheint nicht auf der Seite „Wissen“. */
+  projectId?: string;
 }
 
 export type CollectionInput = Pick<CollectionConfig, 'id' | 'name' | 'sources'>;
@@ -428,9 +430,17 @@ export interface ChatSummary {
 }
 
 /** Ein Ordner für Chats (eine Ebene, keine Unterordner). */
+/**
+ * Ein Projekt (früher „Ordner“) für Chats, eine Ebene. Ohne Anweisungen und
+ * Dokumente ist es einfach ein Ordner.
+ */
 export interface ChatFolder {
   id: string;
   name: string;
+  /** Gelten für jeden Chat im Projekt – vor dem eigenen Systemprompt des Chats. */
+  instructions?: string;
+  /** Sammlung mit den Projekt-Dokumenten (fehlt = noch keine angelegt). */
+  collectionId?: string;
 }
 
 export interface ChatDetail extends ChatSummary {
@@ -469,6 +479,8 @@ export interface ChatSendRequest {
   content: string;
   /** Nur für neue Chats: Einstellungen, die vor der ersten Nachricht gewählt wurden. */
   settings?: ChatSettings;
+  /** Nur für neue Chats: gleich in diesem Projekt anlegen. */
+  folderId?: string;
 }
 
 /**
@@ -552,8 +564,19 @@ export interface LocalDeskApi {
   listFolders: () => Promise<ChatFolder[]>;
   createFolder: (name: string) => Promise<Result<ChatFolder>>;
   renameFolder: (folderId: string, name: string) => Promise<Result<ChatFolder>>;
-  /** Löscht nur den Ordner – seine Chats bleiben und sind danach „ohne Ordner“. */
+  /**
+   * Löscht das Projekt samt Anweisungen und eingelesenen Projekt-Dokumenten
+   * (die Dateien selbst bleiben). Seine Chats bleiben und sind danach „ohne Projekt“.
+   */
   deleteFolder: (folderId: string) => Promise<void>;
+  setProjectInstructions: (
+    folderId: string,
+    instructions: string,
+  ) => Promise<void>;
+  /** Legt die Sammlung für die Projekt-Dokumente an (falls noch keine da ist). */
+  ensureProjectCollection: (
+    folderId: string,
+  ) => Promise<Result<CollectionConfig>>;
   /** `folderId` null = aus dem Ordner herausnehmen. */
   moveChat: (chatId: string, folderId: string | null) => Promise<void>;
 
@@ -623,6 +646,8 @@ export const IpcChannels = {
   renameFolder: 'folders:rename',
   deleteFolder: 'folders:delete',
   moveChat: 'chats:move',
+  setProjectInstructions: 'projects:set-instructions',
+  ensureProjectCollection: 'projects:ensure-collection',
   listServers: 'servers:list',
   saveServer: 'servers:save',
   deleteServer: 'servers:delete',

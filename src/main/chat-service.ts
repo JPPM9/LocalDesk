@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { ipcMain, type WebContents } from 'electron';
 import {
   IpcChannels,
+  type ChatFolder,
   type ChatRequest,
   type ChatSendRequest,
   type ChatStreamEvent,
@@ -35,6 +36,8 @@ export function registerChatHandlers(
   chats: ChatRepository,
   mcpTools: McpTools,
   knowledge: ChatKnowledge,
+  /** Projekt eines Chats (Anweisungen, Projekt-Dokumente). */
+  projectOf: (folderId: string) => ChatFolder | null,
 ) {
   const running = new Map<string, AbortController>();
   /** Rückfragen, auf deren Antwort ein Tool-Aufruf wartet (Aufruf-ID → Antwort). */
@@ -88,10 +91,13 @@ export function registerChatHandlers(
         model: request.model,
         settings: request.settings,
       });
+      // Neuer Chat direkt im Projekt (gibt es das Projekt nicht, bleibt er „ohne“).
+      if (request.folderId) chats.moveChat(request.chatId, request.folderId);
     }
     const chat = chats.getChat(request.chatId);
     const history = chat?.messages ?? [];
     const settings = chat?.settings ?? {};
+    const project = chat?.folderId ? projectOf(chat.folderId) : null;
 
     const userMessage: MessageRecord = {
       id: request.userMessageId,
@@ -117,14 +123,18 @@ export function registerChatHandlers(
       request.model,
       [...history, userMessage],
       settings,
+      project?.instructions,
     );
     const runtime = toolRuntime(settings.mcpServers ?? [], controller.signal);
-    const knowledgeSearch = settings.collections?.length
-      ? {
-          collectionIds: settings.collections,
-          query: knowledgeQuery(history, request.content),
-        }
-      : null;
+    // Projekt-Dokumente werden immer durchsucht, dazu die per Wissen-Knopf gewählten.
+    const collectionIds = [
+      ...(project?.collectionId ? [project.collectionId] : []),
+      ...(settings.collections ?? []),
+    ];
+    const knowledgeSearch =
+      collectionIds.length > 0
+        ? { collectionIds, query: knowledgeQuery(history, request.content) }
+        : null;
     // Bewusst nicht abwarten: Die Oberfläche bekommt die Antwort über Ereignisse.
     // Der Server wird beim Absenden festgelegt – ein Umschalten während der
     // Antwort lässt diese Antwort auf ihrem Server zu Ende laufen.
@@ -257,6 +267,7 @@ function isChatSendRequest(value: unknown): value is ChatSendRequest {
     typeof r.model === 'string' &&
     r.model !== '' &&
     typeof r.content === 'string' &&
-    r.content.trim() !== ''
+    r.content.trim() !== '' &&
+    (r.folderId === undefined || typeof r.folderId === 'string')
   );
 }
