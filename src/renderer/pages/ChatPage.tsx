@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { FolderOpen, PanelRight, SlidersHorizontal, X } from 'lucide-react';
+import {
+  FolderOpen,
+  PanelRight,
+  ScrollText,
+  SlidersHorizontal,
+  X,
+} from 'lucide-react';
 import type { ChatFolder, ChatSummary, ChatTemplate } from '../../shared/api';
 import { thinkFitsModel } from '../../shared/settings';
 import { useChat } from '../chat/useChat';
@@ -23,6 +29,8 @@ import { ChatList } from '../components/chat/ChatList';
 import { ChatSettingsPanel } from '../components/chat/ChatSettingsPanel';
 import { MessageView } from '../components/chat/MessageView';
 import { SaveNoteButton } from '../components/chat/SaveNoteButton';
+import { SummaryPanel } from '../components/chat/SummaryPanel';
+import { shouldSuggestSummary } from '../../shared/summary';
 import { ModelSelect } from '../components/chat/ModelSelect';
 import { KnowledgeButton } from '../components/knowledge/CollectionPicker';
 import { McpButton } from '../components/mcp/McpButton';
@@ -160,6 +168,29 @@ export function ChatPage() {
     void window.api.getObsidian().then((status) => setVaultReady(!!status?.ok));
   }, [chatId]);
 
+  // Zusammenfassung: Vorschlag beim Öffnen eines ruhenden Chats (≥ 6 Nachrichten,
+  // 30 Minuten still) – oder sofort über den Knopf im Chat-Kopf.
+  const [summary, setSummary] = useState<'suggest' | 'start' | null>(null);
+  const loadedChatId = chat?.id;
+  useEffect(() => {
+    setSummary(
+      vaultReady &&
+        chat &&
+        chat.id === chatId &&
+        shouldSuggestSummary(
+          {
+            messageCount: chat.messages.length,
+            updatedAt: chat.updatedAt,
+            summaryAtCount: chat.summaryAtCount,
+          },
+          Date.now(),
+        )
+        ? 'suggest'
+        : null,
+    );
+    // Nur beim Öffnen prüfen, nicht bei jeder neuen Nachricht.
+  }, [loadedChatId, chatId, vaultReady]);
+
   // „Chat damit starten“ auf der Vorlagen-Seite öffnet /chat?template=<id>.
   const templateFromUrl = searchParams.get('template');
   useEffect(() => {
@@ -277,7 +308,19 @@ export function ChatPage() {
                 chatId &&
                 !isRunning &&
                 messages.some((m) => m.role === 'assistant' && m.content) && (
-                  <SaveNoteButton chatId={chatId} variant="icon" />
+                  <>
+                    <SaveNoteButton chatId={chatId} variant="icon" />
+                    <button
+                      type="button"
+                      onClick={() => setSummary('start')}
+                      disabled={summary !== null && summary !== 'suggest'}
+                      title={t('summary.button')}
+                      aria-label={t('summary.button')}
+                      className="rounded border border-border px-2 py-1 hover:bg-surface-hover disabled:opacity-50"
+                    >
+                      <ScrollText size={15} />
+                    </button>
+                  </>
                 )}
               <KnowledgeButton
                 selected={settings.collections ?? []}
@@ -390,6 +433,15 @@ export function ChatPage() {
         </div>
 
         <div className="mx-auto w-full max-w-3xl px-6 pb-5">
+          {summary && chatId && (
+            <SummaryPanel
+              key={`${chatId}-${summary}`}
+              chatId={chatId}
+              model={model}
+              start={summary}
+              onClose={() => setSummary(null)}
+            />
+          )}
           {activeTemplate && messages.length === 0 && (
             <div className="mb-2 flex">
               <span className="flex items-center gap-1.5 rounded-full bg-accent-soft px-3 py-1 text-xs text-accent">

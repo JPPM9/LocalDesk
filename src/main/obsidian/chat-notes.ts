@@ -1,4 +1,5 @@
 import type { ChatDetail, MessageRecord, SourceRef } from '../../shared/api';
+import { localDate, yamlString } from './note-format';
 
 export const CHATS_DIR = 'Chats';
 const TAG = 'localdesk/chat';
@@ -96,14 +97,4 @@ function formatSources(sources: SourceRef[]): string[] {
     }),
     '',
   ];
-}
-
-/** Datum im Kalender des Nutzers (nicht UTC) – passt zum Dateinamen, den er erwartet. */
-function localDate(date: Date): string {
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-}
-
-function yamlString(text: string): string {
-  return `"${text.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
 }

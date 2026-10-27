@@ -281,3 +281,26 @@ describe('Quellen aus dem Wissen', () => {
     expect(repo.getChat('c')!.messages[0]).not.toHaveProperty('sources');
   });
 });
+
+describe('Zusammenfassung merken', () => {
+  it('speichert die Nachrichtenzahl, ohne den Chat nach oben zu schieben', () => {
+    let time = 1000;
+    const repo = new ChatRepository(openDatabase(':memory:'), () => time);
+    repo.createChat({ id: 'c', title: 'T', model: 'm', settings: {} });
+    for (const id of ['u1', 'a1', 'u2']) {
+      repo.appendMessage('c', {
+        id,
+        role: id.startsWith('u') ? 'user' : 'assistant',
+        content: 'x',
+        thinking: '',
+        status: 'done',
+      });
+    }
+    expect(repo.getChat('c')?.summaryAtCount).toBeUndefined();
+    const before = repo.getChat('c')!.updatedAt;
+    time = 99_999;
+    repo.markSummarized('c');
+    expect(repo.getChat('c')?.summaryAtCount).toBe(3);
+    expect(repo.getChat('c')?.updatedAt).toBe(before);
+  });
+});

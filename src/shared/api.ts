@@ -453,6 +453,12 @@ export interface MessageRecord {
   knowledgeError?: string;
 }
 
+/** Entwurf einer Zusammenfassung – du bearbeitest ihn vor dem Speichern. */
+export interface SummaryDraft {
+  title: string;
+  text: string;
+}
+
 /** Ein Chat in der Liste (ohne Nachrichten). */
 export interface ChatSummary {
   id: string;
@@ -481,6 +487,8 @@ export interface ChatFolder {
 export interface ChatDetail extends ChatSummary {
   settings: ChatSettings;
   messages: MessageRecord[];
+  /** Zahl der Nachrichten, als zuletzt zusammengefasst oder abgelehnt wurde. */
+  summaryAtCount?: number;
 }
 
 /** Ein Suchtreffer in einer Nachricht. */
@@ -585,6 +593,20 @@ export interface LocalDeskApi {
    * in `<Unterordner>/Chats/`. Liefert den Pfad der Notiz relativ zum Vault.
    */
   saveChatNote: (chatId: string, answerId?: string) => Promise<Result<string>>;
+  /** Lässt das Modell den Chat zusammenfassen (Entwurf, noch nichts gespeichert). */
+  summarizeChat: (
+    chatId: string,
+    model: string,
+  ) => Promise<Result<SummaryDraft>>;
+  cancelSummary: (chatId: string) => Promise<void>;
+  /** Speichert den (bearbeiteten) Entwurf nach `<Unterordner>/Zusammenfassungen/`. */
+  saveSummary: (
+    chatId: string,
+    model: string,
+    draft: SummaryDraft,
+  ) => Promise<Result<string>>;
+  /** „Nein danke“ – der Vorschlag kommt erst nach 6 neuen Nachrichten wieder. */
+  dismissSummary: (chatId: string) => Promise<void>;
   onMcpChanged: (listener: (servers: McpServerView[]) => void) => () => void;
 
   listCollections: () => Promise<CollectionView[]>;
@@ -699,6 +721,10 @@ export const IpcChannels = {
   deleteMemory: 'memories:delete',
   openMemory: 'memories:open',
   saveChatNote: 'obsidian:save-chat',
+  summarizeChat: 'summary:create',
+  cancelSummary: 'summary:cancel',
+  saveSummary: 'summary:save',
+  dismissSummary: 'summary:dismiss',
   mcpChanged: 'mcp:changed',
   listCollections: 'knowledge:list',
   saveCollection: 'knowledge:save',

@@ -253,6 +253,20 @@
   Titel fällt im Dateinamen weg. Knöpfe: „In Obsidian speichern“ unter jeder Antwort (Antwort + Frage,
   beim Überfahren), Notiz-Symbol im Chat-Kopf (ganzer Chat); Rückmeldung unten rechts (`fixed`, weil
   der Kopf `overflow-hidden` hat). Nur mit Vault. Live (gemma4, mit Quellen) ✓, „(2)“/„(3)“ ✓.
+- **Zusammenfassungen** (`src/shared/summary.ts`, `src/main/summary-service.ts`,
+  `obsidian/summary-notes.ts`, Oberfläche `SummaryPanel.tsx`). Entschieden: Vorschlagskarte beim
+  ÖFFNEN eines Chats mit ≥ 6 Nachrichten, letzte Nachricht ≥ 30 Min alt (`shouldSuggestSummary`);
+  nach Speichern, „Nein danke“ oder „Verwerfen“ merkt sich der Chat die Nachrichtenzahl
+  (Migration 14: `chats.summary_at_count`, `markSummarized` ändert `updated_at` NICHT) – Karte erst
+  nach 6 neuen Nachrichten wieder. Zusammengefasst wird mit dem Modell im Chat-Kopf, Denken aus
+  (gpt-oss: „low“), Kontextlänge des Chats; das Gespräch ohne Gedanken/Tools, höchstens die letzten
+  24 000 Zeichen. Erste Zeile der Antwort = Titel (`parseSummary`). Entwurf bearbeitbar (Titel =
+  Dateiname, Text), „Neu erzeugen“, „Verwerfen“; gespeichert nach `<Unterordner>/Zusammenfassungen/`
+  (Tag `localdesk/zusammenfassung`). Knopf im Chat-Kopf startet sofort. Eine neue Anfrage bricht die
+  alte ab (Map pro Chat); die Oberfläche zeigt nur das Ergebnis der neuesten (Ref-Zähler) und startet
+  nur einmal, auch wenn React im Dev-Modus Effekte doppelt ausführt (Fehler gefunden: kurz „Abgebrochen“).
+  Live: gemma4 Entwurf → Titel geändert → gespeichert ✓; qwen3 ohne Denken (15 s) ✓; Karte nach
+  31 Min Ruhe ✓, „Nein danke“ → bleibt weg ✓, frischer Chat → keine Karte ✓.
 - **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
@@ -301,7 +315,7 @@
   alle im Chat solange ≤ ~1500 Tokens, sonst nur passende · Erinnerungen global + pro Projekt ·
   Zusammenfassung als Vorschlag-Karte · Vault als Sammlung per Wissen-Knopf.
   Schritte: 1 Vault & sicheres Schreiben ✅ · 2 Erinnerungen ✅ · 3 Merken im Chat ✅ · 4 Chats speichern ✅ ·
-  5 Zusammenfassungen · 6 Vault als Wissen · 7 Abschlusstest
+  5 Zusammenfassungen ✅ · 6 Vault als Wissen · 7 Abschlusstest
 - Phase 7: Installer & Update-Check
 
 ## Befehle

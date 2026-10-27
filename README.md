@@ -40,6 +40,10 @@ Stand: **Phase 5 abgeschlossen** (Wissen & Projekte)
 - Chats in Obsidian speichern: Unter jeder Antwort „In Obsidian speichern“ (Antwort mit Frage),
   im Chat-Kopf das Notiz-Symbol (ganzer Chat). Die Notiz landet in `LocalDesk/Chats/` mit Datum,
   Modell, Projekt und Quellen; vorhandene Notizen werden nie überschrieben.
+- Zusammenfassungen: Öffnest du einen Chat mit mindestens 6 Nachrichten, der seit 30 Minuten ruht,
+  fragt LocalDesk „Zusammenfassung speichern?“. Erst auf deinen Klick fasst das Modell zusammen; du
+  bearbeitest Titel und Text und speicherst nach `LocalDesk/Zusammenfassungen/`. „Nein danke“ fragt
+  erst nach 6 neuen Nachrichten wieder. Über das Rollen-Symbol im Chat-Kopf geht es jederzeit.
 
 ## Dateien im Chat benutzen (MCP)
 

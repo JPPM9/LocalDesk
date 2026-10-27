@@ -214,6 +214,11 @@ const migrations: string[] = [
   ALTER TABLE collections ADD COLUMN project_id TEXT REFERENCES folders(id) ON DELETE CASCADE;
   CREATE UNIQUE INDEX collections_by_project ON collections(project_id) WHERE project_id IS NOT NULL;
   `,
+  // 14: Zusammenfassungen – bei wie vielen Nachrichten zuletzt gespeichert oder
+  // „Nein danke“ gesagt wurde. Der Vorschlag kommt erst nach 6 neuen wieder.
+  `
+  ALTER TABLE chats ADD COLUMN summary_at_count INTEGER;
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */

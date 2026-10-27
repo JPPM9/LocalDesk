@@ -464,5 +464,26 @@
     "toObsidian": "In Obsidian speichern",
     "saved": "Gespeichert: {{path}}",
     "error": "Nicht gespeichert: {{error}}"
+  },
+  "summary": {
+    "title": "Zusammenfassung",
+    "button": "Chat zusammenfassen und in Obsidian speichern",
+    "suggestTitle": "Zusammenfassung speichern?",
+    "suggestText": "Dieser Chat ruht. {{model}} kann ihn zusammenfassen – du siehst den Entwurf, bevor etwas in Obsidian landet.",
+    "summarize": "Zusammenfassen",
+    "noThanks": "Nein danke",
+    "working": "{{model}} fasst zusammen …",
+    "cancel": "Abbrechen",
+    "previewTitle": "Entwurf – bearbeiten und speichern",
+    "noteTitle": "Titel der Notiz",
+    "noteText": "Text der Zusammenfassung",
+    "save": "In Obsidian speichern",
+    "again": "Neu erzeugen",
+    "discard": "Verwerfen",
+    "saved": "Gespeichert: {{path}}",
+    "error": "Zusammenfassung fehlgeschlagen: {{error}}",
+    "retry": "Erneut versuchen",
+    "backToDraft": "Zurück zum Entwurf",
+    "close": "Schließen"
   }
 }

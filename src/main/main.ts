@@ -17,6 +17,7 @@ import { registerDownloadHandlers } from './download-service';
 import { AppSettingsRepository } from './db/app-settings-repository';
 import { KnowledgeRepository } from './db/knowledge-repository';
 import { registerObsidianHandlers } from './obsidian-service';
+import { registerSummaryHandlers } from './summary-service';
 import {
   DEFAULT_EMBEDDING_MODEL,
   registerKnowledgeHandlers,
@@ -94,6 +95,12 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
     projects: () => folders.listFolders(),
     embeddingModel: DEFAULT_EMBEDDING_MODEL,
     getChat: (chatId) => chats.getChat(chatId),
+  });
+  registerSummaryHandlers({
+    getProvider,
+    chats,
+    writer: obsidian.writer,
+    projects: () => folders.listFolders(),
   });
   ipcMain.handle(IpcChannels.getOllamaStatus, () =>
     getProvider().checkStatus(),

@@ -35,6 +35,7 @@ interface ChatRow {
 
 interface ChatDetailRow extends ChatRow {
   settings_json: string;
+  summary_at_count: number | null;
 }
 
 interface MessageRow {
@@ -84,7 +85,8 @@ export class ChatRepository {
   getChat(chatId: string): ChatDetail | null {
     const chat = this.db
       .prepare(
-        'SELECT id, title, model, updated_at, folder_id, settings_json FROM chats WHERE id = ?',
+        `SELECT id, title, model, updated_at, folder_id, settings_json, summary_at_count
+           FROM chats WHERE id = ?`,
       )
       .get(chatId) as unknown as ChatDetailRow | undefined;
     if (!chat) return null;
@@ -99,7 +101,23 @@ export class ChatRepository {
       ...toSummary(chat),
       settings: parseSettings(chat.settings_json),
       messages: rows.map(toMessage),
+      ...(chat.summary_at_count !== null && {
+        summaryAtCount: chat.summary_at_count,
+      }),
     };
+  }
+
+  /**
+   * Merkt sich, bei wie vielen Nachrichten zusammengefasst oder abgelehnt wurde.
+   * Ändert `updated_at` bewusst nicht – der Chat soll in der Liste nicht nach oben springen.
+   */
+  markSummarized(chatId: string): void {
+    this.db
+      .prepare(
+        `UPDATE chats SET summary_at_count =
+           (SELECT COUNT(*) FROM messages WHERE chat_id = ?) WHERE id = ?`,
+      )
+      .run(chatId, chatId);
   }
 
   chatExists(chatId: string): boolean {

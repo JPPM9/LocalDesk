@@ -63,6 +63,14 @@ const api: LocalDeskApi = {
   openMemory: (id) => ipcRenderer.invoke(IpcChannels.openMemory, id),
   saveChatNote: (chatId, answerId) =>
     ipcRenderer.invoke(IpcChannels.saveChatNote, chatId, answerId),
+  summarizeChat: (chatId, model) =>
+    ipcRenderer.invoke(IpcChannels.summarizeChat, chatId, model),
+  cancelSummary: (chatId) =>
+    ipcRenderer.invoke(IpcChannels.cancelSummary, chatId),
+  saveSummary: (chatId, model, draft) =>
+    ipcRenderer.invoke(IpcChannels.saveSummary, chatId, model, draft),
+  dismissSummary: (chatId) =>
+    ipcRenderer.invoke(IpcChannels.dismissSummary, chatId),
   onMcpChanged: (listener) => {
     const handler = (_event: IpcRendererEvent, list: McpServerView[]) =>
       listener(list);
