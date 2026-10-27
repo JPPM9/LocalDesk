@@ -219,6 +219,11 @@ const migrations: string[] = [
   `
   ALTER TABLE chats ADD COLUMN summary_at_count INTEGER;
   `,
+  // 15: Die Sammlung „Obsidian“ (der Vault) ist gekennzeichnet – höchstens eine.
+  `
+  ALTER TABLE collections ADD COLUMN kind TEXT;
+  CREATE UNIQUE INDEX collections_by_kind ON collections(kind) WHERE kind IS NOT NULL;
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */

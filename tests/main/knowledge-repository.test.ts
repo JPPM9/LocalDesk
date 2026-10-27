@@ -157,3 +157,54 @@ describe('KnowledgeRepository', () => {
     expect(repo.stats('k1').indexedAt).toBe(5000);
   });
 });
+
+describe('Sammlung „Obsidian“', () => {
+  const obsidian = () =>
+    repo.listCollections().filter((c) => c.kind === 'obsidian');
+
+  it('wird angelegt, bei neuem Vault umgestellt und ohne Vault entfernt', () => {
+    repo.syncObsidianCollection('D:/Vault/', 'emb');
+    expect(obsidian()).toHaveLength(1);
+    expect(obsidian()[0]).toMatchObject({
+      name: 'Obsidian',
+      sources: [{ kind: 'folder', path: 'D:/Vault' }],
+      embeddingModel: 'emb',
+    });
+    const id = obsidian()[0].id;
+    repo.syncObsidianCollection('E:/Notizen', 'emb');
+    expect(obsidian()).toHaveLength(1);
+    expect(obsidian()[0].id).toBe(id);
+    expect(obsidian()[0].sources[0].path).toBe('E:/Notizen');
+    repo.syncObsidianCollection(null, 'emb');
+    expect(obsidian()).toHaveLength(0);
+  });
+
+  it('lässt sich nicht über die Wissen-Seite umbauen', () => {
+    repo.syncObsidianCollection('D:/Vault', 'emb');
+    const { id } = obsidian()[0];
+    const result = repo.saveCollection(
+      { id, name: 'Anders', sources: [{ kind: 'folder', path: 'C:/' }] },
+      'emb',
+    );
+    expect(result.ok).toBe(false);
+    expect(obsidian()[0].name).toBe('Obsidian');
+  });
+
+  it('erkennt Dateien aus dem Vault', () => {
+    repo.syncObsidianCollection('D:/Vault', 'emb');
+    const vault = obsidian()[0].id;
+    repo.saveCollection(input, 'emb');
+    const doc = { size: 1, mtime: 1, hash: 'h', status: 'ok' as const };
+    repo.saveDocument(vault, { ...doc, path: 'D:/Vault/a.md' }, []);
+    repo.saveDocument(
+      'k1',
+      { ...doc, path: 'C:/Users/nutzer/Studium/b.md' },
+      [],
+    );
+    const ids = Object.fromEntries(
+      [vault, 'k1'].map((c) => [c, repo.listDocuments(c)[0].id]),
+    );
+    expect(repo.documentInObsidian(ids[vault])).toBe(true);
+    expect(repo.documentInObsidian(ids.k1)).toBe(false);
+  });
+});

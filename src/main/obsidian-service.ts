@@ -30,6 +30,8 @@ export interface ObsidianDeps {
   embeddingModel: string;
   /** Chats aus der Datenbank – gespeichert wird, was dort steht, nicht was die Oberfläche schickt. */
   getChat: (chatId: string) => ChatDetail | null;
+  /** Vault eingerichtet, geändert oder vergessen (für die Sammlung „Obsidian“). */
+  onVaultChanged: (vaultPath: string | null) => void;
 }
 
 /** Was der Chat von den Erinnerungen braucht. */
@@ -98,6 +100,7 @@ export function registerObsidianHandlers(
       if (status.ok) {
         settings.set(VAULT_KEY, vault);
         settings.set(FOLDER_KEY, name.value);
+        deps.onVaultChanged(vault);
       }
       return status;
     },
@@ -106,6 +109,7 @@ export function registerObsidianHandlers(
   ipcMain.handle(IpcChannels.clearObsidian, () => {
     settings.delete(VAULT_KEY);
     settings.delete(FOLDER_KEY);
+    deps.onVaultChanged(null);
   });
 
   const noVault = {
@@ -260,5 +264,9 @@ export function registerObsidianHandlers(
     return list.map((m) => similarity(qv, vectors.get(m.text)!));
   }
 
-  return { writer, chatMemory };
+  return {
+    writer,
+    chatMemory,
+    vaultPath: () => configured()?.vaultPath ?? null,
+  };
 }

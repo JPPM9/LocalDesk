@@ -90,11 +90,14 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
   const { getProvider } = registerServerHandlers(new ServerRepository(db));
   const folders = new FolderRepository(db);
   // Obsidian-Vault (Phase 6): Erinnerungen, gespeicherte Chats, Zusammenfassungen.
+  // Die Wissens-Dienste kommen erst weiter unten – bis dahin merken wir uns nur den Weg.
+  let syncObsidian: (vaultPath: string | null) => void = () => {};
   const obsidian = registerObsidianHandlers(new AppSettingsRepository(db), {
     getProvider,
     projects: () => folders.listFolders(),
     embeddingModel: DEFAULT_EMBEDDING_MODEL,
     getChat: (chatId) => chats.getChat(chatId),
+    onVaultChanged: (vaultPath) => syncObsidian(vaultPath),
   });
   registerSummaryHandlers({
     getProvider,
@@ -146,6 +149,9 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
     getProvider,
   );
   app.on('will-quit', () => knowledge.stop());
+  // Sammlung „Obsidian“ passend zum eingerichteten Vault (auch für ältere Installationen).
+  syncObsidian = knowledge.syncObsidian;
+  syncObsidian(obsidian.vaultPath());
   // Projekte = Ordner mit Anweisungen und eigenen Dokumenten (eine Sammlung).
   registerFolderHandlers(folders, chats, knowledge.projects);
   registerChatHandlers(

@@ -126,6 +126,11 @@ export interface CollectionConfig {
   embeddingModel: string;
   /** Gehört zu diesem Projekt (Projekt-Dokumente) – erscheint nicht auf der Seite „Wissen“. */
   projectId?: string;
+  /**
+   * „obsidian“: der eingerichtete Vault. LocalDesk legt sie an und pflegt die Quelle
+   * (Einstellungen → Obsidian); Notizen werden für Obsidian aufbereitet.
+   */
+  kind?: 'obsidian';
 }
 
 export type CollectionInput = Pick<CollectionConfig, 'id' | 'name' | 'sources'>;

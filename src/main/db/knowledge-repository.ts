@@ -23,6 +23,7 @@ interface CollectionRow {
   embedding_model: string;
   indexed_at: number | null;
   project_id: string | null;
+  kind: string | null;
 }
 
 interface DocumentRow {
@@ -118,7 +119,7 @@ export class KnowledgeRepository {
   listCollections(): CollectionConfig[] {
     const rows = this.db
       .prepare(
-        'SELECT id, name, sources_json, embedding_model, indexed_at, project_id FROM collections',
+        'SELECT id, name, sources_json, embedding_model, indexed_at, project_id, kind FROM collections',
       )
       .all() as unknown as CollectionRow[];
     return rows
@@ -129,7 +130,7 @@ export class KnowledgeRepository {
   getCollection(collectionId: string): CollectionConfig | null {
     const row = this.db
       .prepare(
-        'SELECT id, name, sources_json, embedding_model, indexed_at, project_id FROM collections WHERE id = ?',
+        'SELECT id, name, sources_json, embedding_model, indexed_at, project_id, kind FROM collections WHERE id = ?',
       )
       .get(collectionId) as unknown as CollectionRow | undefined;
     return row ? toConfig(row) : null;
@@ -146,6 +147,13 @@ export class KnowledgeRepository {
     const checked = checkCollectionInput(input);
     if (!checked.ok) return checked;
     const { id, name, sources } = checked.value;
+    if (this.getCollection(id)?.kind === 'obsidian') {
+      return {
+        ok: false,
+        error:
+          'Die Sammlung „Obsidian“ wird über Einstellungen → Obsidian verwaltet.',
+      };
+    }
     this.db
       .prepare(
         `INSERT INTO collections (id, name, sources_json, embedding_model, created_at)
@@ -177,6 +185,50 @@ export class KnowledgeRepository {
       )
       .run(id, projectName, embeddingModel, this.now(), projectId);
     return this.getCollection(id)!;
+  }
+
+  /**
+   * Die Sammlung „Obsidian“ an den Vault anpassen: anlegen, Quelle ändern oder –
+   * ohne Vault – entfernen (nur die eingelesenen Daten; die Notizen bleiben).
+   */
+  syncObsidianCollection(
+    vaultPath: string | null,
+    embeddingModel: string,
+  ): void {
+    const existing = this.db
+      .prepare("SELECT id FROM collections WHERE kind = 'obsidian'")
+      .get() as { id: string } | undefined;
+    if (!vaultPath) {
+      if (existing) this.deleteCollection(existing.id);
+      return;
+    }
+    const sources = JSON.stringify([
+      { kind: 'folder', path: withoutTrailingSlash(vaultPath) },
+    ]);
+    if (existing) {
+      this.db
+        .prepare('UPDATE collections SET sources_json = ? WHERE id = ?')
+        .run(sources, existing.id);
+      return;
+    }
+    this.db
+      .prepare(
+        `INSERT INTO collections (id, name, sources_json, embedding_model, created_at, kind)
+         VALUES (?, 'Obsidian', ?, ?, ?, 'obsidian')`,
+      )
+      .run(randomUUID(), sources, embeddingModel, this.now());
+  }
+
+  /** Zur Datei: gehört sie zur Sammlung „Obsidian“? (für „Öffnen“ in Obsidian) */
+  documentInObsidian(documentId: string): boolean {
+    return (
+      this.db
+        .prepare(
+          `SELECT 1 FROM documents d JOIN collections c ON c.id = d.collection_id
+            WHERE d.id = ? AND c.kind = 'obsidian'`,
+        )
+        .get(documentId) !== undefined
+    );
   }
 
   deleteCollection(collectionId: string) {
@@ -426,5 +478,6 @@ function toConfig(row: CollectionRow): CollectionConfig {
     sources,
     embeddingModel: row.embedding_model,
     ...(row.project_id && { projectId: row.project_id }),
+    ...(row.kind === 'obsidian' && { kind: 'obsidian' as const }),
   };
 }

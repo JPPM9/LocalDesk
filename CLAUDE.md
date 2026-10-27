@@ -267,6 +267,24 @@
   nur einmal, auch wenn React im Dev-Modus Effekte doppelt ausführt (Fehler gefunden: kurz „Abgebrochen“).
   Live: gemma4 Entwurf → Titel geändert → gespeichert ✓; qwen3 ohne Denken (15 s) ✓; Karte nach
   31 Min Ruhe ✓, „Nein danke“ → bleibt weg ✓, frischer Chat → keine Karte ✓.
+- **Vault als Wissen**: Sammlung „Obsidian“ = normale Sammlung mit `kind = 'obsidian'` (Migration 15,
+  höchstens eine). `KnowledgeRepository.syncObsidianCollection` legt sie beim Einrichten des Vaults an,
+  stellt bei neuem Vault die Quelle um (gleiche ID; laufendes Einlesen wird dann abgebrochen) und
+  entfernt sie beim „Vergessen“ (nur eingelesene Daten). Beim Start abgeglichen (`main.ts`,
+  `onVaultChanged`). Eingelesen wird erst auf Klick („Einlesen“), nicht automatisch – kostet GPU-Zeit.
+  Über die Wissen-Seite nicht umbenenn-/lösch-/änderbar (`saveCollection` lehnt ab, UI zeigt Hinweis).
+  Aufbereitung `rag/obsidian-note.ts` (nur .md dieser Sammlung): Frontmatter raus, Tags (Kopf + `#tag`
+  im Text) als „Datei.md (Tags: …)“ im Überschriften-Pfad, `[[Ziel#Abschnitt|Alias]]` → Alias bzw.
+  „Ziel › Abschnitt“, `%%Kommentare%%` und eingebettete Bilder raus. LocalDesk-Erinnerungen (Tag
+  `localdesk/erinnerung`) werden als „leer“ übersprungen – sie stehen schon in jedem Chat; Chats und
+  Zusammenfassungen sind durchsuchbar. Dot-Ordner (`.obsidian`, `.trash`) übersprang `scanSources`
+  schon. „Öffnen“: `.md` aus dieser Sammlung → `obsidian://open?path=…`, wenn das Protokoll registriert
+  ist (`app.getApplicationNameForProtocol`), sonst Standardprogramm. Bekannt: Kennt Obsidian den Vault
+  nicht, zeigt Obsidian selbst eine Meldung (kein Rückfall möglich, der Aufruf „gelingt“).
+  Live (gemma4): 5 Dateien, `.obsidian` übersprungen, Erinnerung ausgelassen ✓, Abschnitte ohne
+  Kopf/Kommentar/Bild mit Tags ✓, Wissen-Knopf → richtige Quelle ✓, Neu einlesen: 1 geändert, 4
+  unverändert ✓, Vergessen → Sammlung weg ✓. „Öffnen“ in Obsidian nicht selbst geklickt (würde dein
+  Obsidian starten) – von Hand prüfen.
 - **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
@@ -315,7 +333,7 @@
   alle im Chat solange ≤ ~1500 Tokens, sonst nur passende · Erinnerungen global + pro Projekt ·
   Zusammenfassung als Vorschlag-Karte · Vault als Sammlung per Wissen-Knopf.
   Schritte: 1 Vault & sicheres Schreiben ✅ · 2 Erinnerungen ✅ · 3 Merken im Chat ✅ · 4 Chats speichern ✅ ·
-  5 Zusammenfassungen ✅ · 6 Vault als Wissen · 7 Abschlusstest
+  5 Zusammenfassungen ✅ · 6 Vault als Wissen ✅ · 7 Abschlusstest
 - Phase 7: Installer & Update-Check
 
 ## Befehle

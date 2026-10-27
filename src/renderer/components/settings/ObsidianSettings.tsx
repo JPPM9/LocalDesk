@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CircleCheck, FolderOpen, TriangleAlert } from 'lucide-react';
+import { Link } from 'react-router';
+import { CircleCheck, FolderOpen, Library, TriangleAlert } from 'lucide-react';
 import type { ObsidianStatus } from '../../../shared/api';
+import { useCollections } from '../../hooks/useCollections';
 import { MemoryList } from './MemoryList';
 import { Field } from './SettingsFields';
 
@@ -80,6 +82,7 @@ export function ObsidianSettings() {
               path: `${status.vaultPath}\\${status.folder}`,
             })}
           </p>
+          {status.ok && <VaultKnowledgeHint />}
           <div className="flex gap-2 pt-1">
             <button
               type="button"
@@ -159,5 +162,28 @@ export function ObsidianSettings() {
           </button>
         ))}
     </section>
+  );
+}
+
+/** Der Vault als Wissen: Sammlung „Obsidian“ – Stand und Weg zum Einlesen. */
+function VaultKnowledgeHint() {
+  const { t } = useTranslation();
+  const vault = useCollections()?.find((c) => c.config.kind === 'obsidian');
+  if (!vault) return null;
+  return (
+    <p className="flex items-start gap-1.5 text-xs text-muted">
+      <Library size={13} className="mt-0.5 shrink-0" />
+      <span>
+        {vault.stats.documents > 0
+          ? t('obsidian.knowledgeReady', { count: vault.stats.documents })
+          : t('obsidian.knowledgeNew')}{' '}
+        <Link
+          to={`/knowledge/${vault.config.id}`}
+          className="text-accent hover:underline"
+        >
+          {t('obsidian.knowledgeLink')}
+        </Link>
+      </span>
+    </p>
   );
 }

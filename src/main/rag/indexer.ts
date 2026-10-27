@@ -12,6 +12,7 @@ import {
   type DocumentRead,
   type FoundFile,
 } from './files';
+import { prepareObsidianNote } from './obsidian-note';
 import { normalize } from './vectors';
 
 /** So viele Abschnitte gehen pro Anfrage an Ollama. */
@@ -95,6 +96,7 @@ export async function indexCollection(
         signal,
         extractor,
         collectionId: collection.id,
+        obsidian: collection.kind === 'obsidian',
       });
       if (outcome === 'unchanged') {
         repo.touchDocument(before!.id, file.mtime);
@@ -141,9 +143,11 @@ async function indexFile(
   previousHash: string | undefined,
   deps: Pick<IndexDeps, 'repo' | 'embed' | 'signal' | 'extractor'> & {
     collectionId: string;
+    /** Sammlung „Obsidian“: Notizen werden für Obsidian aufbereitet. */
+    obsidian: boolean;
   },
 ): Promise<'saved' | 'unchanged'> {
-  const { repo, embed, signal, extractor, collectionId } = deps;
+  const { repo, embed, signal, extractor, collectionId, obsidian } = deps;
   const base = { path: file.path, size: file.size, mtime: file.mtime };
   const save = (
     doc: DocumentInput,
@@ -170,10 +174,26 @@ async function indexFile(
     return 'saved';
   }
 
+  let tags: string[] = [];
+  if (obsidian && read.type === 'text' && read.markdown) {
+    const note = prepareObsidianNote(read.text);
+    if (note.isMemory) {
+      save({
+        ...base,
+        hash: read.hash,
+        status: 'empty',
+        error: 'LocalDesk-Erinnerung – steht schon in jedem Chat.',
+      });
+      return 'saved';
+    }
+    read = { ...read, text: note.text };
+    tags = note.tags;
+  }
+
   const chunks =
     read.type === 'pages'
       ? pageChunks(file.path, read.pages)
-      : toChunks(file.path, read.text, read.markdown);
+      : toChunks(file.path, read.text, read.markdown, tags);
   if (chunks.length === 0) {
     save({
       ...base,
@@ -207,8 +227,16 @@ async function indexFile(
  * Abschnitte einer Datei. Der Dateiname steht vorne im Überschriften-Pfad –
  * so findet auch „Was steht in einkauf.md?“ die richtige Datei.
  */
-function toChunks(filePath: string, text: string, markdown: boolean): Chunk[] {
-  const name = path.basename(filePath);
+function toChunks(
+  filePath: string,
+  text: string,
+  markdown: boolean,
+  /** Obsidian-Tags: stehen beim Dateinamen und helfen so beim Finden. */
+  tags: string[] = [],
+): Chunk[] {
+  const name =
+    path.basename(filePath) +
+    (tags.length > 0 ? ` (Tags: ${tags.join(', ')})` : '');
   const chunks = markdown ? chunkMarkdown(text) : chunkText(text);
   return chunks.map((chunk) => ({
     ...chunk,

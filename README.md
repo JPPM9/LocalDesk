@@ -44,6 +44,11 @@ Stand: **Phase 5 abgeschlossen** (Wissen & Projekte)
   fragt LocalDesk „Zusammenfassung speichern?“. Erst auf deinen Klick fasst das Modell zusammen; du
   bearbeitest Titel und Text und speicherst nach `LocalDesk/Zusammenfassungen/`. „Nein danke“ fragt
   erst nach 6 neuen Nachrichten wieder. Über das Rollen-Symbol im Chat-Kopf geht es jederzeit.
+- Vault als Wissen: Mit dem Vault erscheint unter „Wissen“ die Sammlung „Obsidian“. Einmal
+  „Einlesen“ (später „Neu einlesen“ – nur Geändertes), dann pro Chat über den Wissen-Knopf
+  einschalten oder in Vorlagen voreinstellen. Datei-Kopf, Tags und [[Wiki-Links]] werden passend
+  aufbereitet, `.obsidian` und deine Erinnerungen übersprungen. „Öffnen“ einer Quelle öffnet die
+  Notiz direkt in Obsidian.
 
 ## Dateien im Chat benutzen (MCP)
 

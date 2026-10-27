@@ -56,7 +56,9 @@
       "error": "Fehler"
     },
     "modelInfo": "Fingerabdrücke berechnet mit {{model}} (über Ollama, lokal).",
-    "modelMissing": "Das Embedding-Modell {{model}} ist auf dem aktiven Ollama-Server nicht installiert. Lade es unter „Installierte Modelle“ herunter."
+    "modelMissing": "Das Embedding-Modell {{model}} ist auf dem aktiven Ollama-Server nicht installiert. Lade es unter „Installierte Modelle“ herunter.",
+    "obsidianManaged": "Diese Sammlung ist dein Obsidian-Vault. LocalDesk legt sie an und hält den Ordner aktuell; Frontmatter, Tags und [[Wiki-Links]] werden für die Suche aufbereitet, „.obsidian“ und deine Erinnerungen übersprungen. Ändern oder entfernen:",
+    "obsidianSettings": "Einstellungen → Obsidian"
   },
   "status": {
     "checking": "Ollama: prüfe Verbindung …",
@@ -375,8 +377,12 @@
     "writesTo": "Schreibt nur nach: {{path}}",
     "change": "Ändern",
     "remove": "Entfernen",
-    "confirmRemove": "Vault nicht mehr verwenden? Im Vault wird nichts gelöscht – auch nicht die Notizen von LocalDesk.",
-    "invalid": "Dieser Ordner lässt sich nicht verwenden."
+    "confirmRemove": "Vault nicht mehr verwenden? Im Vault wird nichts gelöscht – auch nicht die Notizen von LocalDesk. Die Sammlung „Obsidian“ (nur die eingelesenen Daten) wird entfernt.",
+    "invalid": "Dieser Ordner lässt sich nicht verwenden.",
+    "knowledgeNew": "Als Wissen nutzbar über die Sammlung „Obsidian“ – noch nicht eingelesen.",
+    "knowledgeReady_one": "Als Wissen nutzbar: Sammlung „Obsidian“ mit {{count}} Datei.",
+    "knowledgeReady_other": "Als Wissen nutzbar: Sammlung „Obsidian“ mit {{count}} Dateien.",
+    "knowledgeLink": "Zur Sammlung"
   },
   "settings": {
     "title": "Einstellungen",

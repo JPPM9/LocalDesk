@@ -286,3 +286,38 @@ describe('indexCollection mit PDF und Word', () => {
     ]);
   });
 });
+
+describe('Sammlung „Obsidian“', () => {
+  it('liest Notizen ohne Datei-Kopf, mit Tags und ohne Erinnerungen', async () => {
+    write('.obsidian/app.json', '{"theme":"dark"}');
+    write(
+      'Studium/Median.md',
+      '---\ntags: [statistik]\n---\nDer Median, siehe [[Mittelwert|Durchschnitt]].',
+    );
+    write(
+      'LocalDesk/Erinnerungen/Tee.md',
+      '---\ntags: [localdesk/erinnerung]\n---\nIch mag Tee.',
+    );
+    repo.syncObsidianCollection(root, 'qwen3-embedding:0.6b');
+    const vault = repo.listCollections().find((c) => c.kind === 'obsidian')!;
+    await indexCollection(vault, {
+      repo,
+      embed: fakeEmbed,
+      onProgress: () => {},
+      signal: new AbortController().signal,
+      extractor: inlineExtractor,
+    });
+
+    const docs = repo.listDocuments(vault.id);
+    expect(docs.map((d) => path.relative(root, d.path)).sort()).toEqual([
+      path.join('LocalDesk', 'Erinnerungen', 'Tee.md'),
+      path.join('Studium', 'Median.md'),
+    ]);
+    expect(docs.find((d) => d.path.endsWith('Tee.md'))?.status).toBe('empty');
+    expect(embedded).toHaveLength(1);
+    expect(embedded[0]).toContain('Median.md (Tags: statistik)');
+    expect(embedded[0]).toContain('Der Median, siehe Durchschnitt.');
+    expect(embedded[0]).not.toContain('tags:');
+    expect(embedded.join()).not.toContain('Ich mag Tee');
+  });
+});

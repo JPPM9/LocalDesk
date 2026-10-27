@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
-import { NavLink, useNavigate, useParams, useSearchParams } from 'react-router';
+import {
+  Link,
+  NavLink,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Library, Plus, Trash2 } from 'lucide-react';
 import type { CollectionView, KnowledgeSource } from '../../shared/api';
@@ -114,6 +120,8 @@ function CollectionDetail({ view }: { view: CollectionView }) {
   const [searchParams] = useSearchParams();
   // Frisch angelegt → Namensfeld gleich zum Überschreiben bereit.
   const isNew = searchParams.has('neu');
+  // Die Sammlung „Obsidian“ pflegt LocalDesk selbst (Einstellungen → Obsidian).
+  const managed = config.kind === 'obsidian';
 
   const save = async (patch: {
     name?: string;
@@ -145,15 +153,17 @@ function CollectionDetail({ view }: { view: CollectionView }) {
               disabled={modelMissing}
               onError={setError}
             />
-            <button
-              type="button"
-              onClick={() => void remove()}
-              title={t('knowledge.delete')}
-              aria-label={t('knowledge.delete')}
-              className="rounded border border-border px-2 py-1 hover:bg-surface-hover"
-            >
-              <Trash2 size={14} />
-            </button>
+            {!managed && (
+              <button
+                type="button"
+                onClick={() => void remove()}
+                title={t('knowledge.delete')}
+                aria-label={t('knowledge.delete')}
+                className="rounded border border-border px-2 py-1 hover:bg-surface-hover"
+              >
+                <Trash2 size={14} />
+              </button>
+            )}
           </>
         }
       />
@@ -171,29 +181,42 @@ function CollectionDetail({ view }: { view: CollectionView }) {
             </p>
           )}
 
-          <label className="block space-y-1">
-            <span className="text-xs font-medium text-muted">
-              {t('knowledge.name')}
-            </span>
-            <input
-              autoFocus={isNew}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onBlur={() => {
-                if (name.trim() && name !== config.name) void save({ name });
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') e.currentTarget.blur();
-              }}
-              className="w-full rounded border border-border bg-surface px-2 py-1.5 outline-none focus:border-accent"
-            />
-          </label>
+          {managed && (
+            <p className="rounded border border-border bg-surface px-3 py-2 text-xs text-muted">
+              {t('knowledge.obsidianManaged')}{' '}
+              <Link to="/settings" className="text-accent hover:underline">
+                {t('knowledge.obsidianSettings')}
+              </Link>
+            </p>
+          )}
+          {!managed && (
+            <>
+              <label className="block space-y-1">
+                <span className="text-xs font-medium text-muted">
+                  {t('knowledge.name')}
+                </span>
+                <input
+                  autoFocus={isNew}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  onBlur={() => {
+                    if (name.trim() && name !== config.name)
+                      void save({ name });
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') e.currentTarget.blur();
+                  }}
+                  className="w-full rounded border border-border bg-surface px-2 py-1.5 outline-none focus:border-accent"
+                />
+              </label>
 
-          <SourcesEditor
-            sources={config.sources}
-            disabled={isRunning(view)}
-            onChange={(sources) => void save({ sources })}
-          />
+              <SourcesEditor
+                sources={config.sources}
+                disabled={isRunning(view)}
+                onChange={(sources) => void save({ sources })}
+              />
+            </>
+          )}
           <ProgressBox view={view} />
           <DocumentList view={view} />
 

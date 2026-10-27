@@ -1,6 +1,6 @@
 import { stat } from 'node:fs/promises';
 import path from 'node:path';
-import { BrowserWindow, dialog, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron';
 import {
   IpcChannels,
   type CollectionConfig,
@@ -203,6 +203,21 @@ export function registerKnowledgeHandlers(
       const filePath =
         typeof documentId === 'string' ? repo.documentPath(documentId) : null;
       if (!filePath) return { ok: false, error: 'Datei nicht gefunden' };
+      // Notizen aus dem Vault direkt in Obsidian öffnen – sofern Obsidian installiert ist.
+      if (
+        repo.documentInObsidian(documentId as string) &&
+        path.extname(filePath).toLowerCase() === '.md' &&
+        app.getApplicationNameForProtocol('obsidian://')
+      ) {
+        try {
+          await shell.openExternal(
+            `obsidian://open?path=${encodeURIComponent(filePath)}`,
+          );
+          return { ok: true, value: undefined };
+        } catch {
+          // Obsidian reagiert nicht – unten im Standardprogramm öffnen.
+        }
+      }
       if (!OPEN_DIRECTLY.has(path.extname(filePath).toLowerCase())) {
         // Skripte (.bat, .ps1, .js …) würde Windows ausführen – nur im Explorer zeigen.
         shell.showItemInFolder(filePath);
@@ -255,8 +270,28 @@ export function registerKnowledgeHandlers(
     changed: () => broadcast(true),
   };
 
+  /** Sammlung „Obsidian“ an den Vault anpassen (null = Vault vergessen). */
+  const syncObsidian = (vaultPath: string | null) => {
+    const current = running;
+    const existing = repo.listCollections().find((c) => c.kind === 'obsidian');
+    // Wird sie entfernt oder bekommt einen anderen Vault, ein laufendes Einlesen stoppen.
+    repo.syncObsidianCollection(vaultPath, DEFAULT_EMBEDDING_MODEL);
+    const after = repo.listCollections().find((c) => c.kind === 'obsidian');
+    const changed = existing?.sources[0]?.path !== after?.sources[0]?.path;
+    if (existing && changed && current?.collectionId === existing.id) {
+      current.controller.abort();
+    }
+    if (existing && !vaultPath) progress.delete(existing.id);
+    broadcast(true);
+  };
+
   // Läuft beim Beenden noch ein Einlesen, sauber abbrechen.
-  return { stop: () => running?.controller.abort(), knowledge, projects };
+  return {
+    stop: () => running?.controller.abort(),
+    knowledge,
+    projects,
+    syncObsidian,
+  };
 }
 
 /** Erste Quelle, die es nicht gibt (die Formprüfung macht das Repository). */
