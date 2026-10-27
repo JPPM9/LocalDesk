@@ -14,7 +14,9 @@ import { isLocalServer } from '../shared/server';
 import { queryGpus } from './system/gpu';
 import { registerChatHandlers } from './chat-service';
 import { registerDownloadHandlers } from './download-service';
+import { AppSettingsRepository } from './db/app-settings-repository';
 import { KnowledgeRepository } from './db/knowledge-repository';
+import { registerObsidianHandlers } from './obsidian-service';
 import { registerKnowledgeHandlers } from './knowledge-service';
 import { McpRepository } from './db/mcp-repository';
 import { registerMcpHandlers } from './mcp-service';
@@ -80,6 +82,8 @@ const createWindow = () => {
 
 function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
   registerTemplateHandlers(new TemplateRepository(db));
+  // Obsidian-Vault (Phase 6): Erinnerungen, gespeicherte Chats, Zusammenfassungen.
+  registerObsidianHandlers(new AppSettingsRepository(db));
   // Welcher Ollama-Server gerade gilt, entscheidet das aktive Server-Profil.
   const { getProvider } = registerServerHandlers(new ServerRepository(db));
   const folders = new FolderRepository(db);

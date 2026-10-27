@@ -52,6 +52,10 @@ const api: LocalDeskApi = {
       permission,
     ),
   pickFolders: () => ipcRenderer.invoke(IpcChannels.pickFolders),
+  getObsidian: () => ipcRenderer.invoke(IpcChannels.getObsidian),
+  setObsidian: (vaultPath, folder) =>
+    ipcRenderer.invoke(IpcChannels.setObsidian, vaultPath, folder),
+  clearObsidian: () => ipcRenderer.invoke(IpcChannels.clearObsidian),
   onMcpChanged: (listener) => {
     const handler = (_event: IpcRendererEvent, list: McpServerView[]) =>
       listener(list);

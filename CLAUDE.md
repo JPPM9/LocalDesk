@@ -207,6 +207,16 @@
   Kopfzeile: Titel `min-w-24 flex-1`, Modellauswahl darf schrumpfen – sonst verschwand der Titel bei
   offenem Seitenbereich. `/api/ps` meldet bei gemma4 nur ~1,1 GB Größe (Gewichte anders gezählt) – nicht
   für Schätzungen verwenden.
+- **Obsidian-Vault** (Phase 6): Vault-Pfad und Unterordner (Standard `LocalDesk`) in `app_settings`
+  (`obsidian.vault`, `obsidian.folder`; `AppSettingsRepository`), Einstellungen → Obsidian. Prüfung
+  (`inspectVault`): absolut, kein Laufwerk, existiert; `.obsidian` vorhanden → „Vault erkannt“, sonst Hinweis.
+  Unterordner nur ein einfacher Name (`checkFolderName`). LESEN darf der ganze Vault, SCHREIBEN nur
+  `VaultWriter` (`src/main/obsidian/vault.ts`): jeder Pfad wird gegen den Unterordner geprüft (kein `..`,
+  nicht absolut), kein Teil des Weges darf eine Verknüpfung sein (Junctions getestet), nie überschreiben
+  (Name (2), (3) …), Dateinamen ohne Windows-/Obsidian-Sonderzeichen (`# ^ [ ] |`, CON/NUL …), atomar
+  über Zwischendatei + Umbenennen (Sync-Dienste sehen keine halbe Datei). Löschen/Ändern nur eigener
+  `.md` im Unterordner. Einrichten schreibt nichts in den Vault; der Unterordner entsteht beim ersten
+  Speichern. Entwicklung/Tests nur mit Test-Vault im Scratchpad – nie den echten Vault des Nutzers.
 - **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
@@ -249,7 +259,13 @@
   Nummern wie [1] (werden dann keine Knöpfe; Hinweis „keine passenden Stellen“ steht darunter).
   gpt-oss erfand bei einer Code-Frage ein Detail, obwohl die richtige Stelle unter den Quellen war.
   Noch nicht von Hand geprüft: Windows-Datei-/Ordnerdialoge, „Öffnen“-Knopf einer Quelle.
-- Phase 6: Memory/Obsidian
+- Phase 6: Memory/Obsidian – in Arbeit. Entschieden: alle vier Zwecke (Fakten über dich merken,
+  Antworten/Chats als Notiz speichern, Vault als Wissen, Chat-Zusammenfassungen) · lesen ganzer Vault,
+  schreiben nur eigener Unterordner · Merken: Modell schlägt vor (Werkzeug), du bestätigst · Fakten immer
+  alle im Chat solange ≤ ~1500 Tokens, sonst nur passende · Erinnerungen global + pro Projekt ·
+  Zusammenfassung als Vorschlag-Karte · Vault als Sammlung per Wissen-Knopf.
+  Schritte: 1 Vault & sicheres Schreiben ✅ · 2 Erinnerungen · 3 Merken im Chat · 4 Chats speichern ·
+  5 Zusammenfassungen · 6 Vault als Wissen · 7 Abschlusstest
 - Phase 7: Installer & Update-Check
 
 ## Befehle

@@ -337,6 +337,23 @@
     "lanHelp2": "Die Windows-Firewall dort muss eingehende Verbindungen auf Port 11434 erlauben (nur im privaten Netzwerk).",
     "lanHelp3": "Hier die IP-Adresse dieses Rechners eintragen und mit „Testen“ prüfen. Hinweis: Die GPU-Auslastung kann LocalDesk nur bei einem Server auf diesem PC anzeigen."
   },
+  "obsidian": {
+    "title": "Obsidian",
+    "intro": "Für Erinnerungen, gespeicherte Chats und Zusammenfassungen. LocalDesk liest den ganzen Vault (z. B. als Wissen), schreibt aber nur in seinen eigenen Unterordner.",
+    "setUp": "Vault einrichten",
+    "vault": "Vault-Ordner",
+    "vaultHint": "Der Ordner, den du in Obsidian als Vault geöffnet hast (enthält einen Ordner „.obsidian“).",
+    "pick": "Ordner wählen",
+    "folder": "Eigener Unterordner",
+    "folderHint": "Nur hier legt LocalDesk Notizen an. Wird beim ersten Speichern angelegt.",
+    "recognized": "Obsidian-Vault erkannt",
+    "noObsidianFolder": "Kein Ordner „.obsidian“ gefunden – ist das wirklich ein Obsidian-Vault? Nutzbar ist er trotzdem.",
+    "writesTo": "Schreibt nur nach: {{path}}",
+    "change": "Ändern",
+    "remove": "Entfernen",
+    "confirmRemove": "Vault nicht mehr verwenden? Im Vault wird nichts gelöscht – auch nicht die Notizen von LocalDesk.",
+    "invalid": "Dieser Ordner lässt sich nicht verwenden."
+  },
   "settings": {
     "title": "Einstellungen",
     "about": "Über LocalDesk",

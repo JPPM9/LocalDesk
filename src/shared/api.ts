@@ -85,6 +85,20 @@ export interface McpServerView {
   permissions: Record<string, ToolPermission>;
 }
 
+/**
+ * Eingerichteter Obsidian-Vault. Gelesen werden darf der ganze Vault, geschrieben
+ * nur in den eigenen Unterordner `folder`.
+ */
+export interface ObsidianStatus {
+  vaultPath: string;
+  folder: string;
+  /** Ordner gefunden und nutzbar. */
+  ok: boolean;
+  /** Enthält einen `.obsidian`-Ordner – ist also wirklich ein Obsidian-Vault. */
+  looksLikeVault: boolean;
+  error?: string;
+}
+
 /** Woher eine Sammlung ihre Dateien bekommt. Die Dateien bleiben, wo sie sind. */
 export interface KnowledgeSource {
   kind: 'folder' | 'file';
@@ -527,6 +541,13 @@ export interface LocalDeskApi {
   ) => Promise<void>;
   /** Öffnet den Windows-Ordnerdialog; leer = abgebrochen. */
   pickFolders: () => Promise<string[]>;
+
+  /** Eingerichteter Obsidian-Vault mit aktuellem Zustand; null = keiner eingerichtet. */
+  getObsidian: () => Promise<ObsidianStatus | null>;
+  /** Prüft und speichert Vault und Unterordner (nur wenn der Ordner nutzbar ist). */
+  setObsidian: (vaultPath: string, folder: string) => Promise<ObsidianStatus>;
+  /** Vergisst den Vault – im Vault selbst wird nichts gelöscht. */
+  clearObsidian: () => Promise<void>;
   onMcpChanged: (listener: (servers: McpServerView[]) => void) => () => void;
 
   listCollections: () => Promise<CollectionView[]>;
@@ -626,6 +647,9 @@ export const IpcChannels = {
   deleteMcpServer: 'mcp:delete',
   setToolPermission: 'mcp:set-permission',
   pickFolders: 'dialog:pick-folders',
+  getObsidian: 'obsidian:get',
+  setObsidian: 'obsidian:set',
+  clearObsidian: 'obsidian:clear',
   mcpChanged: 'mcp:changed',
   listCollections: 'knowledge:list',
   saveCollection: 'knowledge:save',

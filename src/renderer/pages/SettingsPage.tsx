@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { AppInfo } from '../../shared/api';
 import { PageHeader } from '../components/PageHeader';
 import { McpSettings } from '../components/settings/McpSettings';
+import { ObsidianSettings } from '../components/settings/ObsidianSettings';
 import { ServerSettings } from '../components/settings/ServerSettings';
 
 export function SettingsPage() {
@@ -19,6 +20,7 @@ export function SettingsPage() {
       <div className="max-w-2xl space-y-8 p-6">
         <ServerSettings />
         <McpSettings />
+        <ObsidianSettings />
         <section>
           <h2 className="mb-3 font-semibold">{t('settings.about')}</h2>
           {info ? (
