@@ -133,6 +133,15 @@ Einstellungen in `%APPDATA%\LocalDesk` bleiben dabei erhalten.
 Die App ist nicht signiert. Beim ersten Start der Setup-Datei zeigt Windows deshalb „Der Computer
 wurde durch Windows geschützt“ – über „Weitere Informationen → Trotzdem ausführen“ geht es weiter.
 
+## Neue Version veröffentlichen
+
+1. In `package.json` die Version erhöhen (z. B. `0.1.0` → `0.1.1`).
+2. In `CHANGELOG.md` einen Abschnitt `## 0.1.1 – <Datum>` mit den Änderungen schreiben – das wird
+   der Text, den der Update-Knopf anzeigt.
+3. Committen und pushen.
+4. `npm run release` – prüft und baut alles, veröffentlicht aber nichts (Probelauf).
+5. `npm run release -- --publish` – lädt Installer und Update-Datei als GitHub-Release hoch.
+
 ## Weitere Befehle
 
 | Befehl              | Zweck                                                                   |
@@ -143,6 +152,7 @@ wurde durch Windows geschützt“ – über „Weitere Informationen → Trotzde
 | `npm run lint:fix`  | Formatierung automatisch korrigieren                                    |
 | `npm run dist`      | Windows-Installer bauen (`out/installer/LocalDesk-Setup-<Version>.exe`) |
 | `npm run make`      | Portable ZIP-Version bauen (Ausgabe in `out/make`)                      |
+| `npm run release`   | Release vorbereiten (Probelauf); mit `-- --publish` veröffentlichen     |
 
 ## Aufbau
 

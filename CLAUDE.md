@@ -351,7 +351,7 @@
   Update nur per Knopf, gefunden → auf Klick laden und installieren (electron-updater 6.8.10) ·
   eigenes Symbol. Unsigniert → SmartScreen-Hinweis beim ersten Start. Vor „öffentlich“: Commits tragen
   die Gmail-Adresse des Nutzers – Entscheidung offen (lassen / ab jetzt noreply / Historie umschreiben).
-  Schritte: 1 Symbol ✅ · 2 Installer ✅ · 3 Versionen & Releases · 4 Update-Knopf · 5 Test ohne
+  Schritte: 1 Symbol ✅ · 2 Installer ✅ · 3 Versionen & Releases ✅ · 4 Update-Knopf · 5 Test ohne
   Veröffentlichung · 6 Repo öffentlich + erstes Release · 7 Abschlusstest & Doku
 - **App-Symbol**: `assets/icon.svg` (Sprechblase mit „>_“ auf Akzent-Blau) ist die Quelle;
   `node scripts/build-icons.mjs` erzeugt `assets/icon.png` (512 px) und `assets/icon.ico`
@@ -370,6 +370,17 @@
   Geprüft: still installiert (`/S /currentuser /D=…`) → Ordner, Eintrag unter Apps, Verknüpfungen;
   installierte App startet (0.1.0, Ollama, Symbol); still deinstalliert → alles weg, Datenbank bleibt ✓.
   Den Assistenten selbst (Ordnerwahl-Dialog) hat der Nutzer von Hand zu prüfen.
+- **Versionen & Releases**: Version nur in `package.json` (SemVer `x.y.z`). Zu jeder Version ein
+  Abschnitt `## x.y.z – Datum` in `CHANGELOG.md` – wird zu den GitHub-Release-Notizen (und damit zum
+  „Was ist neu“ des Update-Knopfs). `npm run release` (`scripts/release.mjs`) = Probelauf: Version +
+  Changelog-Abschnitt, Git sauber auf `master` und gleich GitHub, Tag/Release noch frei, typecheck +
+  lint + test, `npm run dist`, `latest.yml` passt zu Version und SHA-512 der Setup.exe, schreibt
+  `out/installer/release-notes.md` und zeigt den gh-Befehl. Erst `npm run release -- --publish` lädt
+  Setup.exe, `.blockmap`, `latest.yml` per `gh release create v<x.y.z> --repo JPPM9/LocalDesk
+  --target <commit>` hoch – VERÖFFENTLICHUNG, nur nach ausdrücklicher Freigabe des Nutzers.
+  Prüfbare Teile in `scripts/release-lib.mjs` (Tests in `tests/scripts/`). Im Skript läuft nur `npm`
+  über die Shell (npm.cmd) – git/gh ohne, sonst zerfallen Argumente mit Leerzeichen.
+  Neue Version: `package.json` erhöhen, Changelog-Abschnitt schreiben, committen, pushen, `npm run release`.
 
 ## Befehle
 

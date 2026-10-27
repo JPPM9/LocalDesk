@@ -13,7 +13,7 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "dist": "electron-forge package && electron-builder --win --prepackaged out/LocalDesk-win32-x64 --publish never",
-    "release": "electron-forge release",
+    "release": "node scripts/release.mjs",
     "lint": "oxlint && oxfmt --check",
     "lint:fix": "oxlint --fix && oxfmt --write",
     "typecheck": "tsc --noEmit",
