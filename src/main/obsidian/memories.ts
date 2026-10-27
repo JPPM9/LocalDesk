@@ -1,5 +1,6 @@
 import path from 'node:path';
 import type { MemoryView } from '../../shared/api';
+import { localDate } from './note-format';
 import { sanitizeFileName, type VaultWriter } from './vault';
 
 /** Ein Fakt bleibt kurz – lange Texte gehören in Notizen oder Wissen. */
@@ -26,7 +27,7 @@ export function formatMemory(
   const lines = [
     '---',
     `tags: [${TAG}]`,
-    `erstellt: ${date.toISOString().slice(0, 10)}`,
+    `erstellt: ${localDate(date)}`,
     ...(project
       ? [
           `projekt: "${project.name.replace(/"/g, "'")}"`,
@@ -132,7 +133,7 @@ export class MemoryStore {
     return {
       id: path.relative(this.writer.folder, file),
       text: trimmed,
-      created: date.toISOString().slice(0, 10),
+      created: localDate(date),
       ...(project && { projectId: project.id, projectName: project.name }),
     };
   }

@@ -327,13 +327,24 @@
   Nummern wie [1] (werden dann keine Knöpfe; Hinweis „keine passenden Stellen“ steht darunter).
   gpt-oss erfand bei einer Code-Frage ein Detail, obwohl die richtige Stelle unter den Quellen war.
   Noch nicht von Hand geprüft: Windows-Datei-/Ordnerdialoge, „Öffnen“-Knopf einer Quelle.
-- Phase 6: Memory/Obsidian – in Arbeit. Entschieden: alle vier Zwecke (Fakten über dich merken,
+- Phase 6: Memory/Obsidian ✅ abgeschlossen. Entschieden: alle vier Zwecke (Fakten über dich merken,
   Antworten/Chats als Notiz speichern, Vault als Wissen, Chat-Zusammenfassungen) · lesen ganzer Vault,
   schreiben nur eigener Unterordner · Merken: Modell schlägt vor (Werkzeug), du bestätigst · Fakten immer
   alle im Chat solange ≤ ~1500 Tokens, sonst nur passende · Erinnerungen global + pro Projekt ·
   Zusammenfassung als Vorschlag-Karte · Vault als Sammlung per Wissen-Knopf.
   Schritte: 1 Vault & sicheres Schreiben ✅ · 2 Erinnerungen ✅ · 3 Merken im Chat ✅ · 4 Chats speichern ✅ ·
-  5 Zusammenfassungen ✅ · 6 Vault als Wissen ✅ · 7 Abschlusstest
+  5 Zusammenfassungen ✅ · 6 Vault als Wissen ✅ · 7 Abschlusstest ✅
+  Abschlusstest (Ollama 0.40.11, Test-Vault): gemma4, qwen3, gpt-oss je über die Oberfläche: Fakt
+  erzählen → Vorschlag → speichern; neuer Chat nutzt ihn; „Merk dir für dieses Projekt …“ → Ziel
+  „projekt“ vorgeschlagen; neuer Projekt-Chat kennt das Datum, Chat außerhalb nicht („weiß ich
+  nicht“); Chat gespeichert („(2)“, „(3)“ bei gleichem Namen); Zusammenfassung erzeugt und gespeichert;
+  Vault-Suche → Median.md als Quelle 1 → 3 × 7/7. Gebaute App: Vault, Einlesen im Worker aus app.asar,
+  Chat mit Erinnerung + Vault-Wissen, Zusammenfassung, Chat-Notiz ✓.
+  Beobachtet: Was gemerkt wird, wählt das Modell – qwen3 nahm nur „lerne mit Code-Beispielen“, gpt-oss
+  nur „studiere Informatik“, gemma4 beides (der Text ist in der Karte änderbar). muse-glimmer schlug in
+  Schritt 3 nichts vor. gpt-oss stürzte in Schritt 3 in Ollama ab (CUDA), lief im Abschlusstest wieder.
+  Gefunden und behoben: Erinnerungen trugen das Datum in UTC (kurz nach Mitternacht der Vortag) → Ortszeit.
+  Noch von Hand zu prüfen: „Öffnen“ einer Vault-Quelle in Obsidian (mit deinem echten Vault).
 - Phase 7: Installer & Update-Check
 
 ## Befehle

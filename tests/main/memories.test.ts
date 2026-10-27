@@ -152,3 +152,12 @@ describe('isMemoryPath', () => {
     expect(isMemoryPath('Erinnerungen/a.png')).toBe(false);
   });
 });
+
+describe('Datum der Erinnerung', () => {
+  it('nutzt die Ortszeit, nicht UTC (kurz nach Mitternacht)', () => {
+    const justAfterMidnight = new Date(2026, 10, 1, 0, 30);
+    expect(formatMemory('x', justAfterMidnight)).toContain(
+      'erstellt: 2026-11-01',
+    );
+  });
+});

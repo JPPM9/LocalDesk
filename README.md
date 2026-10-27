@@ -3,7 +3,7 @@
 Persönliche Desktop-App für lokale KI-Modelle über [Ollama](https://ollama.com).
 Navigation inspiriert von [mudler/LocalAI](https://github.com/mudler/LocalAI) (MIT) – eigener Code, keine Kopie.
 
-Stand: **Phase 5 abgeschlossen** (Wissen & Projekte)
+Stand: **Phase 6 abgeschlossen** (Erinnerungen & Obsidian)
 
 - Statusanzeige für Ollama, Liste der installierten Modelle
 - Chat mit Streaming: Markdown, Code-Hervorhebung, Gedanken von Denkmodellen, Tokens/s
@@ -106,6 +106,11 @@ dazu, auch ohne passende Stelle Nummern zu schreiben.
 Alle Chats liegen in einer SQLite-Datei: `%APPDATA%\LocalDesk\localdesk.db`
 (der genaue Ordner steht in der App unter **Einstellungen → Über LocalDesk**).
 Zum Sichern die App schließen und den Ordner kopieren. Nichts davon verlässt den Rechner.
+
+Mit eingerichtetem Obsidian-Vault liegen Erinnerungen, gespeicherte Chats und Zusammenfassungen
+zusätzlich als normale Notizen im Vault – nur im eigenen Unterordner (Standard `LocalDesk`):
+`Erinnerungen/`, `Projekte/<Projekt>/Erinnerungen/`, `Chats/`, `Zusammenfassungen/`. Sie gehören dir
+wie jede andere Notiz; LocalDesk löscht nur Erinnerungen, und nur wenn du es in der App tust.
 
 ## Starten
 
