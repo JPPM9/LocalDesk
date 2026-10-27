@@ -1,0 +1,7 @@
+# Immer LF-Zeilenenden im Arbeitsordner (der Formatierer oxfmt verlangt LF) –
+# sonst macht Git unter Windows beim Auschecken CRLF daraus.
+* text=auto eol=lf
+
+# Binärdateien nie anfassen.
+*.ico binary
+*.png binary

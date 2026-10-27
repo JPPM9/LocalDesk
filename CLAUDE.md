@@ -352,7 +352,7 @@
   eigenes Symbol. Unsigniert → SmartScreen-Hinweis beim ersten Start. Vor „öffentlich“: Commits tragen
   die Gmail-Adresse des Nutzers – Entscheidung offen (lassen / ab jetzt noreply / Historie umschreiben).
   Schritte: 1 Symbol ✅ · 2 Installer ✅ · 3 Versionen & Releases ✅ · 4 Update-Knopf ✅ · 5 Test ohne
-  Veröffentlichung · 6 Repo öffentlich + erstes Release · 7 Abschlusstest & Doku
+  Veröffentlichung ✅ · 6 Repo öffentlich + erstes Release · 7 Abschlusstest & Doku
 - **App-Symbol**: `assets/icon.svg` (Sprechblase mit „>_“ auf Akzent-Blau) ist die Quelle;
   `node scripts/build-icons.mjs` erzeugt `assets/icon.png` (512 px) und `assets/icon.ico`
   (16–256 px, PNG-Einträge) – ohne Pakete, gezeichnet mit Edge headless (transparenter Hintergrund).
@@ -392,6 +392,18 @@
   `quitAndInstall(true, true)`: Setup still im bisherigen Ordner, danach Neustart. Unsigniert → keine
   Signaturprüfung, nur SHA-512 aus `latest.yml`. Geprüft: Dev → Hinweis; gebaute App → „Suchen“ fragt
   GitHub, privates Repo → „noch keine Version veröffentlicht (oder privat)“ ✓.
+- **Update-Test ohne Veröffentlichung** (Schritt 5): 0.1.0 still installiert, 0.1.1 nur lokal gebaut
+  (Version/Changelog danach per Git zurückgesetzt), Mini-Server auf 127.0.0.1, App mit
+  `LOCALDESK_UPDATE_URL`. Gefunden: Laden scheiterte – electron-updater braucht
+  `resources/app-update.yml`, die bei `--prepackaged` fehlt → liegt jetzt als `resources/app-update.yml`
+  im Projekt und wird per Forge `extraResource` mitkopiert (`updaterCacheDirName: localdesk-updater`).
+  Danach: verfälschte sha512 → „passt nicht zur Prüfsumme“, Datei verworfen ✓; echter Durchlauf:
+  verfügbar (Notizen, Datum) → geladen und geprüft → „Jetzt neu starten“ → nach ~10 s 0.1.1 im
+  selben Ordner, Eintrag unter Apps 0.1.1, App startet von selbst, Daten erhalten ✓.
+  Außerdem gefunden: Git (core.autocrlf) checkte Dateien mit CRLF aus → oxfmt-Lint rot →
+  `.gitattributes` mit `* text=auto eol=lf`.
+  Bekannt: Der Installer legt `%LOCALAPPDATA%\localdesk-updater` an (Kopie des Installers für
+  Teil-Updates, ~120 MB); die Deinstallation lässt ihn liegen (Verhalten von electron-builder).
 
 ## Befehle
 

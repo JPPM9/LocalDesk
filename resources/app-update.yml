@@ -1,0 +1,7 @@
+# Für electron-updater: liegt in der gebauten App unter resources\app-update.yml.
+# Normalerweise schreibt electron-builder diese Datei; weil hier Electron Forge die App baut
+# (electron-builder verpackt nur, --prepackaged), legen wir sie selbst bei (forge.config.mts).
+provider: github
+owner: JPPM9
+repo: LocalDesk
+updaterCacheDirName: localdesk-updater

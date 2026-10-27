@@ -10,6 +10,8 @@ const config: ForgeConfig = {
     // Symbol der LocalDesk.exe (Endung ergänzt Forge: .ico unter Windows).
     // Neu erzeugen aus assets/icon.svg: node scripts/build-icons.mjs
     icon: 'assets/icon',
+    // Einstellungen für den Update-Knopf (electron-updater) – siehe Datei.
+    extraResource: ['resources/app-update.yml'],
   },
   rebuildConfig: {},
   makers: [
