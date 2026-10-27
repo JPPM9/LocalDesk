@@ -350,7 +350,10 @@
   entfällt) · Update-Quelle GitHub-Releases, Repo wird dafür öffentlich (macht der Nutzer selbst) ·
   Update nur per Knopf, gefunden → auf Klick laden und installieren (electron-updater 6.8.10) ·
   eigenes Symbol. Unsigniert → SmartScreen-Hinweis beim ersten Start. Vor „öffentlich“: Commits tragen
-  die Gmail-Adresse des Nutzers – Entscheidung offen (lassen / ab jetzt noreply / Historie umschreiben).
+  die private Adresse des Nutzers → entschieden: Historie umgeschrieben auf `JPPM9
+  <294298180+JPPM9@users.noreply.github.com>` (Autor und Committer, Daten unverändert) und in ein
+  frisches Repo JPPM9/LocalDesk gepusht; das alte Repo wurde umbenannt. Lokale Git-Identität dieses
+  Ordners = JPPM9/noreply (`git config` ohne `--global`).
   Schritte: 1 Symbol ✅ · 2 Installer ✅ · 3 Versionen & Releases ✅ · 4 Update-Knopf ✅ · 5 Test ohne
   Veröffentlichung ✅ · 6 Repo öffentlich + erstes Release · 7 Abschlusstest & Doku
 - **App-Symbol**: `assets/icon.svg` (Sprechblase mit „>_“ auf Akzent-Blau) ist die Quelle;
