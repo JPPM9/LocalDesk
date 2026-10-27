@@ -9,6 +9,7 @@ import {
   type LocalDeskApi,
   type McpServerView,
 } from '../shared/api';
+import type { UpdateState } from '../shared/update';
 
 const api: LocalDeskApi = {
   getAppInfo: () => ipcRenderer.invoke(IpcChannels.getAppInfo),
@@ -71,6 +72,17 @@ const api: LocalDeskApi = {
     ipcRenderer.invoke(IpcChannels.saveSummary, chatId, model, draft),
   dismissSummary: (chatId) =>
     ipcRenderer.invoke(IpcChannels.dismissSummary, chatId),
+  getUpdateState: () => ipcRenderer.invoke(IpcChannels.getUpdateState),
+  checkForUpdates: () => ipcRenderer.invoke(IpcChannels.checkForUpdates),
+  downloadUpdate: () => ipcRenderer.invoke(IpcChannels.downloadUpdate),
+  cancelUpdate: () => ipcRenderer.invoke(IpcChannels.cancelUpdate),
+  installUpdate: () => ipcRenderer.invoke(IpcChannels.installUpdate),
+  onUpdateChanged: (listener) => {
+    const handler = (_event: IpcRendererEvent, state: UpdateState) =>
+      listener(state);
+    ipcRenderer.on(IpcChannels.updateChanged, handler);
+    return () => ipcRenderer.removeListener(IpcChannels.updateChanged, handler);
+  },
   onMcpChanged: (listener) => {
     const handler = (_event: IpcRendererEvent, list: McpServerView[]) =>
       listener(list);

@@ -5,6 +5,7 @@ import { PageHeader } from '../components/PageHeader';
 import { McpSettings } from '../components/settings/McpSettings';
 import { ObsidianSettings } from '../components/settings/ObsidianSettings';
 import { ServerSettings } from '../components/settings/ServerSettings';
+import { UpdateSection } from '../components/settings/UpdateSection';
 
 export function SettingsPage() {
   const { t } = useTranslation();
@@ -39,6 +40,7 @@ export function SettingsPage() {
           ) : (
             <p className="text-muted">{t('settings.loading')}</p>
           )}
+          {info && <UpdateSection version={info.version} />}
         </section>
       </div>
     </>

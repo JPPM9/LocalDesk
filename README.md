@@ -133,6 +133,13 @@ Einstellungen in `%APPDATA%\LocalDesk` bleiben dabei erhalten.
 Die App ist nicht signiert. Beim ersten Start der Setup-Datei zeigt Windows deshalb „Der Computer
 wurde durch Windows geschützt“ – über „Weitere Informationen → Trotzdem ausführen“ geht es weiter.
 
+## Aktualisieren
+
+Einstellungen → Über LocalDesk → **Nach Updates suchen**. LocalDesk fragt dafür (und nur dann)
+GitHub nach der neuesten Version. Gibt es eine, siehst du die Änderungen; „Herunterladen und
+installieren“ lädt sie und prüft die Prüfsumme, „Jetzt neu starten und installieren“ installiert
+sie im bisherigen Ordner. Deine Chats und Einstellungen bleiben erhalten.
+
 ## Neue Version veröffentlichen
 
 1. In `package.json` die Version erhöhen (z. B. `0.1.0` → `0.1.1`).

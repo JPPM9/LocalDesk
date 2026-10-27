@@ -2,6 +2,8 @@
 // Main (Node) und Renderer (React) importieren beide aus dieser Datei,
 // damit sich beide Seiten auf dieselben Datenformen verlassen können.
 
+import type { UpdateState } from './update';
+
 export interface AppInfo {
   name: string;
   version: string;
@@ -614,6 +616,14 @@ export interface LocalDeskApi {
   dismissSummary: (chatId: string) => Promise<void>;
   onMcpChanged: (listener: (servers: McpServerView[]) => void) => () => void;
 
+  /** Update-Knopf: Stand abfragen, suchen, laden, abbrechen, installieren (Neustart). */
+  getUpdateState: () => Promise<UpdateState>;
+  checkForUpdates: () => Promise<UpdateState>;
+  downloadUpdate: () => Promise<UpdateState>;
+  cancelUpdate: () => Promise<void>;
+  installUpdate: () => Promise<void>;
+  onUpdateChanged: (listener: (state: UpdateState) => void) => () => void;
+
   listCollections: () => Promise<CollectionView[]>;
   /** Legt an oder ändert; prüft, ob die Quellen existieren. */
   saveCollection: (input: CollectionInput) => Promise<Result<CollectionConfig>>;
@@ -731,6 +741,12 @@ export const IpcChannels = {
   saveSummary: 'summary:save',
   dismissSummary: 'summary:dismiss',
   mcpChanged: 'mcp:changed',
+  getUpdateState: 'update:state',
+  checkForUpdates: 'update:check',
+  downloadUpdate: 'update:download',
+  cancelUpdate: 'update:cancel',
+  installUpdate: 'update:install',
+  updateChanged: 'update:changed',
   listCollections: 'knowledge:list',
   saveCollection: 'knowledge:save',
   deleteCollection: 'knowledge:delete',

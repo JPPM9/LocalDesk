@@ -351,7 +351,7 @@
   Update nur per Knopf, gefunden → auf Klick laden und installieren (electron-updater 6.8.10) ·
   eigenes Symbol. Unsigniert → SmartScreen-Hinweis beim ersten Start. Vor „öffentlich“: Commits tragen
   die Gmail-Adresse des Nutzers – Entscheidung offen (lassen / ab jetzt noreply / Historie umschreiben).
-  Schritte: 1 Symbol ✅ · 2 Installer ✅ · 3 Versionen & Releases ✅ · 4 Update-Knopf · 5 Test ohne
+  Schritte: 1 Symbol ✅ · 2 Installer ✅ · 3 Versionen & Releases ✅ · 4 Update-Knopf ✅ · 5 Test ohne
   Veröffentlichung · 6 Repo öffentlich + erstes Release · 7 Abschlusstest & Doku
 - **App-Symbol**: `assets/icon.svg` (Sprechblase mit „>_“ auf Akzent-Blau) ist die Quelle;
   `node scripts/build-icons.mjs` erzeugt `assets/icon.png` (512 px) und `assets/icon.ico`
@@ -381,6 +381,17 @@
   Prüfbare Teile in `scripts/release-lib.mjs` (Tests in `tests/scripts/`). Im Skript läuft nur `npm`
   über die Shell (npm.cmd) – git/gh ohne, sonst zerfallen Argumente mit Leerzeichen.
   Neue Version: `package.json` erhöhen, Changelog-Abschnitt schreiben, committen, pushen, `npm run release`.
+- **Update-Knopf** (`src/main/update-service.ts`, `shared/update.ts`, `settings/UpdateSection.tsx` unter
+  „Über LocalDesk“): electron-updater 6.8.10 (fest, von Vite in main.cjs gebündelt – geprüft in der
+  gebauten App). `autoDownload`/`autoInstallOnAppQuit` aus, kein Logger; Feed per `setFeedURL` GitHub
+  JPPM9/LocalDesk (die `--prepackaged`-App hat keine `app-update.yml`). Testhaken:
+  `LOCALDESK_UPDATE_URL` → generischer Server (nur für den lokalen Update-Test). Zustände
+  `UpdateState`: dev (nicht gepackt) · idle · checking · latest · available (Version, Notizen als Text
+  aus dem GitHub-HTML, Datum) · downloading (Fortschritt, abbrechbar per `CancellationToken`) · ready ·
+  error (`describeUpdateError`: offline, 404/privat, Prüfsumme, Rate-Limit). Installieren =
+  `quitAndInstall(true, true)`: Setup still im bisherigen Ordner, danach Neustart. Unsigniert → keine
+  Signaturprüfung, nur SHA-512 aus `latest.yml`. Geprüft: Dev → Hinweis; gebaute App → „Suchen“ fragt
+  GitHub, privates Repo → „noch keine Version veröffentlicht (oder privat)“ ✓.
 
 ## Befehle
 

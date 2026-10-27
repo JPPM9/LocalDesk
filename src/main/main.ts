@@ -31,6 +31,7 @@ import { registerFolderHandlers } from './folder-service';
 import { TemplateRepository } from './db/template-repository';
 import { registerServerHandlers } from './server-service';
 import { registerTemplateHandlers } from './template-service';
+import { registerUpdateHandlers } from './update-service';
 
 // Gleiche Kennung wie im Installer (electron-builder.yml, appId): Taskleiste und
 // Verknüpfungen gehören so zusammen.
@@ -165,6 +166,7 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
     obsidian.chatMemory,
   );
 
+  registerUpdateHandlers();
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({
     name: app.getName(),
     version: app.getVersion(),

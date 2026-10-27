@@ -491,5 +491,20 @@
     "retry": "Erneut versuchen",
     "backToDraft": "Zurück zum Entwurf",
     "close": "Schließen"
+  },
+  "update": {
+    "check": "Nach Updates suchen",
+    "dev": "Updates gibt es nur in der installierten App (nicht im Entwicklungsmodus).",
+    "checking": "Suche auf GitHub nach einer neuen Version …",
+    "latest": "Du hast die neueste Version ({{version}}).",
+    "available": "Version {{version}} ist verfügbar (installiert: {{current}}).",
+    "released": "Veröffentlicht am {{date}}",
+    "dataSafe": "Deine Chats, Einstellungen und Notizen bleiben beim Update erhalten.",
+    "download": "Herunterladen und installieren",
+    "downloading": "Lade Version {{version}} … {{done}} von {{total}} MB",
+    "cancel": "Abbrechen",
+    "ready": "Version {{version}} ist geladen und geprüft.",
+    "restartHint": "Beim Neustart wird sie im bisherigen Ordner installiert; LocalDesk startet danach von selbst wieder.",
+    "install": "Jetzt neu starten und installieren"
   }
 }
