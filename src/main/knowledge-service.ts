@@ -1,23 +1,42 @@
 import { stat } from 'node:fs/promises';
 import path from 'node:path';
-import { BrowserWindow, dialog, ipcMain } from 'electron';
+import { BrowserWindow, dialog, ipcMain, shell } from 'electron';
 import {
   IpcChannels,
   type CollectionConfig,
   type CollectionView,
   type IndexProgress,
   type Result,
+  type SourceRef,
 } from '../shared/api';
 import type { KnowledgeRepository } from './db/knowledge-repository';
 import type { Provider } from './providers/provider';
 import { WorkerExtractor } from './rag/extractor';
 import { indexCollection } from './rag/indexer';
+import { KnowledgeSearch } from './rag/search';
 
 /** Standard-Embedding-Modell für neue Sammlungen (vereinbart in Phase 5). */
 export const DEFAULT_EMBEDDING_MODEL = 'qwen3-embedding:0.6b';
 
 /** Fortschritt höchstens alle 250 ms an die Oberfläche – sonst flackert es. */
 const BROADCAST_INTERVAL_MS = 250;
+
+/** Diese Dateiarten öffnen wir im Standardprogramm; alles andere nur im Explorer. */
+const OPEN_DIRECTLY = new Set([
+  '.pdf',
+  '.docx',
+  '.md',
+  '.markdown',
+  '.txt',
+  '.text',
+  '.csv',
+  '.log',
+]);
+
+/** Was der Chat vom Wissen braucht. */
+export interface ChatKnowledge {
+  search(collectionIds: string[], query: string): Promise<Result<SourceRef[]>>;
+}
 
 /**
  * Wissenssammlungen: anlegen, löschen, einlesen. Es wird immer nur eine Sammlung
@@ -176,8 +195,49 @@ export function registerKnowledgeHandlers(
     return result.canceled ? [] : result.filePaths;
   });
 
+  // Nur Dateien aus Sammlungen – nie ein beliebiger Pfad aus der Oberfläche.
+  ipcMain.handle(
+    IpcChannels.openDocument,
+    async (_event, documentId: unknown): Promise<Result<void>> => {
+      const filePath =
+        typeof documentId === 'string' ? repo.documentPath(documentId) : null;
+      if (!filePath) return { ok: false, error: 'Datei nicht gefunden' };
+      if (!OPEN_DIRECTLY.has(path.extname(filePath).toLowerCase())) {
+        // Skripte (.bat, .ps1, .js …) würde Windows ausführen – nur im Explorer zeigen.
+        shell.showItemInFolder(filePath);
+        return { ok: true, value: undefined };
+      }
+      const error = await shell.openPath(filePath);
+      return error ? { ok: false, error } : { ok: true, value: undefined };
+    },
+  );
+
+  const search = new KnowledgeSearch({
+    repo,
+    embed: async (model, input) => {
+      const result = await getProvider().embed(model, [input]);
+      if (result.ok) return { ok: true, value: result.value[0] };
+      return {
+        ok: false,
+        error: result.error.includes('not found')
+          ? `Das Embedding-Modell ${model} fehlt auf dem aktiven Ollama-Server – unter „Installierte Modelle“ herunterladen.`
+          : result.error,
+      };
+    },
+  });
+
+  /** Für den Chat: Sammlungen durchsuchen (unbekannte IDs werden übergangen). */
+  const knowledge: ChatKnowledge = {
+    search: (collectionIds, query) => {
+      const collections = collectionIds
+        .map((id) => repo.getCollection(id))
+        .filter((c): c is CollectionConfig => c !== null);
+      return search.search(collections, query);
+    },
+  };
+
   // Läuft beim Beenden noch ein Einlesen, sauber abbrechen.
-  return { stop: () => running?.controller.abort() };
+  return { stop: () => running?.controller.abort(), knowledge };
 }
 
 /** Erste Quelle, die es nicht gibt (die Formprüfung macht das Repository). */

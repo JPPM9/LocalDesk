@@ -237,3 +237,47 @@ describe('Tool-Aufrufe', () => {
     expect(repo.getChat('c')?.messages[0]).not.toHaveProperty('toolCalls');
   });
 });
+
+describe('Quellen aus dem Wissen', () => {
+  const source = {
+    n: 1,
+    collectionId: 'k',
+    collectionName: 'Verträge',
+    documentId: 'd1',
+    path: 'C:\docs\mietvertrag.md',
+    text: 'Die Kündigungsfrist beträgt drei Monate.',
+    score: 0.76,
+  };
+
+  it('speichert Quellen und einen Suchfehler mit der Antwort', () => {
+    repo.createChat({ id: 'c', title: 'T', model: 'qwen3:14b' });
+    repo.appendMessage('c', answer('r1'));
+    repo.appendMessage('c', answer('r2'));
+    repo.updateMessage('r1', {
+      content: 'A',
+      thinking: '',
+      status: 'done',
+      sources: [source],
+    });
+    repo.updateMessage('r2', {
+      content: 'B',
+      thinking: '',
+      status: 'done',
+      sources: [],
+      knowledgeError: 'Embedding-Modell fehlt',
+    });
+    const [first, second] = repo.getChat('c')!.messages;
+    expect(first.sources).toEqual([source]);
+    expect(first).not.toHaveProperty('knowledgeError');
+    expect(second).toMatchObject({
+      sources: [],
+      knowledgeError: 'Embedding-Modell fehlt',
+    });
+  });
+
+  it('lässt Antworten ohne Wissenssuche ohne sources', () => {
+    repo.createChat({ id: 'c', title: 'T', model: 'qwen3:14b' });
+    repo.appendMessage('c', answer('r1'));
+    expect(repo.getChat('c')!.messages[0]).not.toHaveProperty('sources');
+  });
+});

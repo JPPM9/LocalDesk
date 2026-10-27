@@ -182,6 +182,30 @@ const migrations: string[] = [
   `
   ALTER TABLE chunks ADD COLUMN page INTEGER;
   `,
+  // 12: Stichwortsuche in den Abschnitten (ergänzt die Fingerabdruck-Suche bei Namen,
+  // Nummern, Fachbegriffen) und die Quellen einer Antwort.
+  `
+  CREATE VIRTUAL TABLE chunks_fts USING fts5(
+    heading,
+    text,
+    content = 'chunks',
+    content_rowid = 'id',
+    tokenize = 'unicode61 remove_diacritics 2'
+  );
+
+  CREATE TRIGGER chunks_fts_insert AFTER INSERT ON chunks BEGIN
+    INSERT INTO chunks_fts(rowid, heading, text) VALUES (new.id, new.heading, new.text);
+  END;
+
+  CREATE TRIGGER chunks_fts_delete AFTER DELETE ON chunks BEGIN
+    INSERT INTO chunks_fts(chunks_fts, rowid, heading, text)
+      VALUES ('delete', old.id, old.heading, old.text);
+  END;
+
+  INSERT INTO chunks_fts(chunks_fts) VALUES ('rebuild');
+
+  ALTER TABLE messages ADD COLUMN sources_json TEXT;
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */

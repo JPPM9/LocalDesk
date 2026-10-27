@@ -7,6 +7,7 @@ import { thinkFitsModel } from '../../shared/settings';
 import { PageHeader } from '../components/PageHeader';
 import { Field, SettingsFields } from '../components/settings/SettingsFields';
 import { useChatModels } from '../hooks/useChatModels';
+import { CollectionPicker } from '../components/knowledge/CollectionPicker';
 import { McpServerPicker } from '../components/mcp/McpServerPicker';
 import { useTemplates } from '../templates/useTemplates';
 
@@ -222,6 +223,22 @@ export function TemplatesPage() {
                     </option>
                   ))}
                 </select>
+              </Field>
+
+              <Field
+                label={t('templates.collections')}
+                hint={t('templates.collectionsHint')}
+              >
+                <CollectionPicker
+                  selected={draft.settings.collections ?? []}
+                  onChange={(ids) => {
+                    const { collections: _old, ...rest } = draft.settings;
+                    update({
+                      settings:
+                        ids.length > 0 ? { ...rest, collections: ids } : rest,
+                    });
+                  }}
+                />
               </Field>
 
               <Field

@@ -29,6 +29,12 @@ export function applyChatEvent(
           ...message,
           toolCalls: upsertToolCall(message.toolCalls ?? [], event.call),
         };
+      case 'sources':
+        return {
+          ...message,
+          sources: event.sources,
+          ...(event.error !== undefined && { knowledgeError: event.error }),
+        };
       case 'done':
         return { ...message, status: 'done', stats: event.stats };
       case 'error':

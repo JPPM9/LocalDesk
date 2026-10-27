@@ -8,6 +8,7 @@ import type {
   MessageStatus,
   SearchHit,
   SearchResult,
+  SourceRef,
   ToolCallRecord,
 } from '../../shared/api';
 import {
@@ -17,6 +18,7 @@ import {
   searchTerms,
 } from '../../shared/search';
 import { normalizeSettings } from '../../shared/settings';
+import { parseSources } from '../../shared/knowledge';
 import { parseToolCalls, settleToolCalls } from '../../shared/tools';
 
 const MAX_SEARCH_HITS = 50;
@@ -45,6 +47,7 @@ interface MessageRow {
   error: string | null;
   stats_json: string | null;
   tool_calls_json: string | null;
+  sources_json: string | null;
 }
 
 /** Felder einer Antwort, die sich nach dem Anlegen noch ändern. */
@@ -55,6 +58,8 @@ export interface MessageUpdate {
   error?: string;
   stats?: ChatStats;
   toolCalls?: ToolCallRecord[];
+  sources?: SourceRef[];
+  knowledgeError?: string;
 }
 
 /**
@@ -85,7 +90,8 @@ export class ChatRepository {
     if (!chat) return null;
     const rows = this.db
       .prepare(
-        `SELECT id, role, content, thinking, status, model, error, stats_json, tool_calls_json
+        `SELECT id, role, content, thinking, status, model, error, stats_json, tool_calls_json,
+                sources_json
            FROM messages WHERE chat_id = ? ORDER BY position`,
       )
       .all(chatId) as unknown as MessageRow[];
@@ -170,8 +176,8 @@ export class ChatRepository {
       .prepare(
         `INSERT INTO messages
            (id, chat_id, position, role, content, thinking, status, model, error, stats_json,
-            tool_calls_json, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            tool_calls_json, sources_json, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .run(
         message.id,
@@ -185,6 +191,7 @@ export class ChatRepository {
         message.error ?? null,
         message.stats ? JSON.stringify(message.stats) : null,
         toolCallsJson(message.toolCalls),
+        sourcesJson(message),
         now,
       );
     const model = message.model ?? null;
@@ -199,7 +206,8 @@ export class ChatRepository {
     this.db
       .prepare(
         `UPDATE messages
-            SET content = ?, thinking = ?, status = ?, error = ?, stats_json = ?, tool_calls_json = ?
+            SET content = ?, thinking = ?, status = ?, error = ?, stats_json = ?, tool_calls_json = ?,
+                sources_json = ?
           WHERE id = ?`,
       )
       .run(
@@ -209,6 +217,7 @@ export class ChatRepository {
         update.error ?? null,
         update.stats ? JSON.stringify(update.stats) : null,
         toolCallsJson(update.toolCalls),
+        sourcesJson(update),
         messageId,
       );
   }
@@ -288,8 +297,22 @@ function toolCallsJson(calls: ToolCallRecord[] | undefined): string | null {
   return calls && calls.length > 0 ? JSON.stringify(calls) : null;
 }
 
+/** Quellen und ein Suchfehler zusammen als JSON (null = keine Wissenssuche). */
+function sourcesJson(
+  message: Pick<MessageRecord, 'sources' | 'knowledgeError'>,
+): string | null {
+  if (message.sources === undefined && message.knowledgeError === undefined) {
+    return null;
+  }
+  return JSON.stringify({
+    sources: message.sources ?? [],
+    ...(message.knowledgeError && { error: message.knowledgeError }),
+  });
+}
+
 function toMessage(row: MessageRow): MessageRecord {
   const toolCalls = parseToolCalls(row.tool_calls_json);
+  const knowledge = parseSources(row.sources_json);
   return {
     id: row.id,
     role: row.role,
@@ -306,5 +329,6 @@ function toMessage(row: MessageRow): MessageRecord {
       toolCalls:
         row.status === 'streaming' ? toolCalls : settleToolCalls(toolCalls),
     }),
+    ...knowledge,
   };
 }

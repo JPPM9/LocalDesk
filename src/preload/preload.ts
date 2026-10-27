@@ -69,6 +69,8 @@ const api: LocalDeskApi = {
   listDocuments: (collectionId) =>
     ipcRenderer.invoke(IpcChannels.listDocuments, collectionId),
   pickFiles: () => ipcRenderer.invoke(IpcChannels.pickFiles),
+  openDocument: (documentId) =>
+    ipcRenderer.invoke(IpcChannels.openDocument, documentId),
   onCollectionsChanged: (listener) => {
     const handler = (_event: IpcRendererEvent, list: CollectionView[]) =>
       listener(list);

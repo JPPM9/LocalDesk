@@ -63,6 +63,13 @@ describe('normalizeSettings', () => {
     expect(normalizeSettings({ mcpServers: [] })).toEqual({});
     expect(normalizeSettings({ mcpServers: 'fs-1' })).toEqual({});
   });
+
+  it('übernimmt die gewählten Wissenssammlungen genauso', () => {
+    expect(
+      normalizeSettings({ collections: ['k1', 'k1', 'k2', 7], mcpServers: [] }),
+    ).toEqual({ collections: ['k1', 'k2'] });
+    expect(normalizeSettings({ collections: [] })).toEqual({});
+  });
 });
 
 describe('buildChatRequest', () => {

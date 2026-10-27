@@ -332,6 +332,27 @@ export interface ChatSettings {
    * Fehlt die Liste, nutzt der Chat keine Tools.
    */
   mcpServers?: string[];
+  /**
+   * IDs der Wissenssammlungen, die vor jeder Antwort durchsucht werden (Wissen-Knopf).
+   * Fehlt die Liste, nutzt der Chat kein Wissen.
+   */
+  collections?: string[];
+}
+
+/** Eine Textstelle aus einer Sammlung, die das Modell für eine Antwort bekommen hat. */
+export interface SourceRef {
+  /** Nummer, mit der das Modell zitiert: [1], [2] … */
+  n: number;
+  collectionId: string;
+  collectionName: string;
+  documentId: string;
+  path: string;
+  /** Seite bei PDFs. */
+  page?: number;
+  heading?: string;
+  text: string;
+  /** Ähnlichkeit 0–1 (Fingerabdruck-Suche). */
+  score: number;
 }
 
 export interface ChatRequest {
@@ -367,6 +388,8 @@ export type ChatStreamEvent = { requestId: string } & (
   | Exclude<ChatChunk, { type: 'tool-calls' }>
   /** Neuer oder geänderter Tool-Aufruf (gleiche id = ersetzen). */
   | { type: 'tool-call'; call: ToolCallRecord }
+  /** Ergebnis der Wissenssuche vor der Antwort (leer = nichts Passendes gefunden). */
+  | { type: 'sources'; sources: SourceRef[]; error?: string }
   | { type: 'error'; error: string }
   | { type: 'aborted' }
 );
@@ -387,6 +410,10 @@ export interface MessageRecord {
   error?: string;
   /** Tool-Aufrufe während dieser Antwort, in Reihenfolge. */
   toolCalls?: ToolCallRecord[];
+  /** Textstellen aus dem Wissen, die das Modell bekommen hat (fehlt = keine Suche). */
+  sources?: SourceRef[];
+  /** Die Wissenssuche ging schief (z. B. Embedding-Modell fehlt) – Antwort kam ohne Wissen. */
+  knowledgeError?: string;
 }
 
 /** Ein Chat in der Liste (ohne Nachrichten). */
@@ -496,6 +523,11 @@ export interface LocalDeskApi {
   listDocuments: (collectionId: string) => Promise<KnowledgeDocument[]>;
   /** Öffnet den Windows-Dateidialog; leer = abgebrochen. */
   pickFiles: () => Promise<string[]>;
+  /**
+   * Öffnet eine eingelesene Datei im Standardprogramm (nur Dokumente und Text) bzw.
+   * zeigt sie im Explorer (alles andere, z. B. Skripte – die würden sonst ausgeführt).
+   */
+  openDocument: (documentId: string) => Promise<Result<void>>;
   onCollectionsChanged: (
     listener: (collections: CollectionView[]) => void,
   ) => () => void;
@@ -573,6 +605,7 @@ export const IpcChannels = {
   cancelIndexing: 'knowledge:cancel',
   listDocuments: 'knowledge:documents',
   pickFiles: 'dialog:pick-files',
+  openDocument: 'knowledge:open-document',
   collectionsChanged: 'knowledge:changed',
   startDownload: 'downloads:start',
   cancelDownload: 'downloads:cancel',

@@ -147,6 +147,15 @@
     "stats": "{{tokens}} Tokens · {{speed}} Tokens/s · {{seconds}} s",
     "toolWorking": "Arbeitet mit Tools …"
   },
+  "sources": {
+    "title_one": "{{count}} Quelle",
+    "title_other": "{{count}} Quellen",
+    "searching": "Durchsuche Wissen …",
+    "none": "Keine passenden Stellen im Wissen gefunden – die Antwort stammt aus dem Modell selbst.",
+    "error": "Wissen nicht durchsucht: {{error}}",
+    "open": "Datei öffnen",
+    "score": "Ähnlichkeit {{score}}"
+  },
   "toolCall": {
     "status": {
       "asking": "wartet auf Freigabe",
@@ -303,6 +312,8 @@
     "pickerTitle": "Mit Vorlage starten",
     "active": "Vorlage: {{name}}",
     "clear": "Vorlage entfernen",
+    "collections": "Wissen",
+    "collectionsHint": "Welche Sammlungen ein Chat mit dieser Vorlage vor jeder Antwort durchsucht. Später im Chat über den Wissen-Knopf änderbar.",
     "mcpServers": "MCP-Server",
     "mcpServersHint": "Welche Werkzeuge ein Chat mit dieser Vorlage nutzen darf. Später im Chat über den MCP-Button änderbar."
   },
@@ -316,6 +327,14 @@
     "tools_one": "{{count}} Tool nutzbar",
     "tools_other": "{{count}} Tools nutzbar",
     "modelNoTools": "Das gewählte Modell kann laut Ollama keine Tools nutzen – wähle z. B. qwen3, gpt-oss oder gemma4."
+  },
+  "knowledgePicker": {
+    "button": "Wissen für diesen Chat",
+    "title": "Wissen für diesen Chat",
+    "intro": "Vor jeder Antwort durchsucht LocalDesk die gewählten Sammlungen und gibt dem Modell passende Textstellen mit.",
+    "none": "Noch keine Sammlungen angelegt.",
+    "toKnowledge": "Zur Seite „Wissen“",
+    "empty": "noch nicht eingelesen"
   },
   "settingsPanel": {
     "title": "Chat-Einstellungen",

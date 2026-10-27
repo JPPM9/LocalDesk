@@ -20,7 +20,10 @@ Stand: **Phase 4 abgeschlossen** (MCP & Tool-Calling), Phase 5 (Wissen & Projekt
   freigegebenen Ordnern lesen und – nach Rückfrage – schreiben
 - Seite „Wissen“: Sammlungen aus Ordnern und Dateien (PDF, Word, Text, Markdown, Quellcode) einlesen;
   „Neu einlesen“ berechnet nur Geändertes neu. Braucht das Embedding-Modell
-  `qwen3-embedding:0.6b` (unter „Installierte Modelle“ herunterladen). Die Suche im Chat folgt.
+  `qwen3-embedding:0.6b` (unter „Installierte Modelle“ herunterladen).
+- Wissen im Chat: Über den Wissen-Knopf (Bücher-Symbol im Chat-Kopf, auch in Vorlagen) Sammlungen
+  wählen – vor jeder Antwort sucht LocalDesk passende Stellen, das Modell zitiert sie mit [1], [2] …
+  Klick auf die Nummer zeigt die Textstelle, „Öffnen“ die Datei.
 
 ## Dateien im Chat benutzen (MCP)
 

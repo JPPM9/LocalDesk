@@ -1,15 +1,27 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TriangleAlert } from 'lucide-react';
 import type { MessageRecord, ToolDecision } from '../../../shared/api';
 import { Markdown } from './Markdown';
+import { SourceList } from './SourceList';
 import { ToolCallView } from './ToolCallView';
 
 interface MessageViewProps {
   message: MessageRecord;
   onToolDecision: (callId: string, decision: ToolDecision) => void;
+  /** Dieser Chat durchsucht Wissen – solange Quellen fehlen, läuft die Suche noch. */
+  usesKnowledge?: boolean;
 }
 
-export function MessageView({ message, onToolDecision }: MessageViewProps) {
+export function MessageView({
+  message,
+  onToolDecision,
+  usesKnowledge = false,
+}: MessageViewProps) {
   const { t } = useTranslation();
+  const [citeFocus, setCiteFocus] = useState<{ n: number; at: number } | null>(
+    null,
+  );
 
   if (message.role === 'user') {
     return (
@@ -31,6 +43,12 @@ export function MessageView({ message, onToolDecision }: MessageViewProps) {
     !message.content &&
     !toolCalls.some((c) => c.status === 'asking' || c.status === 'running') &&
     (usedTools || !message.thinking);
+  const searching =
+    streaming &&
+    usesKnowledge &&
+    message.sources === undefined &&
+    message.knowledgeError === undefined;
+  const sources = message.sources ?? [];
 
   return (
     <div className="space-y-2">
@@ -61,10 +79,31 @@ export function MessageView({ message, onToolDecision }: MessageViewProps) {
 
       {waiting && (
         <p className="animate-pulse text-muted">
-          {usedTools ? t('chat.toolWorking') : t('chat.waiting')}
+          {searching
+            ? t('sources.searching')
+            : usedTools
+              ? t('chat.toolWorking')
+              : t('chat.waiting')}
         </p>
       )}
-      {message.content && <Markdown text={message.content} />}
+      {message.content && (
+        <Markdown
+          text={message.content}
+          sourceCount={sources.length}
+          onCite={(n) => setCiteFocus({ n, at: Date.now() })}
+        />
+      )}
+
+      {message.knowledgeError && (
+        <p className="flex items-start gap-1.5 text-xs text-warn">
+          <TriangleAlert size={13} className="mt-0.5 shrink-0" />
+          {t('sources.error', { error: message.knowledgeError })}
+        </p>
+      )}
+      {message.sources?.length === 0 && !message.knowledgeError && (
+        <p className="text-xs text-muted">{t('sources.none')}</p>
+      )}
+      {sources.length > 0 && <SourceList sources={sources} focus={citeFocus} />}
 
       {message.status === 'error' && (
         <p className="rounded border border-error/40 bg-error/10 px-3 py-2 text-error">

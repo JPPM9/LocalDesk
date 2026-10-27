@@ -17,6 +17,7 @@ import { ChatList } from '../components/chat/ChatList';
 import { ChatSettingsPanel } from '../components/chat/ChatSettingsPanel';
 import { MessageView } from '../components/chat/MessageView';
 import { ModelSelect } from '../components/chat/ModelSelect';
+import { KnowledgeButton } from '../components/knowledge/CollectionPicker';
 import { McpButton } from '../components/mcp/McpButton';
 
 // Nur eine Bequemlichkeit pro Rechner: das zuletzt gewählte Modell für neue Chats.
@@ -65,13 +66,14 @@ export function ChatPage() {
   useShortcut('stop', () => {
     if (isRunning) stop();
   });
-  // Der Punkt am Einstellungs-Knopf gilt nur für das Panel – MCP-Server zeigt ihr eigener Knopf.
+  // Der Punkt am Einstellungs-Knopf gilt nur für das Panel – MCP-Server und Wissen
+  // zeigen ihre eigenen Knöpfe.
   const hasCustomSettings = Object.keys(settings).some(
-    (key) => key !== 'mcpServers',
+    (key) => key !== 'mcpServers' && key !== 'collections',
   );
-  const setMcpServers = (ids: string[]) => {
-    const { mcpServers: _old, ...rest } = settings;
-    updateSettings(ids.length > 0 ? { ...rest, mcpServers: ids } : rest);
+  const setList = (key: 'mcpServers' | 'collections', ids: string[]) => {
+    const { [key]: _old, ...rest } = settings;
+    updateSettings(ids.length > 0 ? { ...rest, [key]: ids } : rest);
   };
 
   const { models, loaded: modelsLoaded, error: loadError } = useChatModels();
@@ -225,9 +227,13 @@ export function ChatPage() {
           }
           actions={
             <>
+              <KnowledgeButton
+                selected={settings.collections ?? []}
+                onChange={(ids) => setList('collections', ids)}
+              />
               <McpButton
                 selected={settings.mcpServers ?? []}
-                onChange={setMcpServers}
+                onChange={(ids) => setList('mcpServers', ids)}
                 modelSupportsTools={models
                   .find((m) => m.name === model)
                   ?.capabilities.includes('tools')}
@@ -292,6 +298,7 @@ export function ChatPage() {
                   onToolDecision={(callId, decision) =>
                     void window.api.chatToolDecision(callId, decision)
                   }
+                  usesKnowledge={Boolean(settings.collections?.length)}
                 />
               </div>
             ))}

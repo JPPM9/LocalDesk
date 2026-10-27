@@ -112,12 +112,12 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
   );
   // MCP-Server sind eigene Programme – beim Beenden der App mit beenden.
   app.on('will-quit', () => void mcp.stopAll());
-  registerChatHandlers(getProvider, chats, mcpTools);
   const knowledge = registerKnowledgeHandlers(
     new KnowledgeRepository(db),
     getProvider,
   );
   app.on('will-quit', () => knowledge.stop());
+  registerChatHandlers(getProvider, chats, mcpTools, knowledge.knowledge);
 
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({
     name: app.getName(),

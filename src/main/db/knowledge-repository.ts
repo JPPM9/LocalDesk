@@ -71,10 +71,48 @@ export interface StoredChunk {
 
 /** Sammlungen, ihre Dokumente und Abschnitte. */
 export class KnowledgeRepository {
+  /**
+   * Zählt jede Änderung an Abschnitten. Die Suche hält die Fingerabdrücke im
+   * Speicher und lädt sie nur neu, wenn sich diese Zahl geändert hat.
+   */
+  version = 0;
+
   constructor(
     private readonly db: DatabaseSync,
     private readonly now: () => number = Date.now,
   ) {}
+
+  /**
+   * Stichwortsuche (FTS5, beste zuerst) in den Abschnitten der Sammlungen.
+   * `ftsQuery` muss schon sicher gebaut sein (siehe rag/search.ts).
+   */
+  keywordSearch(
+    collectionIds: string[],
+    ftsQuery: string,
+    limit: number,
+  ): number[] {
+    if (collectionIds.length === 0) return [];
+    const placeholders = collectionIds.map(() => '?').join(', ');
+    const rows = this.db
+      .prepare(
+        `SELECT c.id FROM chunks_fts
+           JOIN chunks c ON c.id = chunks_fts.rowid
+           JOIN documents d ON d.id = c.document_id
+          WHERE chunks_fts MATCH ? AND d.collection_id IN (${placeholders})
+          ORDER BY rank
+          LIMIT ?`,
+      )
+      .all(ftsQuery, ...collectionIds, limit) as { id: number }[];
+    return rows.map((r) => r.id);
+  }
+
+  /** Pfad einer eingelesenen Datei – nur Dateien aus Sammlungen dürfen geöffnet werden. */
+  documentPath(documentId: string): string | null {
+    const row = this.db
+      .prepare('SELECT path FROM documents WHERE id = ?')
+      .get(documentId) as { path: string } | undefined;
+    return row?.path ?? null;
+  }
 
   listCollections(): CollectionConfig[] {
     const rows = this.db
@@ -118,6 +156,7 @@ export class KnowledgeRepository {
   }
 
   deleteCollection(collectionId: string) {
+    this.version++;
     this.db.prepare('DELETE FROM collections WHERE id = ?').run(collectionId);
   }
 
@@ -253,6 +292,7 @@ export class KnowledgeRepository {
         );
       });
       this.db.exec('COMMIT');
+      this.version++;
     } catch (error) {
       this.db.exec('ROLLBACK');
       throw error;
@@ -267,6 +307,7 @@ export class KnowledgeRepository {
   }
 
   removeDocuments(documentIds: string[]) {
+    if (documentIds.length > 0) this.version++;
     const statement = this.db.prepare('DELETE FROM documents WHERE id = ?');
     for (const id of documentIds) statement.run(id);
   }

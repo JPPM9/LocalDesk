@@ -9,9 +9,11 @@ import {
   type ToolDecision,
 } from '../shared/api';
 import { applyChatEvent, titleFromMessage } from '../shared/chat';
+import { knowledgeQuery, withKnowledge } from '../shared/knowledge';
 import { buildChatRequest } from '../shared/settings';
 import { describeChatError } from './chat-errors';
 import type { ChatRepository } from './db/chat-repository';
+import type { ChatKnowledge } from './knowledge-service';
 import type { McpTools } from './mcp-service';
 import type { Provider } from './providers/provider';
 import { runAnswer, type ToolRuntime } from './tool-loop';
@@ -32,6 +34,7 @@ export function registerChatHandlers(
   getProvider: () => Provider,
   chats: ChatRepository,
   mcpTools: McpTools,
+  knowledge: ChatKnowledge,
 ) {
   const running = new Map<string, AbortController>();
   /** Rückfragen, auf deren Antwort ein Tool-Aufruf wartet (Aufruf-ID → Antwort). */
@@ -116,6 +119,12 @@ export function registerChatHandlers(
       settings,
     );
     const runtime = toolRuntime(settings.mcpServers ?? [], controller.signal);
+    const knowledgeSearch = settings.collections?.length
+      ? {
+          collectionIds: settings.collections,
+          query: knowledgeQuery(history, request.content),
+        }
+      : null;
     // Bewusst nicht abwarten: Die Oberfläche bekommt die Antwort über Ereignisse.
     // Der Server wird beim Absenden festgelegt – ein Umschalten während der
     // Antwort lässt diese Antwort auf ihrem Server zu Ende laufen.
@@ -124,6 +133,7 @@ export function registerChatHandlers(
       event.sender,
       chatRequest,
       runtime,
+      knowledgeSearch,
       answer,
       controller,
     ).finally(() => running.delete(request.requestId));
@@ -169,6 +179,7 @@ export function registerChatHandlers(
     sender: WebContents,
     chatRequest: ChatRequest,
     runtime: ToolRuntime,
+    knowledgeSearch: { collectionIds: string[]; query: string } | null,
     initial: MessageRecord,
     controller: AbortController,
   ) {
@@ -183,9 +194,10 @@ export function registerChatHandlers(
     const emit = (event: ChatStreamEvent) => {
       answer = applyChatEvent([answer], event)[0];
       if (!sender.isDestroyed()) sender.send(IpcChannels.chatEvent, event);
-      // Tool-Aufrufe sofort speichern – sie sind selten, aber wichtig.
+      // Tool-Aufrufe und Quellen sofort speichern – sie sind selten, aber wichtig.
       if (
         event.type === 'tool-call' ||
+        event.type === 'sources' ||
         Date.now() - lastSave > SAVE_INTERVAL_MS
       ) {
         save();
@@ -193,9 +205,25 @@ export function registerChatHandlers(
     };
 
     try {
+      // Erst im Wissen suchen, dann antworten. Geht die Suche schief, kommt die
+      // Antwort ohne Wissen – mit Hinweis, statt gar nicht.
+      let request = chatRequest;
+      if (knowledgeSearch) {
+        const found = await knowledge.search(
+          knowledgeSearch.collectionIds,
+          knowledgeSearch.query,
+        );
+        controller.signal.throwIfAborted();
+        if (found.ok) {
+          emit({ requestId, type: 'sources', sources: found.value });
+          request = withKnowledge(chatRequest, found.value);
+        } else {
+          emit({ requestId, type: 'sources', sources: [], error: found.error });
+        }
+      }
       await runAnswer({
         provider,
-        request: chatRequest,
+        request,
         requestId,
         runtime,
         emit,

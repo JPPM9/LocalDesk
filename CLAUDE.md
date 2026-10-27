@@ -157,6 +157,25 @@
   (geprüft: kein `eval`/`new Function` im Code). Das optionale native `@napi-rs/canvas` wird nie
   geladen (im gebauten Code findet pdf.js kein `require`) und ist nicht im Paket (geprüft: keine
   `.node`-Dateien in `out/`). Gemessen (dev und gebaut gleich): 6 Dateien/107 Abschnitte in ~4 s.
+- **Wissen im Chat** (`ChatSettings.collections`, Wissen-Knopf = `KnowledgeButton`, Auswahl auch in
+  Vorlagen; beide Kopf-Knöpfe teilen sich `PickerButton`). Vor jeder Antwort sucht `KnowledgeSearch`
+  (`src/main/rag/search.ts`): Fingerabdruck-Suche über alle Abschnitte der Sammlungen (im Speicher
+  gehalten, neu geladen wenn `KnowledgeRepository.version` sich ändert) + Stichwortsuche (FTS5
+  `chunks_fts`, Migration 12; Inhaltswörter einzeln mit ODER, Füllwörter raus – `contentWords`),
+  zusammengeführt per Reciprocal Rank Fusion (k = 60), höchstens 6 Stellen. Schwellen (gemessen an
+  16 Fragen DE/EN, PDF/Word/MD: richtige ab 0,43, ohne Antwort ≤ 0,22): Ähnlichkeit ≥ 0,35 und
+  ≥ 70 % des besten Treffers (Stichwort-Treffer ≥ 50 %). Suche + Einbetten der Frage ~20–40 ms.
+  Gefundenes geht nur in diese eine Anfrage (`withKnowledge`: Auszüge mit [n] vor der Frage, Anweisung
+  „ehrlich sagen, wenn nicht beantwortet“); gespeichert wird die Frage ohne Auszüge, dazu die Quellen
+  an der Antwort (`messages.sources_json`, Ereignis `sources`). Suchanfrage (`knowledgeQuery`): die
+  Frage; nur wenn sie ≤ 1 Inhaltswort hat („Und was noch?“) zusätzlich die vorige Frage – nach Länge
+  zu entscheiden zog im Test bei Themenwechsel („WM 2014“ nach Apache-Frage) falsche Quellen.
+  Suchfehler (Modell fehlt, Ollama aus) → Antwort ohne Wissen mit Hinweis (`knowledgeError`).
+  Anzeige: [n] im Text werden per Markdown-Plugin (`citations.ts`) zu Knöpfen (nur Nummern, die es
+  gibt; nicht in Code/Links), Quellenliste aufklappbar mit Textstelle, „Öffnen“ (`openDocument`): nur
+  Dateien aus Sammlungen; PDF/Word/Text im Standardprogramm, alles andere nur im Explorer zeigen
+  (Skripte würden sonst ausgeführt). Live: qwen3, gpt-oss, gemma4 zitieren korrekt; ~1850 Prompt-Tokens
+  bei 6 Quellen. „Öffnen“ selbst nicht automatisch getestet (öffnet echte Programme).
 - **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
@@ -188,7 +207,7 @@
   Dateien bleiben am Ort, „Neu einlesen“ per Knopf (nur Geänderte) · Suche automatisch vor jeder Antwort ·
   Quellen als [1] + Liste, Öffnen im Standardprogramm · Seitenbereich: Quellen / Projekt-Dateien /
   Kontext-Füllstand · zu voll → warnen + Knopf „Kontextlänge erhöhen“.
-  Schritte: 1 Grundlage ✅ · 2 Sammlungen (Text/MD/Code) ✅ · 3 PDF/Word ✅ · 4 Wissen im Chat · 5 Projekte ·
+  Schritte: 1 Grundlage ✅ · 2 Sammlungen (Text/MD/Code) ✅ · 3 PDF/Word ✅ · 4 Wissen im Chat ✅ · 5 Projekte ·
   6 Seitenbereich · 7 Abschlusstest
 - Phase 6: Memory/Obsidian
 - Phase 7: Installer & Update-Check
