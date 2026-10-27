@@ -6,6 +6,8 @@ export interface Chunk {
   end: number;
   /** Überschriften-Pfad bei Markdown, z. B. „LocalDesk › Wo liegen meine Daten?“. */
   heading?: string;
+  /** Seite bei PDFs (ab 1); Positionen gelten dann innerhalb dieser Seite. */
+  page?: number;
 }
 
 export interface ChunkOptions {

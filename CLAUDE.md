@@ -142,6 +142,21 @@
   ganzes Einlesen stoppt; nicht erreichbare Quelle → ihre Dokumente bleiben. Dateiname steht vorne im
   Überschriften-Pfad. Nur eine Sammlung gleichzeitig (`knowledge-service.ts`), Fortschritt gedrosselt
   wie Downloads. Gemessen: 100 Dateien/367 Abschnitte in 10,7 s; Neu einlesen mit 3 Änderungen 0,4 s.
+- **PDF und Word** (`src/main/rag/extract.ts`): `pdfjs-dist` 6.4.299 (Apache-2.0, Legacy-Build für Node)
+  und `mammoth` 1.13.0 (BSD-2), beide mit fester Version (fremde Dateien = Angriffsfläche; Updates
+  bewusst). Auslesen in einem eigenen Thread (`extract-worker.ts`, eigener Build-Eintrag in
+  `forge.config.mts`, gebaut als `extract-worker.cjs`): blockiert den Main-Prozess nicht, und eine
+  hängende Datei wird nach 60 s beendet (`WorkerExtractor`, Thread wird neu gestartet). Prüfsumme wird
+  vorher im Main berechnet → unveränderte PDFs werden nicht ausgelesen. pdf.js bekommt seinen Worker
+  über `globalThis.pdfjsWorker` (sonst sucht es eine Datei, die es im Paket nicht gibt) und immer ein
+  reines `Uint8Array` (Node-Buffer lehnt es ab). PDF: Abschnitte pro Seite, Spalte `chunks.page`
+  (Migration 11), Überschrift „datei.pdf › S. 12“; Silbentrennung am Zeilenende wird zusammengefügt.
+  Ohne Text (Scan) → Status `empty` mit Hinweis; kaputt → `error`. Word: mammoth-HTML → Markdown
+  (Überschriften als `#`, Bilder ignoriert), dann `chunkMarkdown`. Grenze 50 MB, nur `.docx` (kein `.doc`).
+  pdf.js kennt keine `isEvalSupported`-Option mehr; der Weg der Lücke CVE-2024-4367 ist entfernt
+  (geprüft: kein `eval`/`new Function` im Code). Das optionale native `@napi-rs/canvas` wird nie
+  geladen (im gebauten Code findet pdf.js kein `require`) und ist nicht im Paket (geprüft: keine
+  `.node`-Dateien in `out/`). Gemessen (dev und gebaut gleich): 6 Dateien/107 Abschnitte in ~4 s.
 - **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
@@ -173,7 +188,7 @@
   Dateien bleiben am Ort, „Neu einlesen“ per Knopf (nur Geänderte) · Suche automatisch vor jeder Antwort ·
   Quellen als [1] + Liste, Öffnen im Standardprogramm · Seitenbereich: Quellen / Projekt-Dateien /
   Kontext-Füllstand · zu voll → warnen + Knopf „Kontextlänge erhöhen“.
-  Schritte: 1 Grundlage ✅ · 2 Sammlungen (Text/MD/Code) ✅ · 3 PDF/Word · 4 Wissen im Chat · 5 Projekte ·
+  Schritte: 1 Grundlage ✅ · 2 Sammlungen (Text/MD/Code) ✅ · 3 PDF/Word ✅ · 4 Wissen im Chat · 5 Projekte ·
   6 Seitenbereich · 7 Abschlusstest
 - Phase 6: Memory/Obsidian
 - Phase 7: Installer & Update-Check

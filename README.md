@@ -18,7 +18,7 @@ Stand: **Phase 4 abgeschlossen** (MCP & Tool-Calling), Phase 5 (Wissen & Projekt
   nur bei Ollama auf diesem PC mit NVIDIA-Karte) und geladene Modelle mit Anteil GPU/CPU
 - MCP-Dateisystem-Server mit Freigaben pro Tool; Modelle können im Chat Dateien in den
   freigegebenen Ordnern lesen und – nach Rückfrage – schreiben
-- Seite „Wissen“: Sammlungen aus Ordnern und Dateien (Text, Markdown, Quellcode) einlesen;
+- Seite „Wissen“: Sammlungen aus Ordnern und Dateien (PDF, Word, Text, Markdown, Quellcode) einlesen;
   „Neu einlesen“ berechnet nur Geändertes neu. Braucht das Embedding-Modell
   `qwen3-embedding:0.6b` (unter „Installierte Modelle“ herunterladen). Die Suche im Chat folgt.
 

@@ -63,6 +63,8 @@ export interface StoredChunk {
   start: number;
   end: number;
   heading: string | null;
+  /** Seite bei PDFs, sonst null. */
+  page: number | null;
   text: string;
   vector: Uint8Array;
 }
@@ -235,8 +237,8 @@ export class KnowledgeRepository {
         .prepare('DELETE FROM chunks WHERE document_id = ?')
         .run(documentId);
       const insert = this.db.prepare(
-        `INSERT INTO chunks (document_id, position, start, end, heading, text, vector)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO chunks (document_id, position, start, end, heading, page, text, vector)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       );
       chunks.forEach(({ chunk, vector }, position) => {
         insert.run(
@@ -245,6 +247,7 @@ export class KnowledgeRepository {
           chunk.start,
           chunk.end,
           chunk.heading ?? null,
+          chunk.page ?? null,
           chunk.text,
           toBlob(vector),
         );
@@ -272,7 +275,8 @@ export class KnowledgeRepository {
   chunks(collectionId: string): StoredChunk[] {
     return this.db
       .prepare(
-        `SELECT c.id, c.document_id AS documentId, d.path, c.start, c.end, c.heading, c.text, c.vector
+        `SELECT c.id, c.document_id AS documentId, d.path, c.start, c.end, c.heading, c.page,
+                c.text, c.vector
            FROM chunks c JOIN documents d ON d.id = c.document_id
           WHERE d.collection_id = ?
           ORDER BY d.path, c.position`,

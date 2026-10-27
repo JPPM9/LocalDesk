@@ -1,4 +1,5 @@
 import { stat } from 'node:fs/promises';
+import path from 'node:path';
 import { BrowserWindow, dialog, ipcMain } from 'electron';
 import {
   IpcChannels,
@@ -9,6 +10,7 @@ import {
 } from '../shared/api';
 import type { KnowledgeRepository } from './db/knowledge-repository';
 import type { Provider } from './providers/provider';
+import { WorkerExtractor } from './rag/extractor';
 import { indexCollection } from './rag/indexer';
 
 /** Standard-Embedding-Modell für neue Sammlungen (vereinbart in Phase 5). */
@@ -102,7 +104,12 @@ export function registerKnowledgeHandlers(
       running = { collectionId, controller };
       // Bewusst nicht abwarten: Der Fortschritt kommt über Ereignisse.
       const provider = getProvider();
+      // Der Worker liegt nach dem Bauen als eigene Datei neben main.js.
+      const extractor = new WorkerExtractor(
+        path.join(__dirname, 'extract-worker.cjs'),
+      );
       void indexCollection(collection, {
+        extractor,
         repo,
         embed: (inputs, signal) =>
           provider.embed(collection.embeddingModel, inputs, signal),
@@ -112,6 +119,7 @@ export function registerKnowledgeHandlers(
         },
         signal: controller.signal,
       }).finally(() => {
+        extractor.close();
         running = null;
         broadcast(true);
       });
@@ -137,8 +145,10 @@ export function registerKnowledgeHandlers(
       properties: ['openFile', 'multiSelections'],
       filters: [
         {
-          name: 'Text, Markdown, Code',
+          name: 'Dokumente, Text, Code',
           extensions: [
+            'pdf',
+            'docx',
             'md',
             'txt',
             'markdown',

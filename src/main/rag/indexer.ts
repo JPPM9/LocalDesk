@@ -5,7 +5,13 @@ import type {
   KnowledgeRepository,
 } from '../db/knowledge-repository';
 import { chunkMarkdown, chunkText, embeddingText, type Chunk } from './chunk';
-import { readTextFile, scanSources, type FoundFile } from './files';
+import type { Extractor } from './extractor';
+import {
+  readDocument,
+  scanSources,
+  type DocumentRead,
+  type FoundFile,
+} from './files';
 import { normalize } from './vectors';
 
 /** So viele Abschnitte gehen pro Anfrage an Ollama. */
@@ -17,6 +23,8 @@ export interface IndexDeps {
   embed: (inputs: string[], signal: AbortSignal) => Promise<Result<number[][]>>;
   onProgress: (progress: IndexProgress) => void;
   signal: AbortSignal;
+  /** Liest PDF und Word aus (in der App im Hintergrund-Thread). */
+  extractor: Extractor;
 }
 
 /** Ein Fehler, der alle Dateien betrifft (Ollama aus, Modell fehlt) → Einlesen stoppen. */
@@ -29,7 +37,7 @@ class EmbedError extends Error {}
  */
 export async function indexCollection(
   collection: CollectionConfig,
-  { repo, embed, onProgress, signal }: IndexDeps,
+  { repo, embed, onProgress, signal, extractor }: IndexDeps,
 ): Promise<IndexProgress> {
   let progress: IndexProgress = {
     collectionId: collection.id,
@@ -85,6 +93,7 @@ export async function indexCollection(
         repo,
         embed,
         signal,
+        extractor,
         collectionId: collection.id,
       });
       if (outcome === 'unchanged') {
@@ -130,19 +139,22 @@ export async function indexCollection(
 async function indexFile(
   file: FoundFile,
   previousHash: string | undefined,
-  deps: Pick<IndexDeps, 'repo' | 'embed' | 'signal'> & { collectionId: string },
+  deps: Pick<IndexDeps, 'repo' | 'embed' | 'signal' | 'extractor'> & {
+    collectionId: string;
+  },
 ): Promise<'saved' | 'unchanged'> {
-  const { repo, embed, signal, collectionId } = deps;
+  const { repo, embed, signal, extractor, collectionId } = deps;
   const base = { path: file.path, size: file.size, mtime: file.mtime };
   const save = (
     doc: DocumentInput,
     chunks: Parameters<KnowledgeRepository['saveDocument']>[2] = [],
   ) => repo.saveDocument(collectionId, doc, chunks);
 
-  let read;
+  let read: DocumentRead;
   try {
-    read = await readTextFile(file);
+    read = await readDocument(file, extractor, previousHash);
   } catch (error) {
+    signal.throwIfAborted();
     save({
       ...base,
       hash: '',
@@ -152,15 +164,26 @@ async function indexFile(
     return 'saved';
   }
   // Nur die Zeit hat sich geändert (z. B. Datei kopiert) – nichts neu berechnen.
-  if (read.hash !== '' && read.hash === previousHash) return 'unchanged';
-  if (!read.ok) {
+  if (read.type === 'unchanged') return 'unchanged';
+  if (read.type === 'skipped') {
     save({ ...base, hash: read.hash, status: 'skipped', error: read.reason });
     return 'saved';
   }
 
-  const chunks = toChunks(file.path, read.text, read.kind === 'markdown');
+  const chunks =
+    read.type === 'pages'
+      ? pageChunks(file.path, read.pages)
+      : toChunks(file.path, read.text, read.markdown);
   if (chunks.length === 0) {
-    save({ ...base, hash: read.hash, status: 'empty' });
+    save({
+      ...base,
+      hash: read.hash,
+      status: 'empty',
+      ...(read.type === 'pages' && {
+        error:
+          'Kein Text gefunden – vermutlich eingescannt (Texterkennung gibt es nicht).',
+      }),
+    });
     return 'saved';
   }
 
@@ -191,4 +214,19 @@ function toChunks(filePath: string, text: string, markdown: boolean): Chunk[] {
     ...chunk,
     heading: chunk.heading ? `${name} › ${chunk.heading}` : name,
   }));
+}
+
+/**
+ * PDF: jede Seite wird für sich zerlegt – so gehört jeder Abschnitt zu genau einer
+ * Seite, und die Quelle kann „S. 12“ angeben. Positionen gelten innerhalb der Seite.
+ */
+function pageChunks(filePath: string, pages: string[]): Chunk[] {
+  const name = path.basename(filePath);
+  return pages.flatMap((text, index) =>
+    chunkText(text).map((chunk) => ({
+      ...chunk,
+      page: index + 1,
+      heading: `${name} › S. ${index + 1}`,
+    })),
+  );
 }

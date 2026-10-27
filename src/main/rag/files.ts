@@ -2,13 +2,16 @@ import { createHash } from 'node:crypto';
 import { readdir, readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import type { KnowledgeSource } from '../../shared/api';
+import type { Extractor } from './extractor';
 
 /** Größte Datei, die eingelesen wird (2 MB Text ≈ 600 Buchseiten). */
 export const MAX_FILE_BYTES = 2 * 1024 * 1024;
+/** PDF und Word enthalten viel mehr als Text (Bilder, Schriften) – daher mehr Platz. */
+export const MAX_DOCUMENT_BYTES = 50 * 1024 * 1024;
 /** Schutz gegen versehentlich riesige Ordner. */
 export const MAX_FILES = 10_000;
 
-export type FileKind = 'markdown' | 'text' | 'code';
+export type FileKind = 'markdown' | 'text' | 'code' | 'pdf' | 'docx';
 
 const MARKDOWN = new Set(['.md', '.markdown', '.mdx']);
 const TEXT = new Set(['.txt', '.text', '.log', '.csv', '.tsv']);
@@ -44,6 +47,9 @@ export function fileKind(filePath: string): FileKind | null {
   if (MARKDOWN.has(ext)) return 'markdown';
   if (TEXT.has(ext)) return 'text';
   if (CODE.has(ext)) return 'code';
+  if (ext === '.pdf') return 'pdf';
+  // Nur das heutige Word-Format; alte .doc-Dateien sind ein anderes, binäres Format.
+  if (ext === '.docx') return 'docx';
   return null;
 }
 
@@ -131,31 +137,63 @@ export async function scanSources(
   return { files: [...found.values()], missing, truncated };
 }
 
-export type ReadResult =
-  | { ok: true; text: string; kind: FileKind }
-  | { ok: false; reason: string };
+/** Was beim Lesen einer Datei herauskommt. */
+export type DocumentRead =
+  /** Text (bei Markdown und Word mit Überschriften als „#“). */
+  | { type: 'text'; hash: string; text: string; markdown: boolean }
+  /** PDF: Text Seite für Seite. */
+  | { type: 'pages'; hash: string; pages: string[] }
+  | { type: 'skipped'; hash: string; reason: string }
+  /** Gleicher Inhalt wie beim letzten Mal – nichts auszulesen. */
+  | { type: 'unchanged'; hash: string };
 
 /**
- * Liest eine Textdatei – oder sagt, warum nicht. Die Prüfsumme (SHA-256 des
- * Inhalts) zeigt beim nächsten Einlesen, ob sich wirklich etwas geändert hat.
+ * Liest eine Datei – oder sagt, warum nicht. Die Prüfsumme (SHA-256 des Inhalts)
+ * wird zuerst berechnet: Ist sie gleich wie beim letzten Mal, wird eine PDF gar
+ * nicht erst ausgelesen. Kaputte PDF/Word-Dateien werfen einen Fehler.
  */
-export async function readTextFile(
+export async function readDocument(
   file: FoundFile,
-): Promise<ReadResult & { hash: string }> {
+  extractor: Extractor,
+  previousHash?: string,
+): Promise<DocumentRead> {
   const kind = fileKind(file.path);
   if (!kind) {
-    return { ok: false, reason: 'Dateiart wird nicht unterstützt', hash: '' };
+    return {
+      type: 'skipped',
+      reason: 'Dateiart wird nicht unterstützt',
+      hash: '',
+    };
   }
-  if (file.size > MAX_FILE_BYTES) {
-    return { ok: false, reason: 'Größer als 2 MB', hash: '' };
+  const isDocument = kind === 'pdf' || kind === 'docx';
+  const limit = isDocument ? MAX_DOCUMENT_BYTES : MAX_FILE_BYTES;
+  if (file.size > limit) {
+    return {
+      type: 'skipped',
+      reason: `Größer als ${limit / 1024 / 1024} MB`,
+      hash: '',
+    };
   }
   const bytes = await readFile(file.path);
   const hash = createHash('sha256').update(bytes).digest('hex');
-  return { ...decodeText(bytes, kind), hash };
+  if (hash === previousHash) return { type: 'unchanged', hash };
+
+  if (isDocument) {
+    const content = await extractor.extract(kind, bytes);
+    return 'pages' in content
+      ? { type: 'pages', hash, pages: content.pages }
+      : { type: 'text', hash, text: content.text, markdown: true };
+  }
+  const decoded = decodeText(bytes);
+  return decoded.ok
+    ? { type: 'text', hash, text: decoded.text, markdown: kind === 'markdown' }
+    : { type: 'skipped', hash, reason: decoded.reason };
 }
 
 /** Erkennt Binärdaten und den Zeichensatz (UTF-8, sonst Windows-1252). */
-export function decodeText(bytes: Uint8Array, kind: FileKind): ReadResult {
+export function decodeText(
+  bytes: Uint8Array,
+): { ok: true; text: string } | { ok: false; reason: string } {
   // Ein Null-Byte kommt in Text praktisch nie vor, in Binärdateien fast immer.
   if (bytes.subarray(0, 8000).includes(0)) {
     return { ok: false, reason: 'Keine Textdatei (Binärdaten)' };
@@ -167,5 +205,5 @@ export function decodeText(bytes: Uint8Array, kind: FileKind): ReadResult {
     // Ältere Windows-Dateien: Umlaute in Windows-1252 statt UTF-8.
     text = new TextDecoder('windows-1252').decode(bytes);
   }
-  return { ok: true, text: text.replace(/^﻿/, ''), kind };
+  return { ok: true, text: text.replace(/^﻿/, '') };
 }

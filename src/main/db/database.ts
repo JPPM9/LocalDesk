@@ -178,6 +178,10 @@ const migrations: string[] = [
   );
   CREATE INDEX chunks_by_document ON chunks(document_id);
   `,
+  // 11: Seitenzahl bei PDFs, damit eine Quelle „S. 12“ angeben kann.
+  `
+  ALTER TABLE chunks ADD COLUMN page INTEGER;
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */

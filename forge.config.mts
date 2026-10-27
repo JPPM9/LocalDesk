@@ -27,6 +27,12 @@ const config: ForgeConfig = {
           target: 'main',
         },
         {
+          // Hintergrund-Thread zum Auslesen von PDF und Word (eigene Datei neben main.js).
+          entry: 'src/main/rag/extract-worker.ts',
+          config: 'vite.main.config.mts',
+          target: 'main',
+        },
+        {
           entry: 'src/preload/preload.ts',
           config: 'vite.preload.config.mts',
           target: 'preload',

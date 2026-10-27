@@ -11,7 +11,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { IndexProgress, Result } from '../../src/shared/api';
 import { openDatabase } from '../../src/main/db/database';
 import { KnowledgeRepository } from '../../src/main/db/knowledge-repository';
+import { inlineExtractor } from '../../src/main/rag/extractor';
 import { indexCollection } from '../../src/main/rag/indexer';
+import { makeDocx, makePdf } from './fixtures/documents';
 
 let root: string;
 let repo: KnowledgeRepository;
@@ -43,6 +45,7 @@ async function run(
     embed,
     onProgress: (p) => events.push(p),
     signal,
+    extractor: inlineExtractor,
   });
   return { final, events };
 }
@@ -225,5 +228,61 @@ describe('indexCollection', () => {
     fail = false;
     const { final } = await run(flaky);
     expect(final).toMatchObject({ phase: 'done', added: 1 });
+  });
+});
+
+describe('indexCollection mit PDF und Word', () => {
+  it('zerlegt PDFs pro Seite und merkt sich die Seitenzahl', async () => {
+    write(
+      'skript.pdf',
+      makePdf([['Kapitel 1: Median'], [], ['Kapitel 3: Varianz']]),
+    );
+    write(
+      'vertrag.docx',
+      await makeDocx([
+        { text: 'Arbeitsvertrag', style: 'Heading1' },
+        { text: 'Urlaub', style: 'Heading2' },
+        { text: '30 Tage.' },
+      ]),
+    );
+
+    const { final } = await run();
+
+    expect(final).toMatchObject({ phase: 'done', added: 2 });
+    const chunks = repo.chunks('k');
+    expect(
+      chunks
+        .filter((c) => c.path.endsWith('.pdf'))
+        .map((c) => [c.page, c.heading, c.text]),
+    ).toEqual([
+      [1, 'skript.pdf › S. 1', 'Kapitel 1: Median'],
+      [3, 'skript.pdf › S. 3', 'Kapitel 3: Varianz'],
+    ]);
+    expect(chunks.find((c) => c.path.endsWith('.docx'))).toMatchObject({
+      heading: 'vertrag.docx › Arbeitsvertrag › Urlaub',
+      page: null,
+    });
+  });
+
+  it('markiert eine PDF ohne Text als leer mit Hinweis auf Scans', async () => {
+    write('scan.pdf', makePdf([[], []]));
+    await run();
+    expect(repo.listDocuments('k')[0]).toMatchObject({
+      status: 'empty',
+      error: expect.stringContaining('eingescannt'),
+    });
+  });
+
+  it('markiert kaputte PDFs als Fehler und liest den Rest weiter', async () => {
+    write('kaputt.pdf', 'kein PDF');
+    write('gut.md', 'Inhalt');
+    const { final } = await run();
+    expect(final.phase).toBe('done');
+    expect(
+      repo.listDocuments('k').map((d) => [path.basename(d.path), d.status]),
+    ).toEqual([
+      ['gut.md', 'ok'],
+      ['kaputt.pdf', 'error'],
+    ]);
   });
 });

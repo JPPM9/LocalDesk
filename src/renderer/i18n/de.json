@@ -20,7 +20,7 @@
     "none": "Noch keine Sammlungen",
     "name": "Name",
     "sources": "Quellen",
-    "sourcesHint": "Ordner werden mit Unterordnern eingelesen (ohne node_modules, .git, dist …). Text, Markdown und Quellcode bis 2 MB pro Datei.",
+    "sourcesHint": "Ordner werden mit Unterordnern eingelesen (ohne node_modules, .git, dist …). PDF und Word (.docx) bis 50 MB, Text, Markdown und Quellcode bis 2 MB pro Datei. Gescannte PDFs ohne Text gehen nicht.",
     "addFolder": "Ordner hinzufügen",
     "addFiles": "Dateien hinzufügen",
     "removeSource": "Quelle entfernen",
