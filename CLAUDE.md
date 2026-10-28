@@ -439,8 +439,8 @@
   → 9/9. Gebaute App: Beispiele vorhanden, Code-Review automatisch geladen ✓. Bekannt: gpt-oss scheitert
   zwischendurch an Ollamas CUDA-Ladefehler – andere Modelle vorher entladen hilft.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
-  Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · Phase 10 Planer /
-  Aufgabenliste · Phase 11 E-Mail Gmail + Outlook direkt per OAuth (Gmail-API, Microsoft Graph; lesen,
+  Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
+  Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 E-Mail Gmail + Outlook direkt per OAuth (Gmail-API, Microsoft Graph; lesen,
   zusammenfassen, sortieren – Änderungen nur nach Bestätigung, nie senden/löschen; Nutzer registriert
   die OAuth-Apps selbst; erweitert die Netzwerk-Regel um Google/Microsoft; Google-Testmodus = 7-Tage-
   Anmeldung, Lösung in der Phase klären) · Phase 12 Code-Bereich (Agent mit Bestätigung: Vorher/Nachher-
