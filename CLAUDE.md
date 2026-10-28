@@ -393,7 +393,7 @@
   im Eingabefeld) UND automatisch (Liste Name+Beschreibung + Werkzeug „Skill laden“, nur Tool-Modelle) ·
   voreinstellbar in Projekten und Vorlagen · 4 deutsche Beispiel-Skills beim ersten Start. Skills sind NUR
   Text: nichts wird ausgeführt, keine Werkzeug-Rechte.
-  Schritte: 1 Grundlage ✅ · 2 Seite „Skills“ · 3 Schalter im Chat · 4 automatisch · 5 Projekte & Vorlagen ·
+  Schritte: 1 Grundlage ✅ · 2 Seite „Skills“ ✅ · 3 Schalter im Chat · 4 automatisch · 5 Projekte & Vorlagen ·
   6 Test & Doku
   Grundlage: Format/Prüfung in `shared/skills.ts` (Name ≤ 80, Beschreibung ≤ 300, Anleitung ≤ 20 000
   Zeichen; Kopf immer in Anführungszeichen geschrieben; ohne Kopf = Ordnername als Name). `SkillStore`
@@ -402,6 +402,14 @@
   mit Junction), sicheres Schreiben über `atomicWrite` (aus vault.ts); Löschen entfernt nur SKILL.md und
   den Ordner nur, wenn er dann leer ist. Beispiele (`skill-examples.ts`): einmalig, Merker
   `skills.examplesCreated` in app_settings – gelöschte kommen nicht wieder.
+  Seite „Skills“ (`pages/SkillsPage.tsx`, Route `skills/:skillId?`, Leisten-Symbol WandSparkles nach Wissen):
+  Muster wie Vorlagen (Entwurf, „Speichern“ erst bei Änderung, Löschen mit Rückfrage), Felder Name /
+  „Wann passt dieser Skill?“ (Beschreibung – danach entscheidet später das Modell) / Anleitung (Markdown,
+  Monospace, Zeichenzähler). „Neu laden“ (alle bzw. dieser Skill, fragt bei ungespeicherten Änderungen)
+  holt Änderungen von außen; „Ordner öffnen“ zeigt nur Ordner im Explorer (nie Dateien → nichts wird
+  ausgeführt). IPC `skill-service.ts`: listSkills/saveSkill/deleteSkill/openSkillFolder, Eingaben über
+  `checkSkillInput`. Geprüft: anlegen über die Oberfläche (Name mit Doppelpunkt), von außen ändern + Neu
+  laden, löschen, hell/dunkel ✓.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · Phase 10 Planer /
   Aufgabenliste · Phase 11 E-Mail Gmail + Outlook direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

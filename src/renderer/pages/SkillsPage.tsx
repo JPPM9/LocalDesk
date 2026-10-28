@@ -1,0 +1,305 @@
+import { useEffect, useState } from 'react';
+import { NavLink, useNavigate, useParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import {
+  CircleAlert,
+  FolderOpen,
+  Plus,
+  RefreshCw,
+  Save,
+  Trash2,
+} from 'lucide-react';
+import {
+  SKILL_BODY_MAX,
+  SKILL_DESCRIPTION_MAX,
+  SKILL_NAME_MAX,
+  type SkillInput,
+} from '../../shared/skills';
+import { PageHeader } from '../components/PageHeader';
+import { Field } from '../components/settings/SettingsFields';
+import { useSkills } from '../skills/useSkills';
+
+/** Adresse für einen noch nicht gespeicherten Skill. */
+const NEW = 'new';
+
+const ICON_BTN =
+  'grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text';
+const FIELD =
+  'w-full rounded border border-border bg-bg px-2.5 py-1.5 outline-none focus:border-accent';
+
+export function SkillsPage() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const skillId = useParams().skillId ?? null;
+  const {
+    skills,
+    loaded,
+    error: listError,
+    reload,
+    save,
+    remove,
+  } = useSkills();
+
+  // Bearbeitungsstand – wird erst mit „Speichern“ in die SKILL.md geschrieben.
+  const [draft, setDraft] = useState<SkillInput | null>(null);
+  const [dirty, setDirty] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const selected = skills.find((s) => s.id === skillId);
+
+  // Beim Wechsel des Skills (oder nach „Neu laden“) den Entwurf neu befüllen.
+  const fill = () => {
+    setError(null);
+    setDirty(false);
+    if (skillId === NEW) {
+      setDraft({ name: '', description: '', body: t('skills.bodyTemplate') });
+      return;
+    }
+    if (!loaded) return;
+    if (selected) {
+      setDraft({
+        id: selected.id,
+        name: selected.name,
+        description: selected.description,
+        body: selected.body,
+      });
+    } else if (skillId) {
+      navigate('/skills', { replace: true });
+    } else {
+      setDraft(null);
+    }
+  };
+  // Nicht nach jedem Speichern neu befüllen (sonst springt der Cursor).
+  useEffect(fill, [skillId, loaded]);
+
+  const update = (patch: Partial<SkillInput>) => {
+    setDraft((current) => (current ? { ...current, ...patch } : current));
+    setDirty(true);
+  };
+
+  const onSave = async () => {
+    if (!draft) return;
+    const result = await save(draft);
+    if (!result.ok) {
+      setError(result.error);
+      return;
+    }
+    setError(null);
+    setDirty(false);
+    if (skillId !== result.value.id) {
+      navigate(`/skills/${result.value.id}`, { replace: true });
+    }
+  };
+
+  const onReload = async () => {
+    if (dirty && !window.confirm(t('skills.confirmReload'))) return;
+    const result = await reload();
+    if (result.ok) {
+      const fresh = result.value.find((s) => s.id === skillId);
+      if (fresh) {
+        setDraft({
+          id: fresh.id,
+          name: fresh.name,
+          description: fresh.description,
+          body: fresh.body,
+        });
+        setDirty(false);
+        setError(null);
+      }
+    }
+  };
+
+  const onDelete = async () => {
+    if (!draft?.id) return;
+    if (!window.confirm(t('skills.confirmDelete', { name: draft.name })))
+      return;
+    const result = await remove(draft.id);
+    if (!result.ok) {
+      setError(result.error);
+      return;
+    }
+    navigate('/skills');
+  };
+
+  return (
+    <div className="flex h-full">
+      <aside className="flex w-[270px] shrink-0 flex-col border-r border-border bg-surface">
+        <div className="flex gap-1.5 px-2.5 pt-3 pb-2">
+          <button
+            type="button"
+            onClick={() => navigate(`/skills/${NEW}`)}
+            className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg bg-accent px-3 py-1.5 font-medium text-white hover:opacity-90"
+          >
+            <Plus size={16} />
+            {t('skills.new')}
+          </button>
+          <button
+            type="button"
+            onClick={() => void reload()}
+            title={t('skills.reload')}
+            aria-label={t('skills.reload')}
+            className={ICON_BTN}
+          >
+            <RefreshCw size={16} />
+          </button>
+          <button
+            type="button"
+            onClick={() => void window.api.openSkillFolder()}
+            title={t('skills.openFolder')}
+            aria-label={t('skills.openFolder')}
+            className={ICON_BTN}
+          >
+            <FolderOpen size={16} />
+          </button>
+        </div>
+        <nav className="min-h-0 flex-1 overflow-y-auto px-2.5 pb-2">
+          {listError && (
+            <p className="px-2 py-2 text-xs text-error">{listError}</p>
+          )}
+          {loaded && skills.length === 0 && (
+            <p className="px-2 py-4 text-center text-xs text-muted">
+              {t('skills.none')}
+            </p>
+          )}
+          {skills.map((skill) => (
+            <NavLink
+              key={skill.id}
+              to={`/skills/${skill.id}`}
+              className={({ isActive }) =>
+                `my-px block rounded-lg px-2.5 py-2 ${
+                  isActive
+                    ? 'bg-surface-hover font-medium text-text'
+                    : 'text-muted hover:bg-surface-hover hover:text-text'
+                }`
+              }
+            >
+              <div className="flex items-center gap-1.5 truncate">
+                {skill.error && (
+                  <CircleAlert size={13} className="shrink-0 text-error" />
+                )}
+                <span className="truncate">{skill.name}</span>
+              </div>
+              <div className="truncate text-xs font-normal text-subtle">
+                {skill.error ??
+                  (skill.description || t('skills.noDescription'))}
+              </div>
+            </NavLink>
+          ))}
+        </nav>
+      </aside>
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        <PageHeader
+          title={draft ? draft.name || t('skills.untitled') : t('skills.title')}
+          actions={
+            draft && (
+              <>
+                {draft.id && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => void onReload()}
+                      title={t('skills.reloadOne')}
+                      aria-label={t('skills.reloadOne')}
+                      className={ICON_BTN}
+                    >
+                      <RefreshCw size={17} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void window.api.openSkillFolder(draft.id)}
+                      title={t('skills.openSkillFolder')}
+                      aria-label={t('skills.openSkillFolder')}
+                      className={ICON_BTN}
+                    >
+                      <FolderOpen size={17} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void onDelete()}
+                      title={t('skills.delete')}
+                      aria-label={t('skills.delete')}
+                      className={ICON_BTN}
+                    >
+                      <Trash2 size={17} />
+                    </button>
+                  </>
+                )}
+                <button
+                  type="button"
+                  onClick={() => void onSave()}
+                  disabled={!dirty}
+                  className="flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-[13px] font-medium text-white hover:opacity-90 disabled:opacity-40"
+                >
+                  <Save size={15} />
+                  {t('skills.save')}
+                </button>
+              </>
+            )
+          }
+        />
+
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          {draft ? (
+            <div className="mx-auto max-w-3xl space-y-5 px-7 py-6">
+              {(error || selected?.error) && (
+                <p className="rounded-xl border border-error/40 bg-error/10 px-3.5 py-2.5 text-error">
+                  {error ?? t('skills.broken', { error: selected?.error })}
+                </p>
+              )}
+              <Field label={t('skills.name')}>
+                <input
+                  autoFocus={skillId === NEW}
+                  value={draft.name}
+                  maxLength={SKILL_NAME_MAX}
+                  onChange={(e) => update({ name: e.target.value })}
+                  placeholder={t('skills.namePlaceholder')}
+                  className={FIELD}
+                />
+              </Field>
+              <Field
+                label={t('skills.description')}
+                hint={t('skills.descriptionHint')}
+              >
+                <textarea
+                  value={draft.description}
+                  maxLength={SKILL_DESCRIPTION_MAX}
+                  rows={2}
+                  onChange={(e) => update({ description: e.target.value })}
+                  placeholder={t('skills.descriptionPlaceholder')}
+                  className={`${FIELD} resize-y`}
+                />
+              </Field>
+              <Field
+                label={t('skills.body')}
+                hint={t('skills.bodyHint', {
+                  count: draft.body.length.toLocaleString('de-DE'),
+                  max: SKILL_BODY_MAX.toLocaleString('de-DE'),
+                })}
+              >
+                <textarea
+                  value={draft.body}
+                  maxLength={SKILL_BODY_MAX}
+                  rows={20}
+                  onChange={(e) => update({ body: e.target.value })}
+                  spellCheck={false}
+                  className={`${FIELD} resize-y font-mono text-[13px] leading-relaxed`}
+                />
+              </Field>
+              {draft.id && (
+                <p className="text-xs text-subtle">
+                  {t('skills.fileHint')}{' '}
+                  <span className="font-mono">{`skills\\${draft.id}\\SKILL.md`}</span>
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className="mx-auto max-w-md space-y-3 px-6 pt-16 text-center text-muted">
+              <p>{t('skills.intro')}</p>
+              <p className="text-xs text-subtle">{t('skills.introSafe')}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

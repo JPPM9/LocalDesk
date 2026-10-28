@@ -13,7 +13,8 @@
     "expand": "Seitenleiste ausklappen",
     "main": "Bereiche",
     "collapseList": "Chatliste einklappen",
-    "expandList": "Chatliste ausklappen"
+    "expandList": "Chatliste ausklappen",
+    "skills": "Skills"
   },
   "knowledge": {
     "title": "Wissen",
@@ -528,5 +529,32 @@
     "light": "Hell",
     "dark": "Dunkel",
     "railHint": "Farbschema: {{current}} – klicken zum Wechseln"
+  },
+  "skills": {
+    "title": "Skills",
+    "new": "Neuer Skill",
+    "reload": "Alle neu laden (nach Änderungen außerhalb der App)",
+    "reloadOne": "Diesen Skill neu von der Festplatte laden",
+    "openFolder": "Skill-Ordner im Explorer öffnen",
+    "openSkillFolder": "Ordner dieses Skills im Explorer öffnen",
+    "none": "Noch keine Skills",
+    "noDescription": "Ohne Beschreibung",
+    "untitled": "Neuer Skill",
+    "delete": "Skill löschen",
+    "confirmDelete": "Skill „{{name}}“ löschen? Seine SKILL.md wird entfernt.",
+    "confirmReload": "Ungespeicherte Änderungen verwerfen und neu laden?",
+    "save": "Speichern",
+    "name": "Name",
+    "namePlaceholder": "z. B. „Code-Review“",
+    "description": "Wann passt dieser Skill?",
+    "descriptionHint": "Danach entscheidet das Modell, ob es den Skill selbst lädt – beschreibe Aufgabe und Auslöser, z. B. „wenn der Nutzer Code zeigt und eine Prüfung möchte“.",
+    "descriptionPlaceholder": "Prüft Code auf Fehler … – wenn der Nutzer …",
+    "body": "Anleitung (Markdown)",
+    "bodyHint": "{{count}} / {{max}} Zeichen. So viel Kontext kostet der Skill, wenn er eingeschaltet ist.",
+    "bodyTemplate": "# Anleitung\n\n1. \n2. \n3. \n\nRegeln:\n- ",
+    "fileHint": "Gespeichert als",
+    "broken": "Diese SKILL.md kann nicht benutzt werden: {{error}}",
+    "intro": "Skills sind Anleitungen für wiederkehrende Aufgaben – z. B. wie das Modell zusammenfassen, Code prüfen oder Mails beantworten soll. Du schaltest sie im Chat ein, oder das Modell lädt einen passenden selbst.",
+    "introSafe": "Ein Skill ist nur Text: Er führt nichts aus und gibt keine Werkzeug-Rechte."
   }
 }

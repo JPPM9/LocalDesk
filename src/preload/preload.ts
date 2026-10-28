@@ -72,6 +72,10 @@ const api: LocalDeskApi = {
     ipcRenderer.invoke(IpcChannels.saveSummary, chatId, model, draft),
   dismissSummary: (chatId) =>
     ipcRenderer.invoke(IpcChannels.dismissSummary, chatId),
+  listSkills: () => ipcRenderer.invoke(IpcChannels.listSkills),
+  saveSkill: (input) => ipcRenderer.invoke(IpcChannels.saveSkill, input),
+  deleteSkill: (id) => ipcRenderer.invoke(IpcChannels.deleteSkill, id),
+  openSkillFolder: (id) => ipcRenderer.invoke(IpcChannels.openSkillFolder, id),
   getTheme: () => ipcRenderer.invoke(IpcChannels.getTheme),
   setTheme: (theme) => ipcRenderer.invoke(IpcChannels.setTheme, theme),
   getUpdateState: () => ipcRenderer.invoke(IpcChannels.getUpdateState),

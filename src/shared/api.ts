@@ -3,6 +3,7 @@
 // damit sich beide Seiten auf dieselben Datenformen verlassen können.
 
 import type { ThemeChoice } from './appearance';
+import type { SkillInput, SkillView } from './skills';
 import type { UpdateState } from './update';
 
 export interface AppInfo {
@@ -617,6 +618,13 @@ export interface LocalDeskApi {
   dismissSummary: (chatId: string) => Promise<void>;
   onMcpChanged: (listener: (servers: McpServerView[]) => void) => () => void;
 
+  /** Skills (Anleitungen als SKILL.md im Skill-Ordner). */
+  listSkills: () => Promise<Result<SkillView[]>>;
+  saveSkill: (input: SkillInput) => Promise<Result<SkillView>>;
+  deleteSkill: (id: string) => Promise<Result<void>>;
+  /** Zeigt den Skill-Ordner (ohne id) oder den Ordner eines Skills im Explorer. */
+  openSkillFolder: (id?: string) => Promise<Result<void>>;
+
   /** Farbschema (System / Hell / Dunkel) – wirkt sofort und bleibt gespeichert. */
   getTheme: () => Promise<ThemeChoice>;
   setTheme: (theme: ThemeChoice) => Promise<void>;
@@ -746,6 +754,10 @@ export const IpcChannels = {
   saveSummary: 'summary:save',
   dismissSummary: 'summary:dismiss',
   mcpChanged: 'mcp:changed',
+  listSkills: 'skills:list',
+  saveSkill: 'skills:save',
+  deleteSkill: 'skills:delete',
+  openSkillFolder: 'skills:open-folder',
   getTheme: 'appearance:get-theme',
   setTheme: 'appearance:set-theme',
   getUpdateState: 'update:state',

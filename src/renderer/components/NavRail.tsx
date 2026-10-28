@@ -10,6 +10,7 @@ import {
   Moon,
   Settings,
   Sun,
+  WandSparkles,
   type LucideIcon,
 } from 'lucide-react';
 import appIcon from '../../../assets/icon.png';
@@ -28,6 +29,7 @@ const ITEMS: NavItem[] = [
   { to: '/chat', labelKey: 'nav.chat', icon: MessageSquare },
   { to: '/templates', labelKey: 'nav.templates', icon: BookMarked },
   { to: '/knowledge', labelKey: 'nav.knowledge', icon: Library },
+  { to: '/skills', labelKey: 'nav.skills', icon: WandSparkles },
   { to: '/models', labelKey: 'nav.models', icon: Boxes },
   { to: '/status', labelKey: 'nav.status', icon: Activity },
 ];
