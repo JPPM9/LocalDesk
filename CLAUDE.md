@@ -349,7 +349,7 @@
   links, Chatliste daneben, Kopfzeile mit allen Aktionen als Symbole, Seitenbereich rechts als feste Spalte,
   Wissen/Werkzeuge als Schalter im Eingabefeld) · Hell + Dunkel + Schalter (System/Hell/Dunkel) · Akzent Blau
   des Symbols · Schrift Inter mitgeliefert (@fontsource-variable/inter 5.3.0, OFL-1.1), Code: Cascadia Mono.
-  Schritte: 1 Grundlage ✅ · 2 Rahmen & Navigation ✅ · 3 Chat-Seite ✅ · 4 übrige Seiten ✅ · 5 Prüfen · 6 Doku
+  Schritte: 1 Grundlage ✅ · 2 Rahmen & Navigation ✅ · 3 Chat-Seite ✅ · 4 übrige Seiten ✅ · 5 Prüfen ✅ · 6 Doku
   Grundlage: Token-NAMEN bleiben (bg, surface, border, text, muted, accent …), nur Werte neu; neu: surface-2,
   sidebar, subtle, accent-text, bubble, shadow-card. Radien per `--radius-*` (sm 8 px … 2xl 20 px); Tailwinds
   `rounded` ist fest 4 px und per Token nicht änderbar → eigene `.rounded`-Regel in `@layer utilities` nach
@@ -381,6 +381,13 @@
   (ab Breite lg, `sticky`); Markierung per IntersectionObserver – der meldet nur ÄNDERUNGEN, daher eine
   Menge aller sichtbaren Abschnitte führen und den obersten markieren (Fehler gefunden: markierte den
   falschen).
+  Prüfung: Kontraste nach WCAG nachgerechnet (Text ≥ 4,5, Bedienelemente ≥ 3) – gefunden und behoben:
+  `subtle` zu blass (hell 2,8 → #687080 4,56; dunkel → #848d9c 4,88) und im Dunkelmodus Weiß auf Blau nur
+  3,23 → Akzent #356fe6 (4,60); blaue SCHRIFT nimmt deshalb immer `text-accent-text` (20 Stellen umgestellt),
+  `accent` ist nur noch Fläche/Rahmen. Jetzt alle Paare ok in beiden Modi. Tastatur: echte Tab-Drücke über
+  das Entwicklerprotokoll – logische Reihenfolge (Leiste → Chatliste → Kopf), überall 2-px-Fokusrahmen ✓.
+  Echter Chat mit Werkzeug-Rückfrage (Dateisystem-MCP, „Einmal erlauben“, Datei geschrieben) hell/dunkel ✓.
+  Gebaute App: Inter aus app.asar geladen, Radien, Leiste, Logo, Farbschema ✓.
 - Phase 7: Installer & Update-Check – in Arbeit. Entschieden (2026-10-27): Installer mit Assistent
   und Ordnerwahl (NSIS über electron-builder 26.17.0 `--prepackaged` auf den Forge-Build; Squirrel
   entfällt) · Update-Quelle GitHub-Releases, Repo wird dafür öffentlich (macht der Nutzer selbst) ·

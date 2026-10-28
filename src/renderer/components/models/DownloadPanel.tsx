@@ -59,7 +59,7 @@ export function DownloadPanel({ downloads }: { downloads: DownloadView[] }) {
           href={LIBRARY_URL}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-0.5 text-accent underline"
+          className="inline-flex items-center gap-0.5 text-accent-text underline"
         >
           ollama.com/library <ExternalLink size={11} />
         </a>

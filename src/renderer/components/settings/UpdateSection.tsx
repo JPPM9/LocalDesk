@@ -50,7 +50,7 @@ export function UpdateSection({ version }: { version: string }) {
 
       {state.kind === 'checking' && (
         <p className="flex items-center gap-2 text-xs">
-          <LoaderCircle size={14} className="animate-spin text-accent" />
+          <LoaderCircle size={14} className="animate-spin text-accent-text" />
           {t('update.checking')}
         </p>
       )}

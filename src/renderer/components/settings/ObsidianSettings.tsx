@@ -179,7 +179,7 @@ function VaultKnowledgeHint() {
           : t('obsidian.knowledgeNew')}{' '}
         <Link
           to={`/knowledge/${vault.config.id}`}
-          className="text-accent hover:underline"
+          className="text-accent-text hover:underline"
         >
           {t('obsidian.knowledgeLink')}
         </Link>

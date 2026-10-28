@@ -26,7 +26,7 @@ export function CollectionPicker({
     return (
       <p className="text-xs text-muted">
         {t('knowledgePicker.none')}{' '}
-        <Link to="/knowledge" className="text-accent underline">
+        <Link to="/knowledge" className="text-accent-text underline">
           {t('knowledgePicker.toKnowledge')}
         </Link>
       </p>

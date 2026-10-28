@@ -339,7 +339,7 @@ function ToolRow({
         <span
           className={`shrink-0 rounded px-1.5 text-[11px] ${
             tool.readOnly
-              ? 'bg-accent-soft text-accent'
+              ? 'bg-accent-soft text-accent-text'
               : tool.destructive
                 ? 'bg-error/10 text-error'
                 : 'bg-warn/10 text-warn'

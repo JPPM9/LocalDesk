@@ -55,7 +55,7 @@ export function SearchResults({ result }: { result: SearchResult }) {
                     part.highlight ? (
                       <mark
                         key={i}
-                        className="rounded-sm bg-accent-soft px-0.5 text-accent"
+                        className="rounded-sm bg-accent-soft px-0.5 text-accent-text"
                       >
                         {part.text}
                       </mark>

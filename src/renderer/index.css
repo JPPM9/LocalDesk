@@ -18,7 +18,7 @@
   --ld-border: #e3e7ee;
   --ld-text: #161a21;
   --ld-muted: #5f6878; /* Nebentexte */
-  --ld-subtle: #8a93a2; /* ganz leise: Hinweise, Zähler */
+  --ld-subtle: #687080; /* ganz leise: Hinweise, Zähler (Kontrast ≥ 4,5) */
   --ld-accent: #2563eb;
   --ld-accent-soft: #e3ecfd;
   --ld-accent-text: #1d4fd0; /* Akzent als Schrift auf hellem Grund */
@@ -40,8 +40,8 @@
     --ld-border: #262c38;
     --ld-text: #e8ebf1;
     --ld-muted: #98a1b0;
-    --ld-subtle: #6f7888;
-    --ld-accent: #5b8def;
+    --ld-subtle: #848d9c;
+    --ld-accent: #356fe6; /* weiße Schrift darauf ≥ 4,5; als Schrift: accent-text */
     --ld-accent-soft: #1b2843;
     --ld-accent-text: #8fb1f6;
     --ld-bubble: #1c2740;

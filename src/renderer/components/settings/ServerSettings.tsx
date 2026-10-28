@@ -76,7 +76,7 @@ export function ServerSettings() {
               <div className="flex items-center gap-2">
                 <span className="truncate font-medium">{profile.name}</span>
                 {profile.active && (
-                  <span className="rounded bg-accent-soft px-1.5 text-[11px] text-accent">
+                  <span className="rounded bg-accent-soft px-1.5 text-[11px] text-accent-text">
                     {t('servers.active')}
                   </span>
                 )}

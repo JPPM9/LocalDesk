@@ -135,7 +135,7 @@ function ProjectTab({ project }: { project: ChatFolder | undefined }) {
         <h3 className="truncate font-semibold">{project.name}</h3>
         <Link
           to={`/projects/${project.id}`}
-          className="shrink-0 text-xs text-accent hover:underline"
+          className="shrink-0 text-xs text-accent-text hover:underline"
         >
           {t('sidePanel.editProject')}
         </Link>

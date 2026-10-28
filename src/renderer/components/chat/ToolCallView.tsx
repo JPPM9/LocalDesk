@@ -63,7 +63,7 @@ export function ToolCallView({
         className="space-y-2 rounded-xl border border-accent/40 bg-accent-soft/50 px-3.5 py-3"
       >
         <div className="flex items-center gap-2 font-medium">
-          <ShieldQuestion size={16} className="shrink-0 text-accent" />
+          <ShieldQuestion size={16} className="shrink-0 text-accent-text" />
           {t('toolCall.askTitle', { tool: call.toolName })}
         </div>
         <p className="text-xs text-muted">
@@ -147,7 +147,10 @@ function StatusIcon({ status }: { status: ToolCallRecord['status'] }) {
   switch (status) {
     case 'running':
       return (
-        <LoaderCircle size={14} className="shrink-0 animate-spin text-accent" />
+        <LoaderCircle
+          size={14}
+          className="shrink-0 animate-spin text-accent-text"
+        />
       );
     case 'done':
       return <Check size={14} className="shrink-0 text-ok" />;

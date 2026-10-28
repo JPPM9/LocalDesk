@@ -28,7 +28,7 @@ export function Markdown({ text, sourceCount = 0, onCite }: MarkdownProps) {
         <button
           type="button"
           onClick={() => onCite?.(n)}
-          className="mx-0.5 rounded bg-accent-soft px-1 align-super font-mono text-[10px] leading-none text-accent hover:bg-accent hover:text-white"
+          className="mx-0.5 rounded bg-accent-soft px-1 align-super font-mono text-[10px] leading-none text-accent-text hover:bg-accent hover:text-white"
         >
           {children}
         </button>

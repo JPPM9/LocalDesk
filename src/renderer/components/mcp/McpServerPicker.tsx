@@ -38,7 +38,7 @@ export function McpServerPicker({
     return (
       <p className="text-xs text-muted">
         {t('mcpPicker.none')}{' '}
-        <Link to="/settings" className="text-accent underline">
+        <Link to="/settings" className="text-accent-text underline">
           {t('mcpPicker.toSettings')}
         </Link>
       </p>

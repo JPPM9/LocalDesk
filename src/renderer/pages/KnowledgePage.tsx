@@ -184,7 +184,7 @@ function CollectionDetail({ view }: { view: CollectionView }) {
           {managed && (
             <p className="rounded border border-border bg-surface px-3 py-2 text-xs text-muted">
               {t('knowledge.obsidianManaged')}{' '}
-              <Link to="/settings" className="text-accent hover:underline">
+              <Link to="/settings" className="text-accent-text hover:underline">
                 {t('knowledge.obsidianSettings')}
               </Link>
             </p>

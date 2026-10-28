@@ -158,7 +158,7 @@ function ModelTable({
                     .map((capability) => (
                       <span
                         key={capability}
-                        className="rounded bg-accent-soft px-1.5 py-0.5 text-[11px] text-accent"
+                        className="rounded bg-accent-soft px-1.5 py-0.5 text-[11px] text-accent-text"
                       >
                         {t(`models.capability.${capability}`, {
                           defaultValue: capability,

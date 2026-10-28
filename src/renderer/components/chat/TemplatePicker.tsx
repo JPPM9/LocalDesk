@@ -46,7 +46,7 @@ export function TemplatePicker({
             }`}
           >
             <div className="flex items-center gap-1.5 font-semibold">
-              <BookMarked size={14} className="shrink-0 text-accent" />
+              <BookMarked size={14} className="shrink-0 text-accent-text" />
               <span className="truncate">{template.name}</span>
             </div>
             <div className="mt-0.5 truncate font-mono text-[11px] text-muted">

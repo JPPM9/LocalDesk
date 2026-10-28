@@ -102,7 +102,9 @@ export function SummaryPanel({
       return frame(
         <>
           <Title
-            icon={<ScrollText size={16} className="shrink-0 text-accent" />}
+            icon={
+              <ScrollText size={16} className="shrink-0 text-accent-text" />
+            }
           >
             {t('summary.suggestTitle')}
           </Title>
@@ -128,7 +130,7 @@ export function SummaryPanel({
         <div className="flex items-center gap-2">
           <LoaderCircle
             size={16}
-            className="shrink-0 animate-spin text-accent"
+            className="shrink-0 animate-spin text-accent-text"
           />
           <span>{t('summary.working', { model })}</span>
           <button
@@ -239,7 +241,9 @@ function DraftEditor({
 
   return frame(
     <>
-      <Title icon={<ScrollText size={16} className="shrink-0 text-accent" />}>
+      <Title
+        icon={<ScrollText size={16} className="shrink-0 text-accent-text" />}
+      >
         {t('summary.previewTitle')}
       </Title>
       <input

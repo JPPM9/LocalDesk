@@ -76,7 +76,7 @@ export function MemoryList() {
         <button
           type="button"
           onClick={() => void load()}
-          className="text-xs text-accent hover:underline"
+          className="text-xs text-accent-text hover:underline"
         >
           {t('memories.reload')}
         </button>
