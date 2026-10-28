@@ -34,6 +34,13 @@ export interface OfferedTool {
   editable?: {
     checkArguments: (args: unknown) => Record<string, unknown> | null;
   };
+  /** Fragt jedes Mal nach – „Immer erlauben“ gibt es nicht (z. B. Änderungen in Gmail). */
+  alwaysAsk?: boolean;
+  /**
+   * Verständliche Vorschau für die Rückfrage (z. B. welche Mail sich wie ändert).
+   * Wirft sie, läuft das Werkzeug nicht – das Modell bekommt den Fehler.
+   */
+  describe?: (args: Record<string, unknown>) => Promise<string>;
 }
 
 /** Ein angebotenes Tool mit dem Namen, unter dem das Modell es kennt. */

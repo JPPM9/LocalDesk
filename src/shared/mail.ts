@@ -84,6 +84,9 @@ export type MailChange =
 export const MAIL_REAUTH_MESSAGE =
   'Die Anmeldung bei Google gilt nicht mehr – bitte neu anmelden.';
 
+/** Server-Kennung der eingebauten Mail-Werkzeuge im Chat. */
+export const MAIL_TOOL_SERVER = 'localdesk:mail';
+
 export const MAIL_PAGE_MAX = 50;
 export const MAIL_QUERY_MAX = 500;
 /** Längere Mails werden für Anzeige und Modell gekürzt. */

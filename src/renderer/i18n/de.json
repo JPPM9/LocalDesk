@@ -250,7 +250,14 @@
     "memoryTool": "Erinnerung",
     "memorySaved": "gespeichert",
     "skillTool": "Skill",
-    "skillLoaded": "geladen"
+    "skillLoaded": "geladen",
+    "mailAsk": "Änderung in Gmail übernehmen?",
+    "mailApply": "Übernehmen",
+    "mailTool": {
+      "mail_search": "Mails gesucht",
+      "mail_read": "Mail gelesen",
+      "mail_change": "Mail-Änderung"
+    }
   },
   "downloads": {
     "placeholder": "Modellname, z. B. qwen3:8b",
@@ -656,5 +663,14 @@
     "apply_other": "{{count}} Änderungen in Gmail übernehmen",
     "applied_one": "1 Änderung übernommen.",
     "applied_other": "{{count}} Änderungen übernommen."
+  },
+  "mailChat": {
+    "button": "E-Mail: Postfach im Chat nutzen",
+    "chip": "E-Mail",
+    "title": "E-Mail im Chat",
+    "intro": "Das Modell darf in diesem Chat Mails suchen und lesen. Labels und Sterne schlägt es nur vor – du bestätigst jede Änderung. Senden und Löschen gibt es nicht.",
+    "none": "Noch kein Mail-Konto angemeldet.",
+    "toSettings": "Zu den Einstellungen",
+    "noTools": "Das gewählte Modell kann keine Werkzeuge benutzen – wähle eines mit „Tools“, damit es Mails lesen kann."
   }
 }

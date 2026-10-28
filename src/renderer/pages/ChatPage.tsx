@@ -43,6 +43,7 @@ import { ModelSelect } from '../components/chat/ModelSelect';
 import { KnowledgeButton } from '../components/knowledge/CollectionPicker';
 import { McpButton } from '../components/mcp/McpButton';
 import { SkillsButton } from '../components/skills/SkillPicker';
+import { MailButton } from '../components/mail/MailButton';
 
 // Nur eine Bequemlichkeit pro Rechner: das zuletzt gewählte Modell für neue Chats.
 // Gespeicherte Chats merken sich ihr Modell in der Datenbank.
@@ -109,7 +110,7 @@ export function ChatPage() {
     (key) => key !== 'mcpServers' && key !== 'collections' && key !== 'skills',
   );
   const setList = (
-    key: 'mcpServers' | 'collections' | 'skills',
+    key: 'mcpServers' | 'collections' | 'skills' | 'mailAccounts',
     ids: string[],
   ) => {
     const { [key]: _old, ...rest } = settings;
@@ -502,6 +503,13 @@ export function ChatPage() {
                 <SkillsButton
                   selected={settings.skills ?? []}
                   onChange={(ids) => setList('skills', ids)}
+                />
+                <MailButton
+                  selected={settings.mailAccounts ?? []}
+                  onChange={(ids) => setList('mailAccounts', ids)}
+                  modelSupportsTools={models
+                    .find((m) => m.name === model)
+                    ?.capabilities.includes('tools')}
                 />
               </>
             }

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import type { ToolCallRecord, ToolDecision } from '../../../shared/api';
 import { MEMORY_TOOL_SERVER } from '../../../shared/memory';
+import { MAIL_TOOL_SERVER } from '../../../shared/mail';
 import { SKILL_TOOL_SERVER } from '../../../shared/skills';
 import { summarizeArguments } from '../../../shared/tools';
 import { MemoryEditor } from './MemoryEditor';
@@ -42,6 +43,7 @@ export function ToolCallView({
       : summarizeArguments(call.arguments);
   const isMemory = call.serverId === MEMORY_TOOL_SERVER;
   const isSkill = call.serverId === SKILL_TOOL_SERVER;
+  const isMail = call.serverId === MAIL_TOOL_SERVER;
 
   // „Erinnerung speichern“: Vorschlag bearbeiten, dann speichern oder ablehnen.
   if (isMemory && call.status === 'asking') {
@@ -70,34 +72,44 @@ export function ToolCallView({
       >
         <div className="flex items-center gap-2 font-medium">
           <ShieldQuestion size={16} className="shrink-0 text-accent-text" />
-          {t('toolCall.askTitle', { tool: call.toolName })}
+          {isMail
+            ? t('toolCall.mailAsk')
+            : t('toolCall.askTitle', { tool: call.toolName })}
         </div>
-        <p className="text-xs text-muted">
-          {t('toolCall.server', { name: call.serverName })}
-        </p>
+        {!isMail && (
+          <p className="text-xs text-muted">
+            {t('toolCall.server', { name: call.serverName })}
+          </p>
+        )}
         {call.destructive && (
           <p className="flex items-center gap-1.5 text-xs text-warn">
             <TriangleAlert size={13} className="shrink-0" />
             {t('toolCall.askDestructive')}
           </p>
         )}
-        <Code text={formatArguments(call.arguments)} />
+        {call.preview ? (
+          <p className="text-[13px] whitespace-pre-wrap">{call.preview}</p>
+        ) : (
+          <Code text={formatArguments(call.arguments)} />
+        )}
         <div className="flex flex-wrap gap-2 pt-1">
           <button
             type="button"
             onClick={() => onDecision(call.id, 'once')}
             className="rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90"
           >
-            {t('toolCall.allowOnce')}
+            {isMail ? t('toolCall.mailApply') : t('toolCall.allowOnce')}
           </button>
-          <button
-            type="button"
-            onClick={() => onDecision(call.id, 'always')}
-            title={t('toolCall.allowAlwaysHint')}
-            className="rounded border border-border bg-surface px-3 py-1 text-xs hover:bg-surface-hover"
-          >
-            {t('toolCall.allowAlways')}
-          </button>
+          {!call.alwaysAsk && (
+            <button
+              type="button"
+              onClick={() => onDecision(call.id, 'always')}
+              title={t('toolCall.allowAlwaysHint')}
+              className="rounded border border-border bg-surface px-3 py-1 text-xs hover:bg-surface-hover"
+            >
+              {t('toolCall.allowAlways')}
+            </button>
+          )}
           <button
             type="button"
             onClick={() => onDecision(call.id, 'deny')}
@@ -114,16 +126,23 @@ export function ToolCallView({
     <details className="group rounded-xl border border-border text-[13px]">
       <summary className="flex cursor-pointer items-center gap-2 px-3 py-2 text-muted select-none hover:text-text">
         <StatusIcon status={call.status} />
-        {isMemory || isSkill ? (
+        {isMemory || isSkill || isMail ? (
           <span>
-            {t(isSkill ? 'toolCall.skillTool' : 'toolCall.memoryTool')}
+            {t(
+              isSkill
+                ? 'toolCall.skillTool'
+                : isMail
+                  ? `toolCall.mailTool.${call.toolName}`
+                  : 'toolCall.memoryTool',
+              { defaultValue: call.toolName },
+            )}
           </span>
         ) : (
           <span className="font-mono">{call.toolName}</span>
         )}
         {summary && (
           <span
-            className={`min-w-0 truncate text-muted ${isMemory || isSkill ? '' : 'font-mono'}`}
+            className={`min-w-0 truncate text-muted ${isMemory || isSkill || isMail ? '' : 'font-mono'}`}
           >
             {summary}
           </span>

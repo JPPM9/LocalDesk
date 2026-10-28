@@ -171,6 +171,13 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
     (error) => console.error('Beispiel-Skills nicht angelegt:', error),
   );
 
+  const mailAccounts = new MailAccountRepository(db);
+  const mail = registerMailHandlers(
+    new AppSettingsRepository(db),
+    mailAccounts,
+    getProvider,
+  );
+
   registerChatHandlers(
     getProvider,
     chats,
@@ -179,15 +186,14 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
     (folderId) => folders.getFolder(folderId),
     obsidian.chatMemory,
     skills,
+    {
+      exists: (accountId) => mailAccounts.get(accountId) !== null,
+      client: mail.client,
+    },
   );
 
   registerUpdateHandlers();
   registerAppearanceHandlers(new AppSettingsRepository(db));
-  registerMailHandlers(
-    new AppSettingsRepository(db),
-    new MailAccountRepository(db),
-    getProvider,
-  );
 
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({
     name: app.getName(),

@@ -150,6 +150,7 @@ async function runToolCall(
     arguments: call.arguments,
     status: 'running',
     ...(tool?.destructive && { destructive: true }),
+    ...(tool?.alwaysAsk && { alwaysAsk: true }),
   };
   const update = (patch: Partial<ToolCallRecord>) => {
     record = { ...record, ...patch };
@@ -167,7 +168,22 @@ async function runToolCall(
 
   let args = call.arguments;
   if (tool.permission === 'ask') {
-    update({ status: 'asking' });
+    // Erst prüfen und verständlich beschreiben – Unsinn erreicht dich gar nicht.
+    let preview: string | undefined;
+    if (tool.describe) {
+      try {
+        preview = await tool.describe(args);
+      } catch (error) {
+        signal.throwIfAborted();
+        update({
+          status: 'error',
+          result: error instanceof Error ? error.message : String(error),
+        });
+        return record;
+      }
+      signal.throwIfAborted();
+    }
+    update({ status: 'asking', ...(preview && { preview }) });
     const answer = await runtime.ask(record);
     signal.throwIfAborted();
     if (answer.decision === 'deny') {
@@ -188,7 +204,7 @@ async function runToolCall(
       update({ arguments: args });
     }
     // „Immer erlauben“ gibt es bei bearbeitbaren Werkzeugen nicht.
-    if (answer.decision === 'always' && !tool.editable) {
+    if (answer.decision === 'always' && !tool.editable && !tool.alwaysAsk) {
       runtime.allowAlways(tool);
     }
   }

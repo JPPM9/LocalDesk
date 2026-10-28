@@ -12,6 +12,8 @@ import {
 } from '../shared/api';
 import { applyChatEvent, titleFromMessage } from '../shared/chat';
 import { knowledgeQuery, withKnowledge } from '../shared/knowledge';
+import { MAIL_TOOL_SERVER, type MailLabel } from '../shared/mail';
+import { isSortableLabel } from '../shared/mail-sorting';
 import { MEMORY_TOOL_SERVER, withMemories } from '../shared/memory';
 import {
   SKILL_TOOL_SERVER,
@@ -24,6 +26,8 @@ import { buildChatRequest } from '../shared/settings';
 import { describeChatError } from './chat-errors';
 import type { ChatRepository } from './db/chat-repository';
 import type { ChatKnowledge } from './knowledge-service';
+import type { MailClient } from './mail/mail-client';
+import { callMailTool, describeMailChange, mailTools } from './mail/mail-tools';
 import type { McpTools } from './mcp-service';
 import { checkMemoryArguments, memoryTool } from './obsidian/memory-tool';
 import type { ChatMemory } from './obsidian-service';
@@ -55,6 +59,11 @@ export function registerChatHandlers(
   skills: {
     get(id: string): Promise<SkillView | null>;
     list(): Promise<SkillView[]>;
+  },
+  /** Angemeldete Mail-Konten (Schalter „E-Mail“). */
+  mail: {
+    exists(accountId: string): boolean;
+    client(accountId: string): MailClient;
   },
 ) {
   const running = new Map<string, AbortController>();
@@ -162,6 +171,7 @@ export function registerChatHandlers(
       settings.mcpServers ?? [],
       // Projekt-Skills gelten in jedem Chat des Projekts, dazu die des Chats.
       [...new Set([...(project?.skills ?? []), ...(settings.skills ?? [])])],
+      settings.mailAccounts?.[0] ?? null,
       knowledgeSearch,
       { projectId: project?.id, question: request.content },
       answer,
@@ -202,7 +212,18 @@ export function registerChatHandlers(
     memoryTarget: { projectId: string | undefined } | null,
     /** Skills, die das Modell selbst laden darf (leer = Werkzeug nicht anbieten). */
     skillCatalog: SkillView[],
+    /** Postfach für die Mail-Werkzeuge (null = Schalter aus). */
+    mailbox: {
+      client: MailClient;
+      labels: MailLabel[];
+      allLabels: MailLabel[];
+    } | null,
   ): ToolRuntime {
+    const mailOffers = mailbox
+      ? mailTools(mailbox.labels, (args) =>
+          describeMailChange(mailbox.client, args, mailbox.labels),
+        )
+      : [];
     // Jeder Skill ein eigenes Werkzeug (siehe skillTools). Liest nur deinen
     // eigenen Text – keine Rückfrage nötig.
     const offeredSkills = skillTools(skillCatalog);
@@ -221,9 +242,22 @@ export function registerChatHandlers(
           ? [memoryTool(memoryTarget.projectId !== undefined)]
           : []),
         ...skillOffers,
+        ...mailOffers,
         ...mcpTools.offered(serverIds),
       ],
       call: async (tool, args, callSignal) => {
+        if (tool.serverId === MAIL_TOOL_SERVER && mailbox) {
+          return {
+            text: await callMailTool(
+              mailbox.client,
+              tool.toolName,
+              args,
+              mailbox.labels,
+              mailbox.allLabels,
+            ),
+            isError: false,
+          };
+        }
         if (tool.serverId === SKILL_TOOL_SERVER) {
           const found = offeredSkills.find((t) => t.name === tool.toolName);
           // Frisch aus der Datei – falls du ihn gerade bearbeitet hast.
@@ -274,6 +308,7 @@ export function registerChatHandlers(
     chatRequest: ChatRequest,
     serverIds: string[],
     skillIds: string[],
+    mailAccountId: string | null,
     knowledgeSearch: { collectionIds: string[]; query: string } | null,
     memoryContext: { projectId: string | undefined; question: string },
     initial: MessageRecord,
@@ -336,12 +371,25 @@ export function registerChatHandlers(
             (s) => !s.error && !skillIds.includes(s.id),
           )
         : [];
+      // Schalter „E-Mail“: Postfach lesen dürfen (nur Modelle mit Tools). Die
+      // Labels holen wir einmal – fürs Vorschlagen nur deine eigenen.
+      let mailbox: Parameters<typeof toolRuntime>[4] = null;
+      if (canUseTools && mailAccountId && mail.exists(mailAccountId)) {
+        const client = mail.client(mailAccountId);
+        const allLabels = await client.labels().catch(() => []);
+        mailbox = {
+          client,
+          labels: allLabels.filter(isSortableLabel),
+          allLabels,
+        };
+      }
       controller.signal.throwIfAborted();
       const runtime = toolRuntime(
         serverIds,
         controller.signal,
         offerMemory ? { projectId: memoryContext.projectId } : null,
         skillCatalog,
+        mailbox,
       );
       await runAnswer({
         provider,

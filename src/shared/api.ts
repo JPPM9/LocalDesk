@@ -350,6 +350,10 @@ export interface ToolCallRecord {
   status: ToolCallStatus;
   /** Laut Server kann das Tool Daten überschreiben oder löschen. */
   destructive?: boolean;
+  /** Verständliche Beschreibung für die Rückfrage (statt nur der Eingaben). */
+  preview?: string;
+  /** Keine Möglichkeit „Immer erlauben“. */
+  alwaysAsk?: boolean;
   /** Was das Modell als Ergebnis bekommen hat (auch bei Fehler oder Ablehnung). */
   result?: string;
 }
@@ -396,6 +400,8 @@ export interface ChatSettings {
   collections?: string[];
   /** Kennungen der Skills, die in diesem Chat gelten (Schalter „Skills“). */
   skills?: string[];
+  /** Mail-Konto, das das Modell in diesem Chat lesen darf (Schalter „E-Mail“; höchstens eins). */
+  mailAccounts?: string[];
 }
 
 /** Eine Textstelle aus einer Sammlung, die das Modell für eine Antwort bekommen hat. */

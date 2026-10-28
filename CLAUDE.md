@@ -499,6 +499,18 @@
   Live 2026-10-28 ✓: Nutzer legte 3 Labels an; gemma4:12b schlug in 19 s für 11 von 25 Mails ein
   Label vor (14 ohne Vorschlag); Nutzer übernahm alle 11 selbst – Gmail zeigt 7 + 3 + 1 Labels.
   Stern-Vorschlag live noch nicht vorgekommen (nur mit nachgebautem Gmail getestet).
+  Schritt 6 ✓: Chat-Schalter „E-Mail“ (`components/mail/MailButton.tsx`, `ChatSettings.mailAccounts`,
+  höchstens ein Konto). Nur für Modelle mit Tools: `mail/mail-tools.ts` mit `mail_search` und
+  `mail_read` (ohne Rückfrage; Ergebnis mit Hinweis „fremder Text“, Mailtext in `<<<MAIL … MAIL>>>`,
+  max. 12 000 Zeichen) und `mail_change` (Label als Enum der eigenen Labels und/oder Stern; IMMER
+  Rückfrage). Neu in `OfferedTool`: `alwaysAsk` (kein „Immer erlauben“) und `describe` (Vorschau
+  vor der Rückfrage – „Stern setzen / Mail: Absender – „Betreff“ (Datum) / Grund“; wirft sie, z. B.
+  unbekannte Mail oder schon gesetzt, kommt gar keine Rückfrage, das Modell bekommt den Fehler).
+  `ToolCallRecord.preview`/`alwaysAsk`; Karte „Änderung in Gmail übernehmen?“ mit Übernehmen /
+  Ablehnen. Labels werden einmal pro Antwort geholt. Live 2026-10-28 ✓ (qwen3:14b): Frage nach der
+  Zahl der Mails → `mail_search` „newer_than:3d“ → „13“ (ganzes Postfach; Beschreibung nennt jetzt
+  „in:inbox“); „Stern setzen“ → Karte mit Vorschau, Ablehnen → nichts geändert. Test-Chat per ID
+  gelöscht.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 E-Mail Gmail + Outlook direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

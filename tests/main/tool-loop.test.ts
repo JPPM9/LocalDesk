@@ -424,3 +424,46 @@ describe('bearbeitbare Werkzeuge (Erinnerung speichern)', () => {
     expect(runtime.calls).toEqual(['write_file({"path":"a.md"})']);
   });
 });
+
+describe('Werkzeuge mit Vorschau (Änderungen in Gmail)', () => {
+  const changeTool: OfferedTool = {
+    ...readTool,
+    toolName: 'mail_change',
+    permission: 'ask',
+    alwaysAsk: true,
+    describe: async (args) => {
+      if (args.id === 'gibt-es-nicht') throw new Error('Unbekannte Mail.');
+      return `Stern setzen\nMail: ${String(args.id)}`;
+    },
+  };
+  const wants = (id: string): ChatChunk[][] => [
+    [
+      {
+        type: 'tool-calls',
+        calls: [{ name: 'mail_change', arguments: { id } }],
+      },
+    ],
+    [{ type: 'content', text: 'Fertig' }, { type: 'done' }],
+  ];
+
+  it('zeigt die Vorschau in der Rückfrage und merkt sich „Immer“ nicht', async () => {
+    const runtime = fakeRuntime([changeTool], 'always');
+    const { events } = await run(wants('m1'), runtime);
+    const asking = events.find(
+      (e) => e.type === 'tool-call' && e.call.status === 'asking',
+    );
+    expect(asking).toMatchObject({
+      call: { preview: 'Stern setzen\nMail: m1', alwaysAsk: true },
+    });
+    expect(runtime.calls).toEqual(['mail_change({"id":"m1"})']);
+    expect(runtime.allowed).toEqual([]);
+  });
+
+  it('fragt gar nicht erst, wenn die Vorschau scheitert', async () => {
+    const runtime = fakeRuntime([changeTool]);
+    const { events } = await run(wants('gibt-es-nicht'), runtime);
+    expect(runtime.ask).not.toHaveBeenCalled();
+    expect(runtime.calls).toEqual([]);
+    expect(toolCallStatuses(events)).toEqual(['mail_change:error']);
+  });
+});
