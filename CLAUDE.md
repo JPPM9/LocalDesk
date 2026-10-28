@@ -488,7 +488,7 @@
   (`localdesk.mailModel`, sonst Chat-Modell). Abgelaufene Anmeldung → `MAIL_REAUTH_MESSAGE` + Link
   zu den Einstellungen. Live ✓ (Inhalte beim Prüfen per CSS unscharf): 25→50 Mails ohne Doppelte,
   Suche, Zusammenfassung mit gemma4:12b in 15 s.
-  Schritt 5 (Code ✓, Übernehmen echt noch offen): „Sortieren vorschlagen“ (Zauberstab in der
+  Schritt 5 ✓: „Sortieren vorschlagen“ (Zauberstab in der
   Liste, `components/mail/SortPanel.tsx`): Modell sieht Kopfdaten + Vorschau der ersten 25 Mails
   (`shared/mail-sorting.ts`), Antwort per Ollama-`format` (JSON-Schema, neu in `ChatRequest`),
   Label nur als Enum der eigenen Labels, Temperatur 0. `parseSuggestions` wirft Unbekanntes,
@@ -496,6 +496,9 @@
   wie „[Gmail]/All Mail“ – gemma4 hatte das sonst für alle 25 Mails vorgeschlagen). Haken sind
   anfangs AUS; „n Änderungen in Gmail übernehmen“ → `applyMailChanges` prüft jede Änderung erneut
   (`checkMailChange`, max. 100), `GmailClient.apply` holt die Labels einmal je Durchgang.
+  Live 2026-10-28 ✓: Nutzer legte 3 Labels an; gemma4:12b schlug in 19 s für 11 von 25 Mails ein
+  Label vor (14 ohne Vorschlag); Nutzer übernahm alle 11 selbst – Gmail zeigt 7 + 3 + 1 Labels.
+  Stern-Vorschlag live noch nicht vorgekommen (nur mit nachgebautem Gmail getestet).
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 E-Mail Gmail + Outlook direkt per OAuth (Gmail-API, Microsoft Graph; lesen,
