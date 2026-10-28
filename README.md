@@ -3,7 +3,7 @@
 Persönliche Desktop-App für lokale KI-Modelle über [Ollama](https://ollama.com).
 Navigation inspiriert von [mudler/LocalAI](https://github.com/mudler/LocalAI) (MIT) – eigener Code, keine Kopie.
 
-Stand: **Phase 8 abgeschlossen** (moderne Oberfläche) – Installer und Update-Knopf (Phase 7) sind
+Stand: **Phase 9 abgeschlossen** (Skills) – Installer und Update-Knopf (Phase 7) sind
 fertig, das erste Release kommt nach den weiteren geplanten Phasen.
 
 - Oberfläche: schmale Symbolleiste links (Chat, Vorlagen, Wissen, Modelle, Status, Einstellungen),
@@ -18,6 +18,9 @@ fertig, das erste Release kommt nach den weiteren geplanten Phasen.
   Zahnrad am Projekt in der Chat-Liste.
 - Einstellungen pro Chat: Systemprompt, Kontextlänge, Temperatur, Seed, Denken
 - Vorlagen für wiederkehrende Aufgaben
+- Skills: Anleitungen für wiederkehrende Aufgaben (Seite „Skills“ in der Leiste) – im Chat über den
+  Schalter „Skills“ einschalten, in Projekten/Vorlagen voreinstellen, oder das Modell lädt einen
+  passenden selbst
 - Volltextsuche über alle Chats
 - Umschaltbare Ollama-Server (dieser PC oder ein anderer Rechner im LAN)
 - Tastenkürzel (Übersicht mit **Strg+/** oder **F1**)
@@ -56,6 +59,20 @@ fertig, das erste Release kommt nach den weiteren geplanten Phasen.
   einschalten oder in Vorlagen voreinstellen. Datei-Kopf, Tags und [[Wiki-Links]] werden passend
   aufbereitet, `.obsidian` und deine Erinnerungen übersprungen. „Öffnen“ einer Quelle öffnet die
   Notiz direkt in Obsidian.
+
+## Skills benutzen
+
+Ein Skill ist eine Anleitung als Markdown-Datei, z. B. wie das Modell Code prüfen oder Lernkarten
+erstellen soll. Vier Beispiele sind dabei; eigene legst du auf der Seite **Skills** an.
+
+- **Wann passt dieser Skill?** – dieser Satz ist wichtig: Danach entscheidet das Modell, ob es den
+  Skill von selbst lädt (geht mit Modellen, die Werkzeuge können; im Chat steht dann
+  „Skill · … · geladen“).
+- **Von Hand:** Schalter „Skills“ unten im Eingabefeld – eingeschaltete Skills gelten für jede Antwort.
+- **Projekte und Vorlagen** können Skills voreinstellen.
+- Die Dateien liegen unter `%APPDATA%\LocalDesk\skills\<name>\SKILL.md` (gleiches Format wie bei
+  Claude) und lassen sich auch mit jedem Editor ändern („Neu laden“ in der App).
+- Ein Skill ist nur Text: Er führt nichts aus und gibt keine Werkzeug-Rechte.
 
 ## Dateien im Chat benutzen (MCP)
 

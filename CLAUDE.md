@@ -388,13 +388,13 @@
   das Entwicklerprotokoll – logische Reihenfolge (Leiste → Chatliste → Kopf), überall 2-px-Fokusrahmen ✓.
   Echter Chat mit Werkzeug-Rückfrage (Dateisystem-MCP, „Einmal erlauben“, Datei geschrieben) hell/dunkel ✓.
   Gebaute App: Inter aus app.asar geladen, Radien, Leiste, Logo, Farbschema ✓.
-- Phase 9: Skills – in Arbeit. Entschieden (2026-10-28): Ordner + Editor in der App (je Skill ein Ordner mit
+- Phase 9: Skills ✅ abgeschlossen. Entschieden (2026-10-28): Ordner + Editor in der App (je Skill ein Ordner mit
   SKILL.md im Claude-Format unter `%APPDATA%\LocalDesk\skills\`) · Aktivierung von Hand (Schalter „Skills“
   im Eingabefeld) UND automatisch (Liste Name+Beschreibung + Werkzeug „Skill laden“, nur Tool-Modelle) ·
   voreinstellbar in Projekten und Vorlagen · 4 deutsche Beispiel-Skills beim ersten Start. Skills sind NUR
   Text: nichts wird ausgeführt, keine Werkzeug-Rechte.
   Schritte: 1 Grundlage ✅ · 2 Seite „Skills“ ✅ · 3 Schalter im Chat ✅ · 4 automatisch ✅ · 5 Projekte & Vorlagen ✅ ·
-  6 Test & Doku
+  6 Test & Doku ✅
   Grundlage: Format/Prüfung in `shared/skills.ts` (Name ≤ 80, Beschreibung ≤ 300, Anleitung ≤ 20 000
   Zeichen; Kopf immer in Anführungszeichen geschrieben; ohne Kopf = Ordnername als Name). `SkillStore`
   (`main/skills/skill-store.ts`): Kennung = Ordnername aus dem Namen (`skillIdFromName`, ä→ae …, „-2“ bei
@@ -435,6 +435,9 @@
   (speichert sofort). Beim Senden gelten Projekt-Skills ∪ Chat-Skills; diese sind dann nicht mehr als
   Werkzeug im Angebot; Kontext-Schätzung zählt beide. Der Chat-Schalter zeigt nur die Skills des Chats.
   Live (gemma4, „Ahoi!“-Test-Skill): Vorlage → „Ahoi! 5 plus 5 …“, Projekt → „Ahoi! 7 plus 7 …“ ✓.
+  Abschlusstest (Ollama 0.40.11): gemma4, qwen3, gpt-oss je Schalter / Projekt / automatisch (Lernkarten)
+  → 9/9. Gebaute App: Beispiele vorhanden, Code-Review automatisch geladen ✓. Bekannt: gpt-oss scheitert
+  zwischendurch an Ollamas CUDA-Ladefehler – andere Modelle vorher entladen hilft.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · Phase 10 Planer /
   Aufgabenliste · Phase 11 E-Mail Gmail + Outlook direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

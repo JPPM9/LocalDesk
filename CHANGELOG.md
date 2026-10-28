@@ -17,6 +17,8 @@ Erste installierbare Version.
 - **Obsidian:** Erinnerungen über dich (das Modell schlägt vor, du bestätigst), Antworten und
   Chats als Notiz speichern, Zusammenfassungen, dein Vault als Wissen. Geschrieben wird nur in
   einen eigenen Unterordner.
+- **Skills:** Anleitungen als SKILL.md (vier Beispiele dabei) – von Hand einschalten, in Projekten
+  und Vorlagen voreinstellen oder vom Modell passend laden lassen.
 - **Oberfläche** im Stil „Arbeitsplatz“: Symbolleiste links, Chatliste mit Tagesgruppen, Wissen und
   Werkzeuge als Schalter im Eingabefeld, Seitenbereich für Quellen und Kontext. Hell, dunkel oder wie
   Windows; Schrift Inter; Kontraste nach WCAG geprüft.
