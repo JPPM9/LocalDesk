@@ -161,18 +161,6 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
   syncObsidian(obsidian.vaultPath());
   // Projekte = Ordner mit Anweisungen und eigenen Dokumenten (eine Sammlung).
   registerFolderHandlers(folders, chats, knowledge.projects);
-  registerChatHandlers(
-    getProvider,
-    chats,
-    mcpTools,
-    knowledge.knowledge,
-    (folderId) => folders.getFolder(folderId),
-    obsidian.chatMemory,
-  );
-
-  registerUpdateHandlers();
-  registerAppearanceHandlers(new AppSettingsRepository(db));
-
   // Skills: Ordner mit je einer SKILL.md, z. B. %APPDATA%\LocalDesk\skills\code-review\SKILL.md.
   // Beim ersten Start kommen vier Beispiele dazu (danach nie wieder).
   const skills = new SkillStore(path.join(app.getPath('userData'), 'skills'));
@@ -180,6 +168,20 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
   void createExampleSkills(skills, new AppSettingsRepository(db)).catch(
     (error) => console.error('Beispiel-Skills nicht angelegt:', error),
   );
+
+  registerChatHandlers(
+    getProvider,
+    chats,
+    mcpTools,
+    knowledge.knowledge,
+    (folderId) => folders.getFolder(folderId),
+    obsidian.chatMemory,
+    skills,
+  );
+
+  registerUpdateHandlers();
+  registerAppearanceHandlers(new AppSettingsRepository(db));
+
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({
     name: app.getName(),
     version: app.getVersion(),

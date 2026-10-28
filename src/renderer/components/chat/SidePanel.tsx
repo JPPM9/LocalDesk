@@ -177,6 +177,7 @@ function ProjectTab({ project }: { project: ChatFolder | undefined }) {
 
 const PART_COLORS: Record<ContextPart, string> = {
   memory: 'bg-accent/50',
+  skills: 'bg-[#8b5cf6]',
   instructions: 'bg-muted',
   history: 'bg-accent',
   knowledge: 'bg-ok',
@@ -233,7 +234,7 @@ function ContextTab({
             })}
           </span>
           <span
-            className={`font-mono text-xs ${
+            className={`text-xs tabular-nums ${
               usage.level === 'full'
                 ? 'text-error'
                 : usage.level === 'tight'
@@ -260,7 +261,7 @@ function ContextTab({
             <li key={part} className="flex items-center gap-2">
               <span className={`h-2 w-2 rounded-sm ${PART_COLORS[part]}`} />
               <span className="flex-1">{t(`sidePanel.part.${part}`)}</span>
-              <span className="font-mono text-muted">
+              <span className="text-muted tabular-nums">
                 {usage.parts[part].toLocaleString('de-DE')}
               </span>
             </li>

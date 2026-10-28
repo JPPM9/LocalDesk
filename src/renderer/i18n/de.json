@@ -198,7 +198,8 @@
       "instructions": "Anweisungen",
       "history": "Verlauf",
       "knowledge": "Wissen",
-      "tools": "Tools"
+      "tools": "Tools",
+      "skills": "Skills"
     },
     "estimateHint": "Geschätzt für die nächste Anfrage (ohne deine neue Nachricht) – genau zählt erst Ollama.",
     "level": {
@@ -556,5 +557,14 @@
     "broken": "Diese SKILL.md kann nicht benutzt werden: {{error}}",
     "intro": "Skills sind Anleitungen für wiederkehrende Aufgaben – z. B. wie das Modell zusammenfassen, Code prüfen oder Mails beantworten soll. Du schaltest sie im Chat ein, oder das Modell lädt einen passenden selbst.",
     "introSafe": "Ein Skill ist nur Text: Er führt nichts aus und gibt keine Werkzeug-Rechte."
+  },
+  "skillPicker": {
+    "button": "Skills für diesen Chat",
+    "chip": "Skills",
+    "title": "Skills",
+    "intro": "Eingeschaltete Skills gelten für jede Antwort in diesem Chat – ihr Text kostet entsprechend Kontext.",
+    "none": "Noch keine Skills.",
+    "toSkills": "Zur Seite „Skills“",
+    "manage": "Skills verwalten …"
   }
 }

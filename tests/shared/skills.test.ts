@@ -5,7 +5,11 @@ import {
   isSkillId,
   parseSkill,
   skillIdFromName,
+  skillsPrompt,
+  withSkills,
 } from '../../src/shared/skills';
+import { withMemories } from '../../src/shared/memory';
+import { normalizeSettings } from '../../src/shared/settings';
 
 describe('parseSkill / formatSkill', () => {
   it('liest den Kopf im Claude-Format', () => {
@@ -82,5 +86,55 @@ describe('Kennungen', () => {
     expect(isSkillId('a/b')).toBe(false);
     expect(isSkillId('C:')).toBe(false);
     expect(isSkillId('-x')).toBe(false);
+  });
+});
+
+describe('Skills in der System-Nachricht', () => {
+  const skill = { name: 'Kurz', body: '# Kurz\nHöchstens 3 Sätze.' };
+
+  it('stellt Skills vor die Anweisungen, Erinnerungen davor', () => {
+    const request = withMemories(
+      withSkills(
+        {
+          model: 'm',
+          messages: [
+            { role: 'system', content: 'Du bist ein Tutor.' },
+            { role: 'user', content: 'Hallo' },
+          ],
+        },
+        [skill],
+      ),
+      ['Ich studiere Statistik.'],
+    );
+    const system = request.messages[0].content;
+    const order = [
+      'Ich studiere Statistik.',
+      '## Skill: Kurz',
+      'Du bist ein Tutor.',
+    ].map((part) => system.indexOf(part));
+    expect(order.every((i) => i >= 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+    expect(request.messages).toHaveLength(2);
+  });
+
+  it('legt eine System-Nachricht an, wenn es keine gibt – und ändert ohne Skills nichts', () => {
+    const plain = {
+      model: 'm',
+      messages: [{ role: 'user' as const, content: 'Hi' }],
+    };
+    expect(withSkills(plain, [skill]).messages[0]).toMatchObject({
+      role: 'system',
+    });
+    expect(withSkills(plain, [])).toBe(plain);
+    expect(skillsPrompt([])).toBe('');
+  });
+
+  it('wird in den Chat-Einstellungen geprüft gespeichert', () => {
+    expect(
+      normalizeSettings({ skills: ['code-review', 'code-review', '', 7] }),
+    ).toEqual({
+      skills: ['code-review'],
+    });
+    expect(normalizeSettings({ skills: [] })).toEqual({});
   });
 });

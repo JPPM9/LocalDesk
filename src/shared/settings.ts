@@ -52,6 +52,8 @@ export function normalizeSettings(raw: unknown): ChatSettings {
   if (mcpServers.length > 0) result.mcpServers = mcpServers;
   const collections = idList(input.collections);
   if (collections.length > 0) result.collections = collections;
+  const skills = idList(input.skills);
+  if (skills.length > 0) result.skills = skills;
   return result;
 }
 

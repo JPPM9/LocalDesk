@@ -13,6 +13,7 @@ import {
 import { applyChatEvent, titleFromMessage } from '../shared/chat';
 import { knowledgeQuery, withKnowledge } from '../shared/knowledge';
 import { MEMORY_TOOL_SERVER, withMemories } from '../shared/memory';
+import { withSkills, type SkillView } from '../shared/skills';
 import { buildChatRequest } from '../shared/settings';
 import { describeChatError } from './chat-errors';
 import type { ChatRepository } from './db/chat-repository';
@@ -44,6 +45,8 @@ export function registerChatHandlers(
   projectOf: (folderId: string) => ChatFolder | null,
   /** Erinnerungen über dich aus dem Obsidian-Vault. */
   memory: ChatMemory,
+  /** Skills aus dem Skill-Ordner (fehlende oder kaputte werden übergangen). */
+  skills: { get(id: string): Promise<SkillView | null> },
 ) {
   const running = new Map<string, AbortController>();
   /** Rückfragen, auf deren Antwort ein Tool-Aufruf wartet (Aufruf-ID → Antwort). */
@@ -148,6 +151,7 @@ export function registerChatHandlers(
       event.sender,
       chatRequest,
       settings.mcpServers ?? [],
+      settings.skills ?? [],
       knowledgeSearch,
       { projectId: project?.id, question: request.content },
       answer,
@@ -229,6 +233,7 @@ export function registerChatHandlers(
     sender: WebContents,
     chatRequest: ChatRequest,
     serverIds: string[],
+    skillIds: string[],
     knowledgeSearch: { collectionIds: string[]; query: string } | null,
     memoryContext: { projectId: string | undefined; question: string },
     initial: MessageRecord,
@@ -256,9 +261,15 @@ export function registerChatHandlers(
     };
 
     try {
+      // Eingeschaltete Skills, frisch aus ihren Dateien – dann davor die Erinnerungen.
+      const activeSkills = (
+        await Promise.all(
+          skillIds.map((id) => skills.get(id).catch(() => null)),
+        )
+      ).filter((s): s is SkillView => s !== null && !s.error);
       // Erinnerungen über dich (frisch aus dem Vault) vorne in die System-Nachricht.
       let request = withMemories(
-        chatRequest,
+        withSkills(chatRequest, activeSkills),
         await memory.forChat(memoryContext.projectId, memoryContext.question),
       );
       // Dann im Wissen suchen und antworten. Geht die Suche schief, kommt die

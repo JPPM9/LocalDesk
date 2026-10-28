@@ -42,6 +42,7 @@ import { shouldSuggestSummary } from '../../shared/summary';
 import { ModelSelect } from '../components/chat/ModelSelect';
 import { KnowledgeButton } from '../components/knowledge/CollectionPicker';
 import { McpButton } from '../components/mcp/McpButton';
+import { SkillsButton } from '../components/skills/SkillPicker';
 
 // Nur eine Bequemlichkeit pro Rechner: das zuletzt gewählte Modell für neue Chats.
 // Gespeicherte Chats merken sich ihr Modell in der Datenbank.
@@ -105,9 +106,12 @@ export function ChatPage() {
   // Der Punkt am Einstellungs-Knopf gilt nur für das Panel – MCP-Server und Wissen
   // zeigen ihre eigenen Knöpfe.
   const hasCustomSettings = Object.keys(settings).some(
-    (key) => key !== 'mcpServers' && key !== 'collections',
+    (key) => key !== 'mcpServers' && key !== 'collections' && key !== 'skills',
   );
-  const setList = (key: 'mcpServers' | 'collections', ids: string[]) => {
+  const setList = (
+    key: 'mcpServers' | 'collections' | 'skills',
+    ids: string[],
+  ) => {
     const { [key]: _old, ...rest } = settings;
     updateSettings(ids.length > 0 ? { ...rest, [key]: ids } : rest);
   };
@@ -489,6 +493,10 @@ export function ChatPage() {
                   modelSupportsTools={models
                     .find((m) => m.name === model)
                     ?.capabilities.includes('tools')}
+                />
+                <SkillsButton
+                  selected={settings.skills ?? []}
+                  onChange={(ids) => setList('skills', ids)}
                 />
               </>
             }

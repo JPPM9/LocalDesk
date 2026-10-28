@@ -393,7 +393,7 @@
   im Eingabefeld) UND automatisch (Liste Name+Beschreibung + Werkzeug „Skill laden“, nur Tool-Modelle) ·
   voreinstellbar in Projekten und Vorlagen · 4 deutsche Beispiel-Skills beim ersten Start. Skills sind NUR
   Text: nichts wird ausgeführt, keine Werkzeug-Rechte.
-  Schritte: 1 Grundlage ✅ · 2 Seite „Skills“ ✅ · 3 Schalter im Chat · 4 automatisch · 5 Projekte & Vorlagen ·
+  Schritte: 1 Grundlage ✅ · 2 Seite „Skills“ ✅ · 3 Schalter im Chat ✅ · 4 automatisch · 5 Projekte & Vorlagen ·
   6 Test & Doku
   Grundlage: Format/Prüfung in `shared/skills.ts` (Name ≤ 80, Beschreibung ≤ 300, Anleitung ≤ 20 000
   Zeichen; Kopf immer in Anführungszeichen geschrieben; ohne Kopf = Ordnername als Name). `SkillStore`
@@ -410,6 +410,14 @@
   ausgeführt). IPC `skill-service.ts`: listSkills/saveSkill/deleteSkill/openSkillFolder, Eingaben über
   `checkSkillInput`. Geprüft: anlegen über die Oberfläche (Name mit Doppelpunkt), von außen ändern + Neu
   laden, löschen, hell/dunkel ✓.
+  Im Chat: `ChatSettings.skills` (Kennungen, geprüft wie die anderen ID-Listen; zählt nicht als „eigene
+  Einstellung“ für den Punkt am Einstellungs-Knopf). Schalter „Skills“ (`components/skills/SkillPicker.tsx`,
+  `SkillsButton` als dritte Pille im Eingabefeld, mit Link „Skills verwalten“; `SkillPicker` auch für
+  Projekte/Vorlagen gedacht). Beim Senden lädt der Chat-Dienst die Skills FRISCH aus den Dateien (fehlende/
+  kaputte werden übergangen) und setzt sie mit `withSkills` an den Anfang der System-Nachricht; danach
+  `withMemories` davor → Reihenfolge Erinnerungen → Skills → Projekt-Anweisungen/Systemprompt (getestet).
+  Kontext-Füllstand: eigener Anteil „Skills“ (lila). Live (gemma4): Test-Skill „beginne mit Ahoi!“
+  eingeschaltet → „Ahoi! 2 plus 2 ist 4.“, ausgeschaltet → normale Antwort, Anteil 49 Tokens ✓.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · Phase 10 Planer /
   Aufgabenliste · Phase 11 E-Mail Gmail + Outlook direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

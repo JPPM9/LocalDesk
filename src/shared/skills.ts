@@ -1,3 +1,5 @@
+import type { ChatMessage, ChatRequest } from './api';
+
 /**
  * Skills: Arbeitsanleitungen als Markdown (Format wie Claudes SKILL.md):
  * oben ein Datei-Kopf mit `name` und `description`, darunter die Anleitung.
@@ -101,6 +103,33 @@ export function checkSkillInput(
     ok: true,
     value: { ...(id !== undefined && { id }), name, description, body },
   };
+}
+
+/**
+ * Der Skill-Teil der System-Nachricht: jede Anleitung unter ihrem Namen.
+ * Leer, wenn kein Skill eingeschaltet ist.
+ */
+export function skillsPrompt(skills: { name: string; body: string }[]): string {
+  if (skills.length === 0) return '';
+  return [
+    'Eingeschaltete Skills – Anleitungen des Nutzers. Befolge sie, wenn die Aufgabe dazu passt:',
+    ...skills.map((s) => `## Skill: ${s.name}\n\n${s.body.trim()}`),
+  ].join('\n\n');
+}
+
+/** Stellt die Skills an den Anfang der System-Nachricht (oder legt eine an). */
+export function withSkills(
+  request: ChatRequest,
+  skills: { name: string; body: string }[],
+): ChatRequest {
+  const prompt = skillsPrompt(skills);
+  if (!prompt) return request;
+  const [first, ...rest] = request.messages;
+  const messages: ChatMessage[] =
+    first?.role === 'system'
+      ? [{ ...first, content: `${prompt}\n\n${first.content}` }, ...rest]
+      : [{ role: 'system', content: prompt }, ...request.messages];
+  return { ...request, messages };
 }
 
 /** Ordnername eines Skills: nur Kleinbuchstaben, Ziffern und Bindestriche. */

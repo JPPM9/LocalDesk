@@ -14,6 +14,7 @@ import {
   type ContextUsage,
 } from '../../shared/context';
 import { memoryPrompt, selectMemories } from '../../shared/memory';
+import { skillsPrompt, type SkillView } from '../../shared/skills';
 import { effectivePermission } from '../../shared/permissions';
 import { useMcpServers } from '../hooks/useMcpServers';
 
@@ -28,6 +29,7 @@ export function useContextUsage(
 ): ContextUsage {
   const servers = useMcpServers();
   const [memories, setMemories] = useState<MemoryView[]>([]);
+  const [skills, setSkills] = useState<SkillView[]>([]);
 
   // Erinnerungen neu lesen, wenn sich der Chat-Verlauf ändert (neue Erinnerung möglich).
   useEffect(() => {
@@ -35,6 +37,15 @@ export function useContextUsage(
       .listMemories()
       .then((result) => setMemories(result.ok ? result.value : []));
   }, [messages.length]);
+
+  // Skills neu lesen, wenn sich die Auswahl ändert (Texte können sich geändert haben).
+  const skillKey = (settings.skills ?? []).join('|');
+  useEffect(() => {
+    if (!skillKey) return;
+    void window.api
+      .listSkills()
+      .then((result) => setSkills(result.ok ? result.value : []));
+  }, [skillKey]);
 
   return useMemo(() => {
     // Nur Tools laufender Server dieses Chats, ohne die ausgeschalteten.
@@ -62,6 +73,9 @@ export function useContextUsage(
     );
     const parts = estimateContextParts({
       memoryText: memoryPrompt(chatMemories.map((m) => m.text)),
+      skillsText: skillsPrompt(
+        skills.filter((s) => settings.skills?.includes(s.id) && !s.error),
+      ),
       instructions: [project?.instructions, settings.systemPrompt]
         .filter(Boolean)
         .join('\n\n'),
@@ -78,5 +92,5 @@ export function useContextUsage(
       parts,
       settings.contextLength ?? OLLAMA_DEFAULT_CONTEXT,
     );
-  }, [messages, settings, project, servers, memories]);
+  }, [messages, settings, project, servers, memories, skills]);
 }

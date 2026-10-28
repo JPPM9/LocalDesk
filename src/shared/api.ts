@@ -383,6 +383,8 @@ export interface ChatSettings {
    * Fehlt die Liste, nutzt der Chat kein Wissen.
    */
   collections?: string[];
+  /** Kennungen der Skills, die in diesem Chat gelten (Schalter „Skills“). */
+  skills?: string[];
 }
 
 /** Eine Textstelle aus einer Sammlung, die das Modell für eine Antwort bekommen hat. */
