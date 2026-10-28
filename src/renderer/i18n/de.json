@@ -399,7 +399,8 @@
     "about": "Über LocalDesk",
     "version": "Version",
     "dataPath": "Datenordner",
-    "loading": "Lade …"
+    "loading": "Lade …",
+    "sections": "Abschnitte der Einstellungen"
   },
   "templates": {
     "title": "Vorlagen",

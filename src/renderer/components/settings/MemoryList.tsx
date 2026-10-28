@@ -68,7 +68,7 @@ export function MemoryList() {
   ];
 
   return (
-    <div className="space-y-3 rounded border border-border bg-surface p-4">
+    <div className="space-y-3 rounded-xl border border-border bg-surface p-4">
       <div className="flex items-baseline justify-between">
         <h3 className="text-sm font-semibold">
           {t('memories.title', { count: memories.length })}
@@ -98,7 +98,7 @@ export function MemoryList() {
                     {memory.text}
                   </span>
                   {memory.created && (
-                    <span className="shrink-0 font-mono text-[11px] text-muted">
+                    <span className="shrink-0 tabular-nums text-[11px] text-muted">
                       {memory.created}
                     </span>
                   )}

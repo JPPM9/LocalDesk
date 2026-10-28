@@ -83,7 +83,7 @@ export function SettingsFields({
               e.target.value ? Number(e.target.value) : undefined,
             )
           }
-          className="w-full rounded border border-border bg-bg px-2 py-1.5 font-mono outline-none focus:border-accent"
+          className="w-full rounded border border-border bg-bg px-2 py-1.5 outline-none focus:border-accent"
         >
           <option value="">
             {t('settingsPanel.contextDefault', {
@@ -147,7 +147,7 @@ export function SettingsFields({
             )
           }
           placeholder={t('settingsPanel.seedPlaceholder')}
-          className="w-full rounded border border-border bg-bg px-2 py-1.5 font-mono outline-none focus:border-accent"
+          className="w-full rounded border border-border bg-bg px-2 py-1.5 tabular-nums outline-none focus:border-accent"
         />
       </Field>
 
@@ -205,7 +205,7 @@ export function Field({
         <label className="text-xs font-semibold">{label}</label>
         <div className="flex items-center gap-1">
           {value && (
-            <span className="font-mono text-xs text-muted">{value}</span>
+            <span className="tabular-nums text-xs text-muted">{value}</span>
           )}
           {onReset && (
             <button

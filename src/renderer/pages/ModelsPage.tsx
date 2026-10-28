@@ -115,7 +115,7 @@ function ModelTable({
   ];
 
   return (
-    <div className="overflow-x-auto rounded border border-border bg-surface">
+    <div className="overflow-x-auto rounded-xl border border-border bg-surface">
       <table className="w-full text-left text-[13px]">
         <thead className="border-b border-border text-xs text-muted">
           <tr>
@@ -136,19 +136,19 @@ function ModelTable({
               key={model.name}
               className="border-b border-border last:border-0 hover:bg-surface-hover"
             >
-              <td className="px-3 py-2 font-mono whitespace-nowrap">
+              <td className="px-3 py-2 font-medium whitespace-nowrap">
                 {model.name}
               </td>
-              <td className="px-3 py-2 font-mono">
+              <td className="px-3 py-2 tabular-nums">
                 {model.parameterSize ?? '–'}
               </td>
-              <td className="px-3 py-2 font-mono">
+              <td className="px-3 py-2 tabular-nums">
                 {model.quantization ?? '–'}
               </td>
-              <td className="px-3 py-2 font-mono whitespace-nowrap">
+              <td className="px-3 py-2 tabular-nums whitespace-nowrap">
                 {formatBytes(model.sizeBytes)}
               </td>
-              <td className="px-3 py-2 font-mono">
+              <td className="px-3 py-2 tabular-nums">
                 {formatContext(model.contextLength)}
               </td>
               <td className="px-3 py-2">
@@ -167,7 +167,7 @@ function ModelTable({
                     ))}
                 </div>
               </td>
-              <td className="px-3 py-2 font-mono whitespace-nowrap text-muted">
+              <td className="px-3 py-2 tabular-nums whitespace-nowrap text-muted">
                 {formatDate(model.modifiedAt)}
               </td>
               <td className="px-2 py-2 text-right">

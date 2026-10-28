@@ -61,7 +61,7 @@ export function ServerSettings() {
         <p className="mt-1 text-xs text-muted">{t('servers.intro')}</p>
       </div>
 
-      <ul className="divide-y divide-border rounded border border-border bg-surface">
+      <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
         {profiles.map((profile) => (
           <li key={profile.id} className="flex items-center gap-3 px-3 py-2.5">
             <input
@@ -116,7 +116,7 @@ export function ServerSettings() {
       )}
 
       {form ? (
-        <div className="space-y-4 rounded border border-border bg-surface p-4">
+        <div className="space-y-4 rounded-xl border border-border bg-surface p-4">
           <Field label={t('servers.name')}>
             <input
               autoFocus

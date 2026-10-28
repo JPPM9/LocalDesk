@@ -99,18 +99,18 @@ export function TemplatesPage() {
 
   return (
     <div className="flex h-full">
-      <aside className="flex w-64 shrink-0 flex-col border-r border-border">
-        <div className="p-2">
+      <aside className="flex w-[270px] shrink-0 flex-col border-r border-border bg-surface">
+        <div className="px-2.5 pt-3 pb-2">
           <button
             type="button"
             onClick={() => navigate(`/templates/${NEW}`)}
-            className="flex w-full items-center gap-2 rounded border border-border px-3 py-1.5 hover:bg-surface-hover"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-3 py-1.5 font-medium text-white hover:opacity-90"
           >
             <BookmarkPlus size={15} />
             {t('templates.new')}
           </button>
         </div>
-        <nav className="min-h-0 flex-1 overflow-y-auto px-2 pb-2">
+        <nav className="min-h-0 flex-1 overflow-y-auto px-2.5 pb-2">
           {loaded && templates.length === 0 && (
             <p className="px-2 py-4 text-center text-xs text-muted">
               {t('templates.none')}
@@ -121,15 +121,15 @@ export function TemplatesPage() {
               key={tpl.id}
               to={`/templates/${tpl.id}`}
               className={({ isActive }) =>
-                `my-0.5 block rounded px-2 py-1.5 ${
+                `my-px block rounded-lg px-2.5 py-2 ${
                   isActive
-                    ? 'bg-accent-soft text-accent'
-                    : 'hover:bg-surface-hover'
+                    ? 'bg-surface-hover font-medium text-text'
+                    : 'text-muted hover:bg-surface-hover hover:text-text'
                 }`
               }
             >
               <div className="truncate">{tpl.name}</div>
-              <div className="truncate font-mono text-[11px] text-muted">
+              <div className="truncate text-xs text-subtle">
                 {tpl.model ?? t('templates.anyModel')}
               </div>
             </NavLink>
@@ -211,7 +211,7 @@ export function TemplatesPage() {
                 <select
                   value={draft.model ?? ''}
                   onChange={(e) => chooseModel(e.target.value)}
-                  className="w-full rounded border border-border bg-surface px-2 py-1.5 font-mono outline-none focus:border-accent"
+                  className="w-full rounded border border-border bg-surface px-2 py-1.5 outline-none focus:border-accent"
                 >
                   <option value="">{t('templates.anyModel')}</option>
                   {modelMissing && (

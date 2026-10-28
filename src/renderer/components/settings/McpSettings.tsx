@@ -78,7 +78,7 @@ export function McpSettings() {
       ))}
 
       {form ? (
-        <div className="space-y-4 rounded border border-border bg-surface p-4">
+        <div className="space-y-4 rounded-xl border border-border bg-surface p-4">
           <Field label={t('mcp.name')}>
             <input
               autoFocus
@@ -194,7 +194,7 @@ function ServerCard({
   }
 
   return (
-    <article className="space-y-3 rounded border border-border bg-surface p-4">
+    <article className="space-y-3 rounded-xl border border-border bg-surface p-4">
       <div className="flex items-center gap-3">
         <span
           className={`h-2 w-2 shrink-0 rounded-full ${STATE_DOT[status.state]}`}

@@ -57,14 +57,14 @@ export function StatusPage() {
     }
     if (result.value.length === 0) {
       return (
-        <p className="rounded border border-border bg-surface px-4 py-6 text-center text-muted">
+        <p className="rounded-xl border border-border bg-surface px-4 py-6 text-center text-muted">
           {t('status.noneLoaded')}
         </p>
       );
     }
     return (
       <>
-        <p className="font-mono text-xs text-muted">
+        <p className="tabular-nums text-xs text-muted">
           {t('status.summary', {
             count: result.value.length,
             vram: formatMemory(totalVram(result.value)),
@@ -84,10 +84,10 @@ function LoadedModelCard({ model, now }: { model: RunningModel; now: number }) {
   const unload = expiresIn(model.expiresAt, now);
 
   return (
-    <article className="space-y-3 rounded border border-border bg-surface p-4">
+    <article className="space-y-3 rounded-xl border border-border bg-surface p-4">
       <div className="flex items-baseline justify-between gap-3">
-        <h3 className="truncate font-mono font-semibold">{model.name}</h3>
-        <span className="shrink-0 font-mono text-xs text-muted">
+        <h3 className="truncate font-semibold">{model.name}</h3>
+        <span className="shrink-0 tabular-nums text-xs text-muted">
           {[model.parameterSize, model.quantization]
             .filter(Boolean)
             .join(' · ')}
@@ -104,7 +104,7 @@ function LoadedModelCard({ model, now }: { model: RunningModel; now: number }) {
           <div className="bg-accent" style={{ width: `${gpu}%` }} />
           <div className="bg-warn" style={{ width: `${cpu}%` }} />
         </div>
-        <div className="mt-1 flex justify-between font-mono text-xs">
+        <div className="mt-1 flex justify-between tabular-nums text-xs">
           <span>{gpuSplitLabel(model)}</span>
           <span className="text-muted">
             {t('status.vramOf', {
@@ -117,11 +117,11 @@ function LoadedModelCard({ model, now }: { model: RunningModel; now: number }) {
 
       <dl className="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-1 text-[13px]">
         <dt className="text-muted">{t('status.context')}</dt>
-        <dd className="font-mono">{formatContext(model.contextLength)}</dd>
+        <dd className="tabular-nums">{formatContext(model.contextLength)}</dd>
         {unload && (
           <>
             <dt className="text-muted">{t('status.unloadIn')}</dt>
-            <dd className="font-mono">{unload}</dd>
+            <dd className="tabular-nums">{unload}</dd>
           </>
         )}
       </dl>

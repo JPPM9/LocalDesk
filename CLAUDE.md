@@ -349,7 +349,7 @@
   links, Chatliste daneben, Kopfzeile mit allen Aktionen als Symbole, Seitenbereich rechts als feste Spalte,
   Wissen/Werkzeuge als Schalter im Eingabefeld) · Hell + Dunkel + Schalter (System/Hell/Dunkel) · Akzent Blau
   des Symbols · Schrift Inter mitgeliefert (@fontsource-variable/inter 5.3.0, OFL-1.1), Code: Cascadia Mono.
-  Schritte: 1 Grundlage ✅ · 2 Rahmen & Navigation ✅ · 3 Chat-Seite ✅ · 4 übrige Seiten · 5 Prüfen · 6 Doku
+  Schritte: 1 Grundlage ✅ · 2 Rahmen & Navigation ✅ · 3 Chat-Seite ✅ · 4 übrige Seiten ✅ · 5 Prüfen · 6 Doku
   Grundlage: Token-NAMEN bleiben (bg, surface, border, text, muted, accent …), nur Werte neu; neu: surface-2,
   sidebar, subtle, accent-text, bubble, shadow-card. Radien per `--radius-*` (sm 8 px … 2xl 20 px); Tailwinds
   `rounded` ist fest 4 px und per Token nicht änderbar → eigene `.rounded`-Regel in `@layer utilities` nach
@@ -374,6 +374,13 @@
   Chat-Einstellungen 310 px auf `bg-bg` mit Reitern als Segmente. Erinnerungen in der Werkzeug-Zeile ohne
   Monospace. Geprüft: echter Chat (gemma4, Vault-Wissen, Merken-Karte, Quellen, Seitenbereich) hell+dunkel,
   Strg+L/K/J/,/B und Strg+/ ✓.
+  Übrige Seiten: Monospace NUR noch für Pfade, Adressen, Befehle, Werkzeug-/Dateinamen, Tasten und Code
+  (13 Stellen); Modellnamen, Zahlen, Daten in Inter mit `tabular-nums`. Listen-Spalten bei Wissen/Vorlagen
+  wie die Chatliste (270 px, blauer Hauptknopf, weiche Zeilen). Karten (Kästen mit Innenabstand bzw. um
+  Tabellen/Listen) `rounded-xl`, Felder/Knöpfe `rounded` (8 px). Einstellungen mit Sprungliste links
+  (ab Breite lg, `sticky`); Markierung per IntersectionObserver – der meldet nur ÄNDERUNGEN, daher eine
+  Menge aller sichtbaren Abschnitte führen und den obersten markieren (Fehler gefunden: markierte den
+  falschen).
 - Phase 7: Installer & Update-Check – in Arbeit. Entschieden (2026-10-27): Installer mit Assistent
   und Ordnerwahl (NSIS über electron-builder 26.17.0 `--prepackaged` auf den Forge-Build; Squirrel
   entfällt) · Update-Quelle GitHub-Releases, Repo wird dafür öffentlich (macht der Nutzer selbst) ·

@@ -177,7 +177,7 @@ export function ProgressBox({ view }: { view: CollectionView }) {
         ? Math.round((progress.done / progress.total) * 100)
         : 0;
     return (
-      <div className="space-y-1.5 rounded border border-border bg-surface px-3 py-2.5">
+      <div className="space-y-1.5 rounded-xl border border-border bg-surface px-3 py-2.5">
         <div className="flex justify-between text-xs">
           <span>
             {progress.phase === 'scanning'
@@ -188,7 +188,7 @@ export function ProgressBox({ view }: { view: CollectionView }) {
                 })}
           </span>
           {progress.phase === 'indexing' && (
-            <span className="font-mono">{percent} %</span>
+            <span className="tabular-nums">{percent} %</span>
           )}
         </div>
         <div className="h-1.5 overflow-hidden rounded bg-bg">
@@ -210,7 +210,7 @@ export function ProgressBox({ view }: { view: CollectionView }) {
   }
 
   return (
-    <div className="space-y-1 rounded border border-border bg-surface px-3 py-2.5 text-xs">
+    <div className="space-y-1 rounded-xl border border-border bg-surface px-3 py-2.5 text-xs">
       <div className="flex flex-wrap gap-x-4 gap-y-1">
         <span>{t('knowledge.statFiles', { count: stats.documents })}</span>
         <span>{t('knowledge.statChunks', { count: stats.chunks })}</span>

@@ -41,7 +41,7 @@ export function UpdateSection({ version }: { version: string }) {
   );
 
   return (
-    <div className="mt-3 space-y-2 rounded border border-border bg-surface p-4 text-sm">
+    <div className="mt-3 space-y-2 rounded-xl border border-border bg-surface p-4 text-sm">
       {state.kind === 'dev' && (
         <p className="text-xs text-muted">{t('update.dev')}</p>
       )}

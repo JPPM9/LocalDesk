@@ -59,7 +59,7 @@ export function ObsidianSettings() {
       </div>
 
       {status && !editing && (
-        <div className="space-y-2 rounded border border-border bg-surface p-4">
+        <div className="space-y-2 rounded-xl border border-border bg-surface p-4">
           <p className="font-mono text-xs break-all">{status.vaultPath}</p>
           {!status.ok ? (
             <p className="flex items-center gap-1.5 text-xs text-error">
@@ -106,7 +106,7 @@ export function ObsidianSettings() {
 
       {(editing || status === null) &&
         (editing ? (
-          <div className="space-y-4 rounded border border-border bg-surface p-4">
+          <div className="space-y-4 rounded-xl border border-border bg-surface p-4">
             <Field label={t('obsidian.vault')} hint={t('obsidian.vaultHint')}>
               <div className="flex gap-2">
                 <input

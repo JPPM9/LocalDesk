@@ -42,7 +42,7 @@ export function DownloadPanel({ downloads }: { downloads: DownloadView[] }) {
           }}
           placeholder={t('downloads.placeholder')}
           aria-label={t('downloads.placeholder')}
-          className="min-w-0 flex-1 rounded border border-border bg-surface px-3 py-1.5 font-mono outline-none focus:border-accent"
+          className="min-w-0 flex-1 rounded border border-border bg-surface px-3 py-1.5 outline-none focus:border-accent"
         />
         <button
           type="submit"
@@ -110,7 +110,7 @@ function DownloadRow({ download }: { download: DownloadView }) {
     .join(' · ');
 
   return (
-    <li className="space-y-1.5 rounded border border-border bg-surface px-3 py-2.5">
+    <li className="space-y-1.5 rounded-xl border border-border bg-surface px-3 py-2.5">
       <div className="flex items-center gap-2">
         {download.phase === 'done' && (
           <CircleCheck size={15} className="text-ok" />
@@ -118,10 +118,10 @@ function DownloadRow({ download }: { download: DownloadView }) {
         {download.phase === 'error' && (
           <CircleX size={15} className="text-error" />
         )}
-        <span className="min-w-0 flex-1 truncate font-mono">
+        <span className="min-w-0 flex-1 truncate font-medium">
           {download.model}
         </span>
-        <span className="font-mono text-xs text-muted">
+        <span className="tabular-nums text-xs text-muted">
           {t(`downloads.phase.${download.phase}`)}
           {download.phase === 'downloading' && ` · ${percent} %`}
         </span>
@@ -150,7 +150,7 @@ function DownloadRow({ download }: { download: DownloadView }) {
         </div>
       )}
       {details && running && (
-        <p className="font-mono text-xs text-muted">{details}</p>
+        <p className="tabular-nums text-xs text-muted">{details}</p>
       )}
       {download.phase === 'error' && (
         <p className="text-xs text-error">{download.error}</p>
