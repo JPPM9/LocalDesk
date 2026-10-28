@@ -81,6 +81,7 @@ export function KnowledgeButton(props: CollectionPickerProps) {
     <PickerButton
       icon={Library}
       label={t('knowledgePicker.button')}
+      chipText={t('knowledgePicker.chip')}
       count={props.selected.length}
       title={t('knowledgePicker.title')}
       intro={t('knowledgePicker.intro')}

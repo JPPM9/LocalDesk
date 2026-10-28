@@ -42,9 +42,12 @@ export function SidePanel(props: SidePanelProps) {
   const tabs: SidePanelTab[] = ['sources', 'project', 'context'];
 
   return (
-    <aside className="flex w-80 shrink-0 flex-col border-l border-border bg-surface">
-      <div className="flex h-12 items-center gap-1 border-b border-border px-2">
-        <div role="tablist" className="flex flex-1 gap-1">
+    <aside className="flex w-[310px] shrink-0 flex-col border-l border-border bg-bg">
+      <div className="flex h-14 shrink-0 items-center gap-2 px-3">
+        <div
+          role="tablist"
+          className="flex flex-1 gap-1 rounded-lg bg-surface-2 p-1"
+        >
           {tabs.map((tab) => (
             <button
               key={tab}
@@ -52,10 +55,10 @@ export function SidePanel(props: SidePanelProps) {
               role="tab"
               aria-selected={props.tab === tab}
               onClick={() => props.onTab(tab)}
-              className={`flex items-center gap-1.5 rounded px-2.5 py-1 text-xs ${
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1 text-[12.5px] ${
                 props.tab === tab
-                  ? 'bg-accent-soft text-accent'
-                  : 'text-muted hover:bg-surface-hover hover:text-text'
+                  ? 'bg-surface text-text shadow-card'
+                  : 'text-muted hover:text-text'
               }`}
             >
               {t(`sidePanel.tab.${tab}`)}
@@ -69,12 +72,12 @@ export function SidePanel(props: SidePanelProps) {
           type="button"
           onClick={props.onClose}
           aria-label={t('sidePanel.close')}
-          className="rounded p-1 text-muted hover:bg-surface-hover hover:text-text"
+          className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text"
         >
           <X size={16} />
         </button>
       </div>
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto px-3.5 pb-4">
         {props.tab === 'sources' && <SourcesTab messages={props.messages} />}
         {props.tab === 'project' && <ProjectTab project={props.project} />}
         {props.tab === 'context' && <ContextTab {...props} />}

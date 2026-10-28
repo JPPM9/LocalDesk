@@ -53,7 +53,7 @@ export function MemoryEditor({
     <div
       role="group"
       aria-label={title}
-      className="space-y-2 rounded border border-accent bg-accent-soft/40 px-3 py-2.5 text-sm"
+      className="space-y-2 rounded-xl border border-accent/40 bg-accent-soft/50 px-3.5 py-3 text-sm"
     >
       <div className="flex items-center gap-2 font-medium">
         <Brain size={16} className="shrink-0 text-accent" />

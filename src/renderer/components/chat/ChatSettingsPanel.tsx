@@ -23,8 +23,8 @@ export function ChatSettingsPanel({
   const { t } = useTranslation();
 
   return (
-    <aside className="flex w-80 shrink-0 flex-col border-l border-border bg-surface">
-      <div className="flex h-12 items-center justify-between border-b border-border px-4">
+    <aside className="flex w-[310px] shrink-0 flex-col border-l border-border bg-bg">
+      <div className="flex h-14 shrink-0 items-center justify-between px-4">
         <h2 className="font-semibold">{t('settingsPanel.title')}</h2>
         <button
           type="button"

@@ -1,6 +1,12 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type ReactNode,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import { SendHorizontal, Square } from 'lucide-react';
+import { ArrowUp, Square } from 'lucide-react';
 import { useShortcut } from '../../shortcuts/useShortcut';
 
 interface ChatInputProps {
@@ -8,6 +14,8 @@ interface ChatInputProps {
   isRunning: boolean;
   onSend: (text: string) => void;
   onStop: () => void;
+  /** Schalter in der Leiste unter dem Text (Wissen, Werkzeuge). */
+  tools?: ReactNode;
 }
 
 export function ChatInput({
@@ -15,6 +23,7 @@ export function ChatInput({
   isRunning,
   onSend,
   onStop,
+  tools,
 }: ChatInputProps) {
   const { t } = useTranslation();
   const [text, setText] = useState('');
@@ -52,7 +61,7 @@ export function ChatInput({
   };
 
   return (
-    <div className="flex items-end gap-2 rounded-lg border border-border bg-surface p-2 focus-within:border-accent">
+    <div className="rounded-2xl border border-border bg-surface-2 px-3 pt-2.5 pb-2 transition-colors focus-within:border-accent/60">
       <textarea
         ref={textareaRef}
         value={text}
@@ -63,30 +72,34 @@ export function ChatInput({
         )}
         disabled={disabled}
         rows={1}
-        className="field-sizing-content max-h-48 min-h-9 flex-1 resize-none bg-transparent px-2 py-1.5 outline-none disabled:opacity-50"
+        className="field-sizing-content max-h-48 min-h-11 w-full resize-none bg-transparent px-1.5 py-1 text-[14.5px] outline-none placeholder:text-subtle disabled:opacity-50"
       />
-      {isRunning ? (
-        <button
-          type="button"
-          onClick={onStop}
-          title={t('chat.stop')}
-          className="flex h-9 items-center gap-1.5 rounded border border-border px-3 hover:bg-surface-hover"
-        >
-          <Square size={14} />
-          {t('chat.stop')}
-        </button>
-      ) : (
-        <button
-          type="button"
-          onClick={submit}
-          disabled={disabled || !text.trim()}
-          title={t('chat.send')}
-          aria-label={t('chat.send')}
-          className="flex h-9 w-9 items-center justify-center rounded bg-accent text-white disabled:opacity-40"
-        >
-          <SendHorizontal size={16} />
-        </button>
-      )}
+      <div className="mt-1.5 flex items-center gap-1.5 border-t border-border pt-2">
+        {tools}
+        <span className="flex-1" />
+        {isRunning ? (
+          <button
+            type="button"
+            onClick={onStop}
+            title={t('chat.stop')}
+            className="flex h-9 items-center gap-1.5 rounded-xl border border-border bg-surface px-3 text-sm hover:bg-surface-hover"
+          >
+            <Square size={13} className="fill-current" />
+            {t('chat.stop')}
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={submit}
+            disabled={disabled || !text.trim()}
+            title={t('chat.send')}
+            aria-label={t('chat.send')}
+            className="grid h-9 w-9 place-items-center rounded-xl bg-accent text-white hover:opacity-90 disabled:opacity-35"
+          >
+            <ArrowUp size={18} />
+          </button>
+        )}
+      </div>
     </div>
   );
 }

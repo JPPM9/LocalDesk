@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TriangleAlert } from 'lucide-react';
+import { Sparkles, TriangleAlert } from 'lucide-react';
 import type { MessageRecord, ToolDecision } from '../../../shared/api';
 import { Markdown } from './Markdown';
 import { RememberButton } from './RememberButton';
@@ -42,7 +42,7 @@ export function MessageView({
     return (
       <div className="group space-y-1">
         <div className="flex justify-end">
-          <div className="max-w-[80%] rounded-lg bg-accent-soft px-4 py-2.5 whitespace-pre-wrap">
+          <div className="max-w-[80%] rounded-2xl rounded-br-md bg-bubble px-4 py-2.5 whitespace-pre-wrap">
             {message.content}
           </div>
         </div>
@@ -76,10 +76,15 @@ export function MessageView({
 
   return (
     <div className="group space-y-2">
-      <div className="font-mono text-[11px] text-muted">{message.model}</div>
+      <div className="flex items-center gap-2 text-[12.5px] text-muted">
+        <span className="grid h-[22px] w-[22px] place-items-center rounded-[7px] bg-gradient-to-b from-[#3b76f0] to-[#1d4fd0] text-white">
+          <Sparkles size={12} />
+        </span>
+        {message.model}
+      </div>
 
       {message.thinking && (
-        <details className="rounded border border-border bg-surface px-3 py-2 text-[13px] text-muted">
+        <details className="rounded-xl bg-surface-2 px-3.5 py-2 text-[13px] text-muted">
           <summary className="cursor-pointer select-none">
             {streaming && !message.content && !usedTools
               ? t('chat.thinkingNow')
@@ -131,7 +136,7 @@ export function MessageView({
       {sources.length > 0 && <SourceList sources={sources} focus={citeFocus} />}
 
       {message.status === 'error' && (
-        <p className="rounded border border-error/40 bg-error/10 px-3 py-2 text-error">
+        <p className="rounded-xl border border-error/40 bg-error/10 px-3.5 py-2.5 text-error">
           {t('chat.error', { error: message.error })}
         </p>
       )}
@@ -139,7 +144,7 @@ export function MessageView({
         <p className="text-xs text-muted">{t('chat.aborted')}</p>
       )}
       {message.stats && (
-        <p className="font-mono text-[11px] text-muted">
+        <p className="text-xs text-subtle tabular-nums">
           {t('chat.stats', {
             tokens: message.stats.outputTokens,
             speed: message.stats.tokensPerSecond.toLocaleString('de-DE', {

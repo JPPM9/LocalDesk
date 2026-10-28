@@ -62,15 +62,15 @@ export function SaveNoteButton({
           disabled={state.kind === 'saving'}
           title={label}
           aria-label={label}
-          className="rounded border border-border px-2 py-1 hover:bg-surface-hover disabled:opacity-50"
+          className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
         >
-          <StateIcon state={state} />
+          <StateIcon state={state} size={17} />
         </button>
         {/* Fest unten rechts – der Chat-Kopf schneidet Überstehendes ab. */}
         {message && (
           <p
             role="status"
-            className={`fixed right-6 bottom-24 z-50 max-w-md rounded border border-border bg-surface px-3 py-2 text-xs shadow-lg ${
+            className={`fixed right-6 bottom-28 z-50 max-w-md rounded-xl border border-border bg-surface px-3.5 py-2.5 text-xs shadow-card ${
               state.kind === 'error' ? 'text-error' : 'text-ok'
             }`}
           >

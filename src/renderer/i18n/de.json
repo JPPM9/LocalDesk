@@ -437,7 +437,8 @@
     "disabled": "ausgeschaltet – in den Einstellungen einschalten",
     "tools_one": "{{count}} Tool nutzbar",
     "tools_other": "{{count}} Tools nutzbar",
-    "modelNoTools": "Das gewählte Modell kann laut Ollama keine Tools nutzen – wähle z. B. qwen3, gpt-oss oder gemma4."
+    "modelNoTools": "Das gewählte Modell kann laut Ollama keine Tools nutzen – wähle z. B. qwen3, gpt-oss oder gemma4.",
+    "chip": "Werkzeuge"
   },
   "knowledgePicker": {
     "button": "Wissen für diesen Chat",
@@ -445,7 +446,8 @@
     "intro": "Vor jeder Antwort durchsucht LocalDesk die gewählten Sammlungen und gibt dem Modell passende Textstellen mit.",
     "none": "Noch keine Sammlungen angelegt.",
     "toKnowledge": "Zur Seite „Wissen“",
-    "empty": "noch nicht eingelesen"
+    "empty": "noch nicht eingelesen",
+    "chip": "Wissen"
   },
   "settingsPanel": {
     "title": "Chat-Einstellungen",

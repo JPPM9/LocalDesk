@@ -5,6 +5,8 @@ interface PickerButtonProps {
   icon: LucideIcon;
   /** Beschriftung für Tooltip und Screenreader. */
   label: string;
+  /** Kurzer Text auf dem Schalter, z. B. „Wissen“. */
+  chipText: string;
   /** Wie viele Einträge gewählt sind – 0 = Knopf neutral, sonst hervorgehoben mit Zahl. */
   count: number;
   title: string;
@@ -13,12 +15,13 @@ interface PickerButtonProps {
 }
 
 /**
- * Knopf im Chat-Kopf mit aufklappender Auswahl (MCP-Server, Wissen). Schließt
+ * Schalter im Eingabefeld mit aufklappender Auswahl (Wissen, Werkzeuge). Schließt
  * bei Klick daneben oder Esc – Esc stoppt dabei keine laufende Antwort.
  */
 export function PickerButton({
   icon: Icon,
   label,
+  chipText,
   count,
   title,
   intro,
@@ -56,18 +59,21 @@ export function PickerButton({
         title={label}
         aria-label={label}
         aria-expanded={open}
-        className={`flex items-center gap-1 rounded border px-2 py-1 text-xs hover:bg-surface-hover ${
-          active || open ? 'border-accent text-accent' : 'border-border'
+        className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12.5px] ${
+          active || open
+            ? 'border-transparent bg-accent-soft text-accent-text'
+            : 'border-border bg-surface text-muted hover:text-text'
         }`}
       >
         <Icon size={14} />
-        {active && <span className="font-mono">{count}</span>}
+        {chipText}
+        {active && <span className="tabular-nums">· {count}</span>}
       </button>
       {open && (
         <div
           role="dialog"
           aria-label={label}
-          className="absolute right-0 z-30 mt-1 w-72 space-y-2 rounded border border-border bg-surface p-3 shadow-lg"
+          className="absolute bottom-full left-0 z-30 mb-2 w-72 space-y-2 rounded-xl border border-border bg-surface p-3 shadow-card"
         >
           <div>
             <h3 className="text-xs font-semibold">{title}</h3>

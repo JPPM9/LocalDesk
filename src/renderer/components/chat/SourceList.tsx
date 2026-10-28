@@ -43,7 +43,7 @@ export function SourceList({ sources, focus, expanded }: SourceListProps) {
 
   return (
     <div className="space-y-1 text-[13px]">
-      <div className="flex items-center gap-1.5 text-[11px] font-medium text-muted">
+      <div className="flex items-center gap-1.5 text-xs font-medium text-muted">
         <BookOpen size={12} />
         {t('sources.title', { count: sources.length })}
       </div>
@@ -54,25 +54,25 @@ export function SourceList({ sources, focus, expanded }: SourceListProps) {
             ref={(el) => {
               if (el) refs.current.set(source.n, el);
             }}
-            className="rounded border border-border bg-surface"
+            className="rounded-xl bg-surface-2"
           >
-            <div className="flex items-center gap-2 px-2 py-1">
+            <div className="flex items-center gap-2 px-2.5 py-1.5">
               <button
                 type="button"
                 onClick={() => toggle(source.n)}
                 aria-expanded={open.has(source.n)}
                 className="flex min-w-0 flex-1 items-center gap-2 text-left"
               >
-                <span className="shrink-0 rounded bg-accent-soft px-1 font-mono text-[10px] text-accent">
+                <span className="grid h-5 min-w-5 shrink-0 place-items-center rounded-md bg-accent-soft px-1 text-[11px] font-semibold text-accent-text">
                   {source.n}
                 </span>
                 <span
-                  className="truncate font-mono text-xs"
+                  className="truncate text-[13px] font-medium"
                   title={source.path}
                 >
                   {sourceLabel(source)}
                 </span>
-                <span className="shrink-0 truncate text-[11px] text-muted">
+                <span className="shrink-0 truncate text-xs text-subtle">
                   {source.collectionName}
                 </span>
               </button>
@@ -81,13 +81,13 @@ export function SourceList({ sources, focus, expanded }: SourceListProps) {
                 onClick={() => void openFile(source)}
                 title={t('sources.open')}
                 aria-label={t('sources.open')}
-                className="shrink-0 rounded p-1 text-muted hover:bg-surface-hover hover:text-text"
+                className="shrink-0 rounded-md p-1 text-subtle hover:bg-surface hover:text-text"
               >
                 <ExternalLink size={13} />
               </button>
             </div>
             {open.has(source.n) && (
-              <div className="space-y-1 border-t border-border px-2 py-1.5">
+              <div className="space-y-1 border-t border-border px-3 py-2">
                 {source.heading && (
                   <p className="text-[11px] text-muted">{source.heading}</p>
                 )}

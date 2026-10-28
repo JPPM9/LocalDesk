@@ -23,6 +23,7 @@ export function McpButton({
     <PickerButton
       icon={Plug}
       label={t('mcpPicker.button')}
+      chipText={t('mcpPicker.chip')}
       count={selected.length}
       title={t('mcpPicker.title')}
       intro={t('mcpPicker.intro')}

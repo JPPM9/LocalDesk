@@ -321,9 +321,9 @@ export function ChatPage() {
                 <Link
                   to={`/projects/${project.id}`}
                   title={t('folders.open')}
-                  className="flex max-w-48 items-center gap-1 rounded-full bg-accent-soft px-2.5 py-0.5 text-xs text-accent hover:underline"
+                  className="flex max-w-48 items-center gap-1.5 rounded-full border border-border bg-surface-2 px-2.5 py-0.5 text-xs text-muted hover:text-text"
                 >
-                  <FolderOpen size={12} className="shrink-0" />
+                  <FolderOpen size={13} className="shrink-0" />
                   <span className="truncate">
                     {t('projects.badge', { name: project.name })}
                   </span>
@@ -341,23 +341,12 @@ export function ChatPage() {
                       disabled={summary !== null && summary !== 'suggest'}
                       title={t('summary.button')}
                       aria-label={t('summary.button')}
-                      className="rounded border border-border px-2 py-1 hover:bg-surface-hover disabled:opacity-50"
+                      className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
                     >
-                      <ScrollText size={15} />
+                      <ScrollText size={17} />
                     </button>
                   </>
                 )}
-              <KnowledgeButton
-                selected={settings.collections ?? []}
-                onChange={(ids) => setList('collections', ids)}
-              />
-              <McpButton
-                selected={settings.mcpServers ?? []}
-                onChange={(ids) => setList('mcpServers', ids)}
-                modelSupportsTools={models
-                  .find((m) => m.name === model)
-                  ?.capabilities.includes('tools')}
-              />
               <ModelSelect
                 models={models}
                 value={model}
@@ -370,14 +359,16 @@ export function ChatPage() {
                 title={`${t('settingsPanel.title')} (${shortcutLabel('chatSettings')})`}
                 aria-label={t('settingsPanel.title')}
                 aria-pressed={settingsOpen}
-                className={`relative rounded border px-2 py-1 hover:bg-surface-hover ${
-                  settingsOpen ? 'border-accent text-accent' : 'border-border'
+                className={`relative grid h-8 w-8 shrink-0 place-items-center rounded-lg hover:bg-surface-hover ${
+                  settingsOpen
+                    ? 'bg-accent-soft text-accent-text'
+                    : 'text-muted hover:text-text'
                 }`}
               >
-                <SlidersHorizontal size={15} />
+                <SlidersHorizontal size={17} />
                 {/* Punkt zeigt: Dieser Chat hat eigene Einstellungen. */}
                 {hasCustomSettings && (
-                  <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-accent" />
+                  <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-accent ring-2 ring-surface" />
                 )}
               </button>
               <button
@@ -394,14 +385,16 @@ export function ChatPage() {
                 title={t('sidePanel.button')}
                 aria-label={t('sidePanel.button')}
                 aria-pressed={sideTab !== null}
-                className={`relative rounded border px-2 py-1 hover:bg-surface-hover ${
-                  sideTab ? 'border-accent text-accent' : 'border-border'
+                className={`relative grid h-8 w-8 shrink-0 place-items-center rounded-lg hover:bg-surface-hover ${
+                  sideTab
+                    ? 'bg-accent-soft text-accent-text'
+                    : 'text-muted hover:text-text'
                 }`}
               >
-                <PanelRight size={15} />
+                <PanelRight size={17} />
                 {/* Gelb/rot: Der Kontext wird knapp – auch bei geschlossenem Seitenbereich sichtbar. */}
                 {contextLevel !== 'ok' && (
-                  <span className="absolute -top-1 -right-1">
+                  <span className="absolute top-0.5 right-0.5">
                     <LevelDot level={contextLevel} />
                   </span>
                 )}
@@ -411,7 +404,7 @@ export function ChatPage() {
         />
 
         <div className="min-h-0 flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-3xl space-y-6 px-6 py-6">
+          <div className="mx-auto max-w-[820px] space-y-7 px-7 py-7">
             {loadError && (
               <p className="rounded border border-error/40 bg-error/10 px-3 py-2 text-error">
                 {t('chat.modelsError', { error: loadError })}
@@ -457,7 +450,7 @@ export function ChatPage() {
           </div>
         </div>
 
-        <div className="mx-auto w-full max-w-3xl px-6 pb-5">
+        <div className="mx-auto w-full max-w-[820px] px-7 pb-4">
           {summary && chatId && (
             <SummaryPanel
               key={`${chatId}-${summary}`}
@@ -469,7 +462,7 @@ export function ChatPage() {
           )}
           {activeTemplate && messages.length === 0 && (
             <div className="mb-2 flex">
-              <span className="flex items-center gap-1.5 rounded-full bg-accent-soft px-3 py-1 text-xs text-accent">
+              <span className="flex items-center gap-1.5 rounded-full bg-accent-soft px-3 py-1 text-xs text-accent-text">
                 {t('templates.active', { name: activeTemplate.name })}
                 <button
                   type="button"
@@ -484,12 +477,27 @@ export function ChatPage() {
             </div>
           )}
           <ChatInput
+            tools={
+              <>
+                <KnowledgeButton
+                  selected={settings.collections ?? []}
+                  onChange={(ids) => setList('collections', ids)}
+                />
+                <McpButton
+                  selected={settings.mcpServers ?? []}
+                  onChange={(ids) => setList('mcpServers', ids)}
+                  modelSupportsTools={models
+                    .find((m) => m.name === model)
+                    ?.capabilities.includes('tools')}
+                />
+              </>
+            }
             disabled={!model}
             isRunning={isRunning}
             onSend={(text) => send(text, model, project?.id)}
             onStop={stop}
           />
-          <p className="mt-1.5 text-center text-[11px] text-muted">
+          <p className="mt-2 text-center text-[11.5px] text-subtle">
             {t('chat.hint')}
           </p>
         </div>

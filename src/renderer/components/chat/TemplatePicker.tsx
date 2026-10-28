@@ -29,7 +29,7 @@ export function TemplatePicker({
 
   return (
     <div className="space-y-2">
-      <h2 className="text-center text-xs font-semibold tracking-wider text-muted uppercase">
+      <h2 className="text-center text-sm font-medium text-muted">
         {t('templates.pickerTitle')}
       </h2>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] gap-2">
@@ -39,10 +39,10 @@ export function TemplatePicker({
             type="button"
             onClick={() => onPick(template)}
             aria-pressed={template.id === activeId}
-            className={`flex flex-col justify-start rounded-lg border p-3 text-left hover:bg-surface-hover ${
+            className={`flex flex-col justify-start rounded-xl border p-3.5 text-left hover:shadow-card ${
               template.id === activeId
                 ? 'border-accent bg-accent-soft'
-                : 'border-border bg-surface'
+                : 'border-border bg-surface-2 hover:bg-surface'
             }`}
           >
             <div className="flex items-center gap-1.5 font-semibold">

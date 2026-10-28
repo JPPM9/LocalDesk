@@ -87,7 +87,7 @@ export function SummaryPanel({
     <div
       role="group"
       aria-label={t('summary.title')}
-      className="mb-3 space-y-2 rounded border border-accent bg-accent-soft/40 px-3 py-2.5 text-sm"
+      className="mb-3 space-y-2 rounded-xl border border-accent/40 bg-accent-soft/50 px-3.5 py-3 text-sm"
     >
       {children}
     </div>
