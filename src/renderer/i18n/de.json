@@ -506,5 +506,13 @@
     "ready": "Version {{version}} ist geladen und geprüft.",
     "restartHint": "Beim Neustart wird sie im bisherigen Ordner installiert; LocalDesk startet danach von selbst wieder.",
     "install": "Jetzt neu starten und installieren"
+  },
+  "appearance": {
+    "title": "Darstellung",
+    "intro": "Hell, dunkel oder automatisch wie in Windows (Einstellungen → Personalisierung → Farben).",
+    "theme": "Farbschema",
+    "system": "Wie Windows",
+    "light": "Hell",
+    "dark": "Dunkel"
   }
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AppInfo } from '../../shared/api';
 import { PageHeader } from '../components/PageHeader';
+import { AppearanceSettings } from '../components/settings/AppearanceSettings';
 import { McpSettings } from '../components/settings/McpSettings';
 import { ObsidianSettings } from '../components/settings/ObsidianSettings';
 import { ServerSettings } from '../components/settings/ServerSettings';
@@ -19,6 +20,7 @@ export function SettingsPage() {
     <>
       <PageHeader title={t('settings.title')} />
       <div className="max-w-2xl space-y-8 p-6">
+        <AppearanceSettings />
         <ServerSettings />
         <McpSettings />
         <ObsidianSettings />

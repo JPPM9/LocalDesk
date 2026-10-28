@@ -2,6 +2,7 @@
 // Main (Node) und Renderer (React) importieren beide aus dieser Datei,
 // damit sich beide Seiten auf dieselben Datenformen verlassen können.
 
+import type { ThemeChoice } from './appearance';
 import type { UpdateState } from './update';
 
 export interface AppInfo {
@@ -616,6 +617,10 @@ export interface LocalDeskApi {
   dismissSummary: (chatId: string) => Promise<void>;
   onMcpChanged: (listener: (servers: McpServerView[]) => void) => () => void;
 
+  /** Farbschema (System / Hell / Dunkel) – wirkt sofort und bleibt gespeichert. */
+  getTheme: () => Promise<ThemeChoice>;
+  setTheme: (theme: ThemeChoice) => Promise<void>;
+
   /** Update-Knopf: Stand abfragen, suchen, laden, abbrechen, installieren (Neustart). */
   getUpdateState: () => Promise<UpdateState>;
   checkForUpdates: () => Promise<UpdateState>;
@@ -741,6 +746,8 @@ export const IpcChannels = {
   saveSummary: 'summary:save',
   dismissSummary: 'summary:dismiss',
   mcpChanged: 'mcp:changed',
+  getTheme: 'appearance:get-theme',
+  setTheme: 'appearance:set-theme',
   getUpdateState: 'update:state',
   checkForUpdates: 'update:check',
   downloadUpdate: 'update:download',

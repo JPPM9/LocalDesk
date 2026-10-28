@@ -1,7 +1,7 @@
 /* Darstellung von Modellantworten (Markdown) und Farben für Code-Hervorhebung. */
 
 :root {
-  --ld-code-bg: #f1f3f6;
+  --ld-code-bg: #f3f5f9;
   --ld-hl-keyword: #a626a4;
   --ld-hl-string: #50a14f;
   --ld-hl-number: #b76b01;
@@ -14,7 +14,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --ld-code-bg: #0b0d11;
+    --ld-code-bg: #10131a;
     --ld-hl-keyword: #c678dd;
     --ld-hl-string: #98c379;
     --ld-hl-number: #d19a66;

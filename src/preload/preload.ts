@@ -72,6 +72,8 @@ const api: LocalDeskApi = {
     ipcRenderer.invoke(IpcChannels.saveSummary, chatId, model, draft),
   dismissSummary: (chatId) =>
     ipcRenderer.invoke(IpcChannels.dismissSummary, chatId),
+  getTheme: () => ipcRenderer.invoke(IpcChannels.getTheme),
+  setTheme: (theme) => ipcRenderer.invoke(IpcChannels.setTheme, theme),
   getUpdateState: () => ipcRenderer.invoke(IpcChannels.getUpdateState),
   checkForUpdates: () => ipcRenderer.invoke(IpcChannels.checkForUpdates),
   downloadUpdate: () => ipcRenderer.invoke(IpcChannels.downloadUpdate),

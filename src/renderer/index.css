@@ -4,37 +4,51 @@
  * Farb-Tokens: Jede Farbe hat einen Namen nach ihrer Aufgabe (z. B. "surface"),
  * nicht nach ihrem Aussehen. Hell und Dunkel setzen nur andere Werte für dieselben
  * Namen – die Komponenten müssen das Farbschema dadurch nicht kennen.
- * Das Schema folgt Windows (Einstellungen → Personalisierung → Farben).
+ * Ob hell oder dunkel, entscheidet Einstellungen → Darstellung (System / Hell / Dunkel);
+ * der Main-Prozess stellt dafür Electrons nativeTheme um, und prefers-color-scheme folgt.
+ * Akzent = das Blau aus dem App-Symbol.
  */
 :root {
   color-scheme: light;
-  --ld-bg: #f6f7f9;
-  --ld-surface: #ffffff;
-  --ld-surface-hover: #eef0f3;
-  --ld-border: #dde1e6;
-  --ld-text: #1b1f24;
-  --ld-muted: #5f6b7a;
+  --ld-bg: #f7f8fa; /* Grund, Eingabefelder, Code */
+  --ld-surface: #ffffff; /* Flächen: Inhalt, Karten, Listen */
+  --ld-surface-2: #f3f5f9; /* zweite Ebene: Gedanken, Quellen, Kästen in Karten */
+  --ld-surface-hover: #eceff5;
+  --ld-sidebar: #eef1f6; /* Symbolleiste links */
+  --ld-border: #e3e7ee;
+  --ld-text: #161a21;
+  --ld-muted: #5f6878; /* Nebentexte */
+  --ld-subtle: #8a93a2; /* ganz leise: Hinweise, Zähler */
   --ld-accent: #2563eb;
-  --ld-accent-soft: #dbe6fd;
+  --ld-accent-soft: #e3ecfd;
+  --ld-accent-text: #1d4fd0; /* Akzent als Schrift auf hellem Grund */
+  --ld-bubble: #eaf0fd; /* deine Nachrichten */
   --ld-ok: #15803d;
   --ld-warn: #b45309;
   --ld-error: #b91c1c;
+  --ld-shadow: 0 1px 2px rgb(16 24 40 / 0.06), 0 8px 24px rgb(16 24 40 / 0.06);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --ld-bg: #0f1115;
-    --ld-surface: #161a20;
-    --ld-surface-hover: #1f242c;
-    --ld-border: #2a3039;
-    --ld-text: #e6e9ee;
-    --ld-muted: #8b95a3;
+    --ld-bg: #0e1015;
+    --ld-surface: #161a22;
+    --ld-surface-2: #1b2029;
+    --ld-surface-hover: #212733;
+    --ld-sidebar: #13161d;
+    --ld-border: #262c38;
+    --ld-text: #e8ebf1;
+    --ld-muted: #98a1b0;
+    --ld-subtle: #6f7888;
     --ld-accent: #5b8def;
-    --ld-accent-soft: #1c2a45;
+    --ld-accent-soft: #1b2843;
+    --ld-accent-text: #8fb1f6;
+    --ld-bubble: #1c2740;
     --ld-ok: #4ade80;
     --ld-warn: #fbbf24;
     --ld-error: #f87171;
+    --ld-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 10px 30px rgb(0 0 0 / 0.35);
   }
 }
 
@@ -42,17 +56,41 @@
 @theme inline {
   --color-bg: var(--ld-bg);
   --color-surface: var(--ld-surface);
+  --color-surface-2: var(--ld-surface-2);
   --color-surface-hover: var(--ld-surface-hover);
+  --color-sidebar: var(--ld-sidebar);
   --color-border: var(--ld-border);
   --color-text: var(--ld-text);
   --color-muted: var(--ld-muted);
+  --color-subtle: var(--ld-subtle);
   --color-accent: var(--ld-accent);
   --color-accent-soft: var(--ld-accent-soft);
+  --color-accent-text: var(--ld-accent-text);
+  --color-bubble: var(--ld-bubble);
   --color-ok: var(--ld-ok);
   --color-warn: var(--ld-warn);
   --color-error: var(--ld-error);
-  --font-sans: 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  --shadow-card: var(--ld-shadow);
+  /* Inter liegt in der App (@fontsource-variable/inter, Lizenz SIL OFL 1.1) – nichts aus dem Netz. */
+  --font-sans:
+    'Inter Variable', 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
   --font-mono: 'Cascadia Mono', Consolas, ui-monospace, monospace;
+  /* Weichere Ecken überall (Tailwind: rounded-sm/rounded = 8 px, -lg = 12 px …). */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+}
+
+/*
+ * Tailwind setzt „rounded“ fest auf 4 px (lässt sich nicht per Token ändern) – bei uns
+ * folgt es --radius-sm (8 px). Gleiche Ebene wie Tailwinds Utilities, steht danach → gewinnt.
+ */
+@layer utilities {
+  .rounded {
+    border-radius: var(--radius-sm);
+  }
 }
 
 html,
@@ -67,4 +105,18 @@ body {
   color: var(--ld-text);
   font-family: var(--font-sans);
   font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Sichtbare Markierung für die Tastatur – aber nicht beim Klicken mit der Maus. */
+:focus-visible {
+  outline: 2px solid var(--ld-accent);
+  outline-offset: 2px;
+}
+
+/* Schlanke Bildlaufleisten, die zum Farbschema passen. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ld-border) transparent;
 }
