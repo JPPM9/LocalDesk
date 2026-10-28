@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { AppInfo } from '../../shared/api';
 import { PageHeader } from '../components/PageHeader';
 import { AppearanceSettings } from '../components/settings/AppearanceSettings';
+import { MailSettings } from '../components/settings/MailSettings';
 import { McpSettings } from '../components/settings/McpSettings';
 import { ObsidianSettings } from '../components/settings/ObsidianSettings';
 import { ServerSettings } from '../components/settings/ServerSettings';
@@ -14,6 +15,7 @@ const SECTIONS = [
   { id: 'server', titleKey: 'servers.title' },
   { id: 'mcp', titleKey: 'mcp.title' },
   { id: 'obsidian', titleKey: 'obsidian.title' },
+  { id: 'email', titleKey: 'mailSettings.title' },
   { id: 'ueber', titleKey: 'settings.about' },
 ] as const;
 
@@ -100,6 +102,7 @@ export function SettingsPage() {
           {section('server', <ServerSettings />)}
           {section('mcp', <McpSettings />)}
           {section('obsidian', <ObsidianSettings />)}
+          {section('email', <MailSettings />)}
           {section(
             'ueber',
             <section>

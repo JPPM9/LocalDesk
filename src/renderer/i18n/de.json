@@ -572,5 +572,24 @@
     "none": "Noch keine Skills.",
     "toSkills": "Zur Seite „Skills“",
     "manage": "Skills verwalten …"
+  },
+  "mailSettings": {
+    "title": "E-Mail",
+    "intro": "LocalDesk liest deine Mails direkt bei Google – über eine eigene App, die du dort anlegst. Senden und Löschen gibt es nicht; Labels und Sterne ändert LocalDesk nur nach deiner Bestätigung.",
+    "guide": "Schritt für Schritt: docs/email-einrichten.md im LocalDesk-Ordner.",
+    "gmail": "Gmail",
+    "setUp": "Gmail einrichten",
+    "notSetUp": "Noch keine eigene Google-App eingetragen.",
+    "clientId": "Client-ID",
+    "clientIdHint": "Aus der Google Cloud Console → Clients → Desktop-App. Endet auf „.apps.googleusercontent.com“.",
+    "clientSecret": "Clientschlüssel",
+    "clientSecretHint": "Steht direkt neben der Client-ID. Bleibt in LocalDesk und wird hier nicht wieder angezeigt.",
+    "saved": "Google-App eingetragen",
+    "secretStored": "Clientschlüssel gespeichert",
+    "nextStep": "Anmelden kommt im nächsten Schritt.",
+    "change": "Ändern",
+    "remove": "Entfernen",
+    "confirmRemove": "Google-App aus LocalDesk entfernen? Bei Google bleibt sie bestehen.",
+    "outlookLater": "Outlook folgt später – Microsoft verlangt dafür ein eigenes Azure-Verzeichnis."
   }
 }

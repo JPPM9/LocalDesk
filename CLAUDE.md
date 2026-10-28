@@ -438,6 +438,18 @@
   Abschlusstest (Ollama 0.40.11): gemma4, qwen3, gpt-oss je Schalter / Projekt / automatisch (Lernkarten)
   → 9/9. Gebaute App: Beispiele vorhanden, Code-Review automatisch geladen ✓. Bekannt: gpt-oss scheitert
   zwischendurch an Ollamas CUDA-Ladefehler – andere Modelle vorher entladen hilft.
+- Phase 11: E-Mail – in Arbeit. Entschieden (2026-10-28): erst nur Gmail (Outlook später: seit
+  Juni 2024 braucht jede Microsoft-App-Registrierung ein Verzeichnis/Azure-Konto; App-Passwörter
+  für Outlook.com gibt es nicht mehr; fremde Client-IDs nutzen wir nicht) · eigene Google-App des
+  Nutzers, Status „Produktion“ ohne Überprüfung (keine 7-Tage-Abmeldung, Warnung einmal
+  wegklicken, max. 100 Nutzer) · Bereich `gmail.modify` – erlaubt technisch mehr, darum kennt der
+  Code nur Lesen, Label setzen, Stern setzen/entfernen; Senden/Löschen gibt es nicht · Anmeldung
+  im System-Browser mit Loopback (127.0.0.1) + PKCE · Anmelde-Schlüssel mit `safeStorage`
+  verschlüsselt · keine Mail-Kopie auf dem PC · externe Bilder blockiert, Mails nur als Text (kein
+  DOMPurify) · nur bestehende Labels vorschlagen · Seite „E-Mail“ + Chat-Schalter „E-Mail“
+  (lesen ohne Rückfrage, Änderungen als Bestätigungs-Karte).
+  Schritt 1 ✓: Anleitung `docs/email-einrichten.md`, Einstellungen → E-Mail (Client-ID und
+  Clientschlüssel in `app_settings`, Schlüssel geht nie an die Oberfläche zurück).
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 E-Mail Gmail + Outlook direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

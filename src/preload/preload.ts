@@ -53,6 +53,9 @@ const api: LocalDeskApi = {
       permission,
     ),
   pickFolders: () => ipcRenderer.invoke(IpcChannels.pickFolders),
+  getMailApps: () => ipcRenderer.invoke(IpcChannels.getMailApps),
+  setGoogleApp: (app) => ipcRenderer.invoke(IpcChannels.setGoogleApp, app),
+  clearGoogleApp: () => ipcRenderer.invoke(IpcChannels.clearGoogleApp),
   getObsidian: () => ipcRenderer.invoke(IpcChannels.getObsidian),
   setObsidian: (vaultPath, folder) =>
     ipcRenderer.invoke(IpcChannels.setObsidian, vaultPath, folder),

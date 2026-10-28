@@ -3,6 +3,7 @@
 // damit sich beide Seiten auf dieselben Datenformen verlassen können.
 
 import type { ThemeChoice } from './appearance';
+import type { GoogleAppInput, MailAppView } from './mail';
 import type { SkillInput, SkillView } from './skills';
 import type { UpdateState } from './update';
 
@@ -584,6 +585,13 @@ export interface LocalDeskApi {
   /** Öffnet den Windows-Ordnerdialog; leer = abgebrochen. */
   pickFolders: () => Promise<string[]>;
 
+  /** Eingetragene eigene Mail-Apps (ohne Schlüssel). */
+  getMailApps: () => Promise<MailAppView[]>;
+  /** Prüft und speichert die eigene Google-App (Client-ID + Clientschlüssel). */
+  setGoogleApp: (app: GoogleAppInput) => Promise<Result<MailAppView>>;
+  /** Vergisst die eigene Google-App. */
+  clearGoogleApp: () => Promise<void>;
+
   /** Eingerichteter Obsidian-Vault mit aktuellem Zustand; null = keiner eingerichtet. */
   getObsidian: () => Promise<ObsidianStatus | null>;
   /** Prüft und speichert Vault und Unterordner (nur wenn der Ordner nutzbar ist). */
@@ -747,6 +755,9 @@ export const IpcChannels = {
   deleteMcpServer: 'mcp:delete',
   setToolPermission: 'mcp:set-permission',
   pickFolders: 'dialog:pick-folders',
+  getMailApps: 'mail:get-apps',
+  setGoogleApp: 'mail:set-google-app',
+  clearGoogleApp: 'mail:clear-google-app',
   getObsidian: 'obsidian:get',
   setObsidian: 'obsidian:set',
   clearObsidian: 'obsidian:clear',
