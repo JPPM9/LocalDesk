@@ -33,6 +33,8 @@ import { registerServerHandlers } from './server-service';
 import { registerTemplateHandlers } from './template-service';
 import { registerUpdateHandlers } from './update-service';
 import { registerAppearanceHandlers } from './appearance-service';
+import { createExampleSkills } from './skills/skill-examples';
+import { SkillStore } from './skills/skill-store';
 
 // Gleiche Kennung wie im Installer (electron-builder.yml, appId): Taskleiste und
 // Verknüpfungen gehören so zusammen.
@@ -169,6 +171,13 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
 
   registerUpdateHandlers();
   registerAppearanceHandlers(new AppSettingsRepository(db));
+
+  // Skills: Ordner mit je einer SKILL.md, z. B. %APPDATA%\LocalDesk\skills\code-review\SKILL.md.
+  // Beim ersten Start kommen vier Beispiele dazu (danach nie wieder).
+  const skills = new SkillStore(path.join(app.getPath('userData'), 'skills'));
+  void createExampleSkills(skills, new AppSettingsRepository(db)).catch(
+    (error) => console.error('Beispiel-Skills nicht angelegt:', error),
+  );
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({
     name: app.getName(),
     version: app.getVersion(),

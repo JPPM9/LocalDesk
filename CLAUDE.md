@@ -388,6 +388,20 @@
   das Entwicklerprotokoll – logische Reihenfolge (Leiste → Chatliste → Kopf), überall 2-px-Fokusrahmen ✓.
   Echter Chat mit Werkzeug-Rückfrage (Dateisystem-MCP, „Einmal erlauben“, Datei geschrieben) hell/dunkel ✓.
   Gebaute App: Inter aus app.asar geladen, Radien, Leiste, Logo, Farbschema ✓.
+- Phase 9: Skills – in Arbeit. Entschieden (2026-10-28): Ordner + Editor in der App (je Skill ein Ordner mit
+  SKILL.md im Claude-Format unter `%APPDATA%\LocalDesk\skills\`) · Aktivierung von Hand (Schalter „Skills“
+  im Eingabefeld) UND automatisch (Liste Name+Beschreibung + Werkzeug „Skill laden“, nur Tool-Modelle) ·
+  voreinstellbar in Projekten und Vorlagen · 4 deutsche Beispiel-Skills beim ersten Start. Skills sind NUR
+  Text: nichts wird ausgeführt, keine Werkzeug-Rechte.
+  Schritte: 1 Grundlage ✅ · 2 Seite „Skills“ · 3 Schalter im Chat · 4 automatisch · 5 Projekte & Vorlagen ·
+  6 Test & Doku
+  Grundlage: Format/Prüfung in `shared/skills.ts` (Name ≤ 80, Beschreibung ≤ 300, Anleitung ≤ 20 000
+  Zeichen; Kopf immer in Anführungszeichen geschrieben; ohne Kopf = Ordnername als Name). `SkillStore`
+  (`main/skills/skill-store.ts`): Kennung = Ordnername aus dem Namen (`skillIdFromName`, ä→ae …, „-2“ bei
+  Gleichstand), bleibt beim Umbenennen; nur Kennungen `[a-z0-9-]`, keine Verknüpfungen (lstat, getestet
+  mit Junction), sicheres Schreiben über `atomicWrite` (aus vault.ts); Löschen entfernt nur SKILL.md und
+  den Ordner nur, wenn er dann leer ist. Beispiele (`skill-examples.ts`): einmalig, Merker
+  `skills.examplesCreated` in app_settings – gelöschte kommen nicht wieder.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · Phase 10 Planer /
   Aufgabenliste · Phase 11 E-Mail Gmail + Outlook direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

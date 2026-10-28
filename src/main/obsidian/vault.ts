@@ -234,7 +234,7 @@ async function exists(file: string): Promise<boolean> {
  * Erst in eine Zwischendatei schreiben, dann umbenennen: Obsidian oder ein
  * Sync-Dienst sieht so nie eine halb geschriebene Notiz.
  */
-async function atomicWrite(target: string, content: string) {
+export async function atomicWrite(target: string, content: string) {
   const temp = `${target}.${randomUUID()}.tmp`;
   await writeFile(temp, content, 'utf8');
   try {
