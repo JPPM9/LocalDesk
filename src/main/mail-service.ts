@@ -1,5 +1,9 @@
 import { ipcMain, safeStorage, shell } from 'electron';
-import { IpcChannels, type Result } from '../shared/api';
+import { IpcChannels, type ChatRequest, type Result } from '../shared/api';
+import { mailSummaryContext, mailSummaryMessages } from '../shared/mail-prompt';
+import { thinkStyle } from '../shared/settings';
+import { describeChatError } from './chat-errors';
+import type { Provider } from './providers/provider';
 import {
   checkGoogleApp,
   isMailId,
@@ -42,6 +46,7 @@ const safeStorageCipher: TokenCipher = {
 export function registerMailHandlers(
   settings: AppSettingsRepository,
   accounts: MailAccountRepository,
+  getProvider: () => Provider,
 ) {
   const fetch = guardedFetch((url, init) => globalThis.fetch(url, init));
 
@@ -208,6 +213,63 @@ export function registerMailHandlers(
     (_event, accountId: unknown): Promise<Result<MailLabel[]>> =>
       attempt(() => client(accountId).labels()),
   );
+
+  // Zusammenfassen: Die Mail holt der Hauptprozess selbst (nicht aus der Oberfläche)
+  // und gibt sie nur an das lokale Modell. Eine Zusammenfassung zur Zeit.
+  let summary: AbortController | null = null;
+
+  ipcMain.handle(
+    IpcChannels.summarizeMail,
+    async (
+      _event,
+      accountId: unknown,
+      messageId: unknown,
+      model: unknown,
+    ): Promise<Result<string>> => {
+      if (!isMailId(messageId) || typeof model !== 'string' || !model) {
+        return { ok: false, error: 'Ungültige Eingabe' };
+      }
+      summary?.abort();
+      const controller = new AbortController();
+      summary = controller;
+      try {
+        const mail = await client(accountId).get(messageId);
+        const provider = getProvider();
+        const models = await provider.listModels();
+        const info = models.ok
+          ? models.value.find((m) => m.name === model)
+          : undefined;
+        // Denken kostet nur Zeit – fürs Zusammenfassen aus (bzw. niedrig bei gpt-oss).
+        const style = thinkStyle(info);
+        const messages = mailSummaryMessages(mail);
+        const request: ChatRequest = {
+          model,
+          messages,
+          ...(style === 'toggle' && { think: false }),
+          ...(style === 'levels' && { think: 'low' }),
+          options: { contextLength: mailSummaryContext(messages) },
+        };
+        let answer = '';
+        for await (const chunk of provider.chat(request, controller.signal)) {
+          if (chunk.type === 'content') answer += chunk.text;
+        }
+        return answer.trim()
+          ? { ok: true, value: answer.trim() }
+          : {
+              ok: false,
+              error: 'Das Modell hat keine Zusammenfassung geliefert.',
+            };
+      } catch (error) {
+        if (controller.signal.aborted)
+          return { ok: false, error: 'Abgebrochen' };
+        return { ok: false, error: describeChatError(error) };
+      } finally {
+        if (summary === controller) summary = null;
+      }
+    },
+  );
+
+  ipcMain.handle(IpcChannels.cancelMailSummary, () => summary?.abort());
 
   return { sessions, client };
 }

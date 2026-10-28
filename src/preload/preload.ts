@@ -66,6 +66,9 @@ const api: LocalDeskApi = {
     ipcRenderer.invoke(IpcChannels.getMail, accountId, messageId),
   listMailLabels: (accountId) =>
     ipcRenderer.invoke(IpcChannels.listMailLabels, accountId),
+  summarizeMail: (accountId, messageId, model) =>
+    ipcRenderer.invoke(IpcChannels.summarizeMail, accountId, messageId, model),
+  cancelMailSummary: () => ipcRenderer.invoke(IpcChannels.cancelMailSummary),
   getObsidian: () => ipcRenderer.invoke(IpcChannels.getObsidian),
   setObsidian: (vaultPath, folder) =>
     ipcRenderer.invoke(IpcChannels.setObsidian, vaultPath, folder),

@@ -1,7 +1,7 @@
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import { createServer, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import type { GoogleAppInput } from '../../shared/mail';
+import { MAIL_REAUTH_MESSAGE, type GoogleAppInput } from '../../shared/mail';
 import type { Fetch } from './mail-fetch';
 
 /** Lesen, Labels und Sterne ändern. Mehr als nötig – siehe docs/email-einrichten.md. */
@@ -23,7 +23,7 @@ const SIGN_IN_TIMEOUT_MS = 5 * 60_000;
  */
 export class MailReauthError extends Error {
   constructor() {
-    super('Die Anmeldung bei Google gilt nicht mehr – bitte neu anmelden.');
+    super(MAIL_REAUTH_MESSAGE);
   }
 }
 

@@ -616,6 +616,13 @@ export interface LocalDeskApi {
   ) => Promise<Result<MailMessage>>;
   /** Labels des Kontos. */
   listMailLabels: (accountId: string) => Promise<Result<MailLabel[]>>;
+  /** Fasst eine Mail mit dem gewählten (lokalen) Modell zusammen. */
+  summarizeMail: (
+    accountId: string,
+    messageId: string,
+    model: string,
+  ) => Promise<Result<string>>;
+  cancelMailSummary: () => Promise<void>;
 
   /** Eingerichteter Obsidian-Vault mit aktuellem Zustand; null = keiner eingerichtet. */
   getObsidian: () => Promise<ObsidianStatus | null>;
@@ -790,6 +797,8 @@ export const IpcChannels = {
   listMail: 'mail:list',
   getMail: 'mail:get',
   listMailLabels: 'mail:labels',
+  summarizeMail: 'mail:summarize',
+  cancelMailSummary: 'mail:cancel-summary',
   getObsidian: 'obsidian:get',
   setObsidian: 'obsidian:set',
   clearObsidian: 'obsidian:clear',

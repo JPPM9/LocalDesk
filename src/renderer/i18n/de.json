@@ -14,7 +14,8 @@
     "main": "Bereiche",
     "collapseList": "Chatliste einklappen",
     "expandList": "Chatliste ausklappen",
-    "skills": "Skills"
+    "skills": "Skills",
+    "mail": "E-Mail"
   },
   "knowledge": {
     "title": "Wissen",
@@ -601,5 +602,38 @@
     "revokeFailed": "Lokal abgemeldet, aber Google war nicht erreichbar. Entferne den Zugriff zur Sicherheit unter myaccount.google.com/permissions.",
     "lockedHint": "Ändern oder entfernen geht erst, wenn alle Konten abgemeldet sind.",
     "encrypted": "Die Anmeldung wird mit Windows verschlüsselt gespeichert."
+  },
+  "mail": {
+    "title": "E-Mail",
+    "account": "Konto",
+    "search": "In Gmail suchen …",
+    "searchHint": "Gmail-Suche, z. B. „is:unread“ oder „from:bank“. Enter sucht, leer = Posteingang.",
+    "refresh": "Neu laden",
+    "inbox": "Posteingang",
+    "results": "Suchergebnis",
+    "empty": "Keine Mails gefunden.",
+    "more": "Mehr laden",
+    "loading": "Lade …",
+    "noSelection": "Wähle links eine Mail aus.",
+    "noSelectionHint": "LocalDesk zeigt Mails nur als Text, ohne Bilder aus dem Internet. Nichts wird als gelesen markiert, gesendet oder gelöscht.",
+    "setupTitle": "E-Mail einrichten",
+    "setupText": "Melde dich zuerst in den Einstellungen mit deinem Google-Konto an.",
+    "toSettings": "Zu den Einstellungen",
+    "reauth": "Zu den Einstellungen und neu anmelden",
+    "from": "Von",
+    "to": "An",
+    "cc": "Cc",
+    "date": "Datum",
+    "attachments": "Anhänge (nicht geladen)",
+    "truncated": "Die Mail ist sehr lang – angezeigt wird nur der Anfang.",
+    "noSubject": "(ohne Betreff)",
+    "unread": "Ungelesen",
+    "starred": "Mit Stern",
+    "summarize": "Zusammenfassen",
+    "summarizing": "Fasse zusammen …",
+    "cancel": "Abbrechen",
+    "summary": "Zusammenfassung",
+    "summaryHint": "Von {{model}} auf diesem PC erstellt – kann Fehler enthalten.",
+    "close": "Schließen"
   }
 }

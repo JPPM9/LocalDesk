@@ -80,6 +80,10 @@ export type MailChange =
   | { kind: 'label'; messageId: string; labelId: string }
   | { kind: 'star'; messageId: string; starred: boolean };
 
+/** Fehlertext bei abgelaufener Anmeldung – die Oberfläche bietet dann „neu anmelden“ an. */
+export const MAIL_REAUTH_MESSAGE =
+  'Die Anmeldung bei Google gilt nicht mehr – bitte neu anmelden.';
+
 export const MAIL_PAGE_MAX = 50;
 export const MAIL_QUERY_MAX = 500;
 /** Längere Mails werden für Anzeige und Modell gekürzt. */

@@ -478,6 +478,16 @@
   `listMailLabels` (Ändern kommt erst mit der Bestätigung in Schritt 5). Echter Lesetest
   2026-10-28 ✓ (nur Kennzahlen, keine Inhalte ausgelesen): 10 Mails mit allen Kopfdaten, 5 Mails als
   Text ohne HTML-Reste, Labels, Suche, Erneuern des Zugangsschlüssels nach Neustart.
+  Schritt 4 ✓: Seite „E-Mail“ (`pages/MailPage.tsx`, Route `mail/:messageId?`, Symbol in der
+  NavRail nach Vorlagen): Liste 25 je Seite + „Mehr laden“, Gmail-Suche (leer = Posteingang),
+  Konto-Wahl ab 2 Konten (localStorage), Lese-Ansicht (`components/mail/MailReader.tsx`) nur als
+  Text, Anhänge nur Name/Größe; nichts wird als gelesen markiert. „Zusammenfassen“: Hauptprozess
+  holt die Mail selbst (`summarizeMail`), Anweisung in `shared/mail-prompt.ts` grenzt die Mail als
+  fremden Inhalt ab (keine Anweisungen daraus befolgen, Phishing-Hinweis), Denken aus, Kontext
+  8k/16k/32k je nach Länge, Ergebnis als reiner Text (Links nicht klickbar). Modell-Wahl gemerkt
+  (`localdesk.mailModel`, sonst Chat-Modell). Abgelaufene Anmeldung → `MAIL_REAUTH_MESSAGE` + Link
+  zu den Einstellungen. Live ✓ (Inhalte beim Prüfen per CSS unscharf): 25→50 Mails ohne Doppelte,
+  Suche, Zusammenfassung mit gemma4:12b in 15 s.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 E-Mail Gmail + Outlook direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

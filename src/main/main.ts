@@ -186,6 +186,7 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
   registerMailHandlers(
     new AppSettingsRepository(db),
     new MailAccountRepository(db),
+    getProvider,
   );
 
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({

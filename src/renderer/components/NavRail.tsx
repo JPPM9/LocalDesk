@@ -5,6 +5,7 @@ import {
   BookMarked,
   Boxes,
   Library,
+  Mail,
   MessageSquare,
   Monitor,
   Moon,
@@ -28,6 +29,7 @@ interface NavItem {
 const ITEMS: NavItem[] = [
   { to: '/chat', labelKey: 'nav.chat', icon: MessageSquare },
   { to: '/templates', labelKey: 'nav.templates', icon: BookMarked },
+  { to: '/mail', labelKey: 'nav.mail', icon: Mail },
   { to: '/knowledge', labelKey: 'nav.knowledge', icon: Library },
   { to: '/skills', labelKey: 'nav.skills', icon: WandSparkles },
   { to: '/models', labelKey: 'nav.models', icon: Boxes },
