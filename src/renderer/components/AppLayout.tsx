@@ -3,12 +3,19 @@ import { Outlet, useLocation, useNavigate } from 'react-router';
 import { matchShortcut, type ShortcutId } from '../shortcuts/keymap';
 import { triggerShortcut } from '../shortcuts/useShortcut';
 import { ShortcutHelp } from './ShortcutHelp';
-import { Sidebar } from './Sidebar';
+import { NavRail } from './NavRail';
 
 /** Kürzel, die etwas auf der Chat-Seite tun – von anderen Seiten aus wird erst dorthin gewechselt. */
 const CHAT_SHORTCUTS: ShortcutId[] = ['search', 'focusInput', 'chatSettings'];
 
-// Grundrahmen jeder Seite: links die Seitenleiste, rechts der Inhalt der aktuellen Seite.
+/** Was Seiten vom Rahmen bekommen (über React Routers Outlet-Kontext). */
+export interface LayoutContext {
+  /** Chatliste eingeklappt (Strg+B). */
+  listCollapsed: boolean;
+  toggleList: () => void;
+}
+
+// Grundrahmen jeder Seite: links die Symbolleiste, rechts der Inhalt der aktuellen Seite.
 // <Outlet /> ist der Platzhalter, an dem React Router die jeweilige Seite einsetzt.
 // Außerdem nimmt der Rahmen alle Tastenkürzel entgegen und verteilt sie.
 export function AppLayout() {
@@ -41,6 +48,8 @@ export function AppLayout() {
           navigate('/settings');
           break;
         case 'toggleSidebar':
+          // Klappt die Chatliste ein/aus – dafür auf die Chat-Seite wechseln.
+          if (!state.current.pathname.startsWith('/chat')) navigate('/chat');
           setCollapsed((c) => !c);
           break;
         case 'help':
@@ -62,9 +71,16 @@ export function AppLayout() {
 
   return (
     <div className="flex h-full">
-      <Sidebar collapsed={collapsed} onToggle={() => setCollapsed((c) => !c)} />
-      <main className="min-w-0 flex-1 overflow-y-auto">
-        <Outlet />
+      <NavRail />
+      <main className="min-w-0 flex-1 overflow-y-auto bg-surface">
+        <Outlet
+          context={
+            {
+              listCollapsed: collapsed,
+              toggleList: () => setCollapsed((c) => !c),
+            } satisfies LayoutContext
+          }
+        />
       </main>
       {helpOpen && <ShortcutHelp onClose={() => setHelpOpen(false)} />}
     </div>

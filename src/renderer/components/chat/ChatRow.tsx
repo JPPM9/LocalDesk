@@ -67,8 +67,10 @@ export function ChatRow({
           event.dataTransfer.effectAllowed = 'move';
         }}
         className={({ isActive }) =>
-          `group my-0.5 flex items-center gap-1 rounded px-2 py-1.5 ${
-            isActive ? 'bg-accent-soft text-accent' : 'hover:bg-surface-hover'
+          `group my-px flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[13.5px] ${
+            isActive
+              ? 'bg-surface-hover font-medium text-text'
+              : 'text-muted hover:bg-surface-hover hover:text-text'
           }`
         }
       >
@@ -131,7 +133,7 @@ export function IconButton({
         event.stopPropagation();
         onClick();
       }}
-      className="rounded p-1 text-muted hover:bg-surface hover:text-text"
+      className="rounded-md p-1 text-subtle hover:bg-surface hover:text-text"
     >
       {children}
     </button>

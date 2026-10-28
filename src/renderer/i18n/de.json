@@ -10,7 +10,10 @@
     "status": "Status",
     "settings": "Einstellungen",
     "collapse": "Seitenleiste einklappen",
-    "expand": "Seitenleiste ausklappen"
+    "expand": "Seitenleiste ausklappen",
+    "main": "Bereiche",
+    "collapseList": "Chatliste einklappen",
+    "expandList": "Chatliste ausklappen"
   },
   "knowledge": {
     "title": "Wissen",
@@ -100,7 +103,7 @@
     "search": "Chats durchsuchen",
     "focusInput": "Ins Eingabefeld springen",
     "chatSettings": "Chat-Einstellungen öffnen/schließen",
-    "toggleSidebar": "Seitenleiste ein-/ausklappen",
+    "toggleSidebar": "Chatliste ein-/ausklappen",
     "settings": "Einstellungen",
     "stop": "Laufende Antwort stoppen",
     "help": "Diese Übersicht",
@@ -109,7 +112,7 @@
   "folders": {
     "new": "Neues Projekt",
     "namePlaceholder": "Projektname, Enter zum Anlegen",
-    "unfiled": "Ohne Projekt",
+    "unfiled": "Chats",
     "empty": "Leer – Chats hierher ziehen",
     "rename": "Projekt umbenennen",
     "open": "Projekt öffnen (Anweisungen, Dokumente)",
@@ -165,7 +168,14 @@
     "aborted": "Abgebrochen",
     "error": "Fehler: {{error}}",
     "stats": "{{tokens}} Tokens · {{speed}} Tokens/s · {{seconds}} s",
-    "toolWorking": "Arbeitet mit Tools …"
+    "toolWorking": "Arbeitet mit Tools …",
+    "day": {
+      "today": "Heute",
+      "yesterday": "Gestern",
+      "week": "Letzte 7 Tage",
+      "month": "Letzte 30 Tage",
+      "older": "Älter"
+    }
   },
   "sidePanel": {
     "button": "Seitenbereich (Quellen, Projekt, Kontext)",
@@ -513,6 +523,7 @@
     "theme": "Farbschema",
     "system": "Wie Windows",
     "light": "Hell",
-    "dark": "Dunkel"
+    "dark": "Dunkel",
+    "railHint": "Farbschema: {{current}} – klicken zum Wechseln"
   }
 }

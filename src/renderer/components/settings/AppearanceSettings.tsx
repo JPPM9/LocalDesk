@@ -1,23 +1,14 @@
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Monitor, Moon, Sun } from 'lucide-react';
-import { THEME_CHOICES, type ThemeChoice } from '../../../shared/appearance';
+import { THEME_CHOICES } from '../../../shared/appearance';
+import { useTheme } from '../../hooks/useTheme';
 
 const ICONS = { system: Monitor, light: Sun, dark: Moon } as const;
 
 /** Farbschema wählen: wie Windows, hell oder dunkel – wirkt sofort. */
 export function AppearanceSettings() {
   const { t } = useTranslation();
-  const [theme, setTheme] = useState<ThemeChoice | null>(null);
-
-  useEffect(() => {
-    void window.api.getTheme().then(setTheme);
-  }, []);
-
-  const choose = (next: ThemeChoice) => {
-    setTheme(next);
-    void window.api.setTheme(next);
-  };
+  const [theme, choose] = useTheme();
 
   return (
     <section>

@@ -1,8 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
+import {
+  Link,
+  useNavigate,
+  useOutletContext,
+  useParams,
+  useSearchParams,
+} from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
   FolderOpen,
+  PanelLeftOpen,
   PanelRight,
   ScrollText,
   SlidersHorizontal,
@@ -23,6 +30,7 @@ import { useTemplates } from '../templates/useTemplates';
 import { TemplatePicker } from '../components/chat/TemplatePicker';
 import { shortcutLabel } from '../shortcuts/keymap';
 import { useShortcut } from '../shortcuts/useShortcut';
+import type { LayoutContext } from '../components/AppLayout';
 import { PageHeader } from '../components/PageHeader';
 import { ChatInput } from '../components/chat/ChatInput';
 import { ChatList } from '../components/chat/ChatList';
@@ -59,6 +67,7 @@ export function ChatPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const chatId = useParams().chatId ?? null;
+  const { listCollapsed, toggleList } = useOutletContext<LayoutContext>();
 
   const chatList = useChatList();
   const {
@@ -270,17 +279,20 @@ export function ChatPage() {
 
   return (
     <div className="flex h-full">
-      <ChatList
-        chats={chatList.chats}
-        folders={chatList.folders}
-        onNew={() => navigate('/chat')}
-        onRename={(id, title) => void chatList.rename(id, title)}
-        onDelete={(target) => void deleteChat(target)}
-        onMove={(id, folderId) => void chatList.moveChat(id, folderId)}
-        onCreateFolder={chatList.createFolder}
-        onRenameFolder={(id, name) => void chatList.renameFolder(id, name)}
-        onDeleteFolder={(folder) => void deleteFolder(folder)}
-      />
+      {!listCollapsed && (
+        <ChatList
+          onCollapse={toggleList}
+          chats={chatList.chats}
+          folders={chatList.folders}
+          onNew={() => navigate('/chat')}
+          onRename={(id, title) => void chatList.rename(id, title)}
+          onDelete={(target) => void deleteChat(target)}
+          onMove={(id, folderId) => void chatList.moveChat(id, folderId)}
+          onCreateFolder={chatList.createFolder}
+          onRenameFolder={(id, name) => void chatList.renameFolder(id, name)}
+          onDeleteFolder={(folder) => void deleteFolder(folder)}
+        />
+      )}
 
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader
@@ -289,6 +301,19 @@ export function ChatPage() {
             chatList.chats.find((c) => c.id === chatId)?.title ??
             chat?.title ??
             t('chat.newChat')
+          }
+          leading={
+            listCollapsed && (
+              <button
+                type="button"
+                onClick={toggleList}
+                title={`${t('nav.expandList')} (${shortcutLabel('toggleSidebar')})`}
+                aria-label={t('nav.expandList')}
+                className="-ml-1 grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text"
+              >
+                <PanelLeftOpen size={17} />
+              </button>
+            )
           }
           actions={
             <>

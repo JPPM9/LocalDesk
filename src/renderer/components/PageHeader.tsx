@@ -4,11 +4,14 @@ interface PageHeaderProps {
   title: string;
   /** Optionale Knöpfe rechts in der Kopfzeile. */
   actions?: ReactNode;
+  /** Optional links vor dem Titel, z. B. „Chatliste ausklappen“. */
+  leading?: ReactNode;
 }
 
-export function PageHeader({ title, actions }: PageHeaderProps) {
+export function PageHeader({ title, actions, leading }: PageHeaderProps) {
   return (
-    <header className="flex h-12 items-center justify-between gap-4 overflow-hidden border-b border-border px-6">
+    <header className="flex h-14 shrink-0 items-center justify-between gap-4 overflow-hidden border-b border-border px-5">
+      {leading}
       {/* Lange Titel einzeilig kürzen, der volle Titel steht im Tooltip. Der Titel
           füllt nur den übrigen Platz, bleibt aber mindestens 6rem breit – sonst
           verschwände er bei offenem Seitenbereich. */}

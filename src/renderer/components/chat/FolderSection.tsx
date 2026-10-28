@@ -91,7 +91,7 @@ export function FolderSection({
   return (
     <section
       {...dropHandlers}
-      className={`rounded ${dragOver ? 'bg-accent-soft/60 ring-1 ring-accent' : ''}`}
+      className={`rounded-lg ${dragOver ? 'bg-accent-soft/60 ring-1 ring-accent' : ''}`}
     >
       {editing ? (
         <input
@@ -110,13 +110,9 @@ export function FolderSection({
           aria-expanded={!collapsed}
           onClick={onToggle}
           onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onToggle()}
-          className="group flex cursor-pointer items-center gap-1 rounded px-1 py-1 text-xs font-semibold text-muted select-none hover:bg-surface-hover hover:text-text"
+          className="group flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-[13.5px] font-medium text-text select-none hover:bg-surface-hover"
         >
-          <ChevronRight
-            size={13}
-            className={`shrink-0 transition-transform ${collapsed ? '' : 'rotate-90'}`}
-          />
-          <FolderIcon size={14} className="shrink-0" />
+          <FolderIcon size={15} className="shrink-0 text-muted" />
           <span className="min-w-0 flex-1 truncate">{name}</span>
           {/* Punkt: Dieses Projekt hat Anweisungen oder eigene Dokumente. */}
           {(folder?.instructions || folder?.collectionId) && (
@@ -125,9 +121,13 @@ export function FolderSection({
               className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent group-hover:hidden"
             />
           )}
-          <span className="font-mono font-normal group-hover:hidden">
+          <span className="text-xs font-normal text-subtle tabular-nums group-hover:hidden">
             {count}
           </span>
+          <ChevronRight
+            size={14}
+            className={`shrink-0 text-subtle transition-transform group-hover:hidden ${collapsed ? '' : 'rotate-90'}`}
+          />
           {folder && (
             <span className="hidden shrink-0 gap-0.5 group-hover:flex">
               <IconButton
@@ -156,9 +156,9 @@ export function FolderSection({
         </div>
       )}
       {!collapsed && (
-        <div className="pl-3">
+        <div className="pl-5">
           {count === 0 ? (
-            <p className="px-2 py-1 text-[11px] text-muted">
+            <p className="px-2.5 py-1 text-xs text-subtle">
               {t('folders.empty')}
             </p>
           ) : (

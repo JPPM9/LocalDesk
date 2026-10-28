@@ -1,12 +1,14 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FolderPlus, Search, SquarePen, X } from 'lucide-react';
+import { FolderPlus, PanelLeftClose, Plus, Search, X } from 'lucide-react';
 import type { ChatFolder, ChatSummary, Result } from '../../../shared/api';
+import { groupChatsByDay } from '../../chat/days';
 import { groupChatsByFolder } from '../../chat/folders';
 import { useChatSearch } from '../../chat/useChatSearch';
 import { useCollapsedFolders } from '../../chat/useCollapsedFolders';
 import { shortcutLabel } from '../../shortcuts/keymap';
 import { useShortcut } from '../../shortcuts/useShortcut';
+import { StatusPill } from '../StatusPill';
 import { ChatRow } from './ChatRow';
 import { FolderSection } from './FolderSection';
 import { SearchResults } from './SearchResults';
@@ -24,6 +26,8 @@ interface ChatListProps {
   onCreateFolder: (name: string) => Promise<Result<ChatFolder>>;
   onRenameFolder: (folderId: string, name: string) => void;
   onDeleteFolder: (folder: ChatFolder) => void;
+  /** Liste einklappen (Strg+B). */
+  onCollapse: () => void;
 }
 
 export function ChatList(props: ChatListProps) {
@@ -75,6 +79,16 @@ export function ChatList(props: ChatListProps) {
   };
 
   const { groups, unfiled } = groupChatsByFolder(chats, folders);
+  // Chats ohne Projekt nach Tagen: Heute, Gestern, Letzte 7 Tage …
+  const byDay = (list: ChatSummary[]) =>
+    groupChatsByDay(list, new Date()).map((group) => (
+      <div key={group.key}>
+        <div className="px-2.5 pt-3 pb-1 text-[11.5px] font-semibold text-subtle">
+          {t(`chat.day.${group.key}`)}
+        </div>
+        {group.chats.map(row)}
+      </div>
+    ));
   const row = (chat: ChatSummary) => (
     <ChatRow
       key={chat.id}
@@ -87,16 +101,16 @@ export function ChatList(props: ChatListProps) {
   );
 
   return (
-    <aside className="flex w-64 shrink-0 flex-col border-r border-border">
-      <div className="space-y-2 p-2">
+    <aside className="flex w-[270px] shrink-0 flex-col border-r border-border bg-surface">
+      <div className="space-y-2 px-2.5 pt-3 pb-2">
         <div className="flex gap-1.5">
           <button
             type="button"
             onClick={onNew}
             title={shortcutLabel('newChat')}
-            className="flex min-w-0 flex-1 items-center gap-2 rounded border border-border px-3 py-1.5 hover:bg-surface-hover"
+            className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg bg-accent px-3 py-1.5 font-medium text-white hover:opacity-90"
           >
-            <SquarePen size={15} />
+            <Plus size={16} />
             {t('chat.newChat')}
           </button>
           <button
@@ -104,13 +118,22 @@ export function ChatList(props: ChatListProps) {
             onClick={() => setNewFolder('')}
             title={t('folders.new')}
             aria-label={t('folders.new')}
-            className="rounded border border-border px-2 hover:bg-surface-hover"
+            className="grid w-9 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text"
           >
-            <FolderPlus size={15} />
+            <FolderPlus size={17} />
+          </button>
+          <button
+            type="button"
+            onClick={props.onCollapse}
+            title={`${t('nav.collapseList')} (${shortcutLabel('toggleSidebar')})`}
+            aria-label={t('nav.collapseList')}
+            className="grid w-9 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text"
+          >
+            <PanelLeftClose size={17} />
           </button>
         </div>
-        <div className="flex items-center gap-1.5 rounded border border-border bg-surface px-2 focus-within:border-accent">
-          <Search size={14} className="shrink-0 text-muted" />
+        <div className="flex items-center gap-2 rounded-lg bg-surface-2 px-2.5 focus-within:ring-2 focus-within:ring-accent/40">
+          <Search size={15} className="shrink-0 text-subtle" />
           <input
             ref={searchRef}
             type="search"
@@ -120,7 +143,7 @@ export function ChatList(props: ChatListProps) {
             placeholder={t('search.placeholder')}
             title={shortcutLabel('search')}
             aria-label={t('search.placeholder')}
-            className="min-w-0 flex-1 bg-transparent py-1.5 outline-none [&::-webkit-search-cancel-button]:hidden"
+            className="min-w-0 flex-1 bg-transparent py-1.5 outline-none placeholder:text-subtle [&::-webkit-search-cancel-button]:hidden"
           />
           {query && (
             <button
@@ -156,7 +179,7 @@ export function ChatList(props: ChatListProps) {
       {searchResult ? (
         <SearchResults result={searchResult} />
       ) : (
-        <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto px-2 pb-2">
+        <nav className="min-h-0 flex-1 space-y-0.5 overflow-y-auto px-2.5 pb-2">
           {chats.length === 0 && folders.length === 0 && (
             <p className="px-2 py-4 text-center text-xs text-muted">
               {t('chat.noChats')}
@@ -164,8 +187,8 @@ export function ChatList(props: ChatListProps) {
           )}
 
           {folders.length === 0 ? (
-            // Ohne Ordner: schlichte Liste wie bisher.
-            unfiled.map(row)
+            // Ohne Projekte: nur die Tagesgruppen.
+            byDay(unfiled)
           ) : (
             <>
               {groups.map(({ folder, chats: folderChats }) => (
@@ -189,12 +212,15 @@ export function ChatList(props: ChatListProps) {
                 onToggle={() => toggle(UNFILED_KEY)}
                 onDropChat={(chatId) => props.onMove(chatId, null)}
               >
-                {unfiled.map(row)}
+                {byDay(unfiled)}
               </FolderSection>
             </>
           )}
         </nav>
       )}
+      <div className="border-t border-border px-3 py-2.5">
+        <StatusPill />
+      </div>
     </aside>
   );
 }

@@ -5,22 +5,17 @@ import { useGpuStatus, useRunningModels } from '../hooks/useRunningModels';
 import { formatMemory } from '../utils/format';
 import { gpuSplit } from '../utils/running';
 
-interface StatusPillProps {
-  /** Bei eingeklappter Seitenleiste nur den farbigen Punkt zeigen. */
-  compact: boolean;
-}
-
 /** Wie oft die Statusleiste die geladenen Modelle abfragt. */
 const RUNNING_POLL_MS = 5000;
 
-/** Unten in der Seitenleiste: Ollama erreichbar? Welches Modell ist geladen? Klick → Status-Seite. */
-export function StatusPill({ compact }: StatusPillProps) {
+/** Unten in der Chatliste: Ollama erreichbar? Welches Modell ist geladen? Klick → Status-Seite. */
+export function StatusPill() {
   const { t } = useTranslation();
   const status = useOllamaStatus();
   const running = useRunningModels(RUNNING_POLL_MS);
   const gpuStatus = useGpuStatus(RUNNING_POLL_MS);
 
-  let dotClass = 'bg-muted';
+  let dotClass = 'bg-subtle';
   let label = t('status.checking');
   let detail = '';
 
@@ -66,34 +61,27 @@ export function StatusPill({ compact }: StatusPillProps) {
     <Link
       to="/status"
       title={tooltip}
-      className="-mx-1 block rounded px-1 py-0.5 hover:bg-surface-hover"
+      className="-mx-1.5 block rounded-lg px-1.5 py-1 hover:bg-surface-hover"
     >
-      <div className="flex items-center gap-2 text-xs" role="status">
+      <div className="flex items-start gap-2.5 text-xs" role="status">
         <span
-          className={`inline-block h-2 w-2 shrink-0 rounded-full ${dotClass}`}
+          className={`mt-1 inline-block h-2 w-2 shrink-0 rounded-full ${dotClass}`}
         />
-        {!compact && (
-          <div className="min-w-0">
-            <div className="truncate">{label}</div>
-            {detail && (
-              <div className="truncate font-mono text-[11px] text-muted">
-                {detail}
-              </div>
-            )}
-            {loadedText && (
-              <div
-                className={`truncate font-mono text-[11px] ${partlyOnCpu ? 'text-warn' : 'text-accent'}`}
-              >
-                {loadedText}
-              </div>
-            )}
-            {gpuText && (
-              <div className="truncate font-mono text-[11px] text-muted">
-                {gpuText}
-              </div>
-            )}
-          </div>
-        )}
+        <div className="min-w-0 space-y-0.5">
+          <div className="truncate font-medium">{label}</div>
+          {loadedText && (
+            <div
+              className={`truncate text-[11.5px] ${partlyOnCpu ? 'text-warn' : 'text-muted'}`}
+            >
+              {loadedText}
+            </div>
+          )}
+          {gpuText && (
+            <div className="truncate text-[11.5px] text-subtle tabular-nums">
+              {gpuText}
+            </div>
+          )}
+        </div>
       </div>
     </Link>
   );
