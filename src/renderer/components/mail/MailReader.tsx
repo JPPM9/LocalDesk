@@ -2,23 +2,11 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LoaderCircle, Paperclip, Sparkles, X } from 'lucide-react';
 import type { MailMessage } from '../../../shared/mail';
-import { useChatModels } from '../../hooks/useChatModels';
+import { useMailModel } from '../../mail/useMailModel';
 import { fileSize } from '../../mail/format';
 import { ReauthLink } from './ReauthLink';
 import { PageHeader } from '../PageHeader';
 import { ModelSelect } from '../chat/ModelSelect';
-
-const MODEL_KEY = 'localdesk.mailModel';
-/** Zuletzt im Chat genutztes Modell (siehe ChatPage) – als Vorschlag. */
-const CHAT_MODEL_KEY = 'localdesk.lastModel';
-
-function remembered(key: string): string | null {
-  try {
-    return localStorage.getItem(key);
-  } catch {
-    return null;
-  }
-}
 
 type SummaryState =
   | { kind: 'idle' }
@@ -37,8 +25,7 @@ export function MailReader({ accountId, messageId }: MailReaderProps) {
   const [mail, setMail] = useState<MailMessage | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [summary, setSummary] = useState<SummaryState>({ kind: 'idle' });
-  const { models } = useChatModels();
-  const [model, setModel] = useState('');
+  const { models, model, choose: chooseModel } = useMailModel();
 
   useEffect(() => {
     void window.api.getMail(accountId, messageId).then((result) => {
@@ -47,27 +34,8 @@ export function MailReader({ accountId, messageId }: MailReaderProps) {
     });
   }, [accountId, messageId]);
 
-  // Modell: zuletzt hier gewählt, sonst das aus dem Chat, sonst das erste.
-  useEffect(() => {
-    if (model || models.length === 0) return;
-    const names = models.map((m) => m.name);
-    const preferred = [remembered(MODEL_KEY), remembered(CHAT_MODEL_KEY)].find(
-      (name) => name && names.includes(name),
-    );
-    setModel(preferred ?? names[0]);
-  }, [models, model]);
-
   // Verlässt man die Mail, läuft die Zusammenfassung nicht weiter.
   useEffect(() => () => void window.api.cancelMailSummary(), []);
-
-  const chooseModel = (name: string) => {
-    setModel(name);
-    try {
-      localStorage.setItem(MODEL_KEY, name);
-    } catch {
-      // ohne Speicher gilt die Wahl nur bis zum Neustart
-    }
-  };
 
   const summarize = async () => {
     setSummary({ kind: 'running' });

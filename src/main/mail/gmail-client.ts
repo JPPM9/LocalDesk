@@ -53,6 +53,8 @@ interface GmailMessage {
  * Label hinzufügen oder den Stern setzen/entfernen.
  */
 export class GmailClient implements MailClient {
+  private labelCheck: Promise<MailLabel[]> | null = null;
+
   constructor(
     private readonly fetch: Fetch,
     private readonly auth: GmailAuth,
@@ -80,16 +82,20 @@ export class GmailClient implements MailClient {
       nextPageToken?: string;
     }>(`/messages?${params}`);
     const ids = (page.messages ?? []).map((m) => m.id).filter(isMailId);
-    // Je Mail eine Anfrage für die Kopfdaten – höchstens 8 gleichzeitig.
-    const messages = await mapLimit(ids, 8, (id) =>
-      this.request<GmailMessage>(
-        `/messages/${id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date`,
-      ).then(toSummary),
-    );
+    const messages = await this.summaries(ids);
     return {
       messages,
       ...(page.nextPageToken && { nextPageToken: page.nextPageToken }),
     };
+  }
+
+  /** Je Mail eine Anfrage für die Kopfdaten – höchstens 8 gleichzeitig. */
+  summaries(messageIds: string[]): Promise<MailSummary[]> {
+    return mapLimit(messageIds.map(checkedId), 8, (id) =>
+      this.request<GmailMessage>(
+        `/messages/${id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date`,
+      ).then(toSummary),
+    );
   }
 
   async get(messageId: string): Promise<MailMessage> {
@@ -128,7 +134,11 @@ export class GmailClient implements MailClient {
     let body: { addLabelIds?: string[]; removeLabelIds?: string[] };
     if (change.kind === 'label') {
       // Nur eigene Labels – keine Systemlabels wie TRASH, SPAM oder SENT.
-      const label = (await this.labels()).find((l) => l.id === change.labelId);
+      // Die Labels nur einmal pro Durchgang holen (mehrere Änderungen hintereinander).
+      this.labelCheck ??= this.labels();
+      const label = (await this.labelCheck).find(
+        (l) => l.id === change.labelId,
+      );
       if (!label || label.type !== 'user') {
         throw new Error('Dieses Label gibt es nicht (mehr).');
       }

@@ -1,11 +1,21 @@
 import { ipcMain, safeStorage, shell } from 'electron';
 import { IpcChannels, type ChatRequest, type Result } from '../shared/api';
 import { mailSummaryContext, mailSummaryMessages } from '../shared/mail-prompt';
+import {
+  APPLY_CHANGES_MAX,
+  isSortableLabel,
+  parseSuggestions,
+  SORT_MAILS_MAX,
+  sortingMessages,
+  sortingSchema,
+  type MailSuggestion,
+} from '../shared/mail-sorting';
 import { thinkStyle } from '../shared/settings';
 import { describeChatError } from './chat-errors';
 import type { Provider } from './providers/provider';
 import {
   checkGoogleApp,
+  checkMailChange,
   isMailId,
   type GoogleAppInput,
   type MailAccountView,
@@ -270,6 +280,105 @@ export function registerMailHandlers(
   );
 
   ipcMain.handle(IpcChannels.cancelMailSummary, () => summary?.abort());
+
+  // Sortieren: Das Modell schlägt nur vor – geändert wird erst mit applyMailChanges,
+  // also nach deinem Klick auf „Übernehmen“.
+  let sorting: AbortController | null = null;
+
+  ipcMain.handle(
+    IpcChannels.suggestMailSorting,
+    async (
+      _event,
+      accountId: unknown,
+      messageIds: unknown,
+      model: unknown,
+    ): Promise<Result<MailSuggestion[]>> => {
+      if (
+        !Array.isArray(messageIds) ||
+        !messageIds.every(isMailId) ||
+        messageIds.length === 0 ||
+        typeof model !== 'string' ||
+        !model
+      ) {
+        return { ok: false, error: 'Ungültige Eingabe' };
+      }
+      sorting?.abort();
+      const controller = new AbortController();
+      sorting = controller;
+      try {
+        const mailbox = client(accountId);
+        const [mails, allLabels] = await Promise.all([
+          mailbox.summaries(messageIds.slice(0, SORT_MAILS_MAX)),
+          mailbox.labels(),
+        ]);
+        // Vorschlagen darf das Modell nur deine eigenen Labels.
+        const labels = allLabels.filter(isSortableLabel);
+        const provider = getProvider();
+        const models = await provider.listModels();
+        const info = models.ok
+          ? models.value.find((m) => m.name === model)
+          : undefined;
+        const style = thinkStyle(info);
+        const messages = sortingMessages(mails, labels, allLabels);
+        const request: ChatRequest = {
+          model,
+          messages,
+          format: sortingSchema(labels),
+          ...(style === 'toggle' && { think: false }),
+          ...(style === 'levels' && { think: 'low' }),
+          options: {
+            contextLength: mailSummaryContext(messages),
+            temperature: 0,
+          },
+        };
+        let answer = '';
+        for await (const chunk of provider.chat(request, controller.signal)) {
+          if (chunk.type === 'content') answer += chunk.text;
+        }
+        return { ok: true, value: parseSuggestions(answer, mails, labels) };
+      } catch (error) {
+        if (controller.signal.aborted)
+          return { ok: false, error: 'Abgebrochen' };
+        return { ok: false, error: describeChatError(error) };
+      } finally {
+        if (sorting === controller) sorting = null;
+      }
+    },
+  );
+
+  ipcMain.handle(IpcChannels.cancelMailSorting, () => sorting?.abort());
+
+  // Führt bestätigte Änderungen aus – jede wird erneut geprüft (nur Label/Stern).
+  ipcMain.handle(
+    IpcChannels.applyMailChanges,
+    async (
+      _event,
+      accountId: unknown,
+      changes: unknown,
+    ): Promise<Result<{ applied: number; failed: string[] }>> => {
+      if (!Array.isArray(changes) || changes.length > APPLY_CHANGES_MAX) {
+        return { ok: false, error: 'Ungültige Eingabe' };
+      }
+      const checked = changes.map(checkMailChange);
+      const invalid = checked.find((c) => !c.ok);
+      if (invalid && !invalid.ok) return invalid;
+      return attempt(async () => {
+        const mailbox = client(accountId);
+        let applied = 0;
+        const failed: string[] = [];
+        for (const change of checked) {
+          if (!change.ok) continue;
+          try {
+            await mailbox.apply(change.value);
+            applied++;
+          } catch (error) {
+            failed.push(error instanceof Error ? error.message : String(error));
+          }
+        }
+        return { applied, failed };
+      });
+    },
+  );
 
   return { sessions, client };
 }

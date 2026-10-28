@@ -329,6 +329,7 @@ export function toOllamaChatBody(request: ChatRequest) {
     }),
     ...(Object.keys(options).length > 0 && { options }),
     ...(request.think !== undefined && { think: request.think }),
+    ...(request.format && { format: request.format }),
   };
 }
 

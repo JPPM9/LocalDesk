@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Mail, RefreshCw, Search, Star } from 'lucide-react';
+import { Mail, RefreshCw, Search, Star, WandSparkles } from 'lucide-react';
 import type { MailAccountView, MailSummary } from '../../shared/mail';
 import { PageHeader } from '../components/PageHeader';
 import { MailReader } from '../components/mail/MailReader';
 import { ReauthLink } from '../components/mail/ReauthLink';
+import { SortPanel } from '../components/mail/SortPanel';
 import { mailDate, senderName } from '../mail/format';
 
 const ACCOUNT_KEY = 'localdesk.mailAccount';
@@ -40,6 +41,7 @@ export function MailPage() {
   const [nextPage, setNextPage] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sorting, setSorting] = useState(false);
 
   useEffect(() => {
     void window.api.listMailAccounts().then((list) => {
@@ -88,6 +90,7 @@ export function MailPage() {
       // ohne Speicher gilt die Wahl nur bis zum Neustart
     }
     setAccountId(id);
+    setSorting(false);
     navigate('/mail');
   };
 
@@ -146,6 +149,19 @@ export function MailPage() {
                 className="min-w-0 flex-1 bg-transparent py-1.5 text-[13px] outline-none"
               />
             </form>
+            <button
+              type="button"
+              onClick={() => {
+                setSorting(true);
+                navigate('/mail');
+              }}
+              disabled={messages.length === 0}
+              title={t('mailSort.open')}
+              aria-label={t('mailSort.open')}
+              className={ICON_BTN}
+            >
+              <WandSparkles size={16} />
+            </button>
             <button
               type="button"
               onClick={() => void load()}
@@ -232,7 +248,14 @@ export function MailPage() {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        {accountId && messageId ? (
+        {accountId && sorting && !messageId ? (
+          <SortPanel
+            accountId={accountId}
+            messageIds={messages.map((m) => m.id)}
+            onClose={() => setSorting(false)}
+            onApplied={() => void load()}
+          />
+        ) : accountId && messageId ? (
           <MailReader
             key={`${accountId}:${messageId}`}
             accountId={accountId}

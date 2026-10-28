@@ -3,6 +3,7 @@ import type {
   MailLabel,
   MailMessage,
   MailPage,
+  MailSummary,
 } from '../../shared/mail';
 
 /**
@@ -18,6 +19,8 @@ export interface MailClient {
     max: number;
   }): Promise<MailPage>;
   get(messageId: string): Promise<MailMessage>;
+  /** Kopfdaten bestimmter Mails (z. B. zum Sortieren). */
+  summaries(messageIds: string[]): Promise<MailSummary[]>;
   labels(): Promise<MailLabel[]>;
   /** Nur nach deiner Bestätigung aufrufen. */
   apply(change: MailChange): Promise<void>;

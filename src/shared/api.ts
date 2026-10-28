@@ -7,11 +7,13 @@ import type {
   GoogleAppInput,
   MailAccountView,
   MailAppView,
+  MailChange,
   MailLabel,
   MailListQuery,
   MailMessage,
   MailPage,
 } from './mail';
+import type { MailSuggestion } from './mail-sorting';
 import type { SkillInput, SkillView } from './skills';
 import type { UpdateState } from './update';
 
@@ -419,6 +421,8 @@ export interface ChatRequest {
   think?: ThinkSetting;
   /** Tools, die das Modell benutzen darf; fehlt = keine. */
   tools?: ToolDefinition[];
+  /** JSON-Schema: Die Antwort muss genau so aufgebaut sein (Ollama „structured outputs“). */
+  format?: Record<string, unknown>;
 }
 
 /** Kennzahlen, die der Server am Ende einer Antwort liefert. */
@@ -623,6 +627,18 @@ export interface LocalDeskApi {
     model: string,
   ) => Promise<Result<string>>;
   cancelMailSummary: () => Promise<void>;
+  /** Das Modell schlägt Labels/Sterne vor – geändert wird dabei nichts. */
+  suggestMailSorting: (
+    accountId: string,
+    messageIds: string[],
+    model: string,
+  ) => Promise<Result<MailSuggestion[]>>;
+  cancelMailSorting: () => Promise<void>;
+  /** Führt die von dir bestätigten Änderungen aus (nur Label hinzufügen, Stern). */
+  applyMailChanges: (
+    accountId: string,
+    changes: MailChange[],
+  ) => Promise<Result<{ applied: number; failed: string[] }>>;
 
   /** Eingerichteter Obsidian-Vault mit aktuellem Zustand; null = keiner eingerichtet. */
   getObsidian: () => Promise<ObsidianStatus | null>;
@@ -799,6 +815,9 @@ export const IpcChannels = {
   listMailLabels: 'mail:labels',
   summarizeMail: 'mail:summarize',
   cancelMailSummary: 'mail:cancel-summary',
+  suggestMailSorting: 'mail:suggest-sorting',
+  cancelMailSorting: 'mail:cancel-sorting',
+  applyMailChanges: 'mail:apply-changes',
   getObsidian: 'obsidian:get',
   setObsidian: 'obsidian:set',
   clearObsidian: 'obsidian:clear',

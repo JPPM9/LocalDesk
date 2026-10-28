@@ -635,5 +635,26 @@
     "summary": "Zusammenfassung",
     "summaryHint": "Von {{model}} auf diesem PC erstellt – kann Fehler enthalten.",
     "close": "Schließen"
+  },
+  "mailSort": {
+    "open": "Sortieren vorschlagen",
+    "title": "Sortieren vorschlagen",
+    "start": "Vorschläge holen",
+    "intro_one": "Das Modell sieht Absender, Betreff und Vorschau der ersten Mail in der Liste und schlägt eigene Labels und Sterne vor. In Gmail ändert sich nur, was du anhakst und übernimmst.",
+    "intro_other": "Das Modell sieht Absender, Betreff und Vorschau der ersten {{count}} Mails in der Liste und schlägt eigene Labels und Sterne vor. In Gmail ändert sich nur, was du anhakst und übernimmst.",
+    "noLabels": "Du hast in Gmail noch keine eigenen Labels – das Modell kann deshalb nur Sterne vorschlagen. Labels legst du in Gmail an.",
+    "running_one": "Das Modell sieht sich 1 Mail an …",
+    "running_other": "Das Modell sieht sich {{count}} Mails an …",
+    "none": "Keine Vorschläge – das Modell sieht nichts, das klar zu einem Label oder Stern passt.",
+    "addLabel": "Label „{{name}}“ hinzufügen",
+    "addStar": "Stern setzen",
+    "removeStar": "Stern entfernen",
+    "selectAll": "Alle auswählen",
+    "selectNone": "Keine auswählen",
+    "byModel": "Vorschläge von {{model}} – prüfe sie, bevor du sie übernimmst.",
+    "apply_one": "1 Änderung in Gmail übernehmen",
+    "apply_other": "{{count}} Änderungen in Gmail übernehmen",
+    "applied_one": "1 Änderung übernommen.",
+    "applied_other": "{{count}} Änderungen übernommen."
   }
 }
