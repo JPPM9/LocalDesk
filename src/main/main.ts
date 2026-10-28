@@ -37,6 +37,7 @@ import { createExampleSkills } from './skills/skill-examples';
 import { SkillStore } from './skills/skill-store';
 import { registerSkillHandlers } from './skill-service';
 import { registerMailHandlers } from './mail-service';
+import { MailAccountRepository } from './db/mail-account-repository';
 
 // Gleiche Kennung wie im Installer (electron-builder.yml, appId): Taskleiste und
 // Verknüpfungen gehören so zusammen.
@@ -182,7 +183,10 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
 
   registerUpdateHandlers();
   registerAppearanceHandlers(new AppSettingsRepository(db));
-  registerMailHandlers(new AppSettingsRepository(db));
+  registerMailHandlers(
+    new AppSettingsRepository(db),
+    new MailAccountRepository(db),
+  );
 
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({
     name: app.getName(),

@@ -15,6 +15,13 @@ export interface MailAppView {
   clientId: string;
 }
 
+/** Ein angemeldetes Mail-Konto. */
+export interface MailAccountView {
+  id: string;
+  provider: MailProvider;
+  email: string;
+}
+
 const GOOGLE_CLIENT_ID =
   /^[0-9]{6,30}-[a-z0-9]{10,64}\.apps\.googleusercontent\.com$/;
 const GOOGLE_CLIENT_SECRET = /^[A-Za-z0-9_-]{10,100}$/;

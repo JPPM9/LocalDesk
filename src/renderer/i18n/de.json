@@ -586,10 +586,20 @@
     "clientSecretHint": "Steht direkt neben der Client-ID. Bleibt in LocalDesk und wird hier nicht wieder angezeigt.",
     "saved": "Google-App eingetragen",
     "secretStored": "Clientschlüssel gespeichert",
-    "nextStep": "Anmelden kommt im nächsten Schritt.",
     "change": "Ändern",
     "remove": "Entfernen",
     "confirmRemove": "Google-App aus LocalDesk entfernen? Bei Google bleibt sie bestehen.",
-    "outlookLater": "Outlook folgt später – Microsoft verlangt dafür ein eigenes Azure-Verzeichnis."
+    "outlookLater": "Outlook folgt später – Microsoft verlangt dafür ein eigenes Azure-Verzeichnis.",
+    "accounts": "Angemeldete Konten",
+    "noAccounts": "Noch kein Konto angemeldet.",
+    "connect": "Mit Google anmelden",
+    "connectAnother": "Weiteres Konto anmelden",
+    "waiting": "Dein Browser ist offen – melde dich dort an und erlaube den Zugriff. Bei „App nicht überprüft“: Erweitert → Zu LocalDesk wechseln.",
+    "cancel": "Abbrechen",
+    "disconnect": "Abmelden",
+    "confirmDisconnect": "{{email}} abmelden? LocalDesk widerruft den Zugriff bei Google und vergisst die Anmeldung.",
+    "revokeFailed": "Lokal abgemeldet, aber Google war nicht erreichbar. Entferne den Zugriff zur Sicherheit unter myaccount.google.com/permissions.",
+    "lockedHint": "Ändern oder entfernen geht erst, wenn alle Konten abgemeldet sind.",
+    "encrypted": "Die Anmeldung wird mit Windows verschlüsselt gespeichert."
   }
 }

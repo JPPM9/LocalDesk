@@ -1,17 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CircleCheck, Mail } from 'lucide-react';
-import type { MailAppView } from '../../../shared/mail';
+import { CircleCheck, LoaderCircle, Lock, Mail } from 'lucide-react';
+import type { MailAccountView, MailAppView } from '../../../shared/mail';
 import { Field } from './SettingsFields';
 
-/** Abschnitt „E-Mail“ in den Einstellungen: die eigene Google-App eintragen. */
+/** Abschnitt „E-Mail“ in den Einstellungen: eigene Google-App und Konten. */
 export function MailSettings() {
   const { t } = useTranslation();
   const [google, setGoogle] = useState<MailAppView | null | undefined>();
+  const [accounts, setAccounts] = useState<MailAccountView[]>([]);
   const [editing, setEditing] = useState(false);
   const [clientId, setClientId] = useState('');
   const [clientSecret, setClientSecret] = useState('');
+  const [connecting, setConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
     void window.api
@@ -19,6 +22,7 @@ export function MailSettings() {
       .then((apps) =>
         setGoogle(apps.find((a) => a.provider === 'google') ?? null),
       );
+    void window.api.listMailAccounts().then(setAccounts);
   }, []);
 
   const startEdit = () => {
@@ -35,6 +39,7 @@ export function MailSettings() {
       setGoogle(result.value);
       setEditing(false);
       setClientSecret('');
+      setError(null);
     } else {
       setError(result.error);
     }
@@ -42,9 +47,38 @@ export function MailSettings() {
 
   const remove = async () => {
     if (!window.confirm(t('mailSettings.confirmRemove'))) return;
-    await window.api.clearGoogleApp();
-    setGoogle(null);
+    const result = await window.api.clearGoogleApp();
+    if (result.ok) setGoogle(null);
+    else setError(result.error);
   };
+
+  const connect = async () => {
+    setError(null);
+    setNotice(null);
+    setConnecting(true);
+    const result = await window.api.connectGoogle();
+    setConnecting(false);
+    if (result.ok) setAccounts(await window.api.listMailAccounts());
+    else setError(result.error);
+  };
+
+  const disconnect = async (account: MailAccountView) => {
+    if (
+      !window.confirm(
+        t('mailSettings.confirmDisconnect', { email: account.email }),
+      )
+    ) {
+      return;
+    }
+    setError(null);
+    const result = await window.api.disconnectMailAccount(account.id);
+    if (!result.ok) setError(result.error);
+    else if (!result.value.revoked) setNotice(t('mailSettings.revokeFailed'));
+    else setNotice(null);
+    setAccounts(await window.api.listMailAccounts());
+  };
+
+  const locked = accounts.length > 0;
 
   return (
     <section className="space-y-3">
@@ -108,30 +142,106 @@ export function MailSettings() {
             </div>
           </div>
         ) : google ? (
-          <div className="space-y-2">
-            <p className="flex items-center gap-1.5 text-xs text-ok">
-              <CircleCheck size={13} />
-              {t('mailSettings.saved')} · {t('mailSettings.secretStored')}
-            </p>
-            <p className="font-mono text-xs break-all text-muted">
-              {google.clientId}
-            </p>
-            <p className="text-xs text-muted">{t('mailSettings.nextStep')}</p>
-            <div className="flex gap-2 pt-1">
-              <button
-                type="button"
-                onClick={startEdit}
-                className="rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
-              >
-                {t('mailSettings.change')}
-              </button>
-              <button
-                type="button"
-                onClick={() => void remove()}
-                className="rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
-              >
-                {t('mailSettings.remove')}
-              </button>
+          <div className="space-y-3">
+            <div className="space-y-2">
+              <p className="flex items-center gap-1.5 text-xs text-ok">
+                <CircleCheck size={13} />
+                {t('mailSettings.saved')} · {t('mailSettings.secretStored')}
+              </p>
+              <p className="font-mono text-xs break-all text-muted">
+                {google.clientId}
+              </p>
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={startEdit}
+                  disabled={locked}
+                  className="rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-40"
+                >
+                  {t('mailSettings.change')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void remove()}
+                  disabled={locked}
+                  className="rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-40"
+                >
+                  {t('mailSettings.remove')}
+                </button>
+                {locked && (
+                  <span className="text-xs text-subtle">
+                    {t('mailSettings.lockedHint')}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2 border-t border-border pt-3">
+              <h3 className="text-[13px] font-medium">
+                {t('mailSettings.accounts')}
+              </h3>
+              {accounts.length === 0 ? (
+                <p className="text-xs text-muted">
+                  {t('mailSettings.noAccounts')}
+                </p>
+              ) : (
+                <ul className="space-y-1.5">
+                  {accounts.map((account) => (
+                    <li
+                      key={account.id}
+                      className="flex items-center gap-2 rounded-lg border border-border bg-bg px-3 py-1.5"
+                    >
+                      <span className="min-w-0 flex-1 truncate text-[13px]">
+                        {account.email}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => void disconnect(account)}
+                        className="rounded border border-border px-2.5 py-0.5 text-xs hover:bg-surface-hover"
+                      >
+                        {t('mailSettings.disconnect')}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {connecting ? (
+                <div className="space-y-2 rounded-lg bg-accent-soft/50 px-3 py-2">
+                  <p className="flex items-start gap-2 text-xs">
+                    <LoaderCircle
+                      size={14}
+                      className="mt-0.5 shrink-0 animate-spin text-accent-text"
+                    />
+                    {t('mailSettings.waiting')}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => void window.api.cancelMailConnect()}
+                    className="rounded border border-border bg-surface px-3 py-1 text-xs hover:bg-surface-hover"
+                  >
+                    {t('mailSettings.cancel')}
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => void connect()}
+                  className="rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90"
+                >
+                  {t(
+                    accounts.length > 0
+                      ? 'mailSettings.connectAnother'
+                      : 'mailSettings.connect',
+                  )}
+                </button>
+              )}
+              <p className="flex items-center gap-1.5 text-xs text-subtle">
+                <Lock size={12} />
+                {t('mailSettings.encrypted')}
+              </p>
+              {error && <p className="text-xs text-error">{error}</p>}
+              {notice && <p className="text-xs text-warn">{notice}</p>}
             </div>
           </div>
         ) : (

@@ -228,6 +228,18 @@ const migrations: string[] = [
   `
   ALTER TABLE folders ADD COLUMN skills_json TEXT NOT NULL DEFAULT '[]';
   `,
+  // 17: Mail-Konten. refresh_token ist mit Windows verschlüsselt (safeStorage, Base64) –
+  // die Mails selbst speichert LocalDesk nicht.
+  `
+  CREATE TABLE mail_accounts (
+    id            TEXT PRIMARY KEY,
+    provider      TEXT NOT NULL,
+    email         TEXT NOT NULL,
+    refresh_token TEXT NOT NULL,
+    created_at    INTEGER NOT NULL,
+    UNIQUE (provider, email)
+  );
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */

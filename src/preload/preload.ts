@@ -56,6 +56,11 @@ const api: LocalDeskApi = {
   getMailApps: () => ipcRenderer.invoke(IpcChannels.getMailApps),
   setGoogleApp: (app) => ipcRenderer.invoke(IpcChannels.setGoogleApp, app),
   clearGoogleApp: () => ipcRenderer.invoke(IpcChannels.clearGoogleApp),
+  listMailAccounts: () => ipcRenderer.invoke(IpcChannels.listMailAccounts),
+  connectGoogle: () => ipcRenderer.invoke(IpcChannels.connectGoogle),
+  cancelMailConnect: () => ipcRenderer.invoke(IpcChannels.cancelMailConnect),
+  disconnectMailAccount: (id) =>
+    ipcRenderer.invoke(IpcChannels.disconnectMailAccount, id),
   getObsidian: () => ipcRenderer.invoke(IpcChannels.getObsidian),
   setObsidian: (vaultPath, folder) =>
     ipcRenderer.invoke(IpcChannels.setObsidian, vaultPath, folder),

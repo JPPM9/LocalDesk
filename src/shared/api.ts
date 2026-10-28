@@ -3,7 +3,7 @@
 // damit sich beide Seiten auf dieselben Datenformen verlassen können.
 
 import type { ThemeChoice } from './appearance';
-import type { GoogleAppInput, MailAppView } from './mail';
+import type { GoogleAppInput, MailAccountView, MailAppView } from './mail';
 import type { SkillInput, SkillView } from './skills';
 import type { UpdateState } from './update';
 
@@ -589,8 +589,16 @@ export interface LocalDeskApi {
   getMailApps: () => Promise<MailAppView[]>;
   /** Prüft und speichert die eigene Google-App (Client-ID + Clientschlüssel). */
   setGoogleApp: (app: GoogleAppInput) => Promise<Result<MailAppView>>;
-  /** Vergisst die eigene Google-App. */
-  clearGoogleApp: () => Promise<void>;
+  /** Vergisst die eigene Google-App (geht nur ohne angemeldete Konten). */
+  clearGoogleApp: () => Promise<Result<null>>;
+  /** Angemeldete Mail-Konten. */
+  listMailAccounts: () => Promise<MailAccountView[]>;
+  /** Öffnet Googles Anmeldeseite im Browser und wartet (max. 5 Minuten). */
+  connectGoogle: () => Promise<Result<MailAccountView>>;
+  /** Bricht eine laufende Anmeldung ab. */
+  cancelMailConnect: () => Promise<void>;
+  /** Abmelden: bei Google widerrufen und lokal löschen. */
+  disconnectMailAccount: (id: string) => Promise<Result<{ revoked: boolean }>>;
 
   /** Eingerichteter Obsidian-Vault mit aktuellem Zustand; null = keiner eingerichtet. */
   getObsidian: () => Promise<ObsidianStatus | null>;
@@ -758,6 +766,10 @@ export const IpcChannels = {
   getMailApps: 'mail:get-apps',
   setGoogleApp: 'mail:set-google-app',
   clearGoogleApp: 'mail:clear-google-app',
+  listMailAccounts: 'mail:list-accounts',
+  connectGoogle: 'mail:connect-google',
+  cancelMailConnect: 'mail:cancel-connect',
+  disconnectMailAccount: 'mail:disconnect',
   getObsidian: 'obsidian:get',
   setObsidian: 'obsidian:set',
   clearObsidian: 'obsidian:clear',

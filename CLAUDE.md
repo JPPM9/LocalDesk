@@ -450,6 +450,17 @@
   (lesen ohne Rückfrage, Änderungen als Bestätigungs-Karte).
   Schritt 1 ✓: Anleitung `docs/email-einrichten.md`, Einstellungen → E-Mail (Client-ID und
   Clientschlüssel in `app_settings`, Schlüssel geht nie an die Oberfläche zurück).
+  Schritt 2 ✓ (Code): `src/main/mail/google-auth.ts` – Loopback-Server nur auf 127.0.0.1,
+  zufälliger Port, `state` zeitkonstant verglichen, fremde Aufrufe ignoriert, 5 Minuten Wartezeit,
+  abbrechbar; Code + PKCE-Verifier gegen Schlüssel getauscht; abgewählter Gmail-Haken → widerrufen +
+  Fehler; Adresse aus `users/me/profile` (kein openid/email-Bereich nötig). `MailSessions`: Refresh-
+  Token mit `safeStorage` verschlüsselt in `mail_accounts` (Migration 17), Zugangsschlüssel nur im
+  Speicher; ohne Verschlüsselung wird nicht gespeichert; `invalid_grant` → `MailReauthError`.
+  Abmelden widerruft bei Google und löscht lokal (auch wenn Google nicht erreichbar – dann Hinweis).
+  Google-App ist gesperrt, solange Konten angemeldet sind. **Netzwerk-Regel:** Mail-Verkehr nur
+  über `guardedFetch` (`mail-fetch.ts`, HTTPS + feste Hosts `accounts.google.com`,
+  `oauth2.googleapis.com`, `gmail.googleapis.com`). Echter Google-Test steht aus (braucht die
+  Google-App des Nutzers).
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 E-Mail Gmail + Outlook direkt per OAuth (Gmail-API, Microsoft Graph; lesen,
