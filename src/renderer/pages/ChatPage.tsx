@@ -172,7 +172,12 @@ export function ChatPage() {
       ? searchParams.get('project')
       : chatList.chats.find((c) => c.id === chatId)?.folderId;
   const project = chatList.folders.find((f) => f.id === projectId);
-  const contextUsage = useContextUsage(messages, settings, project);
+  const contextUsage = useContextUsage(
+    messages,
+    settings,
+    project,
+    models.find((m) => m.name === model)?.capabilities.includes('tools'),
+  );
   const contextLevel = contextUsage.level;
 
   // „Merken“ gibt es nur mit eingerichtetem Vault (beim Öffnen des Chats geprüft).

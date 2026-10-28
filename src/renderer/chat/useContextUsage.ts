@@ -14,7 +14,7 @@ import {
   type ContextUsage,
 } from '../../shared/context';
 import { memoryPrompt, selectMemories } from '../../shared/memory';
-import { skillsPrompt, type SkillView } from '../../shared/skills';
+import { skillsPrompt, skillTools, type SkillView } from '../../shared/skills';
 import { effectivePermission } from '../../shared/permissions';
 import { useMcpServers } from '../hooks/useMcpServers';
 
@@ -26,6 +26,8 @@ export function useContextUsage(
   messages: MessageRecord[],
   settings: ChatSettings,
   project: ChatFolder | undefined,
+  /** Kann das Modell Werkzeuge? Dann kommt die Skill-Liste („Skill laden“) dazu. */
+  modelSupportsTools = false,
 ): ContextUsage {
   const servers = useMcpServers();
   const [memories, setMemories] = useState<MemoryView[]>([]);
@@ -41,7 +43,6 @@ export function useContextUsage(
   // Skills neu lesen, wenn sich die Auswahl ändert (Texte können sich geändert haben).
   const skillKey = (settings.skills ?? []).join('|');
   useEffect(() => {
-    if (!skillKey) return;
     void window.api
       .listSkills()
       .then((result) => setSkills(result.ok ? result.value : []));
@@ -64,6 +65,19 @@ export function useContextUsage(
             parameters: tool.inputSchema,
           })),
       );
+    // Wie im Main-Prozess: nicht eingeschaltete Skills kann das Modell selbst laden.
+    const catalog = skills.filter(
+      (s) => !s.error && !settings.skills?.includes(s.id),
+    );
+    if (modelSupportsTools) {
+      for (const tool of skillTools(catalog)) {
+        tools.push({
+          name: tool.name,
+          description: tool.description,
+          parameters: tool.inputSchema,
+        });
+      }
+    }
     const lastSources = [...messages]
       .reverse()
       .find((m) => m.sources && m.sources.length > 0)?.sources;
@@ -92,5 +106,13 @@ export function useContextUsage(
       parts,
       settings.contextLength ?? OLLAMA_DEFAULT_CONTEXT,
     );
-  }, [messages, settings, project, servers, memories, skills]);
+  }, [
+    messages,
+    settings,
+    project,
+    servers,
+    memories,
+    skills,
+    modelSupportsTools,
+  ]);
 }

@@ -393,7 +393,7 @@
   im Eingabefeld) UND automatisch (Liste Name+Beschreibung + Werkzeug „Skill laden“, nur Tool-Modelle) ·
   voreinstellbar in Projekten und Vorlagen · 4 deutsche Beispiel-Skills beim ersten Start. Skills sind NUR
   Text: nichts wird ausgeführt, keine Werkzeug-Rechte.
-  Schritte: 1 Grundlage ✅ · 2 Seite „Skills“ ✅ · 3 Schalter im Chat ✅ · 4 automatisch · 5 Projekte & Vorlagen ·
+  Schritte: 1 Grundlage ✅ · 2 Seite „Skills“ ✅ · 3 Schalter im Chat ✅ · 4 automatisch ✅ · 5 Projekte & Vorlagen ·
   6 Test & Doku
   Grundlage: Format/Prüfung in `shared/skills.ts` (Name ≤ 80, Beschreibung ≤ 300, Anleitung ≤ 20 000
   Zeichen; Kopf immer in Anführungszeichen geschrieben; ohne Kopf = Ordnername als Name). `SkillStore`
@@ -418,6 +418,17 @@
   `withMemories` davor → Reihenfolge Erinnerungen → Skills → Projekt-Anweisungen/Systemprompt (getestet).
   Kontext-Füllstand: eigener Anteil „Skills“ (lila). Live (gemma4): Test-Skill „beginne mit Ahoi!“
   eingeschaltet → „Ahoi! 2 plus 2 ist 4.“, ausgeschaltet → normale Antwort, Anteil 49 Tokens ✓.
+  Automatisch: Bei Tool-Modellen bekommt das Modell JEDEN nicht eingeschalteten Skill als eigenes Werkzeug
+  `skill_<kennung>` ohne Eingaben (Beschreibung = Name + „wann passt er“), Server-ID `localdesk:skills`,
+  `permission: 'always'` (liest nur eigenen Text), höchstens 40. Aufruf → Anleitung frisch aus der Datei.
+  ENTSCHEIDUNG nach Messung: Zuerst EIN Werkzeug `load_skill(name)` mit Skill-Liste in der Beschreibung –
+  qwen3 hielt die Namen für eigene Funktionen, lud nie etwas (0/4) und lieferte leere Antworten (Ollama
+  verwirft Aufrufe unbekannter Werkzeuge); auch `enum` half nicht. Ein Werkzeug pro Skill direkt an Ollama:
+  gemma4, qwen3, gpt-oss 18/18 richtig, unpassende Frage nie ein Skill; in der App je 3/3. Anzeige im Chat:
+  Zeile „Skill · <Name> · geladen“ (Name aus dem Ergebnis). Kontext-Schätzung zählt die Skill-Werkzeuge
+  zum Anteil „Tools“ (`useContextUsage(…, modelSupportsTools)`).
+  Außerdem gefunden: Schreibt ein Modell GAR keinen Antworttext, zeigt die Werkzeug-Schleife jetzt den
+  Hinweis `EMPTY_ANSWER` (Fehler-Ereignis) statt einer leeren Blase.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · Phase 10 Planer /
   Aufgabenliste · Phase 11 E-Mail Gmail + Outlook direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

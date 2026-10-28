@@ -21,6 +21,10 @@ import type { Provider } from './providers/provider';
 /** Vereinbart: höchstens so viele Tool-Runden pro Antwort. */
 export const MAX_TOOL_ROUNDS = 8;
 
+/** Hinweis, wenn das Modell gar keinen Antworttext geschrieben hat. */
+export const EMPTY_ANSWER =
+  'Das Modell hat keine Antwort geschrieben – vermutlich wollte es ein Werkzeug falsch aufrufen. Bitte noch einmal fragen oder ein anderes Modell wählen.';
+
 export interface ToolResult {
   text: string;
   isError: boolean;
@@ -100,6 +104,12 @@ export async function runAnswer({
     }
 
     if (wanted.length === 0 || tools.length === 0) {
+      // Kein einziges Wort Antwort (z. B. wollte das Modell ein Werkzeug aufrufen,
+      // das es nicht gibt, und Ollama hat den Aufruf verworfen): Hinweis statt leerer Blase.
+      if (!written.content) {
+        emit({ requestId, type: 'error', error: EMPTY_ANSWER });
+        return;
+      }
       emit({ requestId, type: 'done', stats: combineStats(stats) });
       return;
     }

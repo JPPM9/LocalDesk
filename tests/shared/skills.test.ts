@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   checkSkillInput,
+  skillToolName,
+  skillTools,
   formatSkill,
   isSkillId,
   parseSkill,
@@ -136,5 +138,41 @@ describe('Skills in der System-Nachricht', () => {
       skills: ['code-review'],
     });
     expect(normalizeSettings({ skills: [] })).toEqual({});
+  });
+});
+
+describe('Skills als Werkzeuge', () => {
+  const skills = [
+    { id: 'code-review', name: 'Code-Review', description: 'Prüft Code.' },
+    {
+      id: 'lernkarten-erstellen',
+      name: 'Lernkarten erstellen',
+      description: '',
+    },
+  ];
+
+  it('macht aus jedem Skill ein Werkzeug ohne Eingaben', () => {
+    const tools = skillTools(skills);
+    expect(tools.map((t) => t.name)).toEqual([
+      'skill_code_review',
+      'skill_lernkarten_erstellen',
+    ]);
+    expect(tools[0]).toMatchObject({ skillId: 'code-review' });
+    expect(tools[0].description).toContain('„Code-Review“');
+    expect(tools[0].description).toContain('Prüft Code.');
+    expect(tools[0].inputSchema).toEqual({ type: 'object', properties: {} });
+  });
+
+  it('begrenzt die Zahl, damit die Liste den Kontext nicht sprengt', () => {
+    const many = Array.from({ length: 60 }, (_, i) => ({
+      id: `s-${i}`,
+      name: `Skill ${i}`,
+      description: '',
+    }));
+    expect(skillTools(many)).toHaveLength(40);
+  });
+
+  it('hält Werkzeug-Namen kurz genug', () => {
+    expect(skillToolName('a'.repeat(60)).length).toBeLessThanOrEqual(64);
   });
 });

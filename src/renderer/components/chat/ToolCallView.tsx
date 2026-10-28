@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import type { ToolCallRecord, ToolDecision } from '../../../shared/api';
 import { MEMORY_TOOL_SERVER } from '../../../shared/memory';
+import { SKILL_TOOL_SERVER } from '../../../shared/skills';
 import { summarizeArguments } from '../../../shared/tools';
 import { MemoryEditor } from './MemoryEditor';
 
@@ -34,8 +35,13 @@ export function ToolCallView({
   projectName,
 }: ToolCallViewProps) {
   const { t } = useTranslation();
-  const summary = summarizeArguments(call.arguments);
+  // Bei Skills steht der Name im Ergebnis („Skill „Code-Review“ – …“).
+  const summary =
+    call.serverId === SKILL_TOOL_SERVER
+      ? (/^Skill „([^“]+)“/.exec(call.result ?? '')?.[1] ?? '')
+      : summarizeArguments(call.arguments);
   const isMemory = call.serverId === MEMORY_TOOL_SERVER;
+  const isSkill = call.serverId === SKILL_TOOL_SERVER;
 
   // „Erinnerung speichern“: Vorschlag bearbeiten, dann speichern oder ablehnen.
   if (isMemory && call.status === 'asking') {
@@ -108,14 +114,16 @@ export function ToolCallView({
     <details className="group rounded-xl border border-border text-[13px]">
       <summary className="flex cursor-pointer items-center gap-2 px-3 py-2 text-muted select-none hover:text-text">
         <StatusIcon status={call.status} />
-        {isMemory ? (
-          <span>{t('toolCall.memoryTool')}</span>
+        {isMemory || isSkill ? (
+          <span>
+            {t(isSkill ? 'toolCall.skillTool' : 'toolCall.memoryTool')}
+          </span>
         ) : (
           <span className="font-mono">{call.toolName}</span>
         )}
         {summary && (
           <span
-            className={`min-w-0 truncate text-muted ${isMemory ? '' : 'font-mono'}`}
+            className={`min-w-0 truncate text-muted ${isMemory || isSkill ? '' : 'font-mono'}`}
           >
             {summary}
           </span>
@@ -123,7 +131,9 @@ export function ToolCallView({
         <span className="ml-auto shrink-0 text-xs text-subtle">
           {isMemory && call.status === 'done'
             ? t('toolCall.memorySaved')
-            : t(`toolCall.status.${call.status}`)}
+            : isSkill && call.status === 'done'
+              ? t('toolCall.skillLoaded')
+              : t(`toolCall.status.${call.status}`)}
         </span>
       </summary>
       <div className="space-y-2 border-t border-border px-3 py-2">

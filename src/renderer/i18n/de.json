@@ -245,7 +245,9 @@
     "deny": "Ablehnen",
     "memoryAsk": "Das Modell möchte sich etwas über dich merken",
     "memoryTool": "Erinnerung",
-    "memorySaved": "gespeichert"
+    "memorySaved": "gespeichert",
+    "skillTool": "Skill",
+    "skillLoaded": "geladen"
   },
   "downloads": {
     "placeholder": "Modellname, z. B. qwen3:8b",

@@ -6,7 +6,11 @@ import type {
   ToolDecision,
 } from '../../src/shared/api';
 import type { Provider } from '../../src/main/providers/provider';
-import { runAnswer, type ToolRuntime } from '../../src/main/tool-loop';
+import {
+  EMPTY_ANSWER,
+  runAnswer,
+  type ToolRuntime,
+} from '../../src/main/tool-loop';
 import { toToolResult } from '../../src/main/mcp/tool-result';
 import type { OfferedTool } from '../../src/shared/tools';
 
@@ -233,7 +237,24 @@ describe('runAnswer', () => {
     expect(runtime.calls).toHaveLength(2);
     expect(requests).toHaveLength(3);
     expect(requests[2]).not.toHaveProperty('tools');
-    expect(events.at(-1)?.type).toBe('done');
+    // Die dritte Runde wollte wieder ein Tool, schrieb aber keinen Text → Hinweis statt leerer Antwort.
+    expect(events.at(-1)).toMatchObject({ type: 'error', error: EMPTY_ANSWER });
+  });
+
+  it('meldet eine leere Antwort statt einer leeren Blase', async () => {
+    const empty = await run(
+      [[{ type: 'thinking', text: 'Hm …' }]],
+      fakeRuntime([]),
+    );
+    expect(empty.events.at(-1)).toMatchObject({
+      type: 'error',
+      error: EMPTY_ANSWER,
+    });
+    const fine = await run(
+      [[{ type: 'content', text: 'Hallo' }]],
+      fakeRuntime([]),
+    );
+    expect(fine.events.at(-1)?.type).toBe('done');
   });
 
   it('trennt Text verschiedener Runden mit einer Leerzeile', async () => {

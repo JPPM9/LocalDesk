@@ -13,7 +13,13 @@ import {
 import { applyChatEvent, titleFromMessage } from '../shared/chat';
 import { knowledgeQuery, withKnowledge } from '../shared/knowledge';
 import { MEMORY_TOOL_SERVER, withMemories } from '../shared/memory';
-import { withSkills, type SkillView } from '../shared/skills';
+import {
+  SKILL_TOOL_SERVER,
+  skillTools,
+  withSkills,
+  type SkillView,
+} from '../shared/skills';
+import type { OfferedTool } from '../shared/tools';
 import { buildChatRequest } from '../shared/settings';
 import { describeChatError } from './chat-errors';
 import type { ChatRepository } from './db/chat-repository';
@@ -46,7 +52,10 @@ export function registerChatHandlers(
   /** Erinnerungen über dich aus dem Obsidian-Vault. */
   memory: ChatMemory,
   /** Skills aus dem Skill-Ordner (fehlende oder kaputte werden übergangen). */
-  skills: { get(id: string): Promise<SkillView | null> },
+  skills: {
+    get(id: string): Promise<SkillView | null>;
+    list(): Promise<SkillView[]>;
+  },
 ) {
   const running = new Map<string, AbortController>();
   /** Rückfragen, auf deren Antwort ein Tool-Aufruf wartet (Aufruf-ID → Antwort). */
@@ -190,15 +199,45 @@ export function registerChatHandlers(
     serverIds: string[],
     signal: AbortSignal,
     memoryTarget: { projectId: string | undefined } | null,
+    /** Skills, die das Modell selbst laden darf (leer = Werkzeug nicht anbieten). */
+    skillCatalog: SkillView[],
   ): ToolRuntime {
+    // Jeder Skill ein eigenes Werkzeug (siehe skillTools). Liest nur deinen
+    // eigenen Text – keine Rückfrage nötig.
+    const offeredSkills = skillTools(skillCatalog);
+    const skillOffers: OfferedTool[] = offeredSkills.map((t) => ({
+      serverId: SKILL_TOOL_SERVER,
+      serverName: 'Skills',
+      toolName: t.name,
+      description: t.description,
+      inputSchema: t.inputSchema,
+      destructive: false,
+      permission: 'always',
+    }));
     return {
       tools: () => [
         ...(memoryTarget
           ? [memoryTool(memoryTarget.projectId !== undefined)]
           : []),
+        ...skillOffers,
         ...mcpTools.offered(serverIds),
       ],
       call: async (tool, args, callSignal) => {
+        if (tool.serverId === SKILL_TOOL_SERVER) {
+          const found = offeredSkills.find((t) => t.name === tool.toolName);
+          // Frisch aus der Datei – falls du ihn gerade bearbeitet hast.
+          const skill = found ? await skills.get(found.skillId) : null;
+          if (!skill || skill.error) {
+            return {
+              text: 'Diesen Skill gibt es nicht (mehr).',
+              isError: true,
+            };
+          }
+          return {
+            text: `Skill „${skill.name}“ – befolge diese Anleitung:\n\n${skill.body}`,
+            isError: false,
+          };
+        }
         if (tool.serverId !== MEMORY_TOOL_SERVER) {
           return mcpTools.call(tool, args, callSignal);
         }
@@ -288,13 +327,20 @@ export function registerChatHandlers(
         }
       }
       // „Erinnerung speichern“ nur mit Vault und nur für Modelle, die Tools können.
-      const offerMemory =
-        memory.available() && (await supportsTools(provider, request.model));
+      const canUseTools = await supportsTools(provider, request.model);
+      const offerMemory = memory.available() && canUseTools;
+      // Skills, die nicht schon eingeschaltet sind, darf das Modell selbst laden.
+      const skillCatalog = canUseTools
+        ? (await skills.list().catch(() => [])).filter(
+            (s) => !s.error && !skillIds.includes(s.id),
+          )
+        : [];
       controller.signal.throwIfAborted();
       const runtime = toolRuntime(
         serverIds,
         controller.signal,
         offerMemory ? { projectId: memoryContext.projectId } : null,
+        skillCatalog,
       );
       await runAnswer({
         provider,

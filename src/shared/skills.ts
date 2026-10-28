@@ -132,6 +132,41 @@ export function withSkills(
   return { ...request, messages };
 }
 
+/** Kennung der eingebauten Skill-Werkzeuge (statt eines MCP-Servers). */
+export const SKILL_TOOL_SERVER = 'localdesk:skills';
+/** So viele Skills bekommt das Modell höchstens als Werkzeug (Kontext!). */
+export const SKILL_CATALOG_MAX = 40;
+
+/** Werkzeug-Name eines Skills für das Modell: „code-review“ → „skill_code_review“. */
+export function skillToolName(id: string): string {
+  return `skill_${id.replace(/-/g, '_')}`.slice(0, 64);
+}
+
+/**
+ * Jeder Skill als eigenes Werkzeug ohne Eingaben: Ruft das Modell es auf, bekommt
+ * es die Anleitung. Getestet: Mit EINEM Werkzeug „load_skill(name)“ hielt qwen3 die
+ * Skill-Namen für eigene Funktionen und lud nie etwas (0 von 4); so laden gemma4,
+ * qwen3 und gpt-oss passend (18 von 18) und bei unpassenden Fragen nichts.
+ */
+export function skillTools(
+  skills: { id: string; name: string; description: string }[],
+): {
+  skillId: string;
+  name: string;
+  description: string;
+  inputSchema: Record<string, unknown>;
+}[] {
+  return skills.slice(0, SKILL_CATALOG_MAX).map((s) => ({
+    skillId: s.id,
+    name: skillToolName(s.id),
+    description:
+      `Lädt den Skill „${s.name}“ (eine Anleitung des Nutzers). ` +
+      (s.description ? `${s.description} ` : '') +
+      'Rufe ihn ZUERST auf, wenn die Aufgabe passt, und befolge die Anleitung dann in deiner Antwort.',
+    inputSchema: { type: 'object', properties: {} },
+  }));
+}
+
 /** Ordnername eines Skills: nur Kleinbuchstaben, Ziffern und Bindestriche. */
 export function isSkillId(id: string): boolean {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id) && id.length <= 60;
