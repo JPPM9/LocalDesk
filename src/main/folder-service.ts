@@ -58,6 +58,13 @@ export function registerFolderHandlers(
   );
 
   ipcMain.handle(
+    IpcChannels.setProjectSkills,
+    (_event, folderId: unknown, skillIds: unknown) => {
+      if (typeof folderId === 'string') folders.setSkills(folderId, skillIds);
+    },
+  );
+
+  ipcMain.handle(
     IpcChannels.ensureProjectCollection,
     (_event, folderId: unknown): Result<CollectionConfig> => {
       const folder =

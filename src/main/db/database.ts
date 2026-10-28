@@ -224,6 +224,10 @@ const migrations: string[] = [
   ALTER TABLE collections ADD COLUMN kind TEXT;
   CREATE UNIQUE INDEX collections_by_kind ON collections(kind) WHERE kind IS NOT NULL;
   `,
+  // 16: Skills eines Projekts – gelten in jedem Chat des Projekts (Liste von Kennungen als JSON).
+  `
+  ALTER TABLE folders ADD COLUMN skills_json TEXT NOT NULL DEFAULT '[]';
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */

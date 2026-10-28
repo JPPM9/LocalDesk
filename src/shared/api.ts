@@ -493,6 +493,8 @@ export interface ChatFolder {
   instructions?: string;
   /** Sammlung mit den Projekt-Dokumenten (fehlt = noch keine angelegt). */
   collectionId?: string;
+  /** Skills, die in jedem Chat des Projekts gelten (Kennungen). */
+  skills?: string[];
 }
 
 export interface ChatDetail extends ChatSummary {
@@ -688,6 +690,8 @@ export interface LocalDeskApi {
     folderId: string,
     instructions: string,
   ) => Promise<void>;
+  /** Skills des Projekts setzen (gelten in allen seinen Chats). */
+  setProjectSkills: (folderId: string, skillIds: string[]) => Promise<void>;
   /** Legt die Sammlung für die Projekt-Dokumente an (falls noch keine da ist). */
   ensureProjectCollection: (
     folderId: string,
@@ -794,6 +798,7 @@ export const IpcChannels = {
   deleteFolder: 'folders:delete',
   moveChat: 'chats:move',
   setProjectInstructions: 'projects:set-instructions',
+  setProjectSkills: 'projects:set-skills',
   ensureProjectCollection: 'projects:ensure-collection',
   listServers: 'servers:list',
   saveServer: 'servers:save',

@@ -8,6 +8,7 @@ import type {
   KnowledgeSource,
 } from '../../shared/api';
 import { PageHeader } from '../components/PageHeader';
+import { SkillPicker } from '../components/skills/SkillPicker';
 import {
   DocumentList,
   IndexButton,
@@ -179,6 +180,23 @@ export function ProjectPage() {
               {t('projects.instructionsHint')}
             </span>
           </label>
+
+          <section className="space-y-2">
+            <div>
+              <h2 className="font-semibold">{t('projects.skills')}</h2>
+              <p className="text-xs text-muted">{t('projects.skillsHint')}</p>
+            </div>
+            <div className="rounded-xl border border-border bg-surface p-3">
+              <SkillPicker
+                selected={project.skills ?? []}
+                onChange={(ids) =>
+                  void window.api
+                    .setProjectSkills(project.id, ids)
+                    .then(() => load())
+                }
+              />
+            </div>
+          </section>
 
           <section className="space-y-3">
             <div>

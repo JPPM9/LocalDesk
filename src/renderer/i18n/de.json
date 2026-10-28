@@ -137,7 +137,9 @@
     "chats_one": "{{count}} Chat",
     "chats_other": "{{count}} Chats",
     "noChats": "Noch keine Chats in diesem Projekt.",
-    "badge": "Projekt: {{name}}"
+    "badge": "Projekt: {{name}}",
+    "skills": "Skills",
+    "skillsHint": "Gelten in jedem Chat dieses Projekts – zusätzlich zu den Skills, die du im Chat einschaltest."
   },
   "search": {
     "placeholder": "Chats durchsuchen …",
@@ -431,7 +433,9 @@
     "collections": "Wissen",
     "collectionsHint": "Welche Sammlungen ein Chat mit dieser Vorlage vor jeder Antwort durchsucht. Später im Chat über den Wissen-Knopf änderbar.",
     "mcpServers": "MCP-Server",
-    "mcpServersHint": "Welche Werkzeuge ein Chat mit dieser Vorlage nutzen darf. Später im Chat über den MCP-Button änderbar."
+    "mcpServersHint": "Welche Werkzeuge ein Chat mit dieser Vorlage nutzen darf. Später im Chat über den MCP-Button änderbar.",
+    "skills": "Skills",
+    "skillsHint": "Gelten in jedem Chat, der mit dieser Vorlage startet."
   },
   "mcpPicker": {
     "button": "MCP-Server für diesen Chat",

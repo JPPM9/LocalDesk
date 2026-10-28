@@ -189,3 +189,23 @@ describe('Projekte', () => {
     expect(folderOf('c1')).toBeUndefined();
   });
 });
+
+describe('Skills eines Projekts', () => {
+  it('speichert die Kennungen geprüft und liefert sie mit dem Projekt', () => {
+    const created = folders.createFolder('Klausur');
+    if (!created.ok) throw new Error(created.error);
+    const { id } = created.value;
+    expect(folders.getFolder(id)?.skills).toBeUndefined();
+
+    folders.setSkills(id, ['code-review', 'code-review', '', 42, 'lernkarten']);
+    expect(folders.getFolder(id)?.skills).toEqual([
+      'code-review',
+      'lernkarten',
+    ]);
+
+    folders.setSkills(id, []);
+    expect(folders.getFolder(id)?.skills).toBeUndefined();
+    folders.setSkills(id, 'kein Array');
+    expect(folders.getFolder(id)?.skills).toBeUndefined();
+  });
+});

@@ -160,7 +160,8 @@ export function registerChatHandlers(
       event.sender,
       chatRequest,
       settings.mcpServers ?? [],
-      settings.skills ?? [],
+      // Projekt-Skills gelten in jedem Chat des Projekts, dazu die des Chats.
+      [...new Set([...(project?.skills ?? []), ...(settings.skills ?? [])])],
       knowledgeSearch,
       { projectId: project?.id, question: request.content },
       answer,

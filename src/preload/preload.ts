@@ -141,6 +141,8 @@ const api: LocalDeskApi = {
       folderId,
       instructions,
     ),
+  setProjectSkills: (folderId, skillIds) =>
+    ipcRenderer.invoke(IpcChannels.setProjectSkills, folderId, skillIds),
   ensureProjectCollection: (folderId) =>
     ipcRenderer.invoke(IpcChannels.ensureProjectCollection, folderId),
 

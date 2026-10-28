@@ -9,6 +9,7 @@ import { Field, SettingsFields } from '../components/settings/SettingsFields';
 import { useChatModels } from '../hooks/useChatModels';
 import { CollectionPicker } from '../components/knowledge/CollectionPicker';
 import { McpServerPicker } from '../components/mcp/McpServerPicker';
+import { SkillPicker } from '../components/skills/SkillPicker';
 import { useTemplates } from '../templates/useTemplates';
 
 /** Adresse für eine noch nicht gespeicherte Vorlage. */
@@ -257,6 +258,22 @@ export function TemplatesPage() {
                   modelSupportsTools={selectedModel?.capabilities.includes(
                     'tools',
                   )}
+                />
+              </Field>
+
+              <Field
+                label={t('templates.skills')}
+                hint={t('templates.skillsHint')}
+              >
+                <SkillPicker
+                  selected={draft.settings.skills ?? []}
+                  onChange={(ids) => {
+                    const { skills: _old, ...rest } = draft.settings;
+                    update({
+                      settings:
+                        ids.length > 0 ? { ...rest, skills: ids } : rest,
+                    });
+                  }}
                 />
               </Field>
 

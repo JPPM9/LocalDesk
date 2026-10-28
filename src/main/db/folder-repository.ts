@@ -1,5 +1,6 @@
 import type { DatabaseSync } from 'node:sqlite';
 import type { ChatFolder, Result } from '../../shared/api';
+import { normalizeSettings } from '../../shared/settings';
 
 const NAME_MAX_LENGTH = 80;
 /** Wie beim Systemprompt eines Chats. */
@@ -9,6 +10,7 @@ interface FolderRow {
   id: string;
   name: string;
   instructions: string;
+  skills_json: string;
   collection_id: string | null;
 }
 
@@ -27,7 +29,7 @@ export class FolderRepository {
   listFolders(): ChatFolder[] {
     const rows = this.db
       .prepare(
-        `SELECT f.id, f.name, f.instructions, c.id AS collection_id
+        `SELECT f.id, f.name, f.instructions, f.skills_json, c.id AS collection_id
            FROM folders f LEFT JOIN collections c ON c.project_id = f.id`,
       )
       .all() as unknown as FolderRow[];
@@ -75,6 +77,14 @@ export class FolderRepository {
       .run(instructions.trim().slice(0, INSTRUCTIONS_MAX_LENGTH), folderId);
   }
 
+  /** Skills des Projekts – geprüft wie die Skill-Liste eines Chats. */
+  setSkills(folderId: string, skillIds: unknown) {
+    const skills = normalizeSettings({ skills: skillIds }).skills ?? [];
+    this.db
+      .prepare('UPDATE folders SET skills_json = ? WHERE id = ?')
+      .run(JSON.stringify(skills), folderId);
+  }
+
   /**
    * Die Chats im Projekt bleiben erhalten (ON DELETE SET NULL → „ohne Projekt“);
    * die Projekt-Dokumente (Sammlung, Abschnitte) verschwinden mit (CASCADE).
@@ -85,11 +95,20 @@ export class FolderRepository {
 }
 
 function toFolder(row: FolderRow): ChatFolder {
+  // Auch Gespeichertes prüfen – eine kaputte Zeile soll die App nicht stoppen.
+  let skills: string[] = [];
+  try {
+    skills =
+      normalizeSettings({ skills: JSON.parse(row.skills_json) }).skills ?? [];
+  } catch {
+    skills = [];
+  }
   return {
     id: row.id,
     name: row.name,
     ...(row.instructions && { instructions: row.instructions }),
     ...(row.collection_id && { collectionId: row.collection_id }),
+    ...(skills.length > 0 && { skills }),
   };
 }
 

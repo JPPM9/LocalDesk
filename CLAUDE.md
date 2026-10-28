@@ -393,7 +393,7 @@
   im Eingabefeld) UND automatisch (Liste Name+Beschreibung + Werkzeug „Skill laden“, nur Tool-Modelle) ·
   voreinstellbar in Projekten und Vorlagen · 4 deutsche Beispiel-Skills beim ersten Start. Skills sind NUR
   Text: nichts wird ausgeführt, keine Werkzeug-Rechte.
-  Schritte: 1 Grundlage ✅ · 2 Seite „Skills“ ✅ · 3 Schalter im Chat ✅ · 4 automatisch ✅ · 5 Projekte & Vorlagen ·
+  Schritte: 1 Grundlage ✅ · 2 Seite „Skills“ ✅ · 3 Schalter im Chat ✅ · 4 automatisch ✅ · 5 Projekte & Vorlagen ✅ ·
   6 Test & Doku
   Grundlage: Format/Prüfung in `shared/skills.ts` (Name ≤ 80, Beschreibung ≤ 300, Anleitung ≤ 20 000
   Zeichen; Kopf immer in Anführungszeichen geschrieben; ohne Kopf = Ordnername als Name). `SkillStore`
@@ -429,6 +429,12 @@
   zum Anteil „Tools“ (`useContextUsage(…, modelSupportsTools)`).
   Außerdem gefunden: Schreibt ein Modell GAR keinen Antworttext, zeigt die Werkzeug-Schleife jetzt den
   Hinweis `EMPTY_ANSWER` (Fehler-Ereignis) statt einer leeren Blase.
+  Vorlagen: Feld „Skills“ (`SkillPicker`) im Vorlagen-Editor; die Vorlage gibt `settings.skills` beim Start an
+  den Chat weiter. Projekte: Migration 16 `folders.skills_json` (JSON-Liste, geprüft über `normalizeSettings`,
+  kaputt → leer), `FolderRepository.setSkills`, IPC `setProjectSkills`, Abschnitt „Skills“ auf der Projekt-Seite
+  (speichert sofort). Beim Senden gelten Projekt-Skills ∪ Chat-Skills; diese sind dann nicht mehr als
+  Werkzeug im Angebot; Kontext-Schätzung zählt beide. Der Chat-Schalter zeigt nur die Skills des Chats.
+  Live (gemma4, „Ahoi!“-Test-Skill): Vorlage → „Ahoi! 5 plus 5 …“, Projekt → „Ahoi! 7 plus 7 …“ ✓.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · Phase 10 Planer /
   Aufgabenliste · Phase 11 E-Mail Gmail + Outlook direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

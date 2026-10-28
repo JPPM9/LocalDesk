@@ -41,7 +41,10 @@ export function useContextUsage(
   }, [messages.length]);
 
   // Skills neu lesen, wenn sich die Auswahl ändert (Texte können sich geändert haben).
-  const skillKey = (settings.skills ?? []).join('|');
+  const activeSkills = [
+    ...new Set([...(project?.skills ?? []), ...(settings.skills ?? [])]),
+  ];
+  const skillKey = activeSkills.join('|');
   useEffect(() => {
     void window.api
       .listSkills()
@@ -67,7 +70,7 @@ export function useContextUsage(
       );
     // Wie im Main-Prozess: nicht eingeschaltete Skills kann das Modell selbst laden.
     const catalog = skills.filter(
-      (s) => !s.error && !settings.skills?.includes(s.id),
+      (s) => !s.error && !activeSkills.includes(s.id),
     );
     if (modelSupportsTools) {
       for (const tool of skillTools(catalog)) {
@@ -88,7 +91,7 @@ export function useContextUsage(
     const parts = estimateContextParts({
       memoryText: memoryPrompt(chatMemories.map((m) => m.text)),
       skillsText: skillsPrompt(
-        skills.filter((s) => settings.skills?.includes(s.id) && !s.error),
+        skills.filter((s) => activeSkills.includes(s.id) && !s.error),
       ),
       instructions: [project?.instructions, settings.systemPrompt]
         .filter(Boolean)
