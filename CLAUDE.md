@@ -467,6 +467,17 @@
   Datenschutzerklärung). Nicht aktivierte Gmail-API → 403 SERVICE_DISABLED, wird jetzt erkannt;
   scheitert etwas nach dem Code-Tausch, wird die Anmeldung bei Google sofort widerrufen.
   `safeStorage` über die async-Funktionen (die synchronen sind in Electron 45 veraltet).
+  Schritt 3 ✓: `MailClient` (`mail/mail-client.ts`) als gemeinsame Schnittstelle – `list`, `get`,
+  `labels`, `apply`; `GmailClient` über REST: Liste = `messages` + je Mail `format=metadata`
+  (max. 8 parallel), Mail = `format=full`, Text-Teil bevorzugt (Zeichensatz aus Content-Type),
+  sonst eigenes `htmlToText` (kein DOMPurify; Bilder fallen weg), max. 100 000 Zeichen, Anhänge
+  nur Name+Größe. `apply` = nur `messages/{id}/modify`: eigenes Label hinzufügen (nur `type:user`,
+  sonst wäre TRASH „Löschen durch die Hintertür“) oder STARRED setzen/entfernen; Test prüft, dass es
+  keine anderen Schreib-Aufrufe gibt. 401 → Zugangsschlüssel verwerfen, einmal neu. Kennungen per
+  `isMailId` geprüft, bevor eine Anfrage rausgeht. IPC zum Lesen: `listMail`, `getMail`,
+  `listMailLabels` (Ändern kommt erst mit der Bestätigung in Schritt 5). Echter Lesetest
+  2026-10-28 ✓ (nur Kennzahlen, keine Inhalte ausgelesen): 10 Mails mit allen Kopfdaten, 5 Mails als
+  Text ohne HTML-Reste, Labels, Suche, Erneuern des Zugangsschlüssels nach Neustart.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 E-Mail Gmail + Outlook direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

@@ -2,13 +2,19 @@ import { ipcMain, safeStorage, shell } from 'electron';
 import { IpcChannels, type Result } from '../shared/api';
 import {
   checkGoogleApp,
+  isMailId,
   type GoogleAppInput,
   type MailAccountView,
   type MailAppView,
+  type MailLabel,
+  type MailMessage,
+  type MailPage,
 } from '../shared/mail';
 import type { AppSettingsRepository } from './db/app-settings-repository';
 import type { MailAccountRepository } from './db/mail-account-repository';
 import { GOOGLE_URLS, signInWithGoogle } from './mail/google-auth';
+import { GmailClient } from './mail/gmail-client';
+import type { MailClient } from './mail/mail-client';
 import { guardedFetch } from './mail/mail-fetch';
 import { MailSessions, type TokenCipher } from './mail/mail-sessions';
 
@@ -157,5 +163,63 @@ export function registerMailHandlers(
     },
   );
 
-  return { sessions };
+  /** Zugriff aufs Postfach eines angemeldeten Kontos. */
+  const client = (accountId: unknown): MailClient => {
+    const account =
+      typeof accountId === 'string' ? accounts.get(accountId) : null;
+    if (!account) throw new Error('Dieses Konto ist nicht (mehr) angemeldet.');
+    return new GmailClient(fetch, {
+      token: () => sessions.accessToken(account.id),
+      invalidate: () => sessions.invalidate(account.id),
+    });
+  };
+
+  ipcMain.handle(
+    IpcChannels.listMail,
+    (_event, query: unknown): Promise<Result<MailPage>> => {
+      const raw = (query ?? {}) as Record<string, unknown>;
+      return attempt(() =>
+        client(raw.accountId).list({
+          query: typeof raw.query === 'string' ? raw.query : undefined,
+          labelId: isMailId(raw.labelId) ? raw.labelId : undefined,
+          pageToken:
+            typeof raw.pageToken === 'string' ? raw.pageToken : undefined,
+          max: typeof raw.max === 'number' ? raw.max : 25,
+        }),
+      );
+    },
+  );
+
+  ipcMain.handle(
+    IpcChannels.getMail,
+    (
+      _event,
+      accountId: unknown,
+      messageId: unknown,
+    ): Promise<Result<MailMessage>> =>
+      attempt(() => {
+        if (!isMailId(messageId)) throw new Error('Unbekannte Mail.');
+        return client(accountId).get(messageId);
+      }),
+  );
+
+  ipcMain.handle(
+    IpcChannels.listMailLabels,
+    (_event, accountId: unknown): Promise<Result<MailLabel[]>> =>
+      attempt(() => client(accountId).labels()),
+  );
+
+  return { sessions, client };
+}
+
+/** Fehler als Ergebnis zurückgeben, damit die Oberfläche sie zeigen kann. */
+async function attempt<T>(task: () => Promise<T>): Promise<Result<T>> {
+  try {
+    return { ok: true, value: await task() };
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
 }

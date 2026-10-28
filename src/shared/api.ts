@@ -3,7 +3,15 @@
 // damit sich beide Seiten auf dieselben Datenformen verlassen können.
 
 import type { ThemeChoice } from './appearance';
-import type { GoogleAppInput, MailAccountView, MailAppView } from './mail';
+import type {
+  GoogleAppInput,
+  MailAccountView,
+  MailAppView,
+  MailLabel,
+  MailListQuery,
+  MailMessage,
+  MailPage,
+} from './mail';
 import type { SkillInput, SkillView } from './skills';
 import type { UpdateState } from './update';
 
@@ -599,6 +607,15 @@ export interface LocalDeskApi {
   cancelMailConnect: () => Promise<void>;
   /** Abmelden: bei Google widerrufen und lokal löschen. */
   disconnectMailAccount: (id: string) => Promise<Result<{ revoked: boolean }>>;
+  /** Mails eines Kontos (ohne Suche: Posteingang), frisch vom Anbieter. */
+  listMail: (query: MailListQuery) => Promise<Result<MailPage>>;
+  /** Eine Mail als Text. */
+  getMail: (
+    accountId: string,
+    messageId: string,
+  ) => Promise<Result<MailMessage>>;
+  /** Labels des Kontos. */
+  listMailLabels: (accountId: string) => Promise<Result<MailLabel[]>>;
 
   /** Eingerichteter Obsidian-Vault mit aktuellem Zustand; null = keiner eingerichtet. */
   getObsidian: () => Promise<ObsidianStatus | null>;
@@ -770,6 +787,9 @@ export const IpcChannels = {
   connectGoogle: 'mail:connect-google',
   cancelMailConnect: 'mail:cancel-connect',
   disconnectMailAccount: 'mail:disconnect',
+  listMail: 'mail:list',
+  getMail: 'mail:get',
+  listMailLabels: 'mail:labels',
   getObsidian: 'obsidian:get',
   setObsidian: 'obsidian:set',
   clearObsidian: 'obsidian:clear',

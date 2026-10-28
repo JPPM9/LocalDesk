@@ -72,6 +72,11 @@ export class MailSessions {
     return fresh.token;
   }
 
+  /** Zugangsschlüssel verwerfen – der nächste Aufruf holt einen frischen. */
+  invalidate(accountId: string) {
+    this.access.delete(accountId);
+  }
+
   /**
    * Abmelden: bei Google widerrufen, dann lokal löschen. Gelöscht wird auch,
    * wenn Google nicht erreichbar ist – `revoked` sagt, ob der Widerruf klappte.
