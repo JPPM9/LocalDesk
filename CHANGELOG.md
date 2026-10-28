@@ -17,4 +17,9 @@ Erste installierbare Version.
 - **Obsidian:** Erinnerungen über dich (das Modell schlägt vor, du bestätigst), Antworten und
   Chats als Notiz speichern, Zusammenfassungen, dein Vault als Wissen. Geschrieben wird nur in
   einen eigenen Unterordner.
+- **Oberfläche** im Stil „Arbeitsplatz“: Symbolleiste links, Chatliste mit Tagesgruppen, Wissen und
+  Werkzeuge als Schalter im Eingabefeld, Seitenbereich für Quellen und Kontext. Hell, dunkel oder wie
+  Windows; Schrift Inter; Kontraste nach WCAG geprüft.
 - **Installer** mit Ordnerwahl; deine Daten bleiben beim Deinstallieren erhalten.
+- **Update-Knopf** unter Einstellungen → Über LocalDesk: sucht nur auf Klick, lädt und installiert
+  nach Bestätigung.

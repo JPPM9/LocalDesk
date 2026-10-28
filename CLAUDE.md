@@ -345,11 +345,11 @@
   Schritt 3 nichts vor. gpt-oss stürzte in Schritt 3 in Ollama ab (CUDA), lief im Abschlusstest wieder.
   Gefunden und behoben: Erinnerungen trugen das Datum in UTC (kurz nach Mitternacht der Vortag) → Ortszeit.
   Noch von Hand zu prüfen: „Öffnen“ einer Vault-Quelle in Obsidian (mit deinem echten Vault).
-- Phase 8: Moderne Oberfläche – in Arbeit. Entschieden (2026-10-28): Entwurf B „Arbeitsplatz“ (Symbolleiste
+- Phase 8: Moderne Oberfläche ✅ abgeschlossen. Entschieden (2026-10-28): Entwurf B „Arbeitsplatz“ (Symbolleiste
   links, Chatliste daneben, Kopfzeile mit allen Aktionen als Symbole, Seitenbereich rechts als feste Spalte,
   Wissen/Werkzeuge als Schalter im Eingabefeld) · Hell + Dunkel + Schalter (System/Hell/Dunkel) · Akzent Blau
   des Symbols · Schrift Inter mitgeliefert (@fontsource-variable/inter 5.3.0, OFL-1.1), Code: Cascadia Mono.
-  Schritte: 1 Grundlage ✅ · 2 Rahmen & Navigation ✅ · 3 Chat-Seite ✅ · 4 übrige Seiten ✅ · 5 Prüfen ✅ · 6 Doku
+  Schritte: 1 Grundlage ✅ · 2 Rahmen & Navigation ✅ · 3 Chat-Seite ✅ · 4 übrige Seiten ✅ · 5 Prüfen ✅ · 6 Doku ✅
   Grundlage: Token-NAMEN bleiben (bg, surface, border, text, muted, accent …), nur Werte neu; neu: surface-2,
   sidebar, subtle, accent-text, bubble, shadow-card. Radien per `--radius-*` (sm 8 px … 2xl 20 px); Tailwinds
   `rounded` ist fest 4 px und per Token nicht änderbar → eigene `.rounded`-Regel in `@layer utilities` nach
@@ -388,6 +388,14 @@
   das Entwicklerprotokoll – logische Reihenfolge (Leiste → Chatliste → Kopf), überall 2-px-Fokusrahmen ✓.
   Echter Chat mit Werkzeug-Rückfrage (Dateisystem-MCP, „Einmal erlauben“, Datei geschrieben) hell/dunkel ✓.
   Gebaute App: Inter aus app.asar geladen, Radien, Leiste, Logo, Farbschema ✓.
+- Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
+  Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · Phase 10 Planer /
+  Aufgabenliste · Phase 11 E-Mail Gmail + Outlook direkt per OAuth (Gmail-API, Microsoft Graph; lesen,
+  zusammenfassen, sortieren – Änderungen nur nach Bestätigung, nie senden/löschen; Nutzer registriert
+  die OAuth-Apps selbst; erweitert die Netzwerk-Regel um Google/Microsoft; Google-Testmodus = 7-Tage-
+  Anmeldung, Lösung in der Phase klären) · Phase 12 Code-Bereich (Agent mit Bestätigung: Vorher/Nachher-
+  Ansicht, Befehle nur nach Freigabe) · Phase 13 Datenschutz, Lizenzen (MIT), Sicherheit (u. a. CSP) ·
+  danach Phase 7 zu Ende: Repo öffentlich (macht der Nutzer) und Release 0.1.0 nach Okay.
 - Phase 7: Installer & Update-Check – in Arbeit. Entschieden (2026-10-27): Installer mit Assistent
   und Ordnerwahl (NSIS über electron-builder 26.17.0 `--prepackaged` auf den Forge-Build; Squirrel
   entfällt) · Update-Quelle GitHub-Releases, Repo wird dafür öffentlich (macht der Nutzer selbst) ·

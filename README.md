@@ -3,7 +3,13 @@
 Persönliche Desktop-App für lokale KI-Modelle über [Ollama](https://ollama.com).
 Navigation inspiriert von [mudler/LocalAI](https://github.com/mudler/LocalAI) (MIT) – eigener Code, keine Kopie.
 
-Stand: **Phase 6 abgeschlossen** (Erinnerungen & Obsidian)
+Stand: **Phase 8 abgeschlossen** (moderne Oberfläche) – Installer und Update-Knopf (Phase 7) sind
+fertig, das erste Release kommt nach den weiteren geplanten Phasen.
+
+- Oberfläche: schmale Symbolleiste links (Chat, Vorlagen, Wissen, Modelle, Status, Einstellungen),
+  daneben die Chatliste (Projekte, Chats nach Tagen, Ollama-Status unten; **Strg+B** klappt sie ein).
+  Hell, dunkel oder wie Windows – umschalten unten in der Leiste oder unter Einstellungen →
+  Darstellung. Schrift Inter (liegt in der App, wird nicht aus dem Internet geladen).
 
 - Statusanzeige für Ollama, Liste der installierten Modelle
 - Chat mit Streaming: Markdown, Code-Hervorhebung, Gedanken von Denkmodellen, Tokens/s
@@ -19,11 +25,12 @@ Stand: **Phase 6 abgeschlossen** (Erinnerungen & Obsidian)
 - Status-Seite: Grafikkarte (Auslastung, VRAM nach Ollama/andere/frei, Temperatur, Strom –
   nur bei Ollama auf diesem PC mit NVIDIA-Karte) und geladene Modelle mit Anteil GPU/CPU
 - MCP-Dateisystem-Server mit Freigaben pro Tool; Modelle können im Chat Dateien in den
-  freigegebenen Ordnern lesen und – nach Rückfrage – schreiben
+  freigegebenen Ordnern lesen und – nach Rückfrage – schreiben (einschalten über den Schalter
+  „Werkzeuge“ unten im Eingabefeld)
 - Seite „Wissen“: Sammlungen aus Ordnern und Dateien (PDF, Word, Text, Markdown, Quellcode) einlesen;
   „Neu einlesen“ berechnet nur Geändertes neu. Braucht das Embedding-Modell
   `qwen3-embedding:0.6b` (unter „Installierte Modelle“ herunterladen).
-- Wissen im Chat: Über den Wissen-Knopf (Bücher-Symbol im Chat-Kopf, auch in Vorlagen) Sammlungen
+- Wissen im Chat: Über den Schalter „Wissen“ unten im Eingabefeld (auch in Vorlagen) Sammlungen
   wählen – vor jeder Antwort sucht LocalDesk passende Stellen, das Modell zitiert sie mit [1], [2] …
   Klick auf die Nummer zeigt die Textstelle, „Öffnen“ die Datei.
 - Seitenbereich neben dem Chat (Knopf ganz rechts im Chat-Kopf): Quellen der letzten Antwort,
@@ -71,7 +78,7 @@ auf der Status-Seite nachsehen.
 
 1. Einmalig das Embedding-Modell `qwen3-embedding:0.6b` (639 MB) unter **Installierte Modelle**
    herunterladen – es berechnet die „Fingerabdrücke“ der Textabschnitte, lokal über Ollama.
-2. **Wissen** (Seitenleiste): Sammlung anlegen, Ordner oder Dateien hinzufügen (PDF, Word, Text,
+2. **Wissen** (Symbolleiste links): Sammlung anlegen, Ordner oder Dateien hinzufügen (PDF, Word, Text,
    Markdown, Quellcode), **Einlesen**. Die Dateien bleiben, wo sie sind; nach Änderungen
    **Neu einlesen** – das rechnet nur Neues und Geändertes.
 3. Im Chat über das Bücher-Symbol Sammlungen einschalten. Vor jeder Antwort sucht LocalDesk
