@@ -184,8 +184,14 @@ export async function signInWithGoogle(
       );
     }
     const access = toAccess(tokens, deps.now());
-    const email = await gmailAddress(deps.fetch, access.token);
-    return { email, refreshToken: tokens.refresh_token, access };
+    try {
+      const email = await gmailAddress(deps.fetch, access.token);
+      return { email, refreshToken: tokens.refresh_token, access };
+    } catch (error) {
+      // Nicht nutzbare Anmeldung nicht bei Google offen stehen lassen.
+      await revokeGoogleToken(deps.fetch, tokens.refresh_token).catch(() => {});
+      throw error;
+    }
   } finally {
     clearTimeout(timer);
     deps.signal.removeEventListener('abort', onAbort);
@@ -258,15 +264,40 @@ async function gmailAddress(
   });
   const body = (await response.json().catch(() => ({}))) as {
     emailAddress?: unknown;
-  };
+  } & GoogleApiError;
   if (!response.ok || typeof body.emailAddress !== 'string') {
-    throw new Error(
-      response.status === 403
-        ? 'Gmail lehnt den Zugriff ab – ist die Gmail-API im Google-Projekt aktiviert?'
-        : `Gmail antwortet nicht wie erwartet (${response.status}).`,
-    );
+    throw new Error(describeGmailError(response.status, body));
   }
   return body.emailAddress;
+}
+
+/** Fehlerantwort der Google-APIs (gekürzt auf das, was wir lesen). */
+export interface GoogleApiError {
+  error?: {
+    message?: unknown;
+    details?: { reason?: unknown }[];
+  };
+}
+
+/** Übersetzt die häufigen Gmail-Fehler; sonst zählt Googles eigener Text. */
+export function describeGmailError(
+  status: number,
+  body: GoogleApiError,
+): string {
+  const reasons = (body.error?.details ?? []).map((d) => d?.reason);
+  const message =
+    typeof body.error?.message === 'string' ? body.error.message : '';
+  if (
+    reasons.includes('SERVICE_DISABLED') ||
+    /has not been used|is disabled/i.test(message)
+  ) {
+    return 'Die Gmail-API ist im Google-Projekt nicht aktiviert. Google Cloud Console → APIs & Dienste → Bibliothek → „Gmail API“ → Aktivieren, ein paar Minuten warten und dann neu anmelden.';
+  }
+  if (status === 401)
+    return 'Gmail hat die Anmeldung nicht angenommen – bitte neu anmelden.';
+  if (status === 429)
+    return 'Gmail meldet zu viele Anfragen – bitte kurz warten.';
+  return `Gmail lehnt die Anfrage ab (${status})${message ? `: ${message.slice(0, 300)}` : '.'}`;
 }
 
 function toAccess(

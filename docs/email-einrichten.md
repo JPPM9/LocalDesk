@@ -50,17 +50,17 @@ Dauer: etwa 10 Minuten. Du brauchst nur dein Google-Konto, keine Kreditkarte.
 > festgelegt, welche Aufrufe es überhaupt gibt: Senden und Löschen sind nicht
 > eingebaut.
 
-### 5. App auf „Produktion“ stellen
+### 5. Dich als Testnutzer eintragen
 
-1. Links **Zielgruppe** → bei „Veröffentlichungsstatus“ **App veröffentlichen** →
-   bestätigen.
-2. Google bietet danach eine Überprüfung an – **nicht** beantragen. Für dich allein
-   ist sie nicht nötig (bis 100 Personen geht es ohne).
+1. Links **Zielgruppe** → **Testnutzer** → **Add users** → deine Gmail-Adresse →
+   **Speichern**.
 
-> **Warum?** Im Status „Test“ meldet Google dich nach 7 Tagen ab. Im Status
-> „Produktion“ bleibt die Anmeldung bestehen – abgemeldet wirst du nur, wenn du dein
-> Google-Passwort änderst, LocalDesk 6 Monate nicht nutzt oder den Zugriff selbst
-> widerrufst.
+> **7 Tage:** Im Status „Test“ meldet Google dich nach 7 Tagen ab – LocalDesk zeigt
+> dann „Bitte neu anmelden“. Eigentlich hilft **App veröffentlichen** (Status
+> „Produktion“). Seit Herbst 2026 bleibt dieser Knopf bei vielen privaten Apps aber
+> ausgegraut, vermutlich weil Google jetzt Links zu Startseite und
+> Datenschutzerklärung verlangt. Das holen wir nach, wenn LocalDesk veröffentlicht
+> wird. Eine Überprüfung durch Google beantragst du **nicht**.
 
 ### 6. Zugangsdaten (Client) anlegen
 

@@ -9,9 +9,9 @@ import type { Fetch } from './mail-fetch';
 
 /** Verschlüsselt die Anmelde-Schlüssel (in der App: Electrons safeStorage). */
 export interface TokenCipher {
-  available(): boolean;
-  encrypt(text: string): string;
-  decrypt(encrypted: string): string;
+  available(): Promise<boolean>;
+  encrypt(text: string): Promise<string>;
+  decrypt(encrypted: string): Promise<string>;
 }
 
 /**
@@ -29,20 +29,28 @@ export class MailSessions {
     private readonly now: () => number = Date.now,
   ) {}
 
-  /** Speichert eine neue Anmeldung verschlüsselt; ohne Verschlüsselung gar nicht. */
-  remember(email: string, refreshToken: string, access: AccessToken) {
-    if (!this.cipher.available()) {
-      throw new Error(
-        'Windows kann die Anmeldung gerade nicht verschlüsseln – deshalb wird sie nicht gespeichert.',
+  /**
+   * Speichert eine neue Anmeldung verschlüsselt; ohne Verschlüsselung gar nicht.
+   * Klappt das Speichern nicht, wird die Anmeldung bei Google gleich widerrufen.
+   */
+  async remember(email: string, refreshToken: string, access: AccessToken) {
+    try {
+      if (!(await this.cipher.available())) {
+        throw new Error(
+          'Windows kann die Anmeldung gerade nicht verschlüsseln – deshalb wird sie nicht gespeichert.',
+        );
+      }
+      const account = this.accounts.save(
+        'google',
+        email,
+        await this.cipher.encrypt(refreshToken),
       );
+      this.access.set(account.id, access);
+      return account;
+    } catch (error) {
+      await revokeGoogleToken(this.fetch, refreshToken).catch(() => {});
+      throw error;
     }
-    const account = this.accounts.save(
-      'google',
-      email,
-      this.cipher.encrypt(refreshToken),
-    );
-    this.access.set(account.id, access);
-    return account;
   }
 
   /** Gültiger Zugangsschlüssel für ein Konto – bei Bedarf frisch geholt. */
@@ -57,7 +65,7 @@ export class MailSessions {
     const fresh = await refreshGoogleAccess(
       this.fetch,
       app,
-      this.cipher.decrypt(encrypted),
+      await this.cipher.decrypt(encrypted),
       this.now(),
     );
     this.access.set(accountId, fresh);
@@ -73,7 +81,10 @@ export class MailSessions {
     let revoked = false;
     if (encrypted) {
       try {
-        await revokeGoogleToken(this.fetch, this.cipher.decrypt(encrypted));
+        await revokeGoogleToken(
+          this.fetch,
+          await this.cipher.decrypt(encrypted),
+        );
         revoked = true;
       } catch {
         revoked = false;

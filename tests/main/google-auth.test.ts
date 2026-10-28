@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   GOOGLE_SCOPE,
   GOOGLE_URLS,
+  describeGmailError,
   MailReauthError,
   refreshGoogleAccess,
   signInWithGoogle,
@@ -15,7 +16,13 @@ const APP = {
 };
 
 /** Nachgebautes Google: merkt sich die Anfragen und antwortet wie die echte API. */
-function fakeGoogle(options: { scope?: string; tokenError?: string } = {}) {
+function fakeGoogle(
+  options: {
+    scope?: string;
+    tokenError?: string;
+    gmailDisabled?: boolean;
+  } = {},
+) {
   const calls: { url: string; body: URLSearchParams | null; auth?: string }[] =
     [];
   const fetch: Fetch = async (url, init) => {
@@ -33,6 +40,19 @@ function fakeGoogle(options: { scope?: string; tokenError?: string } = {}) {
         refresh_token: 'dauer-1',
         scope: options.scope ?? GOOGLE_SCOPE,
       });
+    }
+    if (url === GOOGLE_URLS.profile && options.gmailDisabled) {
+      return Response.json(
+        {
+          error: {
+            code: 403,
+            message:
+              'Gmail API has not been used in project 1 before or it is disabled.',
+            details: [{ reason: 'SERVICE_DISABLED' }],
+          },
+        },
+        { status: 403 },
+      );
     }
     if (url === GOOGLE_URLS.profile) {
       return Response.json({ emailAddress: 'ich@gmail.com' });
@@ -121,6 +141,16 @@ describe('signInWithGoogle', () => {
     expect(google.calls.map((c) => c.url)).toContain(GOOGLE_URLS.revoke);
   });
 
+  it('erkennt die nicht aktivierte Gmail-API und widerruft die Anmeldung', async () => {
+    const google = fakeGoogle({ gmailDisabled: true });
+    const { openBrowser } = browser((state) => ({ code: 'c', state }));
+    await expect(
+      signInWithGoogle(APP, deps(google.fetch, openBrowser)),
+    ).rejects.toThrow('Gmail-API ist im Google-Projekt nicht aktiviert');
+    const revoke = google.calls.find((c) => c.url === GOOGLE_URLS.revoke);
+    expect(revoke?.body?.get('token')).toBe('dauer-1');
+  });
+
   it('erklärt falsche App-Daten', async () => {
     const google = fakeGoogle({ tokenError: 'invalid_client' });
     const { openBrowser } = browser((state) => ({ code: 'c', state }));
@@ -149,6 +179,19 @@ describe('signInWithGoogle', () => {
       timeoutMs: 20,
     });
     await expect(running).rejects.toThrow('5 Minuten');
+  });
+});
+
+describe('describeGmailError', () => {
+  it('nimmt sonst Googles eigenen Text', () => {
+    expect(
+      describeGmailError(403, {
+        error: { message: 'Insufficient Permission' },
+      }),
+    ).toBe('Gmail lehnt die Anfrage ab (403): Insufficient Permission');
+    expect(describeGmailError(500, {})).toBe(
+      'Gmail lehnt die Anfrage ab (500).',
+    );
   });
 });
 

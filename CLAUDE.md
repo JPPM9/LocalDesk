@@ -459,8 +459,14 @@
   Abmelden widerruft bei Google und löscht lokal (auch wenn Google nicht erreichbar – dann Hinweis).
   Google-App ist gesperrt, solange Konten angemeldet sind. **Netzwerk-Regel:** Mail-Verkehr nur
   über `guardedFetch` (`mail-fetch.ts`, HTTPS + feste Hosts `accounts.google.com`,
-  `oauth2.googleapis.com`, `gmail.googleapis.com`). Echter Google-Test steht aus (braucht die
-  Google-App des Nutzers).
+  `oauth2.googleapis.com`, `gmail.googleapis.com`). Echter Test 2026-10-28 ✓: Anmeldung mit der
+  Google-App des Nutzers, Konto erscheint, Refresh-Token in der DB verschlüsselt (Präfix `v10`,
+  kein Klartext). Erkenntnisse: „App veröffentlichen“ bleibt in Googles Console ausgegraut (bekanntes
+  Problem seit Herbst 2026, vermutlich fehlen Startseite/Datenschutz-Links) → vorerst Status „Test“
+  mit Nutzer als Testnutzer = Neu-Anmelden alle 7 Tage; Veröffentlichen erneut in Phase 13 (mit
+  Datenschutzerklärung). Nicht aktivierte Gmail-API → 403 SERVICE_DISABLED, wird jetzt erkannt;
+  scheitert etwas nach dem Code-Tausch, wird die Anmeldung bei Google sofort widerrufen.
+  `safeStorage` über die async-Funktionen (die synchronen sind in Electron 45 veraltet).
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 E-Mail Gmail + Outlook direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

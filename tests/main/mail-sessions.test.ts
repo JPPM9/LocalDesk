@@ -11,10 +11,11 @@ import {
 const APP = { clientId: 'id', clientSecret: 'secret' };
 
 /** Spielzeug-Verschlüsselung: sichtbar anders als der Klartext. */
+const reverse = (text: string) => [...text].reverse().join('');
 const cipher: TokenCipher = {
-  available: () => true,
-  encrypt: (text) => `enc(${[...text].reverse().join('')})`,
-  decrypt: (enc) => [...enc.slice(4, -1)].reverse().join(''),
+  available: async () => true,
+  encrypt: async (text) => `enc(${reverse(text)})`,
+  decrypt: async (enc) => reverse(enc.slice(4, -1)),
 };
 
 let clock: number;
@@ -58,11 +59,14 @@ const sessions = (c = cipher) =>
   );
 
 describe('MailSessions', () => {
-  it('speichert die Anmeldung nur verschlüsselt', () => {
-    const account = sessions().remember('ich@gmail.com', 'dauer', {
-      token: 'z',
-      expiresAt: 10,
-    });
+  const access = (expiresAt: number) => ({ token: 'z', expiresAt });
+
+  it('speichert die Anmeldung nur verschlüsselt', async () => {
+    const account = await sessions().remember(
+      'ich@gmail.com',
+      'dauer',
+      access(10),
+    );
     expect(account).toEqual({
       id: 'konto-1',
       provider: 'google',
@@ -71,19 +75,21 @@ describe('MailSessions', () => {
     expect(accounts.encryptedToken('konto-1')).toBe('enc(reuad)');
   });
 
-  it('verweigert das Speichern ohne Verschlüsselung', () => {
-    expect(() =>
-      sessions({ ...cipher, available: () => false }).remember('a@b.c', 'x', {
-        token: 'z',
-        expiresAt: 1,
-      }),
-    ).toThrow('verschlüsseln');
+  it('verweigert das Speichern ohne Verschlüsselung – und widerruft', async () => {
+    await expect(
+      sessions({ ...cipher, available: async () => false }).remember(
+        'a@b.c',
+        'x',
+        access(1),
+      ),
+    ).rejects.toThrow('verschlüsseln');
     expect(accounts.list()).toEqual([]);
+    expect(requests).toEqual([{ url: GOOGLE_URLS.revoke, token: 'x' }]);
   });
 
   it('nutzt den Zugangsschlüssel, bis er abläuft, dann einen frischen', async () => {
     const s = sessions();
-    s.remember('ich@gmail.com', 'dauer', { token: 'z', expiresAt: 100 });
+    await s.remember('ich@gmail.com', 'dauer', access(100));
     clock = 50;
     expect(await s.accessToken('konto-1')).toBe('z');
     expect(requests).toEqual([]);
@@ -92,17 +98,19 @@ describe('MailSessions', () => {
     expect(requests[0]).toEqual({ url: GOOGLE_URLS.token, token: 'dauer' });
   });
 
-  it('neue Anmeldung desselben Kontos behält die Kennung', () => {
+  it('neue Anmeldung desselben Kontos behält die Kennung', async () => {
     const s = sessions();
-    s.remember('ich@gmail.com', 'alt', { token: 'z', expiresAt: 1 });
-    s.remember('ich@gmail.com', 'neu', { token: 'z', expiresAt: 1 });
+    await s.remember('ich@gmail.com', 'alt', access(1));
+    await s.remember('ich@gmail.com', 'neu', access(1));
     expect(accounts.list()).toHaveLength(1);
-    expect(cipher.decrypt(accounts.encryptedToken('konto-1')!)).toBe('neu');
+    expect(await cipher.decrypt(accounts.encryptedToken('konto-1')!)).toBe(
+      'neu',
+    );
   });
 
   it('Abmelden widerruft bei Google und löscht lokal', async () => {
     const s = sessions();
-    s.remember('ich@gmail.com', 'dauer', { token: 'z', expiresAt: 1 });
+    await s.remember('ich@gmail.com', 'dauer', access(1));
     await expect(s.signOut('konto-1')).resolves.toEqual({ revoked: true });
     expect(requests).toEqual([{ url: GOOGLE_URLS.revoke, token: 'dauer' }]);
     expect(accounts.list()).toEqual([]);
@@ -111,7 +119,7 @@ describe('MailSessions', () => {
   it('löscht auch, wenn Google nicht erreichbar ist – und sagt es', async () => {
     revokeStatus = 503;
     const s = sessions();
-    s.remember('ich@gmail.com', 'dauer', { token: 'z', expiresAt: 1 });
+    await s.remember('ich@gmail.com', 'dauer', access(1));
     await expect(s.signOut('konto-1')).resolves.toEqual({ revoked: false });
     expect(accounts.list()).toEqual([]);
     await expect(s.accessToken('konto-1')).rejects.toThrow('nicht (mehr)');

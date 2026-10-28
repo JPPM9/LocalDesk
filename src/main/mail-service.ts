@@ -17,10 +17,14 @@ const GOOGLE_SECRET_KEY = 'mail.google.clientSecret';
 
 /** Windows-Verschlüsselung (DPAPI) – nur dein Windows-Konto kann es entschlüsseln. */
 const safeStorageCipher: TokenCipher = {
-  available: () => safeStorage.isEncryptionAvailable(),
-  encrypt: (text) => safeStorage.encryptString(text).toString('base64'),
-  decrypt: (encrypted) =>
-    safeStorage.decryptString(Buffer.from(encrypted, 'base64')),
+  available: () => safeStorage.isAsyncEncryptionAvailable(),
+  encrypt: async (text) =>
+    (await safeStorage.encryptStringAsync(text)).toString('base64'),
+  // `shouldReEncrypt` (neuer Schlüssel bei Windows) ignorieren wir: Der alte
+  // Text bleibt lesbar, und beim nächsten Anmelden wird ohnehin neu verschlüsselt.
+  decrypt: async (encrypted) =>
+    (await safeStorage.decryptStringAsync(Buffer.from(encrypted, 'base64')))
+      .result,
 };
 
 /**
@@ -97,7 +101,7 @@ export function registerMailHandlers(
     async (): Promise<Result<MailAccountView>> => {
       const app = googleSecrets();
       if (!app) return { ok: false, error: 'Erst die Google-App eintragen.' };
-      if (!safeStorageCipher.available()) {
+      if (!(await safeStorageCipher.available())) {
         return {
           ok: false,
           error:
@@ -122,7 +126,7 @@ export function registerMailHandlers(
         });
         return {
           ok: true,
-          value: sessions.remember(
+          value: await sessions.remember(
             result.email,
             result.refreshToken,
             result.access,
