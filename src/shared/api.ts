@@ -13,7 +13,7 @@ import type {
   MailMessage,
   MailPage,
 } from './mail';
-import type { CodeEntry, CodeFile } from './code';
+import type { CodeChangeState, CodeEntry, CodeFile } from './code';
 import type { MailSuggestion } from './mail-sorting';
 import type { SkillInput, SkillView } from './skills';
 import type { UpdateState } from './update';
@@ -620,6 +620,13 @@ export interface LocalDeskApi {
     sessionId: string,
     relative: string,
   ) => Promise<Result<CodeEntry[]>>;
+  /** Wurde eine Änderung des Agenten schon rückgängig gemacht? */
+  codeChangeState: (callId: string) => Promise<CodeChangeState>;
+  /** Setzt eine Änderung zurück; ohne `force` nicht, wenn die Datei seither anders ist. */
+  undoCodeChange: (
+    callId: string,
+    force?: boolean,
+  ) => Promise<{ ok: true } | { ok: false; error: string; conflict?: true }>;
   /** Eine Datei im Projekt zum Ansehen. */
   readCodeFile: (
     sessionId: string,
@@ -836,6 +843,8 @@ export const IpcChannels = {
   createCodeSession: 'code:create-session',
   listCodeDir: 'code:list-dir',
   readCodeFile: 'code:read-file',
+  codeChangeState: 'code:change-state',
+  undoCodeChange: 'code:undo',
   getMailApps: 'mail:get-apps',
   setGoogleApp: 'mail:set-google-app',
   clearGoogleApp: 'mail:clear-google-app',

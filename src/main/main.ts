@@ -38,6 +38,7 @@ import { SkillStore } from './skills/skill-store';
 import { registerSkillHandlers } from './skill-service';
 import { registerMailHandlers } from './mail-service';
 import { registerCodeHandlers } from './code-service';
+import { CodeBackups } from './code/backups';
 import { MailAccountRepository } from './db/mail-account-repository';
 
 // Gleiche Kennung wie im Installer (electron-builder.yml, appId): Taskleiste und
@@ -172,7 +173,11 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
     (error) => console.error('Beispiel-Skills nicht angelegt:', error),
   );
 
-  registerCodeHandlers(chats);
+  // Code-Bereich: Sicherungen vor jeder Änderung, für „Rückgängig“.
+  const codeBackups = new CodeBackups(
+    path.join(app.getPath('userData'), 'code-backups'),
+  );
+  registerCodeHandlers(chats, codeBackups);
   const mailAccounts = new MailAccountRepository(db);
   const mail = registerMailHandlers(
     new AppSettingsRepository(db),
@@ -192,6 +197,7 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
       exists: (accountId) => mailAccounts.get(accountId) !== null,
       client: mail.client,
     },
+    codeBackups,
   );
 
   registerUpdateHandlers();

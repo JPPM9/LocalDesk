@@ -546,6 +546,19 @@
   bleibt. Live ✓ im Übungsprojekt: qwen3:14b (Baum + 3 Dateien gelesen → Division durch null
   gefunden, 64 s), gpt-oss:20b (`search_text` → richtig, 13 s), gemma4:12b (aus dem Verlauf,
   Zeilen richtig).
+  Schritt 3 ✓: `code/edit-tools.ts` – `edit_file` (old_text muss GENAU einmal vorkommen, sonst
+  Fehler mit Anzahl; CRLF-Dateien werden mit \n verglichen und mit \r\n zurückgeschrieben),
+  `write_file` (neu anlegen inkl. Ordner oder ganz ersetzen), `delete_file` (nur Dateien,
+  `destructive`). Alle `ask` + `alwaysAsk` + `describe` = Unified Diff aus jsdiff
+  (`createTwoFilesPatch`, 3 Zeilen Kontext, max. 400 Zeilen). `planChange` läuft für die Vorschau
+  UND beim Ausführen neu (Datei könnte sich geändert haben). Vor dem Schreiben sichert
+  `code/backups.ts` vorher/nachher unter `code-backups/<Aufruf-ID>.json`; `ToolRuntime.call` bekommt
+  dafür die Aufruf-ID. Rückgängig nur, wenn die Datei noch dem „nachher“ entspricht – sonst
+  Rückfrage „trotzdem“ (force). Oberfläche: `DiffView` (rot/grün), Karte „Datei ändern?“ mit
+  Übernehmen/Ablehnen, danach `CodeChangeRow` mit „Rückgängig“ (Stand per `codeChangeState`).
+  Gefunden durch Tests: write_file hatte „muss existieren“ verkehrt herum. Live ✓ (qwen3:14b):
+  Karte mit Diff nach 79 s → Übernehmen → Datei geändert → Rückgängig → `git status` leer.
+  gpt-oss:20b scheiterte wieder an Ollamas CUDA-Ladefehler (App zeigt ihn verständlich an).
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

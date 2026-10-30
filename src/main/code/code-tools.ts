@@ -3,7 +3,8 @@ import path from 'node:path';
 import type { OfferedTool } from '../../shared/tools';
 import { CODE_FILE_MAX, HIDDEN_DIRS, type Workspace } from './workspace';
 
-export const CODE_TOOL_SERVER = 'localdesk:code';
+export { CODE_TOOL_SERVER } from '../../shared/code';
+import { CODE_TOOL_SERVER } from '../../shared/code';
 
 /** Ordner, die beim Auflisten und Suchen übersprungen werden (riesig, erzeugt). */
 const SKIPPED_DIRS = new Set([

@@ -30,7 +30,15 @@ import {
 import type { OfferedTool } from '../shared/tools';
 import { buildChatRequest } from '../shared/settings';
 import { describeChatError } from './chat-errors';
+import { CODE_CHANGE_TOOLS } from '../shared/code';
+import type { CodeBackups } from './code/backups';
 import { CODE_TOOL_SERVER, callReadTool, readTools } from './code/code-tools';
+import {
+  applyChange,
+  changePreview,
+  editTools,
+  planChange,
+} from './code/edit-tools';
 import { Workspace } from './code/workspace';
 import type { ChatRepository } from './db/chat-repository';
 import type { ChatKnowledge } from './knowledge-service';
@@ -73,6 +81,8 @@ export function registerChatHandlers(
     exists(accountId: string): boolean;
     client(accountId: string): MailClient;
   },
+  /** Sicherungen für „Rückgängig“ im Code-Bereich. */
+  codeBackups: CodeBackups,
 ) {
   const running = new Map<string, AbortController>();
   /** Rückfragen, auf deren Antwort ein Tool-Aufruf wartet (Aufruf-ID → Antwort). */
@@ -245,7 +255,14 @@ export function registerChatHandlers(
     /** Projektordner einer Code-Sitzung (null = normaler Chat). */
     code: Workspace | null,
   ): ToolRuntime {
-    const codeOffers = code ? readTools() : [];
+    const codeOffers = code
+      ? [
+          ...readTools(),
+          ...editTools(async (toolName, args) =>
+            changePreview(await planChange(code, toolName, args)),
+          ),
+        ]
+      : [];
     const mailOffers = mailbox
       ? mailTools(mailbox.labels, (args) =>
           describeMailChange(mailbox.client, args, mailbox.labels),
@@ -273,8 +290,20 @@ export function registerChatHandlers(
         ...codeOffers,
         ...mcpTools.offered(serverIds),
       ],
-      call: async (tool, args, callSignal) => {
+      call: async (tool, args, callSignal, callId) => {
         if (tool.serverId === CODE_TOOL_SERVER && code) {
+          if (CODE_CHANGE_TOOLS.includes(tool.toolName)) {
+            return {
+              text: await applyChange(
+                code,
+                codeBackups,
+                callId,
+                tool.toolName,
+                args,
+              ),
+              isError: false,
+            };
+          }
           const result = await callReadTool(code, tool.toolName, args);
           if (result === null) {
             return {

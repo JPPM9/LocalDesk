@@ -10,7 +10,10 @@ import {
 } from 'lucide-react';
 import type { ToolCallRecord, ToolDecision } from '../../../shared/api';
 import { MEMORY_TOOL_SERVER } from '../../../shared/memory';
+import { CODE_CHANGE_TOOLS, CODE_TOOL_SERVER } from '../../../shared/code';
 import { MAIL_TOOL_SERVER } from '../../../shared/mail';
+import { CodeChangeRow } from '../code/CodeChangeRow';
+import { DiffView } from '../code/DiffView';
 import { SKILL_TOOL_SERVER } from '../../../shared/skills';
 import { summarizeArguments } from '../../../shared/tools';
 import { MemoryEditor } from './MemoryEditor';
@@ -44,6 +47,12 @@ export function ToolCallView({
   const isMemory = call.serverId === MEMORY_TOOL_SERVER;
   const isSkill = call.serverId === SKILL_TOOL_SERVER;
   const isMail = call.serverId === MAIL_TOOL_SERVER;
+  // Datei-Änderungen des Code-Agenten: Vorher/Nachher und „Rückgängig“.
+  const isCodeChange =
+    call.serverId === CODE_TOOL_SERVER &&
+    CODE_CHANGE_TOOLS.includes(call.toolName);
+  // Mail und Code fragen in Alltagssprache, nicht mit dem Werkzeugnamen.
+  const friendly = isMail || isCodeChange;
 
   // „Erinnerung speichern“: Vorschlag bearbeiten, dann speichern oder ablehnen.
   if (isMemory && call.status === 'asking') {
@@ -74,9 +83,11 @@ export function ToolCallView({
           <ShieldQuestion size={16} className="shrink-0 text-accent-text" />
           {isMail
             ? t('toolCall.mailAsk')
-            : t('toolCall.askTitle', { tool: call.toolName })}
+            : isCodeChange
+              ? t(`code.ask.${call.toolName}`)
+              : t('toolCall.askTitle', { tool: call.toolName })}
         </div>
-        {!isMail && (
+        {!friendly && (
           <p className="text-xs text-muted">
             {t('toolCall.server', { name: call.serverName })}
           </p>
@@ -87,7 +98,9 @@ export function ToolCallView({
             {t('toolCall.askDestructive')}
           </p>
         )}
-        {call.preview ? (
+        {call.preview && isCodeChange ? (
+          <DiffView text={call.preview} />
+        ) : call.preview ? (
           <p className="text-[13px] whitespace-pre-wrap">{call.preview}</p>
         ) : (
           <Code text={formatArguments(call.arguments)} />
@@ -98,7 +111,7 @@ export function ToolCallView({
             onClick={() => onDecision(call.id, 'once')}
             className="rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90"
           >
-            {isMail ? t('toolCall.mailApply') : t('toolCall.allowOnce')}
+            {friendly ? t('toolCall.mailApply') : t('toolCall.allowOnce')}
           </button>
           {!call.alwaysAsk && (
             <button
@@ -121,6 +134,8 @@ export function ToolCallView({
       </div>
     );
   }
+
+  if (isCodeChange) return <CodeChangeRow call={call} />;
 
   return (
     <details className="group rounded-xl border border-border text-[13px]">

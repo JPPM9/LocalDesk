@@ -690,6 +690,19 @@
     "agent": "Agent",
     "agentEmpty": "Was soll der Agent in diesem Projekt tun?",
     "agentHint": "Zum Beispiel: „Erklär mir den Aufbau“, „Wo wird X berechnet?“. Er sieht nur diesen Ordner; Dateien liest er ohne Rückfrage.",
-    "noToolModels": "Kein installiertes Modell kann Werkzeuge benutzen – der Agent braucht eins (z. B. qwen3, gpt-oss)."
+    "noToolModels": "Kein installiertes Modell kann Werkzeuge benutzen – der Agent braucht eins (z. B. qwen3, gpt-oss).",
+    "ask": {
+      "edit_file": "Datei ändern?",
+      "write_file": "Datei anlegen oder ersetzen?",
+      "delete_file": "Datei löschen?"
+    },
+    "change": {
+      "edit_file": "Datei geändert",
+      "write_file": "Datei geschrieben",
+      "delete_file": "Datei gelöscht"
+    },
+    "undo": "Rückgängig",
+    "undone": "rückgängig gemacht",
+    "undoConflict": "{{error}} Trotzdem auf den Stand vor der Änderung zurücksetzen? Spätere Änderungen an der Datei gehen dabei verloren."
   }
 }

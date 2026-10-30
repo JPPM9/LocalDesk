@@ -16,3 +16,16 @@ export interface CodeFile {
   tooLarge?: boolean;
   binary?: boolean;
 }
+
+/** Server-Kennung der eingebauten Code-Werkzeuge. */
+export const CODE_TOOL_SERVER = 'localdesk:code';
+
+/** Werkzeuge, die Dateien ändern – mit Vorher/Nachher-Karte und „Rückgängig“. */
+export const CODE_CHANGE_TOOLS: readonly string[] = [
+  'edit_file',
+  'write_file',
+  'delete_file',
+];
+
+/** Stand einer übernommenen Änderung (für den Knopf „Rückgängig“). */
+export type CodeChangeState = 'applied' | 'undone' | 'missing';

@@ -38,6 +38,8 @@ export interface ToolRuntime {
     tool: NamedTool,
     args: Record<string, unknown>,
     signal: AbortSignal,
+    /** Kennung des Aufrufs (z. B. für Sicherungen zum Rückgängigmachen). */
+    callId: string,
   ): Promise<ToolResult>;
   /** Fragt dich im Chat; liefert „deny“, wenn die Antwort vorher gestoppt wird. */
   ask(call: ToolCallRecord): Promise<ToolAnswer>;
@@ -212,7 +214,7 @@ async function runToolCall(
   update({ status: 'running' });
   let result: ToolResult;
   try {
-    result = await runtime.call(tool, args, signal);
+    result = await runtime.call(tool, args, signal, record.id);
   } catch (error) {
     signal.throwIfAborted();
     result = {

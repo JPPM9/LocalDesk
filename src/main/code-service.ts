@@ -4,6 +4,7 @@ import { BrowserWindow, dialog, ipcMain } from 'electron';
 import { IpcChannels, type CodeSession, type Result } from '../shared/api';
 import type { CodeEntry, CodeFile } from '../shared/code';
 import { CODE_CONTEXT_DEFAULT } from '../shared/code-agent';
+import type { CodeBackups } from './code/backups';
 import { Workspace } from './code/workspace';
 import type { ChatRepository } from './db/chat-repository';
 
@@ -12,7 +13,10 @@ import type { ChatRepository } from './db/chat-repository';
  * Den Ordner wählst du immer im Windows-Dialog – die Oberfläche kann keinen
  * Pfad vorgeben.
  */
-export function registerCodeHandlers(chats: ChatRepository) {
+export function registerCodeHandlers(
+  chats: ChatRepository,
+  backups: CodeBackups,
+) {
   /** Projektordner einer Sitzung, frisch geprüft. */
   const workspaceOf = async (sessionId: unknown): Promise<Workspace> => {
     const chat =
@@ -64,6 +68,34 @@ export function registerCodeHandlers(chats: ChatRepository) {
           typeof relative === 'string' ? relative : '',
         ),
       ),
+  );
+
+  ipcMain.handle(IpcChannels.codeChangeState, (_event, callId: unknown) =>
+    typeof callId === 'string' ? backups.state(callId) : 'missing',
+  );
+
+  // „Rückgängig“: nur, wenn die Datei seither nicht geändert wurde – oder mit force.
+  ipcMain.handle(
+    IpcChannels.undoCodeChange,
+    async (
+      _event,
+      callId: unknown,
+      force: unknown,
+    ): Promise<
+      { ok: true } | { ok: false; error: string; conflict?: true }
+    > => {
+      if (typeof callId !== 'string') {
+        return { ok: false, error: 'Ungültige Kennung.' };
+      }
+      try {
+        return await backups.undo(callId, force === true);
+      } catch (error) {
+        return {
+          ok: false,
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+    },
   );
 
   ipcMain.handle(
