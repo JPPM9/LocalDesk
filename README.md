@@ -3,10 +3,11 @@
 Persönliche Desktop-App für lokale KI-Modelle über [Ollama](https://ollama.com).
 Navigation inspiriert von [mudler/LocalAI](https://github.com/mudler/LocalAI) (MIT) – eigener Code, keine Kopie.
 
-Stand: **Phase 9 abgeschlossen** (Skills) – Installer und Update-Knopf (Phase 7) sind
-fertig, das erste Release kommt nach den weiteren geplanten Phasen.
+Stand: **Phase 11 abgeschlossen** (E-Mail mit Gmail) – Installer und Update-Knopf (Phase 7)
+sind fertig, das erste Release kommt nach den weiteren geplanten Phasen.
 
-- Oberfläche: schmale Symbolleiste links (Chat, Vorlagen, Wissen, Modelle, Status, Einstellungen),
+- Oberfläche: schmale Symbolleiste links (Chat, Vorlagen, E-Mail, Wissen, Skills, Modelle, Status,
+  Einstellungen),
   daneben die Chatliste (Projekte, Chats nach Tagen, Ollama-Status unten; **Strg+B** klappt sie ein).
   Hell, dunkel oder wie Windows – umschalten unten in der Leiste oder unter Einstellungen →
   Darstellung. Schrift Inter (liegt in der App, wird nicht aus dem Internet geladen).
@@ -74,6 +75,25 @@ erstellen soll. Vier Beispiele sind dabei; eigene legst du auf der Seite **Skill
   Claude) und lassen sich auch mit jedem Editor ändern („Neu laden“ in der App).
 - Ein Skill ist nur Text: Er führt nichts aus und gibt keine Werkzeug-Rechte.
 
+## E-Mail benutzen (Gmail)
+
+LocalDesk liest deine Gmail-Mails direkt bei Google – ohne fremden Dienst dazwischen – und gibt sie
+nur an dein lokales Modell. Einrichten (einmalig, etwa 10 Minuten): Schritt für Schritt in
+[docs/email-einrichten.md](docs/email-einrichten.md), danach **Einstellungen → E-Mail → Mit Google
+anmelden**. Outlook folgt später (Microsoft verlangt dafür ein Azure-Verzeichnis).
+
+- **Seite „E-Mail“:** Posteingang oder Gmail-Suche (z. B. `is:unread`, `from:bank`), Mails als reiner
+  Text ohne Bilder aus dem Internet, **Zusammenfassen** mit einem Modell deiner Wahl.
+- **Sortieren vorschlagen** (Zauberstab über der Liste): Das Modell schlägt für die ersten 25 Mails
+  eigene Labels und Sterne vor; du hakst an, was in Gmail übernommen wird.
+- **Im Chat:** Schalter „E-Mail“ im Eingabefeld – dann darf das Modell Mails suchen und lesen
+  („Was kam heute Wichtiges?“). Änderungen schlägt es als Karte vor, du klickst „Übernehmen“ oder
+  „Ablehnen“. Braucht ein Modell mit Werkzeugen.
+- **Was nie passiert:** senden, löschen, archivieren, als gelesen markieren. Ändern kann LocalDesk
+  nur „eigenes Label hinzufügen“ und „Stern setzen/entfernen“ – und nur nach deinem Klick.
+- **Testmodus:** Solange deine Google-App im Status „Test“ ist, meldet Google dich nach 7 Tagen ab –
+  dann einfach in den Einstellungen neu anmelden.
+
 ## Dateien im Chat benutzen (MCP)
 
 1. **Einstellungen → MCP-Server**: einen Dateisystem-Server anlegen und die Ordner wählen,
@@ -130,6 +150,10 @@ dazu, auch ohne passende Stelle Nummern zu schreiben.
 Alle Chats liegen in einer SQLite-Datei: `%APPDATA%\LocalDesk\localdesk.db`
 (der genaue Ordner steht in der App unter **Einstellungen → Über LocalDesk**).
 Zum Sichern die App schließen und den Ordner kopieren. Nichts davon verlässt den Rechner.
+
+Bei E-Mail speichert LocalDesk **keine Mails** – nur die Anmeldung bei Google, mit Windows
+verschlüsselt (nur dein Windows-Konto kann sie lesen), und die Client-ID deiner Google-App.
+„Abmelden“ widerruft den Zugriff bei Google und löscht die Anmeldung.
 
 Mit eingerichtetem Obsidian-Vault liegen Erinnerungen, gespeicherte Chats und Zusammenfassungen
 zusätzlich als normale Notizen im Vault – nur im eigenen Unterordner (Standard `LocalDesk`):

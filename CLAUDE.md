@@ -288,8 +288,9 @@
 - **Modell löschen**: Ollama `DELETE /api/delete`; nur mit gültigem Namen und immer mit Rückfrage
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
-- **Netzwerk**: nur Ollama-Server (lokal/LAN), Modell-Downloads über Ollama, Update-Prüfung nur per Knopf.
-  Keine Telemetrie.
+- **Netzwerk**: nur Ollama-Server (lokal/LAN), Modell-Downloads über Ollama, Update-Prüfung nur per Knopf,
+  und (Phase 11, vom Nutzer freigegeben) Gmail: nur `accounts.google.com`, `oauth2.googleapis.com`,
+  `gmail.googleapis.com` über HTTPS, erzwungen in `mail/mail-fetch.ts`. Keine Telemetrie.
 - **Tools/MCP**: Lesen frei, Schreiben/Ausführen bestätigen; pro Tool „immer / fragen / aus“.
 - **Obsidian-Memory**: App schreibt nur in eigenen Unterordner des Vaults; Pfad in Einstellungen.
 - **UI**: Dunkel + Hell (folgt Windows), nüchtern-technisch, Seitenleiste wie LocalAI, Texte über i18n (Deutsch).
@@ -438,7 +439,7 @@
   Abschlusstest (Ollama 0.40.11): gemma4, qwen3, gpt-oss je Schalter / Projekt / automatisch (Lernkarten)
   → 9/9. Gebaute App: Beispiele vorhanden, Code-Review automatisch geladen ✓. Bekannt: gpt-oss scheitert
   zwischendurch an Ollamas CUDA-Ladefehler – andere Modelle vorher entladen hilft.
-- Phase 11: E-Mail – in Arbeit. Entschieden (2026-10-28): erst nur Gmail (Outlook später: seit
+- Phase 11: E-Mail – abgeschlossen (2026-10-30), vorerst nur Gmail. Entschieden (2026-10-28): erst nur Gmail (Outlook später: seit
   Juni 2024 braucht jede Microsoft-App-Registrierung ein Verzeichnis/Azure-Konto; App-Passwörter
   für Outlook.com gibt es nicht mehr; fremde Client-IDs nutzen wir nicht) · eigene Google-App des
   Nutzers, Status „Produktion“ ohne Überprüfung (keine 7-Tage-Abmeldung, Warnung einmal
@@ -511,9 +512,16 @@
   Zahl der Mails → `mail_search` „newer_than:3d“ → „13“ (ganzes Postfach; Beschreibung nennt jetzt
   „in:inbox“); „Stern setzen“ → Karte mit Vorschau, Ablehnen → nichts geändert. Test-Chat per ID
   gelöscht.
+  Schritt 7 ✓ (2026-10-30, gebaute App `npm run package`): zwei Tage nach der Anmeldung frischer
+  Zugangsschlüssel aus der verschlüsselten Anmeldung ✓, Liste/Lesen/Labels/Suche ✓, Zusammenfassen
+  mit gemma4:12b ✓, unerlaubte Änderung („trash“) abgewiesen ✓, Seite rendert ✓. Doku: README
+  („E-Mail benutzen“, Daten), CHANGELOG, Netzwerk-Regel. Offen für später: Outlook (Azure-Verzeichnis
+  nötig), „App veröffentlichen“ bei Google (Phase 13 mit Datenschutzerklärung), Stern echt über den
+  Chat gesetzt (nur abgelehnt getestet), Schätzung des Kontext-Füllstands kennt die Mail-Werkzeuge
+  noch nicht.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
-  Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 E-Mail Gmail + Outlook direkt per OAuth (Gmail-API, Microsoft Graph; lesen,
+  Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,
   zusammenfassen, sortieren – Änderungen nur nach Bestätigung, nie senden/löschen; Nutzer registriert
   die OAuth-Apps selbst; erweitert die Netzwerk-Regel um Google/Microsoft; Google-Testmodus = 7-Tage-
   Anmeldung, Lösung in der Phase klären) · Phase 12 Code-Bereich (Agent mit Bestätigung: Vorher/Nachher-

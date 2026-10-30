@@ -17,6 +17,10 @@ Erste installierbare Version.
 - **Obsidian:** Erinnerungen über dich (das Modell schlägt vor, du bestätigst), Antworten und
   Chats als Notiz speichern, Zusammenfassungen, dein Vault als Wissen. Geschrieben wird nur in
   einen eigenen Unterordner.
+- **E-Mail (Gmail):** Anmeldung über deine eigene Google-App, Posteingang und Suche, Mails als
+  reiner Text, Zusammenfassen mit einem lokalen Modell, Sortieren vorschlagen (Labels, Sterne) und
+  ein Schalter „E-Mail“ im Chat. Geändert wird nur nach deiner Bestätigung; senden und löschen
+  gibt es nicht. Die Anmeldung wird mit Windows verschlüsselt gespeichert, Mails gar nicht.
 - **Skills:** Anleitungen als SKILL.md (vier Beispiele dabei) – von Hand einschalten, in Projekten
   und Vorlagen voreinstellen oder vom Modell passend laden lassen.
 - **Oberfläche** im Stil „Arbeitsplatz“: Symbolleiste links, Chatliste mit Tagesgruppen, Wissen und
