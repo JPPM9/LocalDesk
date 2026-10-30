@@ -33,6 +33,12 @@ import { describeChatError } from './chat-errors';
 import { CODE_CHANGE_TOOLS } from '../shared/code';
 import type { CodeBackups } from './code/backups';
 import { CODE_TOOL_SERVER, callReadTool, readTools } from './code/code-tools';
+import {
+  GIT_TOOLS,
+  callGitTool,
+  describeCommit,
+  gitTools,
+} from './code/git-tools';
 import { COMMAND_TOOL, commandTool, runCommand } from './code/command-tool';
 import {
   applyChange,
@@ -263,6 +269,7 @@ export function registerChatHandlers(
             changePreview(await planChange(code, toolName, args)),
           ),
           commandTool(),
+          ...gitTools((args) => describeCommit(code.root, args)),
         ]
       : [];
     const mailOffers = mailbox
@@ -294,6 +301,12 @@ export function registerChatHandlers(
       ],
       call: async (tool, args, callSignal, callId) => {
         if (tool.serverId === CODE_TOOL_SERVER && code) {
+          if ((GIT_TOOLS as readonly string[]).includes(tool.toolName)) {
+            return {
+              text: await callGitTool(code, tool.toolName, args),
+              isError: false,
+            };
+          }
           if (tool.toolName === COMMAND_TOOL) {
             return {
               text: await runCommand(code.root, args, callSignal),

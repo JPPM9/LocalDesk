@@ -579,6 +579,16 @@
   Rückgängigmachen das gespeicherte Ergebnis „Vom Nutzer rückgängig gemacht …“. Live ✓ (qwen3:14b):
   „python rechner.py“ → Karte nach 39 s → Ausführen → Exit 0, Ausgabe „5 / 5.0“ richtig
   wiedergegeben. pytest ist auf dem PC nicht installiert (bewusst nichts installiert).
+  Schritt 5 ✓: `code/git-tools.ts` – `git_status`, `git_diff` (gegen HEAD, plus Liste neuer
+  Dateien, max. 20 000 Zeichen; Pfad über `Workspace.resolve`) frei; `git_commit` (ask, alwaysAsk,
+  Karte „Commit erstellen?“ mit Nachricht + `git status --short` als Dateiliste, Knopf „Committen“)
+  = `git add --all -- .` + `git commit -m … -- .`. Alles mit Pfadangabe `-- .` → gilt nur für den
+  Projektordner, auch wenn das Git-Projekt größer ist (Test: Nachbarordner bleibt unangetastet).
+  Git per `execFile` ohne Shell, `core.quotepath=false`; KEIN Push-Werkzeug. Git-Hooks des Projekts
+  laufen beim Commit wie gewohnt mit. Live (qwen3:14b): 1. Versuch mit altem Verlauf (Rückgängig
+  von vor der Korrektur) → Modell erfand die Nachricht ohne Diff → Beschreibung verlangt jetzt
+  „VORHER git_diff“; 2. Versuch frische Sitzung `test-code-2`: Status → Diff → „Add verdopple
+  function“ ✓. Übungsprojekt hat lokal die Test-Identität „Uebung“.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

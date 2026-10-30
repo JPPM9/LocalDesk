@@ -695,7 +695,8 @@
       "edit_file": "Datei ändern?",
       "write_file": "Datei anlegen oder ersetzen?",
       "delete_file": "Datei löschen?",
-      "run_command": "Befehl ausführen?"
+      "run_command": "Befehl ausführen?",
+      "git_commit": "Commit erstellen?"
     },
     "change": {
       "edit_file": "Datei geändert",
@@ -705,7 +706,13 @@
     "undo": "Rückgängig",
     "undone": "rückgängig gemacht",
     "undoConflict": "{{error}} Trotzdem auf den Stand vor der Änderung zurücksetzen? Spätere Änderungen an der Datei gehen dabei verloren.",
-    "run": "Ausführen",
-    "command": "Befehl"
+    "confirm": {
+      "run_command": "Ausführen",
+      "git_commit": "Committen"
+    },
+    "label": {
+      "run_command": "Befehl",
+      "git_commit": "Commit"
+    }
   }
 }

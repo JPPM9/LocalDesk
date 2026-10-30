@@ -52,7 +52,8 @@ export function ToolCallView({
     call.serverId === CODE_TOOL_SERVER &&
     CODE_CHANGE_TOOLS.includes(call.toolName);
   const isCommand =
-    call.serverId === CODE_TOOL_SERVER && call.toolName === 'run_command';
+    call.serverId === CODE_TOOL_SERVER &&
+    (call.toolName === 'run_command' || call.toolName === 'git_commit');
   // Mail und Code fragen in Alltagssprache, nicht mit dem Werkzeugnamen.
   const friendly = isMail || isCodeChange || isCommand;
 
@@ -116,7 +117,7 @@ export function ToolCallView({
             className="rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90"
           >
             {isCommand
-              ? t('code.run')
+              ? t(`code.confirm.${call.toolName}`)
               : friendly
                 ? t('toolCall.mailApply')
                 : t('toolCall.allowOnce')}
@@ -157,7 +158,7 @@ export function ToolCallView({
                 : isMail
                   ? `toolCall.mailTool.${call.toolName}`
                   : isCommand
-                    ? 'code.command'
+                    ? `code.label.${call.toolName}`
                     : 'toolCall.memoryTool',
               { defaultValue: call.toolName },
             )}
