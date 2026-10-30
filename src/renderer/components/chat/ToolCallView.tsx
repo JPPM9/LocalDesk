@@ -51,8 +51,10 @@ export function ToolCallView({
   const isCodeChange =
     call.serverId === CODE_TOOL_SERVER &&
     CODE_CHANGE_TOOLS.includes(call.toolName);
+  const isCommand =
+    call.serverId === CODE_TOOL_SERVER && call.toolName === 'run_command';
   // Mail und Code fragen in Alltagssprache, nicht mit dem Werkzeugnamen.
-  const friendly = isMail || isCodeChange;
+  const friendly = isMail || isCodeChange || isCommand;
 
   // „Erinnerung speichern“: Vorschlag bearbeiten, dann speichern oder ablehnen.
   if (isMemory && call.status === 'asking') {
@@ -83,7 +85,7 @@ export function ToolCallView({
           <ShieldQuestion size={16} className="shrink-0 text-accent-text" />
           {isMail
             ? t('toolCall.mailAsk')
-            : isCodeChange
+            : isCodeChange || isCommand
               ? t(`code.ask.${call.toolName}`)
               : t('toolCall.askTitle', { tool: call.toolName })}
         </div>
@@ -100,6 +102,8 @@ export function ToolCallView({
         )}
         {call.preview && isCodeChange ? (
           <DiffView text={call.preview} />
+        ) : call.preview && isCommand ? (
+          <Code text={call.preview} />
         ) : call.preview ? (
           <p className="text-[13px] whitespace-pre-wrap">{call.preview}</p>
         ) : (
@@ -111,7 +115,11 @@ export function ToolCallView({
             onClick={() => onDecision(call.id, 'once')}
             className="rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90"
           >
-            {friendly ? t('toolCall.mailApply') : t('toolCall.allowOnce')}
+            {isCommand
+              ? t('code.run')
+              : friendly
+                ? t('toolCall.mailApply')
+                : t('toolCall.allowOnce')}
           </button>
           {!call.alwaysAsk && (
             <button
@@ -141,14 +149,16 @@ export function ToolCallView({
     <details className="group rounded-xl border border-border text-[13px]">
       <summary className="flex cursor-pointer items-center gap-2 px-3 py-2 text-muted select-none hover:text-text">
         <StatusIcon status={call.status} />
-        {isMemory || isSkill || isMail ? (
+        {isMemory || isSkill || isMail || isCommand ? (
           <span>
             {t(
               isSkill
                 ? 'toolCall.skillTool'
                 : isMail
                   ? `toolCall.mailTool.${call.toolName}`
-                  : 'toolCall.memoryTool',
+                  : isCommand
+                    ? 'code.command'
+                    : 'toolCall.memoryTool',
               { defaultValue: call.toolName },
             )}
           </span>

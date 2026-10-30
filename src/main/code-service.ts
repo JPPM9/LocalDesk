@@ -88,7 +88,15 @@ export function registerCodeHandlers(
         return { ok: false, error: 'Ungültige Kennung.' };
       }
       try {
-        return await backups.undo(callId, force === true);
+        const result = await backups.undo(callId, force === true);
+        // Der Agent soll im Verlauf sehen, dass die Änderung nicht mehr gilt.
+        if (result.ok) {
+          chats.appendToolResult(
+            callId,
+            'Vom Nutzer rückgängig gemacht – die Datei ist wieder wie vor dieser Änderung.',
+          );
+        }
+        return result;
       } catch (error) {
         return {
           ok: false,

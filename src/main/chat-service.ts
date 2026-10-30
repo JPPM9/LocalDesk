@@ -33,6 +33,7 @@ import { describeChatError } from './chat-errors';
 import { CODE_CHANGE_TOOLS } from '../shared/code';
 import type { CodeBackups } from './code/backups';
 import { CODE_TOOL_SERVER, callReadTool, readTools } from './code/code-tools';
+import { COMMAND_TOOL, commandTool, runCommand } from './code/command-tool';
 import {
   applyChange,
   changePreview,
@@ -261,6 +262,7 @@ export function registerChatHandlers(
           ...editTools(async (toolName, args) =>
             changePreview(await planChange(code, toolName, args)),
           ),
+          commandTool(),
         ]
       : [];
     const mailOffers = mailbox
@@ -292,6 +294,12 @@ export function registerChatHandlers(
       ],
       call: async (tool, args, callSignal, callId) => {
         if (tool.serverId === CODE_TOOL_SERVER && code) {
+          if (tool.toolName === COMMAND_TOOL) {
+            return {
+              text: await runCommand(code.root, args, callSignal),
+              isError: false,
+            };
+          }
           if (CODE_CHANGE_TOOLS.includes(tool.toolName)) {
             return {
               text: await applyChange(

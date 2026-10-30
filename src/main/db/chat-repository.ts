@@ -260,6 +260,31 @@ export class ChatRepository {
   }
 
   /**
+   * Hängt einen Hinweis an das gespeicherte Ergebnis eines Werkzeug-Aufrufs –
+   * so sieht das Modell im Verlauf z. B., dass eine Änderung zurückgenommen wurde.
+   */
+  appendToolResult(callId: string, note: string): boolean {
+    const rows = this.db
+      .prepare(
+        `SELECT id, tool_calls_json FROM messages
+          WHERE tool_calls_json LIKE '%' || ? || '%'`,
+      )
+      .all(`"id":"${callId}"`) as { id: string; tool_calls_json: string }[];
+    for (const row of rows) {
+      const calls = parseToolCalls(row.tool_calls_json);
+      if (!calls.some((c) => c.id === callId)) continue;
+      const updated = calls.map((c) =>
+        c.id === callId ? { ...c, result: `${c.result ?? ''}\n${note}` } : c,
+      );
+      this.db
+        .prepare('UPDATE messages SET tool_calls_json = ? WHERE id = ?')
+        .run(JSON.stringify(updated), row.id);
+      return true;
+    }
+    return false;
+  }
+
+  /**
    * Volltextsuche über alle Nachrichten (FTS5-Index, beste Treffer zuerst)
    * plus Chats, deren Titel alle Suchwörter enthält.
    */

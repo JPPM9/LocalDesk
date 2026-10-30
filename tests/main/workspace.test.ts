@@ -153,3 +153,36 @@ describe('Code-Sitzungen in der Datenbank', () => {
     expect(chats.search('Zebra').hits).toEqual([]);
   });
 });
+
+describe('Rückgängig im Verlauf', () => {
+  it('ergänzt das gespeicherte Werkzeug-Ergebnis', () => {
+    const chats = new ChatRepository(openDatabase(':memory:'));
+    chats.createChat({ id: 'k1', title: 'p', model: '', workspace: 'D:\p' });
+    const call = {
+      id: 'call-7',
+      round: 1,
+      name: 'edit_file',
+      toolName: 'edit_file',
+      serverId: 'localdesk:code',
+      serverName: 'Code',
+      arguments: { path: 'a.py' },
+      status: 'done' as const,
+      result: 'Geändert: a.py',
+    };
+    chats.appendMessage('k1', {
+      id: 'a1',
+      role: 'assistant',
+      content: 'Fertig',
+      thinking: '',
+      status: 'done',
+      toolCalls: [call, { ...call, id: 'call-8', result: 'Geändert: b.py' }],
+    });
+    expect(chats.appendToolResult('call-7', 'Rückgängig gemacht.')).toBe(true);
+    expect(chats.appendToolResult('gibt-es-nicht', 'x')).toBe(false);
+    const saved = chats.getChat('k1')?.messages[0].toolCalls;
+    expect(saved?.map((c) => c.result)).toEqual([
+      'Geändert: a.py\nRückgängig gemacht.',
+      'Geändert: b.py',
+    ]);
+  });
+});

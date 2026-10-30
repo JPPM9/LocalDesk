@@ -568,6 +568,17 @@
   Gefunden durch Tests: write_file hatte „muss existieren“ verkehrt herum. Live ✓ (qwen3:14b):
   Karte mit Diff nach 79 s → Übernehmen → Datei geändert → Rückgängig → `git status` leer.
   gpt-oss:20b scheiterte wieder an Ollamas CUDA-Ladefehler (App zeigt ihn verständlich an).
+  Schritt 4 ✓: `code/command-tool.ts` – `run_command` (ask, alwaysAsk, destructive; Karte
+  „Befehl ausführen?“ zeigt den genauen Befehl + Zeitlimit, Knopf „Ausführen“). Läuft als
+  `powershell.exe -NoLogo -NoProfile -NonInteractive -Command` im Projektordner, stdin zu (keine
+  Eingaben, `Read-Host` hängt nicht), UTF-8-Ausgabe (OutputEncoding + PYTHONIOENCODING/PYTHONUTF8),
+  Zeitlimit Standard 120 s / max. 600 s, bei Zeitablauf oder „Stopp“ `taskkill /T /F` (ganzer
+  Prozessbaum). Ergebnis „Exit-Code: N (x s)“ + Ausgabe (Anfang 4000 + Ende 12 000 Zeichen).
+  Tests laufen mit echter PowerShell. Fund im Live-Test: Das Modell hielt eine rückgängig gemachte
+  Änderung für noch gültig (stand ja so im Verlauf) → `ChatRepository.appendToolResult` ergänzt beim
+  Rückgängigmachen das gespeicherte Ergebnis „Vom Nutzer rückgängig gemacht …“. Live ✓ (qwen3:14b):
+  „python rechner.py“ → Karte nach 39 s → Ausführen → Exit 0, Ausgabe „5 / 5.0“ richtig
+  wiedergegeben. pytest ist auf dem PC nicht installiert (bewusst nichts installiert).
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,
