@@ -11,6 +11,15 @@
 - Bei Unklarheiten nachfragen statt raten.
 - Fremden Code (LocalAI, Jan, Open WebUI, Chatbox, Cherry Studio, AnythingLLM) nur als
   Inspiration lesen. Übernahme nur bei MIT/Apache mit Quellenangabe; GPL/AGPL/Open-WebUI-Lizenz nie.
+- Beim Programmieren (Karpathy-Leitlinien, vom Nutzer 2026-10-30 festgelegt):
+  1. **Erst denken:** Annahmen nennen, bei mehreren Deutungen nachfragen statt still wählen,
+     einfachere Wege ansprechen.
+  2. **So einfach wie möglich:** nur was verlangt ist; keine Abstraktion für Einmaliges, keine
+     „Flexibilität“ auf Vorrat, keine Fehlerbehandlung für Unmögliches.
+  3. **Nur Nötiges ändern:** keinen benachbarten Code „verbessern“, Stil übernehmen; selbst
+     verursachte Reste aufräumen, fremden toten Code nur nennen.
+  4. **Prüfbare Ziele:** Aufgabe als prüfbares Ziel formulieren (z. B. erst Test, dann Code) und
+     erst fertig melden, wenn es geprüft ist.
 
 ## Architektur-Entscheidungen
 
@@ -565,7 +574,9 @@
   zusammenfassen, sortieren – Änderungen nur nach Bestätigung, nie senden/löschen; Nutzer registriert
   die OAuth-Apps selbst; erweitert die Netzwerk-Regel um Google/Microsoft; Google-Testmodus = 7-Tage-
   Anmeldung, Lösung in der Phase klären) · Phase 12 Code-Bereich (Agent mit Bestätigung: Vorher/Nachher-
-  Ansicht, Befehle nur nach Freigabe) · Phase 13 Datenschutz, Lizenzen (MIT), Sicherheit (u. a. CSP) ·
+  Ansicht, Befehle nur nach Freigabe) · danach Design-Prüfung gegen Apples Human Interface Guidelines
+  (Prüfliste + Feinschliff, kein neuer Look; Nutzer 2026-10-30) · Phase 13 Datenschutz, Lizenzen (MIT),
+  Sicherheit (u. a. CSP; Sicherheits-Audit mit dem Skill „security-audit“, Vorbild cloudflare/security-audit-skill) ·
   danach Phase 7 zu Ende: Repo öffentlich (macht der Nutzer) und Release 0.1.0 nach Okay.
 - Phase 7: Installer & Update-Check – in Arbeit. Entschieden (2026-10-27): Installer mit Assistent
   und Ordnerwahl (NSIS über electron-builder 26.17.0 `--prepackaged` auf den Forge-Build; Squirrel
