@@ -633,6 +633,14 @@
   asar-Integrität, nur aus asar laden, Cookie-Verschlüsselung). Geprüft in der gebauten App: alle 9
   Seiten ohne CSP-Verstoß; geblockt: Bild von außen, fetch nach außen, Inline-Skript, Mikrofon/
   Kamera (Berechtigung „denied“), Benachrichtigung, Standort, window.open, Navigation weg.
+  Schritt 3 ✓: EINE Datenschutzerklärung `docs/privacy.md` (Deutsch + kurze englische Fassung,
+  Google-„Limited Use“-Zusage, Tabelle aller Verbindungen inkl. npm für den MCP-Server und dem
+  Hinweis, dass freigegebene Befehle/MCP-Server eigene Programme sind). Dieselbe Datei: App
+  (Forge `extraResource` → `resources/privacy.md`, IPC `getPrivacy` entfernt den Jekyll-Kopf,
+  Einstellungen → „Datenschutz“ mit `Markdown`) und GitHub Pages (Quelle `/docs`, `_config.yml`,
+  Startseite `docs/index.md`). Abweichung vom Plan: nicht `site/`, weil Pages ohne Actions nur
+  Root oder `/docs` kann. Test: jede Adresse aus `MAIL_HOSTS` steht in der Erklärung, Limited-Use-
+  Satz vorhanden. Pages einschalten = Nutzer, nach öffentlichem Repo.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

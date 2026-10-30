@@ -16,6 +16,8 @@ const config: ForgeConfig = {
       'resources/app-update.yml',
       'LICENSE',
       'THIRD_PARTY_NOTICES.md',
+      // Datenschutzerklärung – dieselbe Datei wie auf der GitHub-Pages-Seite.
+      'docs/privacy.md',
     ],
   },
   rebuildConfig: {},

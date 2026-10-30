@@ -719,5 +719,12 @@
       "run_command": "Befehl",
       "git_commit": "Commit"
     }
+  },
+  "privacy": {
+    "title": "Datenschutz",
+    "intro": "Keine Telemetrie, kein Konto, keine Werbung. Deine Daten bleiben auf diesem PC und gehen nur an den Ollama-Server, den du einstellst.",
+    "show": "Datenschutzerklärung anzeigen",
+    "hide": "Datenschutzerklärung ausblenden",
+    "missing": "Die Datenschutzerklärung wurde nicht gefunden."
   }
 }

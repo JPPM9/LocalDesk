@@ -242,6 +242,12 @@ src/
 
 Projektregeln und Entscheidungen: siehe [CLAUDE.md](CLAUDE.md).
 
+## Datenschutz
+
+Keine Telemetrie, kein Konto, keine Werbung – deine Daten bleiben auf deinem PC. Alles im
+Detail: [docs/privacy.md](docs/privacy.md) (auch in der App unter **Einstellungen →
+Datenschutz**).
+
 ## Lizenz
 
 LocalDesk steht unter der [MIT-Lizenz](LICENSE). Die Lizenzen der mitgelieferten Pakete stehen in

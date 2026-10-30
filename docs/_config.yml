@@ -1,0 +1,6 @@
+# GitHub Pages (Quelle: Ordner /docs im Branch main). Wird erst online, wenn das Repo
+# öffentlich ist und Pages in den Repo-Einstellungen eingeschaltet wird.
+title: LocalDesk
+description: Lokale KI-Modelle auf deinem eigenen Rechner – ohne Konto, ohne Cloud, ohne Telemetrie.
+lang: de
+theme: jekyll-theme-primer

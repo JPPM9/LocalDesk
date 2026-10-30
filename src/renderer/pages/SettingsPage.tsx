@@ -4,6 +4,7 @@ import type { AppInfo } from '../../shared/api';
 import { PageHeader } from '../components/PageHeader';
 import { AppearanceSettings } from '../components/settings/AppearanceSettings';
 import { MailSettings } from '../components/settings/MailSettings';
+import { PrivacySection } from '../components/settings/PrivacySection';
 import { McpSettings } from '../components/settings/McpSettings';
 import { ObsidianSettings } from '../components/settings/ObsidianSettings';
 import { ServerSettings } from '../components/settings/ServerSettings';
@@ -17,6 +18,7 @@ const SECTIONS = [
   { id: 'mcp', titleKey: 'mcp.title' },
   { id: 'obsidian', titleKey: 'obsidian.title' },
   { id: 'email', titleKey: 'mailSettings.title' },
+  { id: 'datenschutz', titleKey: 'privacy.title' },
   { id: 'ueber', titleKey: 'settings.about' },
 ] as const;
 
@@ -108,6 +110,7 @@ export function SettingsPage() {
           {section('mcp', <McpSettings />)}
           {section('obsidian', <ObsidianSettings />)}
           {section('email', <MailSettings />)}
+          {section('datenschutz', <PrivacySection />)}
           {section(
             'ueber',
             <section>

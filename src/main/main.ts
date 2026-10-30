@@ -213,6 +213,22 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
     dataPath: app.getPath('userData'),
   }));
 
+  // Datenschutzerklärung (Einstellungen → Datenschutz): eine Datei für App und Webseite.
+  ipcMain.handle(IpcChannels.getPrivacy, async (): Promise<string | null> => {
+    const file = app.isPackaged
+      ? path.join(process.resourcesPath, 'privacy.md')
+      : path.join(app.getAppPath(), 'docs', 'privacy.md');
+    try {
+      // Den Kopf für GitHub Pages („---\ntitle: …\n---“) braucht die App nicht.
+      return (await readFile(file, 'utf8')).replace(
+        /^---\r?\n[\s\S]*?\r?\n---\r?\n/,
+        '',
+      );
+    } catch {
+      return null;
+    }
+  });
+
   // Lizenztexte (Über LocalDesk → Lizenzen): in der fertigen App neben der
   // app.asar (extraResource), beim Entwickeln im Projektordner.
   ipcMain.handle(
