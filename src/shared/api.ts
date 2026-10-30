@@ -584,6 +584,8 @@ export type TemplateInput = Omit<ChatTemplate, 'updatedAt'>;
 /** Alles, was die Oberfläche über `window.api` aufrufen darf. */
 export interface LocalDeskApi {
   getAppInfo: () => Promise<AppInfo>;
+  /** Lizenz von LocalDesk und der mitgelieferten Pakete (null = Dateien fehlen). */
+  getLicenses: () => Promise<{ own: string; thirdParty: string } | null>;
   getOllamaStatus: () => Promise<ProviderStatus>;
   listModels: () => Promise<Result<ModelInfo[]>>;
   listRunningModels: () => Promise<Result<RunningModel[]>>;
@@ -826,6 +828,7 @@ export interface LocalDeskApi {
 /** Namen der IPC-Kanäle an einer Stelle, damit sich keine Tippfehler einschleichen. */
 export const IpcChannels = {
   getAppInfo: 'app:get-info',
+  getLicenses: 'app:get-licenses',
   getOllamaStatus: 'ollama:get-status',
   listModels: 'models:list',
   listRunningModels: 'models:list-running',

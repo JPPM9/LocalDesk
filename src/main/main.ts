@@ -1,4 +1,5 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import type { DatabaseSync } from 'node:sqlite';
 import {
@@ -211,6 +212,26 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
     chrome: process.versions.chrome,
     dataPath: app.getPath('userData'),
   }));
+
+  // Lizenztexte (Über LocalDesk → Lizenzen): in der fertigen App neben der
+  // app.asar (extraResource), beim Entwickeln im Projektordner.
+  ipcMain.handle(
+    IpcChannels.getLicenses,
+    async (): Promise<{ own: string; thirdParty: string } | null> => {
+      const dir = app.isPackaged ? process.resourcesPath : app.getAppPath();
+      try {
+        return {
+          own: await readFile(path.join(dir, 'LICENSE'), 'utf8'),
+          thirdParty: await readFile(
+            path.join(dir, 'THIRD_PARTY_NOTICES.md'),
+            'utf8',
+          ),
+        };
+      } catch {
+        return null;
+      }
+    },
+  );
 }
 
 app.whenReady().then(() => {

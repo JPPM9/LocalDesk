@@ -7,6 +7,7 @@ import { MailSettings } from '../components/settings/MailSettings';
 import { McpSettings } from '../components/settings/McpSettings';
 import { ObsidianSettings } from '../components/settings/ObsidianSettings';
 import { ServerSettings } from '../components/settings/ServerSettings';
+import { LicenseSection } from '../components/settings/LicenseSection';
 import { UpdateSection } from '../components/settings/UpdateSection';
 
 /** Abschnitte in Reihenfolge – für die Sprungliste links. */
@@ -130,6 +131,7 @@ export function SettingsPage() {
                 <p className="text-muted">{t('settings.loading')}</p>
               )}
               {info && <UpdateSection version={info.version} />}
+              <LicenseSection />
             </section>,
           )}
         </div>

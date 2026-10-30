@@ -5,7 +5,7 @@
   "private": true,
   "description": "Desktop-App für lokale KI-Modelle über Ollama",
   "keywords": [],
-  "license": "UNLICENSED",
+  "license": "MIT",
   "author": "JPPM9",
   "main": ".vite/build/main.cjs",
   "scripts": {
@@ -17,7 +17,8 @@
     "lint": "oxlint && oxfmt --check",
     "lint:fix": "oxlint --fix && oxfmt --write",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "notices": "node scripts/third-party-notices.mjs"
   },
   "devDependencies": {
     "@electron-forge/cli": "^8.0.1",

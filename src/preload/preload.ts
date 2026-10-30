@@ -13,6 +13,7 @@ import type { UpdateState } from '../shared/update';
 
 const api: LocalDeskApi = {
   getAppInfo: () => ipcRenderer.invoke(IpcChannels.getAppInfo),
+  getLicenses: () => ipcRenderer.invoke(IpcChannels.getLicenses),
   getOllamaStatus: () => ipcRenderer.invoke(IpcChannels.getOllamaStatus),
   listModels: () => ipcRenderer.invoke(IpcChannels.listModels),
   listRunningModels: () => ipcRenderer.invoke(IpcChannels.listRunningModels),

@@ -606,6 +606,21 @@
   Seitentitel = Tooltip der Leiste war schon überall gleich (Befund war ein Irrtum). Bewusst
   gelassen: Hover-Symbole in Chat-/Projektzeilen (dichte Liste, WCAG-Abstandsausnahme), Links im
   Fließtext.
+- Phase 13: Datenschutz, Lizenzen, Sicherheit – in Arbeit. Entschieden (2026-10-31): volles Audit mit
+  Skill „security-audit“, Funde erst als Bericht, dann wählt der Nutzer · Datenschutz als App-Seite,
+  PRIVACY.md und GitHub-Pages-Seite (`site/`, online erst mit öffentlichem Repo) · Lizenzen als
+  Datei + in der App. Reihenfolge: 1 Lizenzen · 2 CSP/Härtung · 3 Datenschutz · 4 Audit · 5 Funde
+  beheben · 6 Abschluss.
+  Schritt 1 ✓: `LICENSE` (MIT, „Copyright (c) 2026 JPPM9“), `package.json` license MIT.
+  `scripts/third-party-notices.mjs` (`npm run notices`, `-- --check`) sammelt dependencies +
+  deren Abhängigkeiten rekursiv wie Node auflöst → `THIRD_PARTY_NOTICES.md` (249 Pakete, alle
+  freizügig: MIT/ISC/BSD/Apache/OFL/Python-2.0/BlueOak; jszip „MIT OR GPL-3.0“ → MIT gewählt;
+  3 MIT-Pakete ohne Lizenzdatei). Datei ist vom Formatierer ausgenommen (`ignorePatterns`), sonst
+  passt `--check` nie. Test schlägt fehl, wenn die Datei veraltet ist oder eine reine
+  GPL/AGPL/SSPL-Lizenz auftaucht. Forge `extraResource`: LICENSE + THIRD_PARTY_NOTICES.md; IPC
+  `getLicenses` liest aus `process.resourcesPath` (gebaut) bzw. `app.getAppPath()` (dev); Anzeige
+  „Über LocalDesk → Lizenzen“ (`LicenseSection.tsx`). Electron/Chromium bringen eigene
+  Lizenzdateien im Programmordner mit.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

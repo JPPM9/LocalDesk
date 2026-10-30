@@ -228,6 +228,7 @@ sie im bisherigen Ordner. Deine Chats und Einstellungen bleiben erhalten.
 | `npm run dist`      | Windows-Installer bauen (`out/installer/LocalDesk-Setup-<Version>.exe`) |
 | `npm run make`      | Portable ZIP-Version bauen (Ausgabe in `out/make`)                      |
 | `npm run release`   | Release vorbereiten (Probelauf); mit `-- --publish` veröffentlichen     |
+| `npm run notices`   | Lizenzen der Pakete in `THIRD_PARTY_NOTICES.md` neu sammeln             |
 
 ## Aufbau
 
@@ -240,3 +241,9 @@ src/
 ```
 
 Projektregeln und Entscheidungen: siehe [CLAUDE.md](CLAUDE.md).
+
+## Lizenz
+
+LocalDesk steht unter der [MIT-Lizenz](LICENSE). Die Lizenzen der mitgelieferten Pakete stehen in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) und in der App unter **Einstellungen → Über
+LocalDesk → Lizenzen**.

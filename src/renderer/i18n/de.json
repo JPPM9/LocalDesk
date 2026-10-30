@@ -415,7 +415,12 @@
     "version": "Version",
     "dataPath": "Datenordner",
     "loading": "Lade …",
-    "sections": "Abschnitte der Einstellungen"
+    "sections": "Abschnitte der Einstellungen",
+    "licenses": "Lizenzen",
+    "licensesIntro": "LocalDesk steht unter der MIT-Lizenz. Es bringt Pakete anderer Autorinnen und Autoren mit – ihre Lizenzen stehen hier.",
+    "licensesShow": "Lizenzen anzeigen",
+    "licensesHide": "Lizenzen ausblenden",
+    "licensesMissing": "Die Lizenzdateien wurden nicht gefunden."
   },
   "templates": {
     "title": "Vorlagen",

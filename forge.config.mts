@@ -11,7 +11,12 @@ const config: ForgeConfig = {
     // Neu erzeugen aus assets/icon.svg: node scripts/build-icons.mjs
     icon: 'assets/icon',
     // Einstellungen für den Update-Knopf (electron-updater) – siehe Datei.
-    extraResource: ['resources/app-update.yml'],
+    // Lizenztexte gehören zur Auslieferung (MIT verlangt den Hinweis mitzuliefern).
+    extraResource: [
+      'resources/app-update.yml',
+      'LICENSE',
+      'THIRD_PARTY_NOTICES.md',
+    ],
   },
   rebuildConfig: {},
   makers: [
