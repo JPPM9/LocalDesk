@@ -53,6 +53,12 @@ const api: LocalDeskApi = {
       permission,
     ),
   pickFolders: () => ipcRenderer.invoke(IpcChannels.pickFolders),
+  listCodeSessions: () => ipcRenderer.invoke(IpcChannels.listCodeSessions),
+  createCodeSession: () => ipcRenderer.invoke(IpcChannels.createCodeSession),
+  listCodeDir: (sessionId, relative) =>
+    ipcRenderer.invoke(IpcChannels.listCodeDir, sessionId, relative),
+  readCodeFile: (sessionId, relative) =>
+    ipcRenderer.invoke(IpcChannels.readCodeFile, sessionId, relative),
   getMailApps: () => ipcRenderer.invoke(IpcChannels.getMailApps),
   setGoogleApp: (app) => ipcRenderer.invoke(IpcChannels.setGoogleApp, app),
   clearGoogleApp: () => ipcRenderer.invoke(IpcChannels.clearGoogleApp),

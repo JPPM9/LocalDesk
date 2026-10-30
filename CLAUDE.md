@@ -519,6 +519,21 @@
   nötig), „App veröffentlichen“ bei Google (Phase 13 mit Datenschutzerklärung), Stern echt über den
   Chat gesetzt (nur abgelehnt getestet), Schätzung des Kontext-Füllstands kennt die Mail-Werkzeuge
   noch nicht.
+- Phase 12: Code-Bereich – in Arbeit. Entschieden (2026-10-30): eigene Seite „Code“ (Sitzung = ein
+  Projektordner) · Lesen/Suchen frei; Dateien ändern/anlegen/löschen nur mit Vorher/Nachher-Karte
+  (Ändern = Text ersetzen wie bei Claude Code) · Befehle (PowerShell im Projektordner, Zeitlimit,
+  Stopp) JEDER einzeln freigegeben, kein „immer“ · Git: Status/Diff frei, Commit mit Karte, KEIN Push,
+  Git ohne Shell · eigene Sicherungen + „Rückgängig“ je Änderung (`%APPDATA%\LocalDesk\code-backups`)
+  · jsdiff (`diff` 9.0.0, BSD-3) für die Vorher/Nachher-Ansicht · Code-Sitzungen mit 32k Kontext ·
+  Hinweis: freigegebene Befehle unterliegen nicht der Netzwerk-Regel (dürfen, was der Nutzer darf).
+  Schritt 1 ✓: Migration 18 `chats.workspace` – Code-Sitzungen stehen nicht in Chat-Liste und Suche
+  (`listCodeSessions`). Ordner nur über den Windows-Dialog im Hauptprozess (`createCodeSession`
+  nimmt keinen Pfad an); Laufwerk, Systemordner und ganzer Benutzerordner abgelehnt.
+  `code/workspace.ts`: jeder Pfad über `resolve` (kein `..`, kein absoluter Pfad, kein Laufwerk,
+  Junctions/Symlinks per realpath geprüft, `.git` gesperrt und versteckt), Dateien max. 1 MB,
+  Binärdateien erkannt. Seite `pages/CodePage.tsx` (Sitzungen, Dateibaum lazy, Datei-Ansicht mit
+  Zeilennummern), Symbol „Code“ nach E-Mail. Test-Sitzung `test-code-1` (Übungsprojekt im
+  Scratchpad) direkt in der DB angelegt – am Ende der Phase per ID löschen.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

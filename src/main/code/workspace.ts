@@ -1,0 +1,172 @@
+import { open, readdir, realpath, stat } from 'node:fs/promises';
+import path from 'node:path';
+import type { CodeEntry, CodeFile } from '../../shared/code';
+
+/** Größte Datei, die angezeigt oder dem Modell gegeben wird. */
+export const CODE_FILE_MAX = 1_000_000;
+/** So viele Einträge zeigt ein Ordner höchstens. */
+const DIR_ENTRIES_MAX = 2000;
+/** Diese Ordner sind Interna – nicht anzeigen, nicht durchsuchen. */
+export const HIDDEN_DIRS = new Set(['.git']);
+
+/**
+ * Ein Projektordner, in dem der Agent arbeitet. JEDER Zugriff geht über
+ * `resolve`: Pfade außerhalb des Ordners – auch über `..`, absolute Pfade,
+ * Laufwerke oder Verknüpfungen (Symlinks, Junctions) – werden abgelehnt.
+ */
+export class Workspace {
+  private constructor(readonly root: string) {}
+
+  /** Prüft den Ordner und merkt sich seinen echten Pfad (Verknüpfungen aufgelöst). */
+  static async open(folder: string): Promise<Workspace> {
+    if (!path.isAbsolute(folder)) throw new Error('Kein gültiger Ordner.');
+    const real = await realpath(folder).catch(() => {
+      throw new Error(`Den Ordner gibt es nicht (mehr): ${folder}`);
+    });
+    if (!(await stat(real)).isDirectory()) {
+      throw new Error(`Das ist kein Ordner: ${folder}`);
+    }
+    const problem = unsafeRoot(real);
+    if (problem) throw new Error(problem);
+    return new Workspace(real);
+  }
+
+  /**
+   * Relativer Pfad (mit / oder \) → absoluter Pfad im Ordner. `mustExist`
+   * false erlaubt neue Dateien – dann muss der nächste vorhandene Ordner
+   * darüber im Projekt liegen.
+   */
+  async resolve(relative: string, mustExist = true): Promise<string> {
+    const clean = relative.trim().replace(/\\/g, '/');
+    if (
+      clean === '' ||
+      clean === '.' ||
+      path.isAbsolute(clean) ||
+      /^[a-zA-Z]:/.test(clean) ||
+      clean.includes('\0')
+    ) {
+      if (clean === '' || clean === '.') return this.root;
+      throw new Error(`Nur Pfade im Projektordner sind erlaubt: ${relative}`);
+    }
+    const full = path.resolve(this.root, clean);
+    if (!this.contains(full)) {
+      throw new Error(`Nur Pfade im Projektordner sind erlaubt: ${relative}`);
+    }
+    // Verknüpfungen auflösen: Der echte Ort muss ebenfalls im Projekt liegen.
+    let existing = full;
+    for (;;) {
+      try {
+        const real = await realpath(existing);
+        if (!this.contains(real)) {
+          throw new Error(
+            `Der Pfad führt aus dem Projektordner hinaus: ${relative}`,
+          );
+        }
+        break;
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+        if (mustExist && existing === full) {
+          throw new Error(`Gibt es nicht: ${relative}`);
+        }
+        const parent = path.dirname(existing);
+        if (parent === existing) throw new Error(`Gibt es nicht: ${relative}`);
+        existing = parent;
+      }
+    }
+    if (this.isHidden(full)) {
+      throw new Error(`Der Ordner .git ist gesperrt: ${relative}`);
+    }
+    return full;
+  }
+
+  /** Pfad relativ zum Projekt, immer mit „/“ (für Anzeige und Modell). */
+  relative(full: string): string {
+    return path.relative(this.root, full).split(path.sep).join('/');
+  }
+
+  /** Einträge eines Ordners: Ordner zuerst, dann Dateien, jeweils nach Namen. */
+  async list(relative = ''): Promise<CodeEntry[]> {
+    const dir = await this.resolve(relative);
+    const entries = await readdir(dir, { withFileTypes: true });
+    const result: CodeEntry[] = [];
+    for (const entry of entries.slice(0, DIR_ENTRIES_MAX)) {
+      if (entry.isDirectory() && HIDDEN_DIRS.has(entry.name)) continue;
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        result.push({
+          path: this.relative(full),
+          name: entry.name,
+          kind: 'dir',
+        });
+      } else if (entry.isFile()) {
+        const size = await stat(full)
+          .then((s) => s.size)
+          .catch(() => 0);
+        result.push({
+          path: this.relative(full),
+          name: entry.name,
+          kind: 'file',
+          size,
+        });
+      }
+      // Verknüpfungen und Sonderdateien werden gar nicht erst angezeigt.
+    }
+    return result.sort(
+      (a, b) =>
+        (a.kind === b.kind ? 0 : a.kind === 'dir' ? -1 : 1) ||
+        a.name.localeCompare(b.name, 'de', { sensitivity: 'base' }),
+    );
+  }
+
+  /** Datei als Text; zu große oder binäre Dateien nur mit Hinweis. */
+  async read(relative: string): Promise<CodeFile> {
+    const full = await this.resolve(relative);
+    const info = await stat(full);
+    if (!info.isFile()) throw new Error(`Keine Datei: ${relative}`);
+    const base = { path: this.relative(full), size: info.size };
+    if (info.size > CODE_FILE_MAX) return { ...base, tooLarge: true };
+    const handle = await open(full, 'r');
+    try {
+      const bytes = await handle.readFile();
+      // Ein Null-Byte am Anfang heißt fast immer: keine Textdatei.
+      if (bytes.subarray(0, 8000).includes(0)) return { ...base, binary: true };
+      return { ...base, text: bytes.toString('utf8') };
+    } finally {
+      await handle.close();
+    }
+  }
+
+  private contains(full: string): boolean {
+    const rel = path.relative(this.root, full);
+    return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
+  }
+
+  private isHidden(full: string): boolean {
+    return this.relative(full)
+      .split('/')
+      .some((part) => HIDDEN_DIRS.has(part));
+  }
+}
+
+/** Ganze Laufwerke und Systemordner sind als Projekt zu gefährlich. */
+function unsafeRoot(real: string): string | null {
+  if (path.parse(real).root === real) {
+    return 'Ein ganzes Laufwerk geht nicht – bitte einen Projektordner wählen.';
+  }
+  const lower = real.toLowerCase();
+  const system = [
+    process.env.SystemRoot,
+    process.env.ProgramFiles,
+    process.env['ProgramFiles(x86)'],
+  ]
+    .filter((p): p is string => !!p)
+    .map((p) => p.toLowerCase());
+  if (system.some((p) => lower === p || lower.startsWith(p + path.sep))) {
+    return 'Systemordner gehen nicht – bitte einen Projektordner wählen.';
+  }
+  const home = process.env.USERPROFILE?.toLowerCase();
+  if (home && lower === home) {
+    return 'Der ganze Benutzerordner geht nicht – bitte einen Projektordner wählen.';
+  }
+  return null;
+}

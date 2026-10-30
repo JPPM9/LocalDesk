@@ -13,6 +13,7 @@ import type {
   MailMessage,
   MailPage,
 } from './mail';
+import type { CodeEntry, CodeFile } from './code';
 import type { MailSuggestion } from './mail-sorting';
 import type { SkillInput, SkillView } from './skills';
 import type { UpdateState } from './update';
@@ -521,6 +522,13 @@ export interface ChatDetail extends ChatSummary {
   messages: MessageRecord[];
   /** Zahl der Nachrichten, als zuletzt zusammengefasst oder abgelehnt wurde. */
   summaryAtCount?: number;
+  /** Nur Code-Sitzungen: der Projektordner. */
+  workspace?: string;
+}
+
+/** Eine Code-Sitzung: ein Chat mit dem Agenten, gebunden an einen Projektordner. */
+export interface CodeSession extends ChatSummary {
+  workspace: string;
 }
 
 /** Ein Suchtreffer in einer Nachricht. */
@@ -602,6 +610,21 @@ export interface LocalDeskApi {
   ) => Promise<void>;
   /** Öffnet den Windows-Ordnerdialog; leer = abgebrochen. */
   pickFolders: () => Promise<string[]>;
+
+  /** Code-Sitzungen (Seite „Code“), neueste zuerst. */
+  listCodeSessions: () => Promise<CodeSession[]>;
+  /** Öffnet den Ordner-Dialog und legt eine Sitzung an; null = abgebrochen. */
+  createCodeSession: () => Promise<Result<CodeSession> | null>;
+  /** Einträge eines Ordners im Projekt („“ = oberste Ebene). */
+  listCodeDir: (
+    sessionId: string,
+    relative: string,
+  ) => Promise<Result<CodeEntry[]>>;
+  /** Eine Datei im Projekt zum Ansehen. */
+  readCodeFile: (
+    sessionId: string,
+    relative: string,
+  ) => Promise<Result<CodeFile>>;
 
   /** Eingetragene eigene Mail-Apps (ohne Schlüssel). */
   getMailApps: () => Promise<MailAppView[]>;
@@ -809,6 +832,10 @@ export const IpcChannels = {
   deleteMcpServer: 'mcp:delete',
   setToolPermission: 'mcp:set-permission',
   pickFolders: 'dialog:pick-folders',
+  listCodeSessions: 'code:list-sessions',
+  createCodeSession: 'code:create-session',
+  listCodeDir: 'code:list-dir',
+  readCodeFile: 'code:read-file',
   getMailApps: 'mail:get-apps',
   setGoogleApp: 'mail:set-google-app',
   clearGoogleApp: 'mail:clear-google-app',

@@ -6,6 +6,7 @@ import { ProjectPage } from './pages/ProjectPage';
 import { ModelsPage } from './pages/ModelsPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { MailPage } from './pages/MailPage';
+import { CodePage } from './pages/CodePage';
 import { SkillsPage } from './pages/SkillsPage';
 import { StatusPage } from './pages/StatusPage';
 import { TemplatesPage } from './pages/TemplatesPage';
@@ -26,6 +27,7 @@ export function App() {
           <Route path="knowledge/:collectionId?" element={<KnowledgePage />} />
           <Route path="skills/:skillId?" element={<SkillsPage />} />
           <Route path="mail/:messageId?" element={<MailPage />} />
+          <Route path="code/:sessionId?" element={<CodePage />} />
           <Route path="projects/:projectId" element={<ProjectPage />} />
           <Route path="models" element={<ModelsPage />} />
           <Route path="status" element={<StatusPage />} />

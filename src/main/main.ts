@@ -37,6 +37,7 @@ import { createExampleSkills } from './skills/skill-examples';
 import { SkillStore } from './skills/skill-store';
 import { registerSkillHandlers } from './skill-service';
 import { registerMailHandlers } from './mail-service';
+import { registerCodeHandlers } from './code-service';
 import { MailAccountRepository } from './db/mail-account-repository';
 
 // Gleiche Kennung wie im Installer (electron-builder.yml, appId): Taskleiste und
@@ -171,6 +172,7 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
     (error) => console.error('Beispiel-Skills nicht angelegt:', error),
   );
 
+  registerCodeHandlers(chats);
   const mailAccounts = new MailAccountRepository(db);
   const mail = registerMailHandlers(
     new AppSettingsRepository(db),

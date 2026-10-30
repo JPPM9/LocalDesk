@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Activity,
   BookMarked,
+  FolderCode,
   Boxes,
   Library,
   Mail,
@@ -30,6 +31,7 @@ const ITEMS: NavItem[] = [
   { to: '/chat', labelKey: 'nav.chat', icon: MessageSquare },
   { to: '/templates', labelKey: 'nav.templates', icon: BookMarked },
   { to: '/mail', labelKey: 'nav.mail', icon: Mail },
+  { to: '/code', labelKey: 'nav.code', icon: FolderCode },
   { to: '/knowledge', labelKey: 'nav.knowledge', icon: Library },
   { to: '/skills', labelKey: 'nav.skills', icon: WandSparkles },
   { to: '/models', labelKey: 'nav.models', icon: Boxes },

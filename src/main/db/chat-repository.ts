@@ -4,6 +4,7 @@ import type {
   ChatSettings,
   ChatStats,
   ChatSummary,
+  CodeSession,
   MessageRecord,
   MessageStatus,
   SearchHit,
@@ -36,6 +37,7 @@ interface ChatRow {
 interface ChatDetailRow extends ChatRow {
   settings_json: string;
   summary_at_count: number | null;
+  workspace: string | null;
 }
 
 interface MessageRow {
@@ -76,16 +78,29 @@ export class ChatRepository {
   listChats(): ChatSummary[] {
     const rows = this.db
       .prepare(
-        'SELECT id, title, model, updated_at, folder_id FROM chats ORDER BY updated_at DESC',
+        `SELECT id, title, model, updated_at, folder_id FROM chats
+          WHERE workspace IS NULL ORDER BY updated_at DESC`,
       )
       .all() as unknown as ChatRow[];
     return rows.map(toSummary);
   }
 
+  /** Code-Sitzungen (Chats mit Projektordner), neueste zuerst. */
+  listCodeSessions(): CodeSession[] {
+    const rows = this.db
+      .prepare(
+        `SELECT id, title, model, updated_at, folder_id, workspace FROM chats
+          WHERE workspace IS NOT NULL ORDER BY updated_at DESC`,
+      )
+      .all() as unknown as (ChatRow & { workspace: string })[];
+    return rows.map((row) => ({ ...toSummary(row), workspace: row.workspace }));
+  }
+
   getChat(chatId: string): ChatDetail | null {
     const chat = this.db
       .prepare(
-        `SELECT id, title, model, updated_at, folder_id, settings_json, summary_at_count
+        `SELECT id, title, model, updated_at, folder_id, settings_json, summary_at_count,
+                workspace
            FROM chats WHERE id = ?`,
       )
       .get(chatId) as unknown as ChatDetailRow | undefined;
@@ -104,6 +119,7 @@ export class ChatRepository {
       ...(chat.summary_at_count !== null && {
         summaryAtCount: chat.summary_at_count,
       }),
+      ...(chat.workspace && { workspace: chat.workspace }),
     };
   }
 
@@ -132,12 +148,14 @@ export class ChatRepository {
     title: string;
     model: string;
     settings?: ChatSettings;
+    /** Nur Code-Sitzungen: der Projektordner. */
+    workspace?: string;
   }) {
     const now = this.now();
     this.db
       .prepare(
-        `INSERT INTO chats (id, title, model, created_at, updated_at, settings_json)
-         VALUES (?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO chats (id, title, model, created_at, updated_at, settings_json, workspace)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
       )
       .run(
         chat.id,
@@ -146,6 +164,7 @@ export class ChatRepository {
         now,
         now,
         JSON.stringify(normalizeSettings(chat.settings)),
+        chat.workspace ?? null,
       );
   }
 
@@ -255,7 +274,7 @@ export class ChatRepository {
            FROM messages_fts
            JOIN messages m ON m.rowid = messages_fts.rowid
            JOIN chats c ON c.id = m.chat_id
-          WHERE messages_fts MATCH ?
+          WHERE messages_fts MATCH ? AND c.workspace IS NULL
           ORDER BY rank
           LIMIT ?`,
       )

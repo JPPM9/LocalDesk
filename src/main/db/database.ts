@@ -240,6 +240,11 @@ const migrations: string[] = [
     UNIQUE (provider, email)
   );
   `,
+  // 18: Code-Sitzungen (Phase 12) sind Chats mit Projektordner. Sie stehen nicht in der
+  // normalen Chat-Liste, sondern auf der Seite „Code“.
+  `
+  ALTER TABLE chats ADD COLUMN workspace TEXT;
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */
