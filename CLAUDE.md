@@ -528,7 +528,7 @@
   nötig), „App veröffentlichen“ bei Google (Phase 13 mit Datenschutzerklärung), Stern echt über den
   Chat gesetzt (nur abgelehnt getestet), Schätzung des Kontext-Füllstands kennt die Mail-Werkzeuge
   noch nicht.
-- Phase 12: Code-Bereich – in Arbeit. Entschieden (2026-10-30): eigene Seite „Code“ (Sitzung = ein
+- Phase 12: Code-Bereich – abgeschlossen (2026-10-30). Entschieden (2026-10-30): eigene Seite „Code“ (Sitzung = ein
   Projektordner) · Lesen/Suchen frei; Dateien ändern/anlegen/löschen nur mit Vorher/Nachher-Karte
   (Ändern = Text ersetzen wie bei Claude Code) · Befehle (PowerShell im Projektordner, Zeitlimit,
   Stopp) JEDER einzeln freigegeben, kein „immer“ · Git: Status/Diff frei, Commit mit Karte, KEIN Push,
@@ -589,12 +589,18 @@
   von vor der Korrektur) → Modell erfand die Nachricht ohne Diff → Beschreibung verlangt jetzt
   „VORHER git_diff“; 2. Versuch frische Sitzung `test-code-2`: Status → Diff → „Add verdopple
   function“ ✓. Übungsprojekt hat lokal die Test-Identität „Uebung“.
+  Schritt 6 ✓ (gebaute App): in einer Antwort `read_file` → `edit_file` (Karte, freigegeben) →
+  `run_command` „python rechner.py“ (Karte, freigegeben) → Ausgabe 5 / 5.0 / 4 richtig; Rückgängig
+  per Knopf → `git status` leer, Hinweis im Verlauf ✓. Aufgeräumt per ID: Test-Sitzungen
+  `test-code-1`/`-2`, zwei Sicherungsdateien. Offen/bekannt: Ausgabe von Befehlen kommt erst am
+  Ende (kein Live-Stream); Kontext-Füllstand kennt die Code-Werkzeuge nicht; lokale Modelle
+  brauchen 40–120 s je Schritt und erfinden manchmal (Karten lesen!).
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,
   zusammenfassen, sortieren – Änderungen nur nach Bestätigung, nie senden/löschen; Nutzer registriert
   die OAuth-Apps selbst; erweitert die Netzwerk-Regel um Google/Microsoft; Google-Testmodus = 7-Tage-
-  Anmeldung, Lösung in der Phase klären) · Phase 12 Code-Bereich (Agent mit Bestätigung: Vorher/Nachher-
+  Anmeldung, Lösung in der Phase klären) · Phase 12 ✓ Code-Bereich (Agent mit Bestätigung: Vorher/Nachher-
   Ansicht, Befehle nur nach Freigabe) · danach Design-Prüfung gegen Apples Human Interface Guidelines
   (Prüfliste + Feinschliff, kein neuer Look; Nutzer 2026-10-30) · Phase 13 Datenschutz, Lizenzen (MIT),
   Sicherheit (u. a. CSP; Sicherheits-Audit mit dem Skill „security-audit“, Vorbild cloudflare/security-audit-skill) ·

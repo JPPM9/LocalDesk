@@ -3,10 +3,11 @@
 Persönliche Desktop-App für lokale KI-Modelle über [Ollama](https://ollama.com).
 Navigation inspiriert von [mudler/LocalAI](https://github.com/mudler/LocalAI) (MIT) – eigener Code, keine Kopie.
 
-Stand: **Phase 11 abgeschlossen** (E-Mail mit Gmail) – Installer und Update-Knopf (Phase 7)
+Stand: **Phase 12 abgeschlossen** (Code-Bereich) – Installer und Update-Knopf (Phase 7)
 sind fertig, das erste Release kommt nach den weiteren geplanten Phasen.
 
-- Oberfläche: schmale Symbolleiste links (Chat, Vorlagen, E-Mail, Wissen, Skills, Modelle, Status,
+- Oberfläche: schmale Symbolleiste links (Chat, Vorlagen, E-Mail, Code, Wissen, Skills, Modelle,
+  Status,
   Einstellungen),
   daneben die Chatliste (Projekte, Chats nach Tagen, Ollama-Status unten; **Strg+B** klappt sie ein).
   Hell, dunkel oder wie Windows – umschalten unten in der Leiste oder unter Einstellungen →
@@ -93,6 +94,25 @@ anmelden**. Outlook folgt später (Microsoft verlangt dafür ein Azure-Verzeichn
   nur „eigenes Label hinzufügen“ und „Stern setzen/entfernen“ – und nur nach deinem Klick.
 - **Testmodus:** Solange deine Google-App im Status „Test“ ist, meldet Google dich nach 7 Tagen ab –
   dann einfach in den Einstellungen neu anmelden.
+
+## Code-Bereich benutzen
+
+Auf der Seite **Code** arbeitet ein Agent in einem Projektordner, den du mit **Neue Sitzung** im
+Windows-Dialog wählst. Er sieht nur diesen Ordner (ganze Laufwerke, Systemordner und der ganze
+Benutzerordner gehen nicht; `.git` ist gesperrt).
+
+- **Ohne Rückfrage:** Ordner ansehen, Dateien lesen, Text suchen, Git-Status und -Diff.
+- **Nur nach deinem Klick**, jedes Mal einzeln:
+  - **Datei ändern, anlegen, löschen** – die Karte zeigt Vorher/Nachher (rot/grün). Danach kannst
+    du jede Änderung mit **Rückgängig** zurücknehmen; wurde die Datei seither noch einmal geändert,
+    fragt LocalDesk vorher.
+  - **Befehle** (PowerShell im Projektordner, z. B. `python -m pytest`) – die Karte zeigt den
+    genauen Befehl. Zeitlimit 2 Minuten (höchstens 10), **Stopp** beendet auch Unterprozesse.
+    Achtung: Ein freigegebener Befehl darf alles, was du am PC darfst – auch ins Internet.
+  - **Commit** – die Karte zeigt Nachricht und Dateien. **Push gibt es nicht.**
+- Braucht ein Modell mit Werkzeugen (z. B. qwen3, gpt-oss). Lokale Modelle irren sich: Lies die
+  Karten kurz, bevor du klickst.
+- Sicherungen für „Rückgängig“ liegen unter `%APPDATA%\LocalDesk\code-backups\`.
 
 ## Dateien im Chat benutzen (MCP)
 

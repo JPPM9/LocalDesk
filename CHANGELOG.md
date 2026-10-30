@@ -21,6 +21,9 @@ Erste installierbare Version.
   reiner Text, Zusammenfassen mit einem lokalen Modell, Sortieren vorschlagen (Labels, Sterne) und
   ein Schalter „E-Mail“ im Chat. Geändert wird nur nach deiner Bestätigung; senden und löschen
   gibt es nicht. Die Anmeldung wird mit Windows verschlüsselt gespeichert, Mails gar nicht.
+- **Code-Bereich:** ein Agent arbeitet in einem gewählten Projektordner – lesen und suchen frei,
+  Dateien ändern mit Vorher/Nachher-Ansicht und „Rückgängig“, Befehle und Commits nur nach
+  Freigabe (jeder einzeln, kein Push).
 - **Skills:** Anleitungen als SKILL.md (vier Beispiele dabei) – von Hand einschalten, in Projekten
   und Vorlagen voreinstellen oder vom Modell passend laden lassen.
 - **Oberfläche** im Stil „Arbeitsplatz“: Symbolleiste links, Chatliste mit Tagesgruppen, Wissen und
