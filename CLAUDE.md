@@ -534,6 +534,18 @@
   Binärdateien erkannt. Seite `pages/CodePage.tsx` (Sitzungen, Dateibaum lazy, Datei-Ansicht mit
   Zeilennummern), Symbol „Code“ nach E-Mail. Test-Sitzung `test-code-1` (Übungsprojekt im
   Scratchpad) direkt in der DB angelegt – am Ende der Phase per ID löschen.
+  Schritt 2 ✓: `code/code-tools.ts` – `list_files` (Baum, Standard 2 Ebenen, max. 300 Einträge,
+  node_modules/dist/venv … nur genannt), `read_file` (Zeilennummern, max. 400 Zeilen/30 000 Zeichen
+  je Aufruf, Hinweis „weiter mit start_line“), `search_text` (ohne Groß/klein, max. 100 Treffer,
+  5000 Dateien, ohne Binäres) – alle ohne Rückfrage, Server `localdesk:code`. `chat-service`: Chat
+  mit `workspace` = Code-Sitzung → Anweisung `codeAgentPrompt` (`shared/code-agent.ts`) statt
+  Projekt-Anweisungen, 32k Kontext (wenn nicht selbst gesetzt), 25 Werkzeug-Runden, KEINE
+  Erinnerungen, kein Wissen, keine MCP-Server, keine Mail, keine automatischen Skills. Seite:
+  `components/code/CodeAgent.tsx` (useChat + MessageView + ChatInput; Modellwahl nur Modelle mit
+  Tools, gemerkt in `localdesk.codeModel`); Datei-Ansicht legt sich über den Agenten, der geladen
+  bleibt. Live ✓ im Übungsprojekt: qwen3:14b (Baum + 3 Dateien gelesen → Division durch null
+  gefunden, 64 s), gpt-oss:20b (`search_text` → richtig, 13 s), gemma4:12b (aus dem Verlauf,
+  Zeilen richtig).
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

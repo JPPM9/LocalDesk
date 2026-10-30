@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import path from 'node:path';
 import { ipcMain, type WebContents } from 'electron';
 import {
   IpcChannels,
@@ -11,6 +12,11 @@ import {
   type ToolDecision,
 } from '../shared/api';
 import { applyChatEvent, titleFromMessage } from '../shared/chat';
+import {
+  CODE_CONTEXT_DEFAULT,
+  CODE_MAX_ROUNDS,
+  codeAgentPrompt,
+} from '../shared/code-agent';
 import { knowledgeQuery, withKnowledge } from '../shared/knowledge';
 import { MAIL_TOOL_SERVER, type MailLabel } from '../shared/mail';
 import { isSortableLabel } from '../shared/mail-sorting';
@@ -24,6 +30,8 @@ import {
 import type { OfferedTool } from '../shared/tools';
 import { buildChatRequest } from '../shared/settings';
 import { describeChatError } from './chat-errors';
+import { CODE_TOOL_SERVER, callReadTool, readTools } from './code/code-tools';
+import { Workspace } from './code/workspace';
 import type { ChatRepository } from './db/chat-repository';
 import type { ChatKnowledge } from './knowledge-service';
 import type { MailClient } from './mail/mail-client';
@@ -123,7 +131,12 @@ export function registerChatHandlers(
     }
     const chat = chats.getChat(request.chatId);
     const history = chat?.messages ?? [];
-    const settings = chat?.settings ?? {};
+    const workspace = chat?.workspace ?? null;
+    // Code-Sitzungen: mehr Kontext, falls nicht selbst eingestellt.
+    const settings = {
+      ...(workspace && { contextLength: CODE_CONTEXT_DEFAULT }),
+      ...(chat?.settings ?? {}),
+    };
     const project = chat?.folderId ? projectOf(chat.folderId) : null;
 
     const userMessage: MessageRecord = {
@@ -150,7 +163,9 @@ export function registerChatHandlers(
       request.model,
       [...history, userMessage],
       settings,
-      project?.instructions,
+      workspace
+        ? codeAgentPrompt(path.basename(workspace), new Date())
+        : project?.instructions,
     );
     // Projekt-Dokumente werden immer durchsucht, dazu die per Wissen-Knopf gewählten.
     const collectionIds = [
@@ -158,7 +173,7 @@ export function registerChatHandlers(
       ...(settings.collections ?? []),
     ];
     const knowledgeSearch =
-      collectionIds.length > 0
+      collectionIds.length > 0 && !workspace
         ? { collectionIds, query: knowledgeQuery(history, request.content) }
         : null;
     // Bewusst nicht abwarten: Die Oberfläche bekommt die Antwort über Ereignisse.
@@ -168,10 +183,19 @@ export function registerChatHandlers(
       getProvider(),
       event.sender,
       chatRequest,
-      settings.mcpServers ?? [],
+      // Der Code-Agent hat nur seine eigenen Werkzeuge.
+      workspace ? [] : (settings.mcpServers ?? []),
       // Projekt-Skills gelten in jedem Chat des Projekts, dazu die des Chats.
-      [...new Set([...(project?.skills ?? []), ...(settings.skills ?? [])])],
-      settings.mailAccounts?.[0] ?? null,
+      workspace
+        ? (settings.skills ?? [])
+        : [
+            ...new Set([
+              ...(project?.skills ?? []),
+              ...(settings.skills ?? []),
+            ]),
+          ],
+      workspace ? null : (settings.mailAccounts?.[0] ?? null),
+      workspace,
       knowledgeSearch,
       { projectId: project?.id, question: request.content },
       answer,
@@ -218,7 +242,10 @@ export function registerChatHandlers(
       labels: MailLabel[];
       allLabels: MailLabel[];
     } | null,
+    /** Projektordner einer Code-Sitzung (null = normaler Chat). */
+    code: Workspace | null,
   ): ToolRuntime {
+    const codeOffers = code ? readTools() : [];
     const mailOffers = mailbox
       ? mailTools(mailbox.labels, (args) =>
           describeMailChange(mailbox.client, args, mailbox.labels),
@@ -243,9 +270,20 @@ export function registerChatHandlers(
           : []),
         ...skillOffers,
         ...mailOffers,
+        ...codeOffers,
         ...mcpTools.offered(serverIds),
       ],
       call: async (tool, args, callSignal) => {
+        if (tool.serverId === CODE_TOOL_SERVER && code) {
+          const result = await callReadTool(code, tool.toolName, args);
+          if (result === null) {
+            return {
+              text: `Das Werkzeug „${tool.toolName}“ gibt es nicht.`,
+              isError: true,
+            };
+          }
+          return { text: result, isError: false };
+        }
         if (tool.serverId === MAIL_TOOL_SERVER && mailbox) {
           return {
             text: await callMailTool(
@@ -309,6 +347,7 @@ export function registerChatHandlers(
     serverIds: string[],
     skillIds: string[],
     mailAccountId: string | null,
+    workspacePath: string | null,
     knowledgeSearch: { collectionIds: string[]; query: string } | null,
     memoryContext: { projectId: string | undefined; question: string },
     initial: MessageRecord,
@@ -343,10 +382,16 @@ export function registerChatHandlers(
         )
       ).filter((s): s is SkillView => s !== null && !s.error);
       // Erinnerungen über dich (frisch aus dem Vault) vorne in die System-Nachricht.
-      let request = withMemories(
-        withSkills(chatRequest, activeSkills),
-        await memory.forChat(memoryContext.projectId, memoryContext.question),
-      );
+      // Code-Sitzungen bekommen keine Erinnerungen – der Platz gehört dem Code.
+      let request = workspacePath
+        ? withSkills(chatRequest, activeSkills)
+        : withMemories(
+            withSkills(chatRequest, activeSkills),
+            await memory.forChat(
+              memoryContext.projectId,
+              memoryContext.question,
+            ),
+          );
       // Dann im Wissen suchen und antworten. Geht die Suche schief, kommt die
       // Antwort ohne Wissen – mit Hinweis, statt gar nicht.
       if (knowledgeSearch) {
@@ -364,13 +409,14 @@ export function registerChatHandlers(
       }
       // „Erinnerung speichern“ nur mit Vault und nur für Modelle, die Tools können.
       const canUseTools = await supportsTools(provider, request.model);
-      const offerMemory = memory.available() && canUseTools;
+      const offerMemory = memory.available() && canUseTools && !workspacePath;
       // Skills, die nicht schon eingeschaltet sind, darf das Modell selbst laden.
-      const skillCatalog = canUseTools
-        ? (await skills.list().catch(() => [])).filter(
-            (s) => !s.error && !skillIds.includes(s.id),
-          )
-        : [];
+      const skillCatalog =
+        canUseTools && !workspacePath
+          ? (await skills.list().catch(() => [])).filter(
+              (s) => !s.error && !skillIds.includes(s.id),
+            )
+          : [];
       // Schalter „E-Mail“: Postfach lesen dürfen (nur Modelle mit Tools). Die
       // Labels holen wir einmal – fürs Vorschlagen nur deine eigenen.
       let mailbox: Parameters<typeof toolRuntime>[4] = null;
@@ -383,6 +429,11 @@ export function registerChatHandlers(
           allLabels,
         };
       }
+      // Code-Sitzung: Projektordner frisch prüfen (könnte verschoben worden sein).
+      const code =
+        workspacePath && canUseTools
+          ? await Workspace.open(workspacePath)
+          : null;
       controller.signal.throwIfAborted();
       const runtime = toolRuntime(
         serverIds,
@@ -390,6 +441,7 @@ export function registerChatHandlers(
         offerMemory ? { projectId: memoryContext.projectId } : null,
         skillCatalog,
         mailbox,
+        code,
       );
       await runAnswer({
         provider,
@@ -399,6 +451,7 @@ export function registerChatHandlers(
         emit,
         signal: controller.signal,
         newId: randomUUID,
+        ...(code && { maxRounds: CODE_MAX_ROUNDS }),
       });
     } catch (error) {
       if (controller.signal.aborted) {

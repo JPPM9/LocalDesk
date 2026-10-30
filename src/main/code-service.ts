@@ -3,6 +3,7 @@ import path from 'node:path';
 import { BrowserWindow, dialog, ipcMain } from 'electron';
 import { IpcChannels, type CodeSession, type Result } from '../shared/api';
 import type { CodeEntry, CodeFile } from '../shared/code';
+import { CODE_CONTEXT_DEFAULT } from '../shared/code-agent';
 import { Workspace } from './code/workspace';
 import type { ChatRepository } from './db/chat-repository';
 
@@ -41,6 +42,7 @@ export function registerCodeHandlers(chats: ChatRepository) {
           id,
           title: path.basename(workspace.root),
           model: '',
+          settings: { contextLength: CODE_CONTEXT_DEFAULT },
           workspace: workspace.root,
         });
         const session = chats.listCodeSessions().find((s) => s.id === id);

@@ -5,6 +5,7 @@ import { FolderCode, Plus, Trash2 } from 'lucide-react';
 import type { CodeSession } from '../../shared/api';
 import { PageHeader } from '../components/PageHeader';
 import { FileTree } from '../components/code/FileTree';
+import { CodeAgent } from '../components/code/CodeAgent';
 import { FileView } from '../components/code/FileView';
 
 /**
@@ -18,6 +19,7 @@ export function CodePage() {
   const [sessions, setSessions] = useState<CodeSession[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [file, setFile] = useState<string | null>(null);
+  const [treeKey, setTreeKey] = useState(0);
   const session = sessions?.find((s) => s.id === sessionId) ?? null;
 
   const load = useCallback(
@@ -116,24 +118,29 @@ export function CodePage() {
                 sessionId={session.id}
                 selected={file}
                 onSelect={setFile}
+                reloadKey={treeKey}
               />
             </div>
           </div>
           <div className="flex min-w-0 flex-1 flex-col">
-            {file ? (
+            {/* Der Agent bleibt geladen, auch wenn eine Datei offen ist. */}
+            {file && (
               <FileView
                 sessionId={session.id}
                 path={file}
                 onClose={() => setFile(null)}
               />
-            ) : (
-              <>
-                <PageHeader title={t('code.agent')} />
-                <div className="mx-auto max-w-md space-y-3 px-6 pt-16 text-center text-muted">
-                  <p>{t('code.agentSoon')}</p>
-                </div>
-              </>
             )}
+            <div className={file ? 'hidden' : 'flex min-h-0 flex-1 flex-col'}>
+              <CodeAgent
+                key={session.id}
+                sessionId={session.id}
+                onChanged={() => {
+                  void load();
+                  setTreeKey((k) => k + 1);
+                }}
+              />
+            </div>
           </div>
         </>
       ) : (
