@@ -595,6 +595,17 @@
   `test-code-1`/`-2`, zwei Sicherungsdateien. Offen/bekannt: Ausgabe von Befehlen kommt erst am
   Ende (kein Live-Stream); Kontext-Füllstand kennt die Code-Werkzeuge nicht; lokale Modelle
   brauchen 40–120 s je Schritt und erfinden manchmal (Karten lesen!).
+- Design-Prüfung nach Apples Human Interface Guidelines – abgeschlossen (2026-10-31). Geprüft: alle
+  Seiten hell/dunkel, Klickflächen, Beschriftungen, Fokus. Umgesetzt (Nutzerwahl): Klickflächen
+  mind. 28 px (Symbolknöpfe `grid h-7 w-7 place-items-center`, Textknöpfe `min-h-7`, Server-Radio
+  in 28-px-Label; Regel: neue Knöpfe nicht kleiner, WCAG 2.2 verlangt 24 px) · gemeinsamer
+  Leer-Zustand `components/EmptyState.tsx` (Symbol, ein Satz, Hinweis, optional Knopf) auf Code,
+  Wissen, Skills, Vorlagen, E-Mail · linke Listen einheitlich 270 px (E-Mail 320 px) ·
+  `prefers-reduced-motion` (Windows „Animationseffekte“ aus) → keine Übergänge, kein weiches
+  Scrollen; drehende Lade-Symbole bleiben · leerer Chat: Hinweis + richtiger Knopf „Neue Vorlage“.
+  Seitentitel = Tooltip der Leiste war schon überall gleich (Befund war ein Irrtum). Bewusst
+  gelassen: Hover-Symbole in Chat-/Projektzeilen (dichte Liste, WCAG-Abstandsausnahme), Links im
+  Fließtext.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

@@ -64,14 +64,17 @@ export function ServerSettings() {
       <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
         {profiles.map((profile) => (
           <li key={profile.id} className="flex items-center gap-3 px-3 py-2.5">
-            <input
-              type="radio"
-              name="active-server"
-              checked={profile.active}
-              onChange={() => void activate(profile)}
-              aria-label={t('servers.useThis', { name: profile.name })}
-              className="accent-[var(--ld-accent)]"
-            />
+            {/* Größere Klickfläche um den kleinen Radio-Knopf (mind. 24 px). */}
+            <label className="grid h-7 w-7 shrink-0 cursor-pointer place-items-center">
+              <input
+                type="radio"
+                name="active-server"
+                checked={profile.active}
+                onChange={() => void activate(profile)}
+                aria-label={t('servers.useThis', { name: profile.name })}
+                className="h-4 w-4 accent-[var(--ld-accent)]"
+              />
+            </label>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <span className="truncate font-medium">{profile.name}</span>
@@ -238,7 +241,7 @@ function IconButton({
       disabled={disabled}
       title={label}
       aria-label={label}
-      className="rounded p-1 text-muted hover:bg-surface-hover hover:text-text disabled:opacity-30"
+      className="grid h-7 w-7 place-items-center rounded text-muted hover:bg-surface-hover hover:text-text disabled:opacity-30"
     >
       {children}
     </button>

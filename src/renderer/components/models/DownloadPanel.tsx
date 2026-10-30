@@ -134,7 +134,7 @@ function DownloadRow({ download }: { download: DownloadView }) {
           }
           title={t(running ? 'downloads.cancel' : 'downloads.dismiss')}
           aria-label={t(running ? 'downloads.cancel' : 'downloads.dismiss')}
-          className="rounded p-1 text-muted hover:bg-surface-hover hover:text-text"
+          className="grid h-7 w-7 place-items-center rounded text-muted hover:bg-surface-hover hover:text-text"
         >
           <X size={14} />
         </button>

@@ -54,9 +54,13 @@ export function SettingsPage() {
 
   const jump = (id: SectionId) => {
     setActive(id);
-    refs.current
-      .get(id)
-      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    refs.current.get(id)?.scrollIntoView({
+      // „Animationseffekte“ in Windows aus → springen statt gleiten.
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'auto'
+        : 'smooth',
+      block: 'start',
+    });
   };
 
   const section = (id: SectionId, children: ReactNode) => (

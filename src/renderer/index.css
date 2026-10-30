@@ -115,6 +115,20 @@ body {
   outline-offset: 2px;
 }
 
+/*
+ * Windows „Animationseffekte“ aus → keine Übergänge und kein weiches Scrollen.
+ * Drehende Lade-Symbole bleiben: Sie zeigen, dass noch etwas läuft.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *:not(.animate-spin),
+  *::before,
+  *::after {
+    transition-duration: 0s !important;
+    animation-duration: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Schlanke Bildlaufleisten, die zum Farbschema passen. */
 * {
   scrollbar-width: thin;

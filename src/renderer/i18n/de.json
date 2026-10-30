@@ -444,7 +444,8 @@
     "mcpServers": "MCP-Server",
     "mcpServersHint": "Welche Werkzeuge ein Chat mit dieser Vorlage nutzen darf. Später im Chat über den MCP-Button änderbar.",
     "skills": "Skills",
-    "skillsHint": "Gelten in jedem Chat, der mit dieser Vorlage startet."
+    "skillsHint": "Gelten in jedem Chat, der mit dieser Vorlage startet.",
+    "noneHint": "Mit Vorlagen startest du Chats mit festem Modell, Systemprompt und Parametern."
   },
   "mcpPicker": {
     "button": "MCP-Server für diesen Chat",
@@ -624,7 +625,6 @@
     "loading": "Lade …",
     "noSelection": "Wähle links eine Mail aus.",
     "noSelectionHint": "LocalDesk zeigt Mails nur als Text, ohne Bilder aus dem Internet. Nichts wird als gelesen markiert, gesendet oder gelöscht.",
-    "setupTitle": "E-Mail einrichten",
     "setupText": "Melde dich zuerst in den Einstellungen mit deinem Google-Konto an.",
     "toSettings": "Zu den Einstellungen",
     "reauth": "Zu den Einstellungen und neu anmelden",
@@ -677,7 +677,7 @@
   "code": {
     "title": "Code",
     "new": "Neue Sitzung",
-    "none": "Noch keine Code-Sitzungen.",
+    "none": "Noch keine Code-Sitzungen",
     "delete": "Sitzung löschen",
     "confirmDelete": "Sitzung „{{name}}“ löschen? Der Verlauf mit dem Agenten wird entfernt – deine Dateien bleiben unverändert.",
     "intro": "Wähle mit „Neue Sitzung“ einen Projektordner. Der Agent arbeitet nur in diesem Ordner.",

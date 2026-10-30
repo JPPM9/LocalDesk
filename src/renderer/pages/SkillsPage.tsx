@@ -8,6 +8,7 @@ import {
   RefreshCw,
   Save,
   Trash2,
+  WandSparkles,
 } from 'lucide-react';
 import {
   SKILL_BODY_MAX,
@@ -16,6 +17,7 @@ import {
   type SkillInput,
 } from '../../shared/skills';
 import { PageHeader } from '../components/PageHeader';
+import { EmptyState } from '../components/EmptyState';
 import { Field } from '../components/settings/SettingsFields';
 import { useSkills } from '../skills/useSkills';
 
@@ -293,10 +295,11 @@ export function SkillsPage() {
               )}
             </div>
           ) : (
-            <div className="mx-auto max-w-md space-y-3 px-6 pt-16 text-center text-muted">
-              <p>{t('skills.intro')}</p>
-              <p className="text-xs text-subtle">{t('skills.introSafe')}</p>
-            </div>
+            <EmptyState
+              icon={WandSparkles}
+              text={t('skills.intro')}
+              hint={t('skills.introSafe')}
+            />
           )}
         </div>
       </div>

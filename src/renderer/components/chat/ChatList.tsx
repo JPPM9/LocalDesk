@@ -151,7 +151,7 @@ export function ChatList(props: ChatListProps) {
               onClick={() => setQuery('')}
               title={t('search.clear')}
               aria-label={t('search.clear')}
-              className="rounded p-0.5 text-muted hover:text-text"
+              className="grid h-7 w-7 place-items-center rounded text-muted hover:text-text"
             >
               <X size={13} />
             </button>

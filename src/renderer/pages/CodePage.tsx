@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { FolderCode, Plus, Trash2 } from 'lucide-react';
 import type { CodeSession } from '../../shared/api';
 import { PageHeader } from '../components/PageHeader';
+import { EmptyState } from '../components/EmptyState';
 import { FileTree } from '../components/code/FileTree';
 import { CodeAgent } from '../components/code/CodeAgent';
 import { FileView } from '../components/code/FileView';
@@ -50,7 +51,7 @@ export function CodePage() {
 
   return (
     <div className="flex h-full">
-      <aside className="flex w-[230px] shrink-0 flex-col border-r border-border bg-surface">
+      <aside className="flex w-[270px] shrink-0 flex-col border-r border-border bg-surface">
         <div className="px-2.5 pt-3 pb-2">
           <button
             type="button"
@@ -146,11 +147,11 @@ export function CodePage() {
       ) : (
         <div className="flex min-w-0 flex-1 flex-col">
           <PageHeader title={t('code.title')} />
-          <div className="mx-auto max-w-md space-y-3 px-6 pt-16 text-center text-muted">
-            <FolderCode size={28} className="mx-auto text-subtle" />
-            <p>{t('code.intro')}</p>
-            <p className="text-xs text-subtle">{t('code.introSafe')}</p>
-          </div>
+          <EmptyState
+            icon={FolderCode}
+            text={t('code.intro')}
+            hint={t('code.introSafe')}
+          />
         </div>
       )}
     </div>

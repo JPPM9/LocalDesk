@@ -93,7 +93,7 @@ export function SourcesEditor({
               disabled={disabled}
               aria-label={t('knowledge.removeSource')}
               title={t('knowledge.removeSource')}
-              className="rounded p-0.5 text-muted hover:text-text disabled:opacity-40"
+              className="grid h-7 w-7 place-items-center rounded text-muted hover:text-text disabled:opacity-40"
             >
               <X size={13} />
             </button>

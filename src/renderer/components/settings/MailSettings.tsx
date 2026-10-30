@@ -197,7 +197,7 @@ export function MailSettings() {
                       <button
                         type="button"
                         onClick={() => void disconnect(account)}
-                        className="rounded border border-border px-2.5 py-0.5 text-xs hover:bg-surface-hover"
+                        className="min-h-7 rounded border border-border px-2.5 py-1 text-xs hover:bg-surface-hover"
                       >
                         {t('mailSettings.disconnect')}
                       </button>

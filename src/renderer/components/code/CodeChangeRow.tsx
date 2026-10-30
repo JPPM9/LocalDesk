@@ -76,7 +76,7 @@ export function CodeChangeRow({ call }: { call: ToolCallRecord }) {
               e.preventDefault();
               void undo();
             }}
-            className="flex shrink-0 items-center gap-1 rounded border border-border bg-surface px-2 py-0.5 text-xs text-text hover:bg-surface-hover"
+            className="flex min-h-7 shrink-0 items-center gap-1 rounded border border-border bg-surface px-2 py-1 text-xs text-text hover:bg-surface-hover"
           >
             <Undo2 size={12} />
             {t('code.undo')}

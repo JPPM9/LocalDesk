@@ -107,7 +107,7 @@ export function MemoryList() {
                     onClick={() => void open(memory)}
                     title={t('memories.open')}
                     aria-label={t('memories.open')}
-                    className="shrink-0 rounded p-0.5 text-muted hover:text-text"
+                    className="shrink-0 grid h-7 w-7 place-items-center rounded text-muted hover:text-text"
                   >
                     <ExternalLink size={13} />
                   </button>
@@ -116,7 +116,7 @@ export function MemoryList() {
                     onClick={() => void remove(memory)}
                     title={t('memories.delete')}
                     aria-label={t('memories.delete')}
-                    className="shrink-0 rounded p-0.5 text-muted hover:text-error"
+                    className="shrink-0 grid h-7 w-7 place-items-center rounded text-muted hover:text-error"
                   >
                     <Trash2 size={13} />
                   </button>

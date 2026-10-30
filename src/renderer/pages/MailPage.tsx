@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Mail, RefreshCw, Search, Star, WandSparkles } from 'lucide-react';
 import type { MailAccountView, MailSummary } from '../../shared/mail';
 import { PageHeader } from '../components/PageHeader';
+import { EmptyState } from '../components/EmptyState';
 import { MailReader } from '../components/mail/MailReader';
 import { ReauthLink } from '../components/mail/ReauthLink';
 import { SortPanel } from '../components/mail/SortPanel';
@@ -98,24 +99,25 @@ export function MailPage() {
     return (
       <div className="flex h-full flex-col">
         <PageHeader title={t('mail.title')} />
-        <div className="mx-auto max-w-md space-y-3 px-6 pt-16 text-center">
-          <Mail size={28} className="mx-auto text-subtle" />
-          <h2 className="font-semibold">{t('mail.setupTitle')}</h2>
-          <p className="text-muted">{t('mail.setupText')}</p>
-          <Link
-            to="/settings"
-            className="inline-block rounded-lg bg-accent px-3 py-1.5 text-[13px] font-medium text-white hover:opacity-90"
-          >
-            {t('mail.toSettings')}
-          </Link>
-        </div>
+        <EmptyState
+          icon={Mail}
+          text={t('mail.setupText')}
+          action={
+            <Link
+              to="/settings"
+              className="inline-block rounded-lg bg-accent px-3 py-1.5 text-[13px] font-medium text-white hover:opacity-90"
+            >
+              {t('mail.toSettings')}
+            </Link>
+          }
+        />
       </div>
     );
   }
 
   return (
     <div className="flex h-full">
-      <aside className="flex w-[340px] shrink-0 flex-col border-r border-border bg-surface">
+      <aside className="flex w-[320px] shrink-0 flex-col border-r border-border bg-surface">
         <div className="space-y-2 px-2.5 pt-3 pb-2">
           {accounts && accounts.length > 1 && (
             <select
@@ -264,10 +266,11 @@ export function MailPage() {
         ) : (
           <>
             <PageHeader title={t('mail.title')} />
-            <div className="mx-auto max-w-md space-y-3 px-6 pt-16 text-center text-muted">
-              <p>{t('mail.noSelection')}</p>
-              <p className="text-xs text-subtle">{t('mail.noSelectionHint')}</p>
-            </div>
+            <EmptyState
+              icon={Mail}
+              text={t('mail.noSelection')}
+              hint={t('mail.noSelectionHint')}
+            />
           </>
         )}
       </div>

@@ -110,7 +110,7 @@ export function McpSettings() {
                       })
                     }
                     aria-label={t('mcp.removeFolder')}
-                    className="rounded p-0.5 text-muted hover:text-text"
+                    className="grid h-7 w-7 place-items-center rounded text-muted hover:text-text"
                   >
                     <X size={13} />
                   </button>
@@ -390,7 +390,7 @@ function ToolRow({
           aria-label={t('mcp.resetPermission', {
             standard: t(`mcp.permission.${standard}`),
           })}
-          className={`rounded p-0.5 text-muted hover:text-text ${override ? '' : 'invisible'}`}
+          className={`grid h-7 w-7 place-items-center rounded text-muted hover:text-text ${override ? '' : 'invisible'}`}
         >
           <RotateCcw size={12} />
         </button>
@@ -424,7 +424,7 @@ function IconButton({
       disabled={disabled}
       title={label}
       aria-label={label}
-      className="rounded p-1 text-muted hover:bg-surface-hover hover:text-text disabled:opacity-30"
+      className="grid h-7 w-7 place-items-center rounded text-muted hover:bg-surface-hover hover:text-text disabled:opacity-30"
     >
       {children}
     </button>

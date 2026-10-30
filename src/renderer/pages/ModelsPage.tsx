@@ -176,7 +176,7 @@ function ModelTable({
                   onClick={() => onDelete(model)}
                   title={t('models.delete', { name: model.name })}
                   aria-label={t('models.delete', { name: model.name })}
-                  className="rounded p-1 text-muted hover:bg-error/10 hover:text-error"
+                  className="grid h-7 w-7 place-items-center rounded text-muted hover:bg-error/10 hover:text-error"
                 >
                   <Trash2 size={14} />
                 </button>

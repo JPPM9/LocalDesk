@@ -213,7 +213,7 @@ export function Field({
               onClick={onReset}
               title={t('settingsPanel.reset')}
               aria-label={t('settingsPanel.reset')}
-              className="rounded p-0.5 text-muted hover:text-text"
+              className="grid h-7 w-7 place-items-center rounded text-muted hover:text-text"
             >
               <RotateCcw size={12} />
             </button>

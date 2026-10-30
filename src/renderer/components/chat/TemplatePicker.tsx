@@ -19,11 +19,16 @@ export function TemplatePicker({
 
   if (templates.length === 0) {
     return (
-      <p className="text-center text-xs text-muted">
-        <NavLink to="/templates" className="underline hover:text-text">
+      <div className="space-y-2 text-center">
+        <p className="text-xs text-subtle">{t('templates.noneHint')}</p>
+        <NavLink
+          to="/templates"
+          className="inline-flex min-h-7 items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-1 text-xs text-muted hover:bg-surface-hover hover:text-text"
+        >
+          <BookMarked size={13} />
           {t('templates.new')}
         </NavLink>
-      </p>
+      </div>
     );
   }
 

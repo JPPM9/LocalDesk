@@ -1,10 +1,17 @@
 import { useEffect, useState } from 'react';
 import { NavLink, useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { BookmarkPlus, MessageSquarePlus, Save, Trash2 } from 'lucide-react';
+import {
+  BookMarked,
+  BookmarkPlus,
+  MessageSquarePlus,
+  Save,
+  Trash2,
+} from 'lucide-react';
 import type { TemplateInput } from '../../shared/api';
 import { thinkFitsModel } from '../../shared/settings';
 import { PageHeader } from '../components/PageHeader';
+import { EmptyState } from '../components/EmptyState';
 import { Field, SettingsFields } from '../components/settings/SettingsFields';
 import { useChatModels } from '../hooks/useChatModels';
 import { CollectionPicker } from '../components/knowledge/CollectionPicker';
@@ -284,9 +291,7 @@ export function TemplatesPage() {
               />
             </div>
           ) : (
-            <div className="mx-auto max-w-md px-6 pt-16 text-center text-muted">
-              <p>{t('templates.intro')}</p>
-            </div>
+            <EmptyState icon={BookMarked} text={t('templates.intro')} />
           )}
         </div>
       </div>

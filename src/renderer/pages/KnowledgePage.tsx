@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { Library, Plus, Trash2 } from 'lucide-react';
 import type { CollectionView, KnowledgeSource } from '../../shared/api';
 import { PageHeader } from '../components/PageHeader';
+import { EmptyState } from '../components/EmptyState';
 import {
   DocumentList,
   IndexButton,
@@ -99,10 +100,7 @@ export function KnowledgePage() {
         ) : (
           <>
             <PageHeader title={t('knowledge.title')} />
-            <div className="mx-auto max-w-md space-y-3 px-6 pt-16 text-center text-muted">
-              <Library size={32} className="mx-auto" />
-              <p>{t('knowledge.intro')}</p>
-            </div>
+            <EmptyState icon={Library} text={t('knowledge.intro')} />
           </>
         )}
       </div>
