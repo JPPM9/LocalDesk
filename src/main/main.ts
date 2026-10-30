@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, session, shell } from 'electron';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import type { DatabaseSync } from 'node:sqlite';
@@ -235,6 +235,13 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
 }
 
 app.whenReady().then(() => {
+  // Electron erlaubt Kamera, Mikrofon, Standort, Benachrichtigungen usw. sonst ohne
+  // Rückfrage. LocalDesk braucht davon nichts – also alles ablehnen.
+  session.defaultSession.setPermissionRequestHandler((_wc, _perm, callback) =>
+    callback(false),
+  );
+  session.defaultSession.setPermissionCheckHandler(() => false);
+
   // Die Datenbank liegt im Benutzerordner, z. B. %APPDATA%\LocalDesk\localdesk.db
   const db = openDatabase(path.join(app.getPath('userData'), 'localdesk.db'));
   app.on('will-quit', () => db.close());

@@ -10,8 +10,14 @@ const CSP = [
   "default-src 'self'",
   "script-src 'self'",
   "style-src 'self' 'unsafe-inline'",
+  // Keine Bilder aus dem Internet – auch nicht in Antworten eines Modells (Tracking).
   "img-src 'self' data: blob:",
   "connect-src 'self'",
+  // Was die Oberfläche nie braucht, ist ganz verboten.
+  "object-src 'none'",
+  "frame-src 'none'",
+  "base-uri 'none'",
+  "form-action 'none'",
 ].join('; ');
 
 function cspPlugin(): Plugin {

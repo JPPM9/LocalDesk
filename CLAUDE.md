@@ -366,7 +366,8 @@
   Tailwind (`@utility` greift für eingebaute Klassen nicht). Farbschema: `appearance-service.ts` setzt
   `nativeTheme.themeSource` (gespeichert als `appearance.theme`), CSS folgt per prefers-color-scheme;
   Einstellungen → Darstellung. Geprüft: Inter geladen, Radien, Umschalten sofort, Wahl gespeichert ✓.
-  Notiert für Phase 13: index.html hat keine Content-Security-Policy.
+  (Die damalige Notiz „index.html hat keine CSP“ war falsch: Die CSP wird beim Bauen eingefügt,
+  siehe Phase 13 Schritt 2.)
   Rahmen: `NavRail.tsx` (ersetzt Sidebar) – 60 px Symbolleiste, Namen im Tooltip, Punkt am Status-Symbol
   (Ollama erreichbar), unten Hell/Dunkel-Knopf (System → Hell → Dunkel) und Einstellungen; `useTheme` hält
   Leiste und Einstellungen per Fenster-Ereignis gleich. Ausführlicher Ollama-Status (`StatusPill`) unten in
@@ -621,6 +622,17 @@
   `getLicenses` liest aus `process.resourcesPath` (gebaut) bzw. `app.getAppPath()` (dev); Anzeige
   „Über LocalDesk → Lizenzen“ (`LicenseSection.tsx`). Electron/Chromium bringen eigene
   Lizenzdateien im Programmordner mit.
+  Schritt 2 ✓: CSP kommt per Vite-Plugin nur in den Build (`vite.renderer.config.mts`, im Dev
+  braucht Vite Inline-Skripte): `default-src 'self'; script-src 'self'; style-src 'self'
+  'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'` + neu `object-src 'none';
+  frame-src 'none'; base-uri 'none'; form-action 'none'`. Neu: `setPermissionRequestHandler` und
+  `setPermissionCheckHandler` lehnen ALLES ab (Electron erlaubt sonst Kamera/Mikro/Standort/
+  Benachrichtigungen ohne Rückfrage; LocalDesk nutzt nichts davon, auch nicht die Zwischenablage-
+  API). Schon vorhanden: contextIsolation/sandbox an, nodeIntegration aus, `will-navigate` und
+  `setWindowOpenHandler` (Links → System-Browser), Fuses (RunAsNode aus, NODE_OPTIONS/Inspect aus,
+  asar-Integrität, nur aus asar laden, Cookie-Verschlüsselung). Geprüft in der gebauten App: alle 9
+  Seiten ohne CSP-Verstoß; geblockt: Bild von außen, fetch nach außen, Inline-Skript, Mikrofon/
+  Kamera (Berechtigung „denied“), Benachrichtigung, Standort, window.open, Navigation weg.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,
