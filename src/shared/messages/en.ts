@@ -285,4 +285,15 @@ export const en: Record<MessageKey, string> = {
     'Access allowed: mailbox {email} ({scope}). The e-mail tools are now available – use them now instead of guessing.',
   'access.filesGranted':
     'Access allowed: files through {names} ({scope}). The file tools of these servers are now available – read the file with them, do not invent contents.',
+  'github.invalidLink':
+    'That is not a suitable GitHub link. Allowed: a link to a repository, a folder or a .md file on github.com.',
+  'github.notFound':
+    'There is no SKILL.md there (or the repository is private). The link must point to a SKILL.md or a folder containing one.',
+  'github.failed': 'GitHub answered with error {status}.',
+  'github.tooLarge': 'The file is too large for a skill (over 200 KB).',
+  'github.notText': 'That is not a text file.',
+  'github.timeout': 'GitHub is not responding (time limit).',
+  'github.redirect':
+    'The link redirects (the repository was probably renamed) – please use the current link.',
+  'github.offline': 'No connection to GitHub – are you online?',
 };

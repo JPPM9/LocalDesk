@@ -760,6 +760,16 @@
   `read_text_file`, richtiges Geheimwort, `mcpServers` gespeichert. gemma4:12b bat auch richtig, erfand danach aber
   den Dateiinhalt (nur Ordner gelistet) – Modellschwäche; das Ergebnis mahnt jetzt „lies die Datei, erfinde nichts“.
   Noch deutsch (Schritt 3): die Beschreibung von `request_access`.
+  D ✓: Skills von GitHub laden (nur Skills, KEINE Plugins mit Programmen – so gewählt). `shared/github.ts`
+  `parseGithubSkillUrl` (Links: Projekt, `/tree/…`, `/blob/….md`, raw; Besitzer/Projekt/Zweig/Pfad Zeichen für Zeichen
+  geprüft, `.`/`..` und Fremd-Hosts abgelehnt; Zweig mit „/“ geht nicht) → `main/skills/github-skill.ts`
+  `fetchGithubSkill`: NUR `raw.githubusercontent.com` über https, `redirect: 'error'`, 200 KB und 15 s Limit, Text-
+  Prüfung, Kopf kürzen statt ablehnen; IPC `fetchGithubSkill`. Es wird nichts gespeichert: Der Text landet als Entwurf im
+  Skill-Editor (`GithubSkillDialog`, Banner „noch nicht gespeichert“, Warnhinweis zu fremden Anleitungen), gespeichert wird
+  mit dem normalen „Speichern“. **Netzwerk-Regel erweitert:** raw.githubusercontent.com nur auf Klick bei „Skill von GitHub
+  laden“ (steht in `docs/privacy.md`, Test prüft den Host). Echt geprüft gegen ein öffentliches Projekt (README.md als
+  Datei: Name aus Dateiname, Banner, erst nach „Speichern“ in der Liste); 404 und Fremd-Host werden verständlich gemeldet.
+  Fremde Skills können das Modell beeinflussen (Prompt-Injection) – darum Prüfung vor dem Speichern, nie automatisch.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

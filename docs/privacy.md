@@ -52,6 +52,7 @@ verliert). Wenn du alles entfernen willst, lösche `%APPDATA%\LocalDesk` von Han
 | Ollama-Modellbibliothek                                                         | nur wenn du ein Modell herunterlädst          | Ollama selbst lädt das Modell                                              |
 | Google (`accounts.google.com`, `oauth2.googleapis.com`, `gmail.googleapis.com`) | nur mit eingerichteter E-Mail                 | Anmeldung, Mails lesen, Labels/Sterne nach deiner Bestätigung              |
 | GitHub (Releases von JPPM9/LocalDesk)                                           | nur wenn du „Nach Updates suchen“ klickst     | Versionsabfrage, Download des Updates                                      |
+| GitHub (`raw.githubusercontent.com`)                                            | nur wenn du „Skill von GitHub laden“ klickst  | der Pfad des Links; geladen wird nur eine Textdatei (SKILL.md)             |
 | npm-Paketverzeichnis                                                            | beim ersten Start des Dateisystem-MCP-Servers | `npx` lädt das Server-Programm herunter                                    |
 
 Außerdem gilt: **Befehle, die du dem Code-Agenten freigibst**, laufen mit deinen Rechten und

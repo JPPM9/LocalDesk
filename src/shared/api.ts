@@ -16,6 +16,7 @@ import type {
 } from './mail';
 import type { CodeChangeState, CodeEntry, CodeFile } from './code';
 import type { CodeMode } from './code-agent';
+import type { GithubSkill } from './github';
 import type { MailSuggestion } from './mail-sorting';
 import type { SkillInput, SkillView } from './skills';
 import type { UpdateState } from './update';
@@ -726,6 +727,8 @@ export interface LocalDeskApi {
   listSkills: () => Promise<Result<SkillView[]>>;
   saveSkill: (input: SkillInput) => Promise<Result<SkillView>>;
   deleteSkill: (id: string) => Promise<Result<void>>;
+  /** Lädt eine SKILL.md von GitHub (nur zum Prüfen – gespeichert wird erst mit saveSkill). */
+  fetchGithubSkill: (link: string) => Promise<Result<GithubSkill>>;
   /** Zeigt den Skill-Ordner (ohne id) oder den Ordner eines Skills im Explorer. */
   openSkillFolder: (id?: string) => Promise<Result<void>>;
 
@@ -893,6 +896,7 @@ export const IpcChannels = {
   listSkills: 'skills:list',
   saveSkill: 'skills:save',
   deleteSkill: 'skills:delete',
+  fetchGithubSkill: 'skills:fetch-github',
   openSkillFolder: 'skills:open-folder',
   getTheme: 'appearance:get-theme',
   setTheme: 'appearance:set-theme',

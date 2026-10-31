@@ -40,7 +40,7 @@ Status: the first release (0.1.0) is not published yet. The installer and the up
 
 **Skills**
 
-- Instructions as `SKILL.md` files (same format as Claude skills). Turn them on by hand, preset them in projects and templates, or let the model load a fitting one itself. A skill is plain text. It runs nothing.
+- Instructions as `SKILL.md` files (same format as Claude skills). Turn them on by hand, preset them in projects and templates, or let the model load a fitting one itself. You can also load a skill from a GitHub link: LocalDesk fetches only the text and shows it to you first. A skill is plain text. It runs nothing.
 
 **Obsidian**
 

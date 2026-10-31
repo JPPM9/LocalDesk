@@ -1,12 +1,18 @@
 import path from 'node:path';
 import { ipcMain, shell } from 'electron';
 import { IpcChannels, type Result } from '../shared/api';
+import type { GithubSkill } from '../shared/github';
 import { checkSkillInput, isSkillId, type SkillView } from '../shared/skills';
+import { fetchGithubSkill, type SkillFetch } from './skills/github-skill';
 import type { SkillStore } from './skills/skill-store';
 import { tr } from '../shared/messages';
 
 /** Skills für die Oberfläche: auflisten, speichern, löschen, Ordner im Explorer zeigen. */
-export function registerSkillHandlers(store: SkillStore) {
+export function registerSkillHandlers(
+  store: SkillStore,
+  /** Für Tests austauschbar; sonst das normale fetch. */
+  skillFetch: SkillFetch = (url, init) => globalThis.fetch(url, init),
+) {
   const failed = (error: unknown) => ({
     ok: false as const,
     error: error instanceof Error ? error.message : String(error),
@@ -34,6 +40,15 @@ export function registerSkillHandlers(store: SkillStore) {
         return failed(error);
       }
     },
+  );
+
+  // „Von GitHub laden“: holt nur den Text zum Prüfen – gespeichert wird später mit „Speichern“.
+  ipcMain.handle(
+    IpcChannels.fetchGithubSkill,
+    (_event, link: unknown): Promise<Result<GithubSkill>> =>
+      typeof link === 'string' && link.length <= 500
+        ? fetchGithubSkill(link, skillFetch)
+        : Promise.resolve({ ok: false, error: tr('github.invalidLink') }),
   );
 
   ipcMain.handle(

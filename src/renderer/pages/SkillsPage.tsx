@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { NavLink, useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
   CircleAlert,
+  Download,
   FolderOpen,
   Plus,
   RefreshCw,
@@ -16,7 +17,9 @@ import {
   SKILL_NAME_MAX,
   type SkillInput,
 } from '../../shared/skills';
+import type { GithubSkill } from '../../shared/github';
 import { PageHeader } from '../components/PageHeader';
+import { GithubSkillDialog } from '../components/skills/GithubSkillDialog';
 import { EmptyState } from '../components/EmptyState';
 import { Field } from '../components/settings/SettingsFields';
 import { useSkills } from '../skills/useSkills';
@@ -49,12 +52,26 @@ export function SkillsPage() {
   const [dirty, setDirty] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const selected = skills.find((s) => s.id === skillId);
+  // „Von GitHub laden“: Der geladene Text kommt als Entwurf in den Editor (nichts ist gespeichert).
+  const [githubOpen, setGithubOpen] = useState(false);
+  const [importedFrom, setImportedFrom] = useState<string | null>(null);
+  const pendingImport = useRef<GithubSkill | null>(null);
 
   // Beim Wechsel des Skills (oder nach „Neu laden“) den Entwurf neu befüllen.
   const fill = () => {
     setError(null);
     setDirty(false);
+    setImportedFrom(null);
     if (skillId === NEW) {
+      const imported = pendingImport.current;
+      pendingImport.current = null;
+      if (imported) {
+        const { source, ...skill } = imported;
+        setDraft(skill);
+        setImportedFrom(source);
+        setDirty(true); // Erst „Speichern“ legt die Datei an.
+        return;
+      }
       setDraft({ name: '', description: '', body: t('skills.bodyTemplate') });
       return;
     }
@@ -74,6 +91,13 @@ export function SkillsPage() {
   };
   // Nicht nach jedem Speichern neu befüllen (sonst springt der Cursor).
   useEffect(fill, [skillId, loaded]);
+
+  const onImported = (skill: GithubSkill) => {
+    setGithubOpen(false);
+    pendingImport.current = skill;
+    if (skillId === NEW) fill();
+    else navigate(`/skills/${NEW}`);
+  };
 
   const update = (patch: Partial<SkillInput>) => {
     setDraft((current) => (current ? { ...current, ...patch } : current));
@@ -148,6 +172,15 @@ export function SkillsPage() {
           >
             <Plus size={16} />
             {t('skills.new')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setGithubOpen(true)}
+            title={t('skills.github.title')}
+            aria-label={t('skills.github.title')}
+            className={ICON_BTN}
+          >
+            <Download size={16} />
           </button>
           <button
             type="button"
@@ -263,6 +296,11 @@ export function SkillsPage() {
                   {error ?? t('skills.broken', { error: selected?.error })}
                 </p>
               )}
+              {importedFrom && !draft.id && (
+                <p className="rounded-xl border border-warn/40 bg-warn/10 px-3.5 py-2.5 text-sm">
+                  {t('skills.github.imported', { source: importedFrom })}
+                </p>
+              )}
               <Field label={t('skills.name')}>
                 <input
                   autoFocus={skillId === NEW}
@@ -318,6 +356,12 @@ export function SkillsPage() {
           )}
         </div>
       </div>
+      {githubOpen && (
+        <GithubSkillDialog
+          onLoaded={onImported}
+          onClose={() => setGithubOpen(false)}
+        />
+      )}
     </div>
   );
 }

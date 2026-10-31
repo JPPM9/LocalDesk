@@ -113,6 +113,8 @@ const api: LocalDeskApi = {
   listSkills: () => ipcRenderer.invoke(IpcChannels.listSkills),
   saveSkill: (input) => ipcRenderer.invoke(IpcChannels.saveSkill, input),
   deleteSkill: (id) => ipcRenderer.invoke(IpcChannels.deleteSkill, id),
+  fetchGithubSkill: (link) =>
+    ipcRenderer.invoke(IpcChannels.fetchGithubSkill, link),
   openSkillFolder: (id) => ipcRenderer.invoke(IpcChannels.openSkillFolder, id),
   getTheme: () => ipcRenderer.invoke(IpcChannels.getTheme),
   setTheme: (theme) => ipcRenderer.invoke(IpcChannels.setTheme, theme),

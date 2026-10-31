@@ -596,7 +596,16 @@
     "fileHint": "Gespeichert als",
     "broken": "Diese SKILL.md kann nicht benutzt werden: {{error}}",
     "intro": "Skills sind Anleitungen für wiederkehrende Aufgaben – z. B. wie das Modell zusammenfassen, Code prüfen oder Mails beantworten soll. Du schaltest sie im Chat ein, oder das Modell lädt einen passenden selbst.",
-    "introSafe": "Ein Skill ist nur Text: Er führt nichts aus und gibt keine Werkzeug-Rechte."
+    "introSafe": "Ein Skill ist nur Text: Er führt nichts aus und gibt keine Werkzeug-Rechte.",
+    "github": {
+      "title": "Skill von GitHub laden",
+      "intro": "Füge den Link zu einer SKILL.md ein – zu einer Datei, einem Ordner oder einem ganzen Projekt auf github.com. LocalDesk holt nur den Text und zeigt ihn dir im Editor. Gespeichert wird erst, wenn du auf „Speichern“ klickst.",
+      "placeholder": "https://github.com/besitzer/projekt/tree/main/mein-skill",
+      "warning": "Ein Skill ist eine Anleitung an das Modell. Lies fremde Skills, bevor du sie speicherst und einschaltest – sie können das Modell zu unerwünschtem Verhalten bringen.",
+      "load": "Laden",
+      "loading": "Lade …",
+      "imported": "Geladen von GitHub ({{source}}) – noch nicht gespeichert. Lies den Text und passe ihn an, bevor du speicherst."
+    }
   },
   "skillPicker": {
     "button": "Skills für diesen Chat",

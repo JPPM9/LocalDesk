@@ -596,7 +596,16 @@
     "fileHint": "Saved as",
     "broken": "This SKILL.md can't be used: {{error}}",
     "intro": "Skills are instructions for recurring tasks – e.g. how the model should summarize, review code or answer mail. You turn them on in the chat, or the model loads a fitting one itself.",
-    "introSafe": "A skill is only text: it runs nothing and grants no tool permissions."
+    "introSafe": "A skill is only text: it runs nothing and grants no tool permissions.",
+    "github": {
+      "title": "Load a skill from GitHub",
+      "intro": "Paste the link to a SKILL.md – to a file, a folder or a whole repository on github.com. LocalDesk fetches only the text and shows it in the editor. Nothing is saved until you click “Save”.",
+      "placeholder": "https://github.com/owner/repository/tree/main/my-skill",
+      "warning": "A skill is an instruction to the model. Read foreign skills before you save and turn them on – they can push the model into unwanted behavior.",
+      "load": "Load",
+      "loading": "Loading …",
+      "imported": "Loaded from GitHub ({{source}}) – not saved yet. Read the text and adjust it before you save."
+    }
   },
   "skillPicker": {
     "button": "Skills for this chat",

@@ -290,6 +290,17 @@ export const de = {
     'Zugriff erlaubt: Postfach {email} ({scope}). Die E-Mail-Werkzeuge stehen jetzt bereit – nutze sie jetzt, statt zu raten.',
   'access.filesGranted':
     'Zugriff erlaubt: Dateien über {names} ({scope}). Die Dateiwerkzeuge dieser Server stehen jetzt bereit – lies die Datei damit, erfinde keine Inhalte.',
+  'github.invalidLink':
+    'Das ist kein passender GitHub-Link. Erlaubt: ein Link auf ein Projekt, einen Ordner oder eine .md-Datei bei github.com.',
+  'github.notFound':
+    'Dort gibt es keine SKILL.md (oder das Projekt ist privat). Der Link muss auf eine SKILL.md oder einen Ordner mit SKILL.md zeigen.',
+  'github.failed': 'GitHub antwortet mit Fehler {status}.',
+  'github.tooLarge': 'Die Datei ist zu groß für eine Anleitung (über 200 KB).',
+  'github.notText': 'Das ist keine Textdatei.',
+  'github.timeout': 'GitHub antwortet nicht (Zeitlimit).',
+  'github.redirect':
+    'Der Link wird weitergeleitet (das Projekt wurde wohl umbenannt) – bitte den aktuellen Link nehmen.',
+  'github.offline': 'Keine Verbindung zu GitHub – bist du online?',
 } as const;
 
 export type MessageKey = keyof typeof de;
