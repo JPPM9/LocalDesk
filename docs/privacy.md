@@ -1,5 +1,83 @@
 ---
-title: Datenschutz
+title: Privacy policy / Datenschutz
+---
+
+# LocalDesk privacy policy
+
+Last updated: 31 October 2026 · Deutsche Fassung weiter unten
+
+LocalDesk is a Windows desktop app that lets you use AI models **on your own computer** (via
+[Ollama](https://ollama.com)). There is no LocalDesk server and no account with us. LocalDesk is
+published by JPPM9 (contact: through the issues on
+[github.com/JPPM9/LocalDesk](https://github.com/JPPM9/LocalDesk/issues)).
+
+## In short
+
+- LocalDesk collects **no** usage data, has **no** telemetry, no advertising and sends **no**
+  crash reports.
+- Your chats, documents and emails go **only to the Ollama server you configure** – by default
+  your own computer. LocalDesk sends nothing to third-party AI services.
+- Everything LocalDesk stores is **on your computer**.
+
+## What LocalDesk stores, and where
+
+Everything lives in the data folder `%APPDATA%\LocalDesk` (in the app: Settings → About
+LocalDesk):
+
+- **`localdesk.db`** – chats, settings, templates, projects, code sessions, the indexed passages
+  of your knowledge collections (text and “fingerprints” used for searching), MCP server
+  settings and – if you set up e-mail – your e-mail address, the client ID of your own Google
+  app and your Google sign-in, **encrypted with Windows**.
+- **`skills\`** – your skills as text files.
+- **`code-backups\`** – backups of files the code agent changed (used for “Undo”).
+
+Outside this folder LocalDesk only writes when you set it up to:
+
+- **Obsidian:** memories, saved chats and summaries – only in LocalDesk's own subfolder of your
+  vault.
+- **Code area:** files in the project folder you choose – every change only after your
+  confirmation.
+
+LocalDesk **does not store your emails**. They are fetched fresh from Gmail when needed and only
+displayed or passed to your local model.
+
+**Deleting:** Uninstalling keeps the data folder (so an update loses nothing). If you want to
+remove everything, delete `%APPDATA%\LocalDesk` by hand.
+
+## Where LocalDesk connects to
+
+| Destination                                                                     | When                                         | What                                                             |
+| ------------------------------------------------------------------------------- | -------------------------------------------- | ---------------------------------------------------------------- |
+| Your Ollama server (default: this computer)                                     | with every chat, when indexing knowledge     | your messages, document passages, emails you ask it to summarize |
+| Ollama model library                                                            | only when you download a model               | Ollama itself downloads the model                                |
+| Google (`accounts.google.com`, `oauth2.googleapis.com`, `gmail.googleapis.com`) | only with e-mail set up                      | sign-in, reading mail, labels/stars after your confirmation      |
+| GitHub (releases of JPPM9/LocalDesk)                                            | only when you click “Check for updates”      | version query, download of the update                            |
+| GitHub (`raw.githubusercontent.com`)                                            | only when you click “Load skill from GitHub” | the path of the link; only one text file (SKILL.md) is loaded    |
+| npm package registry                                                            | on first start of the file-system MCP server | `npx` downloads the server program                               |
+
+Also note: **commands you approve for the code agent** run with your permissions and may do
+anything you may do on your PC – including connecting to the internet. The same applies to
+**MCP servers** you add: they are programs of their own.
+
+LocalDesk's own user interface is not allowed to open outside connections or load images from the
+internet; camera, microphone, location and notifications are blocked.
+
+## Google data (Gmail)
+
+If you set up e-mail, you sign in through **your own Google app**. LocalDesk uses the access only
+to display and search emails, summarize them with your local model and – only after your
+confirmation – set your own labels or stars. LocalDesk does not send, delete or archive emails
+and does not mark anything as read.
+
+LocalDesk's use and transfer of information received from Google APIs adheres to the
+[Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy),
+including the Limited Use requirements. Gmail data is not shared with third parties, not used for
+advertising and not used to train AI models.
+
+**Signing out** (Settings → E-mail) revokes the access at Google and deletes the sign-in on your
+PC. You can also remove the access at
+[myaccount.google.com/permissions](https://myaccount.google.com/permissions).
+
 ---
 
 # Datenschutzerklärung von LocalDesk
@@ -78,17 +156,3 @@ KI-Modellen verwendet.
 **Abmelden** (Einstellungen → E-Mail) widerruft den Zugriff bei Google und löscht die Anmeldung
 auf deinem PC. Du kannst den Zugriff auch unter
 [myaccount.google.com/permissions](https://myaccount.google.com/permissions) entziehen.
-
-## English summary
-
-LocalDesk is a Windows desktop app for running AI models locally via Ollama. It has no server,
-no accounts, no telemetry and no analytics. All data is stored on the user's computer in
-`%APPDATA%\LocalDesk`. Chats, documents and emails are only sent to the Ollama server the user
-configures (by default the same computer). Gmail access uses the user's own Google OAuth client;
-emails are not stored, only displayed, searched, summarized by the local model and – after the
-user's explicit confirmation – labeled or starred. LocalDesk never sends, deletes or archives
-emails. LocalDesk's use and transfer of information received from Google APIs adheres to the
-[Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy),
-including the Limited Use requirements. Gmail data is not shared with third parties, not used
-for advertising and not used to train AI models. Contact: issues on
-[github.com/JPPM9/LocalDesk](https://github.com/JPPM9/LocalDesk/issues).

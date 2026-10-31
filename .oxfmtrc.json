@@ -2,5 +2,8 @@
   "singleQuote": true,
   "printWidth": 80,
   "sortPackageJson": false,
-  "ignorePatterns": ["THIRD_PARTY_NOTICES.md"]
+  "ignorePatterns": [
+    "THIRD_PARTY_NOTICES.md",
+    "docs/googled3404eb9c4da9cfd.html"
+  ]
 }

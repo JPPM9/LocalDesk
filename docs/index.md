@@ -23,7 +23,7 @@ needs [Ollama](https://ollama.com/download) to be installed.
 ## Privacy
 
 Your data stays on your PC. LocalDesk has no server and no account, collects no usage data and
-sends nothing to third-party AI services. Details: [Privacy policy](privacy.md) (in German).
+sends nothing to third-party AI services. Details: [Privacy policy](privacy.md) (English and German).
 
 The Gmail feature only reads and labels your mail on your own computer, after you set up your
 own Google app. See the [e-mail setup guide](email-setup.md).

@@ -633,7 +633,7 @@
   asar-Integrität, nur aus asar laden, Cookie-Verschlüsselung). Geprüft in der gebauten App: alle 9
   Seiten ohne CSP-Verstoß; geblockt: Bild von außen, fetch nach außen, Inline-Skript, Mikrofon/
   Kamera (Berechtigung „denied“), Benachrichtigung, Standort, window.open, Navigation weg.
-  Schritt 3 ✓: EINE Datenschutzerklärung `docs/privacy.md` (Deutsch + kurze englische Fassung,
+  Schritt 3 ✓: EINE Datenschutzerklärung `docs/privacy.md` (vollständig Englisch + Deutsch, Englisch zuerst,
   Google-„Limited Use“-Zusage, Tabelle aller Verbindungen inkl. npm für den MCP-Server und dem
   Hinweis, dass freigegebene Befehle/MCP-Server eigene Programme sind). Dieselbe Datei: App
   (Forge `extraResource` → `resources/privacy.md`, IPC `getPrivacy` entfernt den Jekyll-Kopf,
