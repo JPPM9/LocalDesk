@@ -55,7 +55,7 @@ export function registerDownloadHandlers(getProvider: () => Provider) {
       }
       if (state.phase !== 'done') {
         // Stream endete ohne „success“ – z. B. Verbindung weg
-        state = { ...state, phase: 'error', error: 'Download unvollständig' };
+        state = { ...state, phase: 'error', error: tr('download.incomplete') };
       }
     } catch (error) {
       state = controller.signal.aborted
@@ -82,7 +82,7 @@ export function registerDownloadHandlers(getProvider: () => Provider) {
       if (controllers.has(name)) {
         return {
           ok: false,
-          error: 'Dieses Modell wird schon heruntergeladen.',
+          error: tr('download.already'),
         };
       }
       const controller = new AbortController();

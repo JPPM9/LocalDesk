@@ -1,4 +1,5 @@
 import type { Result } from './api';
+import { tr } from './messages';
 
 export const OLLAMA_DEFAULT_PORT = 11434;
 
@@ -9,7 +10,7 @@ export const OLLAMA_DEFAULT_PORT = 11434;
  */
 export function normalizeServerUrl(input: string): Result<string> {
   const trimmed = input.trim();
-  if (!trimmed) return { ok: false, error: 'Bitte eine Adresse eingeben.' };
+  if (!trimmed) return { ok: false, error: tr('server.addressMissing') };
 
   // Ohne „http://“ davor versteht der URL-Parser „pc:11434“ falsch.
   const withScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed)
@@ -20,27 +21,27 @@ export function normalizeServerUrl(input: string): Result<string> {
   try {
     url = new URL(withScheme);
   } catch {
-    return { ok: false, error: 'Das ist keine gültige Adresse.' };
+    return { ok: false, error: tr('server.addressInvalid') };
   }
   if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-    return { ok: false, error: 'Nur http:// oder https:// ist erlaubt.' };
+    return { ok: false, error: tr('server.protocolOnly') };
   }
   if (!url.hostname) {
     return {
       ok: false,
-      error: 'Die Adresse braucht einen Rechnernamen oder eine IP.',
+      error: tr('server.hostMissing'),
     };
   }
   if (url.username || url.password) {
     return {
       ok: false,
-      error: 'Benutzername/Passwort in der Adresse werden nicht unterstützt.',
+      error: tr('server.noCredentials'),
     };
   }
   if (url.pathname !== '/' || url.search || url.hash) {
     return {
       ok: false,
-      error: 'Bitte nur Rechner und Port angeben, ohne Pfad (z. B. /api).',
+      error: tr('server.noPath'),
     };
   }
 

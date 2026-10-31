@@ -85,7 +85,7 @@ export class OllamaProvider implements Provider {
       }
       const body = (await response.json()) as { version?: unknown };
       if (typeof body.version !== 'string') {
-        return this.offline('Unerwartete Antwort – ist das wirklich Ollama?');
+        return this.offline(tr('ollama.unexpected'));
       }
       return { online: true, baseUrl: this.baseUrl, version: body.version };
     } catch (error) {
@@ -126,7 +126,7 @@ export class OllamaProvider implements Provider {
       if (!Array.isArray(body.models)) {
         return {
           ok: false,
-          error: 'Unerwartete Antwort – ist das wirklich Ollama?',
+          error: tr('ollama.unexpected'),
         };
       }
       return { ok: true, value: body.models };
@@ -263,7 +263,7 @@ export class OllamaProvider implements Provider {
       ) {
         return {
           ok: false,
-          error: 'Unerwartete Antwort – ist das ein Embedding-Modell?',
+          error: tr('ollama.notEmbedding'),
         };
       }
       return { ok: true, value: vectors };
@@ -288,7 +288,7 @@ export class OllamaProvider implements Provider {
       const info = body.model_info;
       return typeof info === 'object' && info !== null
         ? { ok: true, value: info as Record<string, unknown> }
-        : { ok: false, error: 'Keine Modell-Angaben' };
+        : { ok: false, error: tr('ollama.noModelInfo') };
     } catch (error) {
       return { ok: false, error: describeError(error) };
     }
@@ -469,12 +469,12 @@ function asString(value: unknown): string | undefined {
 /** Übersetzt technische Fehler in einen kurzen, verständlichen Satz. */
 function describeError(error: unknown): string {
   if (error instanceof DOMException && error.name === 'TimeoutError') {
-    return 'Keine Antwort (Zeitüberschreitung)';
+    return tr('ollama.timeout');
   }
   if (error instanceof Error) {
     const code = (error.cause as { code?: string } | undefined)?.code;
-    if (code === 'ECONNREFUSED') return 'Nicht erreichbar – läuft Ollama?';
-    if (code === 'ENOTFOUND') return 'Server-Adresse nicht gefunden';
+    if (code === 'ECONNREFUSED') return tr('ollama.unreachable');
+    if (code === 'ENOTFOUND') return tr('ollama.hostNotFound');
     return error.message;
   }
   return String(error);

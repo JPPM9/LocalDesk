@@ -84,7 +84,11 @@ export function registerKnowledgeHandlers(
     IpcChannels.saveCollection,
     async (_event, input: unknown): Promise<Result<CollectionConfig>> => {
       const missing = await missingSource(input);
-      if (missing) return { ok: false, error: `Nicht gefunden: ${missing}` };
+      if (missing)
+        return {
+          ok: false,
+          error: tr('knowledge.notFoundPaths', { paths: missing }),
+        };
       const result = repo.saveCollection(input, DEFAULT_EMBEDDING_MODEL);
       if (result.ok) broadcast(true);
       return result;
@@ -119,7 +123,7 @@ export function registerKnowledgeHandlers(
       if (running) {
         return {
           ok: false,
-          error: 'Es wird gerade schon eine Sammlung eingelesen.',
+          error: tr('knowledge.busy'),
         };
       }
       const controller = new AbortController();
@@ -163,7 +167,7 @@ export function registerKnowledgeHandlers(
   ipcMain.handle(IpcChannels.pickFiles, async (event): Promise<string[]> => {
     const window = BrowserWindow.fromWebContents(event.sender);
     const options: Electron.OpenDialogOptions = {
-      title: 'Dateien wählen',
+      title: tr('knowledge.pickFilesTitle'),
       properties: ['openFile', 'multiSelections'],
       filters: [
         {
@@ -238,7 +242,7 @@ export function registerKnowledgeHandlers(
       return {
         ok: false,
         error: result.error.includes('not found')
-          ? `Das Embedding-Modell ${model} fehlt auf dem aktiven Ollama-Server – unter „Installierte Modelle“ herunterladen.`
+          ? tr('knowledge.modelMissing', { model })
           : result.error,
       };
     },

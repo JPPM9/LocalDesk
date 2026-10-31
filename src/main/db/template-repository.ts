@@ -81,11 +81,11 @@ function validateInput(input: unknown): Result<TemplateInput> {
   }
   const raw = input as Record<string, unknown>;
   if (typeof raw.id !== 'string' || raw.id === '') {
-    return { ok: false, error: 'Vorlage ohne ID' };
+    return { ok: false, error: tr('template.noId') };
   }
   const name = typeof raw.name === 'string' ? raw.name.trim() : '';
   if (!name) {
-    return { ok: false, error: 'Bitte gib der Vorlage einen Namen.' };
+    return { ok: false, error: tr('template.nameMissing') };
   }
   const model =
     typeof raw.model === 'string' && raw.model !== '' ? raw.model : undefined;

@@ -1,4 +1,5 @@
 import type { ToolResult } from '../tool-loop';
+import { tr } from '../../shared/messages';
 
 /** Ein Inhaltsteil einer MCP-Tool-Antwort (nur die Felder, die wir nutzen). */
 interface ContentPart {
@@ -21,10 +22,12 @@ export function toToolResult(raw: unknown): ToolResult {
     if (part.type === 'resource' && typeof part.resource?.text === 'string') {
       return part.resource.text;
     }
-    return `[${typeof part.type === 'string' ? part.type : 'Inhalt'} – kann nicht als Text gezeigt werden]`;
+    return tr('mcp.cannotShow', {
+      type: typeof part.type === 'string' ? part.type : tr('mcp.contentWord'),
+    });
   });
   return {
-    text: texts.join('\n') || '(kein Ergebnis)',
+    text: texts.join('\n') || tr('mcp.noResult'),
     isError: response.isError === true,
   };
 }

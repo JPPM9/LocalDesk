@@ -18,6 +18,11 @@ export function getMessageLanguage(): Language {
   return current;
 }
 
+/** Zahlen- und Datumsformat der gewählten Sprache. */
+export function messageLocale(): string {
+  return current === 'de' ? 'de-DE' : 'en-US';
+}
+
 /** Meldung in der aktuellen Sprache; `{name}` wird durch `params.name` ersetzt. */
 export function tr(
   key: MessageKey,

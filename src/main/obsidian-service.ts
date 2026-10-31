@@ -115,7 +115,7 @@ export function registerObsidianHandlers(
 
   const noVault = {
     ok: false as const,
-    error: 'Kein Obsidian-Vault eingerichtet (Einstellungen → Obsidian).',
+    error: tr('obsidian.noVault'),
   };
 
   ipcMain.handle(
@@ -178,7 +178,7 @@ export function registerObsidianHandlers(
       const w = writer();
       if (!w) return noVault;
       if (typeof id !== 'string' || !isMemoryPath(id)) {
-        return { ok: false, error: 'Keine Erinnerung' };
+        return { ok: false, error: tr('obsidian.noMemory') };
       }
       const error = await shell.openPath(w.resolve(id));
       return error ? { ok: false, error } : { ok: true, value: undefined };
@@ -204,7 +204,7 @@ export function registerObsidianHandlers(
       if (!note)
         return {
           ok: false,
-          error: 'Nichts zu speichern (noch keine fertige Antwort).',
+          error: tr('obsidian.nothingToSave'),
         };
       try {
         return {

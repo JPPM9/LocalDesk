@@ -118,13 +118,13 @@ export function checkInput(
   }
   const raw = input as Record<string, unknown>;
   if (typeof raw.id !== 'string' || raw.id === '') {
-    return { ok: false, error: 'Server ohne ID' };
+    return { ok: false, error: tr('mcp.noId') };
   }
   if (raw.kind !== 'filesystem') {
-    return { ok: false, error: 'Unbekannte Server-Art' };
+    return { ok: false, error: tr('mcp.unknownKind') };
   }
   const name = typeof raw.name === 'string' ? raw.name.trim() : '';
-  if (!name) return { ok: false, error: 'Bitte gib dem Server einen Namen.' };
+  if (!name) return { ok: false, error: tr('error.serverNameMissing') };
 
   const folders = Array.isArray(raw.folders)
     ? [
@@ -134,19 +134,22 @@ export function checkInput(
       ]
     : [];
   if (folders.length === 0) {
-    return { ok: false, error: 'Bitte mindestens einen Ordner freigeben.' };
+    return { ok: false, error: tr('mcp.needFolder') };
   }
   if (folders.length > MAX_FOLDERS) {
-    return { ok: false, error: `Höchstens ${MAX_FOLDERS} Ordner.` };
+    return { ok: false, error: tr('mcp.maxFolders', { max: MAX_FOLDERS }) };
   }
   for (const folder of folders) {
     if (!path.win32.isAbsolute(folder)) {
-      return { ok: false, error: `Kein vollständiger Pfad: ${folder}` };
+      return {
+        ok: false,
+        error: tr('error.fullPathMissing', { path: folder }),
+      };
     }
     if (isDriveRoot(folder)) {
       return {
         ok: false,
-        error: `Ein ganzes Laufwerk (${folder}) ist zu viel – bitte einen Unterordner wählen.`,
+        error: tr('error.driveTooBig', { path: folder }),
       };
     }
   }

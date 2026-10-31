@@ -115,7 +115,6 @@ function toFolder(row: FolderRow): ChatFolder {
 
 function checkName(name: unknown): Result<string> {
   const trimmed = typeof name === 'string' ? name.trim() : '';
-  if (!trimmed)
-    return { ok: false, error: 'Bitte gib dem Projekt einen Namen.' };
+  if (!trimmed) return { ok: false, error: tr('project.nameMissing') };
   return { ok: true, value: trimmed.slice(0, NAME_MAX_LENGTH) };
 }

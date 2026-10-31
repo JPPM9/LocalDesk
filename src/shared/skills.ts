@@ -1,5 +1,5 @@
 import type { ChatMessage, ChatRequest } from './api';
-import { tr } from './messages';
+import { messageLocale, tr } from './messages';
 
 /**
  * Skills: Arbeitsanleitungen als Markdown (Format wie Claudes SKILL.md):
@@ -79,21 +79,26 @@ export function checkSkillInput(
   const name = oneLine(text('name'));
   const description = oneLine(text('description'));
   const body = text('body').trim();
-  if (!name) return { ok: false, error: 'Der Skill braucht einen Namen.' };
+  if (!name) return { ok: false, error: tr('skills.nameMissing') };
   if (name.length > SKILL_NAME_MAX) {
-    return { ok: false, error: `Name höchstens ${SKILL_NAME_MAX} Zeichen.` };
+    return {
+      ok: false,
+      error: tr('skills.nameTooLong', { max: SKILL_NAME_MAX }),
+    };
   }
   if (description.length > SKILL_DESCRIPTION_MAX) {
     return {
       ok: false,
-      error: `Beschreibung höchstens ${SKILL_DESCRIPTION_MAX} Zeichen.`,
+      error: tr('skills.descriptionTooLong', { max: SKILL_DESCRIPTION_MAX }),
     };
   }
-  if (!body) return { ok: false, error: 'Die Anleitung ist leer.' };
+  if (!body) return { ok: false, error: tr('skills.bodyEmpty') };
   if (body.length > SKILL_BODY_MAX) {
     return {
       ok: false,
-      error: `Anleitung höchstens ${SKILL_BODY_MAX.toLocaleString('de-DE')} Zeichen.`,
+      error: tr('skills.bodyMax', {
+        max: SKILL_BODY_MAX.toLocaleString(messageLocale()),
+      }),
     };
   }
   const id = raw.id;

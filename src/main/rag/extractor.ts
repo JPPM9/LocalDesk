@@ -1,5 +1,6 @@
 import { Worker } from 'node:worker_threads';
 import { extractDocx, extractPdf } from './extract';
+import { tr } from '../../shared/messages';
 
 export type DocumentKind = 'pdf' | 'docx';
 
@@ -66,7 +67,7 @@ export class WorkerExtractor implements Extractor {
         this.reset();
         reject(
           new Error(
-            `Zeitüberschreitung beim Lesen (über ${this.timeoutMs / 1000} s)`,
+            tr('knowledge.readTimeout', { seconds: this.timeoutMs / 1000 }),
           ),
         );
       }, this.timeoutMs);

@@ -1,3 +1,5 @@
+import { tr } from './messages';
+
 /**
  * Stand des Update-Knopfs. Gesucht wird nur, wenn du klickst; geladen und installiert
  * erst nach deiner Bestätigung.
@@ -51,18 +53,18 @@ export function releaseNotesText(
 /** Technische Fehler des Updaters in verständliche Sätze übersetzen. */
 export function describeUpdateError(message: string): string {
   if (/ENOTFOUND|ECONNREFUSED|ETIMEDOUT|ECONNRESET|net::ERR_/i.test(message)) {
-    return 'Keine Verbindung zu GitHub – bist du online?';
+    return tr('update.offline');
   }
   if (
     /\b404\b|Unable to find latest version|No published versions/i.test(message)
   ) {
-    return 'Auf GitHub ist noch keine Version veröffentlicht (oder das Repo ist privat).';
+    return tr('update.noRelease');
   }
   if (/sha512 checksum mismatch|checksum/i.test(message)) {
-    return 'Die geladene Datei passt nicht zur Prüfsumme – sie wurde verworfen. Bitte erneut versuchen.';
+    return tr('update.checksum');
   }
   if (/\b403\b|rate limit/i.test(message)) {
-    return 'GitHub lässt gerade keine weiteren Anfragen zu – in einer Stunde erneut versuchen.';
+    return tr('update.rateLimit');
   }
   return message.split('\n')[0].slice(0, 300);
 }

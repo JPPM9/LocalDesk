@@ -49,7 +49,7 @@ export function registerSummaryHandlers(deps: SummaryDeps) {
       if (
         !chat.messages.some((m) => m.role === 'assistant' && m.content.trim())
       ) {
-        return { ok: false, error: 'Noch nichts zum Zusammenfassen.' };
+        return { ok: false, error: tr('summary.nothingToSummarize') };
       }
       running.get(chatId)?.abort();
       const controller = new AbortController();
@@ -79,7 +79,7 @@ export function registerSummaryHandlers(deps: SummaryDeps) {
         if (!answer.trim()) {
           return {
             ok: false,
-            error: 'Das Modell hat keine Zusammenfassung geliefert.',
+            error: tr('mail.noSummary'),
           };
         }
         return {
@@ -112,15 +112,14 @@ export function registerSummaryHandlers(deps: SummaryDeps) {
       if (!writer) {
         return {
           ok: false,
-          error: 'Kein Obsidian-Vault eingerichtet (Einstellungen → Obsidian).',
+          error: tr('obsidian.noVault'),
         };
       }
       const chat =
         typeof chatId === 'string' ? deps.chats.getChat(chatId) : null;
       if (!chat) return { ok: false, error: tr('error.chatNotFound') };
       const checked = checkDraft(draft);
-      if (!checked)
-        return { ok: false, error: 'Titel und Text dürfen nicht leer sein.' };
+      if (!checked) return { ok: false, error: tr('summary.titleTextEmpty') };
       const note = formatSummaryNote(checked, new Date(), {
         chatId: chat.id,
         model: typeof model === 'string' ? model.slice(0, 200) : chat.model,

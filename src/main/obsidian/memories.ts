@@ -2,6 +2,7 @@ import path from 'node:path';
 import type { MemoryView } from '../../shared/api';
 import { localDate } from './note-format';
 import { sanitizeFileName, type VaultWriter } from './vault';
+import { tr } from '../../shared/messages';
 
 /** Ein Fakt bleibt kurz – lange Texte gehören in Notizen oder Wissen. */
 export const MEMORY_MAX_LENGTH = 500;
@@ -119,7 +120,7 @@ export class MemoryStore {
 
   async add(text: string, project?: MemoryProject): Promise<MemoryView> {
     const trimmed = text.trim().slice(0, MEMORY_MAX_LENGTH);
-    if (!trimmed) throw new Error('Die Erinnerung ist leer.');
+    if (!trimmed) throw new Error(tr('obsidian.memoryEmpty'));
     // Ordnername aus dem Projektnamen – gesäubert, damit er nie ein Pfad wird.
     const dir = project
       ? path.join(PROJECTS_DIR, sanitizeFileName(project.name), GLOBAL_DIR)
@@ -140,7 +141,7 @@ export class MemoryStore {
 
   /** Löscht eine Erinnerung – nur Notizen in den Erinnerungs-Ordnern. */
   async remove(id: string): Promise<void> {
-    if (!isMemoryPath(id)) throw new Error('Keine Erinnerung');
+    if (!isMemoryPath(id)) throw new Error(tr('obsidian.noMemory'));
     await this.writer.deleteNote(id);
   }
 }

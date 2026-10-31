@@ -14,6 +14,7 @@ import {
 } from './files';
 import { prepareObsidianNote } from './obsidian-note';
 import { normalize } from './vectors';
+import { tr } from '../../shared/messages';
 
 /** So viele Abschnitte gehen pro Anfrage an Ollama. */
 const EMBED_BATCH = 16;
@@ -118,10 +119,12 @@ export async function indexCollection(
       unchanged,
       removed: removed.length,
       ...(scan.missing.length > 0 && {
-        error: `Nicht gefunden: ${scan.missing.join(', ')}`,
+        error: tr('knowledge.notFoundPaths', {
+          paths: scan.missing.join(', '),
+        }),
       }),
       ...(scan.truncated && {
-        error: 'Mehr als 10 000 Dateien – der Rest wurde nicht eingelesen.',
+        error: tr('knowledge.tooManyFiles'),
       }),
     });
   } catch (error) {
@@ -182,7 +185,7 @@ async function indexFile(
         ...base,
         hash: read.hash,
         status: 'empty',
-        error: 'LocalDesk-Erinnerung – steht schon in jedem Chat.',
+        error: tr('knowledge.memoryNote'),
       });
       return 'saved';
     }
@@ -200,8 +203,7 @@ async function indexFile(
       hash: read.hash,
       status: 'empty',
       ...(read.type === 'pages' && {
-        error:
-          'Kein Text gefunden – vermutlich eingescannt (Texterkennung gibt es nicht).',
+        error: tr('knowledge.noText'),
       }),
     });
     return 'saved';

@@ -700,6 +700,15 @@
   zwischendurch umgeschaltet wurde) – nie mehr mit einem festen Text vergleichen. `serverName` der
   Mail-Werkzeuge ist „E-Mail“/„E-mail“. Noch deutsch (Schritt 3): `FOREIGN`-Hinweis in Mail-Ergebnissen,
   Beschreibungen, Sortier-/Zusammenfassungs-Prompts, `formatDate` (`de-DE`).
+  2d ✓ Rest der Meldungen: Wissen/Indexer (auch die gespeicherten Datei-Gründe: werden beim Einlesen in der
+  damaligen Sprache abgelegt), Obsidian, MCP, Skills (Prüfung + SKILL.md-Fehler), Server-Adresse, Updates,
+  Downloads, Ollama-Fehler, Chat-Fehler, Dialogtitel. Neu: `messageLocale()` (`de-DE`/`en-US`) für Zahlen in
+  Meldungen. Schritt 2 ist damit fertig. SCHRITT 3 (offen): Anweisungen ans Modell (`code-agent.ts`,
+  `mail-prompt.ts`, `mail-sorting.ts`, `summary.ts`, `knowledge.ts` inkl. Stoppwörter, `memory.ts`, `skills.ts`
+  Prompts, `tools.ts` Kürzung, `FOREIGN`-Hinweis), alle Werkzeug-Beschreibungen/-Schemas (`code-tools`,
+  `edit-tools`, `git-tools`, `command-tool`, `mail-tools`, `memory-tool`), die vier Beispiel-Skills
+  (`skill-examples.ts`, nur beim ersten Start angelegt), Datumsformate in Meldungen (`formatDate` `de-DE`),
+  Name „Dieser PC“ des Standard-Servers (`database.ts`), `docs/email-einrichten.md`, UI-`de-DE`-Stellen.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

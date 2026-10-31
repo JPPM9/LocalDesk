@@ -151,8 +151,7 @@ export class KnowledgeRepository {
     if (this.getCollection(id)?.kind === 'obsidian') {
       return {
         ok: false,
-        error:
-          'Die Sammlung „Obsidian“ wird über Einstellungen → Obsidian verwaltet.',
+        error: tr('knowledge.obsidianManaged'),
       };
     }
     this.db
@@ -415,28 +414,31 @@ export function checkCollectionInput(
   }
   const raw = input as Record<string, unknown>;
   if (typeof raw.id !== 'string' || raw.id === '' || raw.id.length > 100) {
-    return { ok: false, error: 'Sammlung ohne ID' };
+    return { ok: false, error: tr('knowledge.noId') };
   }
   const name = typeof raw.name === 'string' ? raw.name.trim() : '';
-  if (!name) return { ok: false, error: 'Bitte gib der Sammlung einen Namen.' };
+  if (!name) return { ok: false, error: tr('knowledge.nameMissing') };
 
   const sources: KnowledgeSource[] = [];
   const seen = new Set<string>();
   for (const entry of Array.isArray(raw.sources) ? raw.sources : []) {
     const source = entry as Partial<KnowledgeSource>;
     if (source?.kind !== 'folder' && source?.kind !== 'file') {
-      return { ok: false, error: 'Unbekannte Quellenart' };
+      return { ok: false, error: tr('knowledge.unknownSourceKind') };
     }
     if (
       typeof source.path !== 'string' ||
       !path.win32.isAbsolute(source.path)
     ) {
-      return { ok: false, error: `Kein vollständiger Pfad: ${source.path}` };
+      return {
+        ok: false,
+        error: tr('error.fullPathMissing', { path: String(source.path) }),
+      };
     }
     if (source.kind === 'folder' && isDriveRoot(source.path)) {
       return {
         ok: false,
-        error: `Ein ganzes Laufwerk (${source.path}) ist zu viel – bitte einen Unterordner wählen.`,
+        error: tr('error.driveTooBig', { path: source.path }),
       };
     }
     const normalized = withoutTrailingSlash(path.win32.normalize(source.path));
@@ -446,7 +448,10 @@ export function checkCollectionInput(
     sources.push({ kind: source.kind, path: normalized });
   }
   if (sources.length > MAX_SOURCES) {
-    return { ok: false, error: `Höchstens ${MAX_SOURCES} Quellen.` };
+    return {
+      ok: false,
+      error: tr('knowledge.maxSources', { max: MAX_SOURCES }),
+    };
   }
   return {
     ok: true,

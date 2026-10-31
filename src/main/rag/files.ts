@@ -3,6 +3,7 @@ import { readdir, readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import type { KnowledgeSource } from '../../shared/api';
 import type { Extractor } from './extractor';
+import { tr } from '../../shared/messages';
 
 /** Größte Datei, die eingelesen wird (2 MB Text ≈ 600 Buchseiten). */
 export const MAX_FILE_BYTES = 2 * 1024 * 1024;
@@ -161,7 +162,7 @@ export async function readDocument(
   if (!kind) {
     return {
       type: 'skipped',
-      reason: 'Dateiart wird nicht unterstützt',
+      reason: tr('knowledge.reasonUnsupported'),
       hash: '',
     };
   }
@@ -170,7 +171,7 @@ export async function readDocument(
   if (file.size > limit) {
     return {
       type: 'skipped',
-      reason: `Größer als ${limit / 1024 / 1024} MB`,
+      reason: tr('knowledge.reasonTooLarge', { mb: limit / 1024 / 1024 }),
       hash: '',
     };
   }
@@ -196,7 +197,7 @@ export function decodeText(
 ): { ok: true; text: string } | { ok: false; reason: string } {
   // Ein Null-Byte kommt in Text praktisch nie vor, in Binärdateien fast immer.
   if (bytes.subarray(0, 8000).includes(0)) {
-    return { ok: false, reason: 'Keine Textdatei (Binärdaten)' };
+    return { ok: false, reason: tr('knowledge.reasonBinary') };
   }
   let text: string;
   try {

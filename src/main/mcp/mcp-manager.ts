@@ -2,6 +2,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 import type { McpServerConfig, McpServerStatus } from '../../shared/api';
 import { buildCommand, toToolInfo } from './server-kinds';
+import { tr } from '../../shared/messages';
 
 /** Wie viele Zeilen der Server-Meldungen wir für die Fehlersuche aufheben. */
 const LOG_LINES = 30;
@@ -89,7 +90,7 @@ export class McpManager {
       if (session.status.state === 'running') {
         update({
           state: 'error',
-          error: 'Server wurde unerwartet beendet',
+          error: tr('mcp.unexpectedExit'),
           tools: [],
         });
       }

@@ -12,6 +12,7 @@ import type { McpRepository } from './db/mcp-repository';
 import { McpManager } from './mcp/mcp-manager';
 import { toToolResult } from './mcp/tool-result';
 import type { ToolResult } from './tool-loop';
+import { tr } from '../shared/messages';
 
 /**
  * MCP-Server für die Oberfläche: einrichten, ein-/ausschalten, neu starten,
@@ -45,7 +46,10 @@ export function registerMcpHandlers(servers: McpRepository) {
     async (_event, input: unknown): Promise<Result<McpServerConfig>> => {
       const missing = await missingFolders(input);
       if (missing) {
-        return { ok: false, error: `Ordner nicht gefunden: ${missing}` };
+        return {
+          ok: false,
+          error: tr('mcp.foldersNotFound', { paths: missing }),
+        };
       }
       const result = servers.saveServer(input);
       if (result.ok) {
@@ -96,7 +100,7 @@ export function registerMcpHandlers(servers: McpRepository) {
   ipcMain.handle(IpcChannels.pickFolders, async (event): Promise<string[]> => {
     const window = BrowserWindow.fromWebContents(event.sender);
     const options: Electron.OpenDialogOptions = {
-      title: 'Ordner wählen',
+      title: tr('common.pickFoldersTitle'),
       properties: ['openDirectory', 'multiSelections'],
     };
     const result = window
@@ -134,7 +138,7 @@ export function registerMcpHandlers(servers: McpRepository) {
     async call(tool, args, signal) {
       const client = manager.getClient(tool.serverId);
       if (!client) {
-        return { text: 'Der MCP-Server läuft nicht mehr.', isError: true };
+        return { text: tr('mcp.notRunning'), isError: true };
       }
       const result = await client.callTool(
         { name: tool.toolName, arguments: args },

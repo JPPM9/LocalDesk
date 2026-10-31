@@ -177,6 +177,106 @@ export const de = {
   'mail.summaryLine':
     '[id: {id}] {date} · Von: {from} · Betreff: {subject}{flags}',
   'mail.previewLine': 'Vorschau: {snippet}',
+  'common.pickFoldersTitle': 'Ordner wählen',
+  'error.fullPathMissing': 'Kein vollständiger Pfad: {path}',
+  'error.driveTooBig':
+    'Ein ganzes Laufwerk ({path}) ist zu viel – bitte einen Unterordner wählen.',
+  'error.serverNameMissing': 'Bitte gib dem Server einen Namen.',
+  'knowledge.busy': 'Es wird gerade schon eine Sammlung eingelesen.',
+  'knowledge.pickFilesTitle': 'Dateien wählen',
+  'knowledge.modelMissing':
+    'Das Embedding-Modell {model} fehlt auf dem aktiven Ollama-Server – unter „Installierte Modelle“ herunterladen.',
+  'knowledge.obsidianManaged':
+    'Die Sammlung „Obsidian“ wird über Einstellungen → Obsidian verwaltet.',
+  'knowledge.nameMissing': 'Bitte gib der Sammlung einen Namen.',
+  'knowledge.maxSources': 'Höchstens {max} Quellen.',
+  'knowledge.noId': 'Sammlung ohne ID',
+  'knowledge.unknownSourceKind': 'Unbekannte Quellenart',
+  'knowledge.notFoundPaths': 'Nicht gefunden: {paths}',
+  'knowledge.reasonUnsupported': 'Dateiart wird nicht unterstützt',
+  'knowledge.reasonTooLarge': 'Größer als {mb} MB',
+  'knowledge.reasonBinary': 'Keine Textdatei (Binärdaten)',
+  'knowledge.tooManyFiles':
+    'Mehr als 10 000 Dateien – der Rest wurde nicht eingelesen.',
+  'knowledge.noText':
+    'Kein Text gefunden – vermutlich eingescannt (Texterkennung gibt es nicht).',
+  'knowledge.memoryNote': 'LocalDesk-Erinnerung – steht schon in jedem Chat.',
+  'knowledge.readTimeout': 'Zeitüberschreitung beim Lesen (über {seconds} s)',
+  'obsidian.nothingToSave': 'Nichts zu speichern (noch keine fertige Antwort).',
+  'obsidian.noVault':
+    'Kein Obsidian-Vault eingerichtet (Einstellungen → Obsidian).',
+  'obsidian.noMemory': 'Keine Erinnerung',
+  'obsidian.memoryEmpty': 'Die Erinnerung ist leer.',
+  'obsidian.folderNameMissing': 'Bitte gib einen Ordnernamen an.',
+  'obsidian.folderNameTooLong':
+    'Der Ordnername ist zu lang (höchstens 60 Zeichen).',
+  'obsidian.folderNameInvalid':
+    'Nur ein einfacher Ordnername – ohne \\ / : * ? " < > | und nicht mit Punkt am Anfang.',
+  'obsidian.pathNotFull': 'Kein vollständiger Pfad.',
+  'obsidian.notAFolder': 'Das ist kein Ordner.',
+  'obsidian.folderMissing': 'Ordner nicht gefunden.',
+  'obsidian.pathOutside': 'Nur Pfade innerhalb des LocalDesk-Ordners',
+  'obsidian.tooManyNotes': 'Zu viele Notizen mit diesem Namen',
+  'obsidian.markdownOnly': 'Nur Markdown-Notizen',
+  'summary.nothingToSummarize': 'Noch nichts zum Zusammenfassen.',
+  'summary.titleTextEmpty': 'Titel und Text dürfen nicht leer sein.',
+  'skills.notRegularFile': 'SKILL.md ist keine normale Datei.',
+  'skills.fileTooLarge': 'SKILL.md ist zu groß.',
+  'skills.bodyTooLong': 'Anleitung ist zu lang.',
+  'skills.onlyInFolder': 'Nur Skills im Skill-Ordner',
+  'skills.badFolder': 'Der Skill-Ordner ist keine normale Ordner-Struktur.',
+  'skills.tooManySameName': 'Zu viele Skills mit diesem Namen',
+  'skills.nameMissing': 'Der Skill braucht einen Namen.',
+  'skills.nameTooLong': 'Name höchstens {max} Zeichen.',
+  'skills.descriptionTooLong': 'Beschreibung höchstens {max} Zeichen.',
+  'skills.bodyEmpty': 'Die Anleitung ist leer.',
+  'skills.bodyMax': 'Anleitung höchstens {max} Zeichen.',
+  'mcp.foldersNotFound': 'Ordner nicht gefunden: {paths}',
+  'mcp.notRunning': 'Der MCP-Server läuft nicht mehr.',
+  'mcp.noId': 'Server ohne ID',
+  'mcp.unknownKind': 'Unbekannte Server-Art',
+  'mcp.needFolder': 'Bitte mindestens einen Ordner freigeben.',
+  'mcp.maxFolders': 'Höchstens {max} Ordner.',
+  'mcp.unexpectedExit': 'Server wurde unerwartet beendet',
+  'mcp.cannotShow': '[{type} – kann nicht als Text gezeigt werden]',
+  'mcp.contentWord': 'Inhalt',
+  'mcp.noResult': '(kein Ergebnis)',
+  'server.addressMissing': 'Bitte eine Adresse eingeben.',
+  'server.addressInvalid': 'Das ist keine gültige Adresse.',
+  'server.protocolOnly': 'Nur http:// oder https:// ist erlaubt.',
+  'server.hostMissing': 'Die Adresse braucht einen Rechnernamen oder eine IP.',
+  'server.noCredentials':
+    'Benutzername/Passwort in der Adresse werden nicht unterstützt.',
+  'server.noPath':
+    'Bitte nur Rechner und Port angeben, ohne Pfad (z. B. /api).',
+  'server.noId': 'Profil ohne ID',
+  'server.lastOne': 'Der letzte Server kann nicht gelöscht werden.',
+  'template.noId': 'Vorlage ohne ID',
+  'template.nameMissing': 'Bitte gib der Vorlage einen Namen.',
+  'project.nameMissing': 'Bitte gib dem Projekt einen Namen.',
+  'download.incomplete': 'Download unvollständig',
+  'download.already': 'Dieses Modell wird schon heruntergeladen.',
+  'update.offline': 'Keine Verbindung zu GitHub – bist du online?',
+  'update.noRelease':
+    'Auf GitHub ist noch keine Version veröffentlicht (oder das Repo ist privat).',
+  'update.checksum':
+    'Die geladene Datei passt nicht zur Prüfsumme – sie wurde verworfen. Bitte erneut versuchen.',
+  'update.rateLimit':
+    'GitHub lässt gerade keine weiteren Anfragen zu – in einer Stunde erneut versuchen.',
+  'ollama.unexpected': 'Unerwartete Antwort – ist das wirklich Ollama?',
+  'ollama.notEmbedding': 'Unerwartete Antwort – ist das ein Embedding-Modell?',
+  'ollama.noModelInfo': 'Keine Modell-Angaben',
+  'ollama.timeout': 'Keine Antwort (Zeitüberschreitung)',
+  'ollama.unreachable': 'Nicht erreichbar – läuft Ollama?',
+  'ollama.hostNotFound': 'Server-Adresse nicht gefunden',
+  'chat.noTools':
+    'Dieses Modell kann keine Tools benutzen – schalte die MCP-Server für diesen Chat aus (Stecker-Symbol oben).',
+  'chat.cannotLoad':
+    'Ollama konnte das Modell nicht laden. Häufigste Ursache: Der Grafikspeicher ist noch von einem anderen Modell belegt – auf der Status-Seite nachsehen und es erneut versuchen. ({message})',
+  'obsidian.symlink':
+    'Der LocalDesk-Ordner enthält eine Verknüpfung – aus Sicherheitsgründen wird dort nicht geschrieben.',
+  'obsidian.driveNotVault':
+    'Ein ganzes Laufwerk ist kein Vault – bitte den Vault-Ordner wählen.',
 } as const;
 
 export type MessageKey = keyof typeof de;

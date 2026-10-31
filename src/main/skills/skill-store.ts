@@ -97,11 +97,11 @@ export class SkillStore {
       body: '',
       error,
     });
-    if (!info.isFile()) return broken('SKILL.md ist keine normale Datei.');
-    if (info.size > MAX_FILE_BYTES) return broken('SKILL.md ist zu groß.');
+    if (!info.isFile()) return broken(tr('skills.notRegularFile'));
+    if (info.size > MAX_FILE_BYTES) return broken(tr('skills.fileTooLarge'));
     const skill = parseSkill(await readFile(file, 'utf8'), id);
     if (skill.body.length > SKILL_BODY_MAX) {
-      return { id, ...skill, body: '', error: 'Anleitung ist zu lang.' };
+      return { id, ...skill, body: '', error: tr('skills.bodyTooLong') };
     }
     return { id, ...skill };
   }
@@ -110,7 +110,7 @@ export class SkillStore {
     const dir = path.join(path.resolve(this.root), id);
     // Doppelte Sicherung zu isSkillId: nie außerhalb des Skill-Ordners.
     if (path.dirname(dir) !== path.resolve(this.root)) {
-      throw new Error('Nur Skills im Skill-Ordner');
+      throw new Error(tr('skills.onlyInFolder'));
     }
     return dir;
   }
@@ -129,7 +129,7 @@ export class SkillStore {
     await mkdir(this.root, { recursive: true });
     const info = await lstat(this.root);
     if (!info.isDirectory() || info.isSymbolicLink()) {
-      throw new Error('Der Skill-Ordner ist keine normale Ordner-Struktur.');
+      throw new Error(tr('skills.badFolder'));
     }
   }
 
@@ -143,6 +143,6 @@ export class SkillStore {
         return id;
       }
     }
-    throw new Error('Zu viele Skills mit diesem Namen');
+    throw new Error(tr('skills.tooManySameName'));
   }
 }

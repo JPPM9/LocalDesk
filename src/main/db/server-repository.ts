@@ -44,10 +44,10 @@ export class ServerRepository {
     }
     const raw = input as Record<string, unknown>;
     if (typeof raw.id !== 'string' || raw.id === '') {
-      return { ok: false, error: 'Profil ohne ID' };
+      return { ok: false, error: tr('server.noId') };
     }
     const name = typeof raw.name === 'string' ? raw.name.trim() : '';
-    if (!name) return { ok: false, error: 'Bitte gib dem Server einen Namen.' };
+    if (!name) return { ok: false, error: tr('error.serverNameMissing') };
     const url = normalizeServerUrl(
       typeof raw.address === 'string' ? raw.address : '',
     );
@@ -71,7 +71,7 @@ export class ServerRepository {
     if (profiles.length <= 1) {
       return {
         ok: false,
-        error: 'Der letzte Server kann nicht gelöscht werden.',
+        error: tr('server.lastOne'),
       };
     }
     this.db.prepare('DELETE FROM server_profiles WHERE id = ?').run(profileId);
