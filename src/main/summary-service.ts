@@ -88,7 +88,7 @@ export function registerSummaryHandlers(deps: SummaryDeps) {
         };
       } catch (error) {
         if (controller.signal.aborted)
-          return { ok: false, error: 'Abgebrochen' };
+          return { ok: false, error: tr('error.cancelled') };
         return { ok: false, error: describeChatError(error) };
       } finally {
         if (running.get(chatId) === controller) running.delete(chatId);

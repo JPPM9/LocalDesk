@@ -29,7 +29,10 @@ export function mailTools(
   labels: MailLabel[],
   describe: (args: Record<string, unknown>) => Promise<string>,
 ): OfferedTool[] {
-  const base = { serverId: MAIL_TOOL_SERVER, serverName: 'E-Mail' };
+  const base = {
+    serverId: MAIL_TOOL_SERVER,
+    serverName: tr('mail.serverName'),
+  };
   return [
     {
       ...base,
@@ -122,12 +125,12 @@ export function mailChanges(
   changes: MailChange[];
 } {
   const messageId = typeof args.id === 'string' ? args.id.trim() : '';
-  if (!messageId) throw new Error('Die Kennung der Mail fehlt.');
+  if (!messageId) throw new Error(tr('mail.idMissing'));
   let label: MailLabel | undefined;
   if (args.label !== undefined && args.label !== '') {
     label = labels.find((l) => l.name === args.label);
     if (!label)
-      throw new Error(`Das Label „${String(args.label)}“ gibt es nicht.`);
+      throw new Error(tr('mail.labelMissing', { label: String(args.label) }));
   }
   const star = typeof args.star === 'boolean' ? args.star : undefined;
   const changes: MailChange[] = [
@@ -139,7 +142,7 @@ export function mailChanges(
       : []),
   ];
   if (changes.length === 0) {
-    throw new Error('Keine Änderung angegeben (Label oder Stern).');
+    throw new Error(tr('mail.noChange'));
   }
   return { messageId, label, star, changes };
 }
@@ -153,22 +156,26 @@ export async function describeMailChange(
   const { messageId, label, star } = mailChanges(args, labels);
   const [mail] = await client.summaries([messageId]);
   if (label && mail.labelIds.includes(label.id) && star === undefined) {
-    throw new Error(`Die Mail hat das Label „${label.name}“ schon.`);
+    throw new Error(tr('mail.hasLabel', { label: label.name }));
   }
   if (star !== undefined && star === mail.starred && !label) {
-    throw new Error(
-      star ? 'Die Mail hat schon einen Stern.' : 'Die Mail hat keinen Stern.',
-    );
+    throw new Error(star ? tr('mail.hasStar') : tr('mail.hasNoStar'));
   }
   const what = [
-    ...(label ? [`Label „${label.name}“ hinzufügen`] : []),
-    ...(star !== undefined ? [star ? 'Stern setzen' : 'Stern entfernen'] : []),
-  ].join(' und ');
+    ...(label ? [tr('mail.addLabel', { label: label.name })] : []),
+    ...(star !== undefined
+      ? [star ? tr('mail.addStar') : tr('mail.removeStar')]
+      : []),
+  ].join(tr('mail.and'));
   const reason =
     typeof args.reason === 'string' && args.reason.trim()
-      ? `\nGrund: ${args.reason.trim().slice(0, 200)}`
+      ? `\n${tr('mail.reason', { reason: args.reason.trim().slice(0, 200) })}`
       : '';
-  return `${what}\nMail: ${mail.from} – „${mail.subject || '(ohne Betreff)'}“ (${formatDate(mail.date)})${reason}`;
+  return `${what}\n${tr('mail.changePreview', {
+    from: mail.from,
+    subject: mail.subject || tr('mail.noSubject'),
+    date: formatDate(mail.date),
+  })}${reason}`;
 }
 
 /** Führt ein Mail-Werkzeug aus (Änderungen erst nach deiner Bestätigung). */
@@ -186,29 +193,36 @@ export async function callMailTool(
         : 10;
     const query = typeof args.query === 'string' ? args.query : undefined;
     const page = await client.list({ query, max });
-    if (page.messages.length === 0) return 'Keine Mails gefunden.';
+    if (page.messages.length === 0) return tr('mail.noMails');
     return [
       FOREIGN,
-      `${page.messages.length} Mails${query?.trim() ? ` für „${query.trim()}“` : ' im Posteingang'}, neueste zuerst:`,
+      query?.trim()
+        ? tr('mail.listQuery', {
+            count: page.messages.length,
+            query: query.trim(),
+          })
+        : tr('mail.listInbox', { count: page.messages.length }),
       ...page.messages.map((m) => summaryLine(m, allLabels)),
     ].join('\n\n');
   }
   if (toolName === MAIL_READ_TOOL) {
     const id = typeof args.id === 'string' ? args.id.trim() : '';
-    if (!id) throw new Error('Die Kennung der Mail fehlt.');
+    if (!id) throw new Error(tr('mail.idMissing'));
     const mail = await client.get(id);
     const text =
       mail.text.length > READ_TEXT_MAX
-        ? `${mail.text.slice(0, READ_TEXT_MAX)}\n[… Rest gekürzt]`
+        ? `${mail.text.slice(0, READ_TEXT_MAX)}\n${tr('mail.restTruncated')}`
         : mail.text || mail.snippet;
     return [
       FOREIGN,
       summaryLine(mail, allLabels),
-      ...(mail.to ? [`An: ${mail.to}`] : []),
-      ...(mail.cc ? [`Cc: ${mail.cc}`] : []),
+      ...(mail.to ? [tr('mail.to', { value: mail.to })] : []),
+      ...(mail.cc ? [tr('mail.cc', { value: mail.cc })] : []),
       ...(mail.attachments.length > 0
         ? [
-            `Anhänge (nicht geladen): ${mail.attachments.map((a) => a.name).join(', ')}`,
+            tr('mail.attachments', {
+              names: mail.attachments.map((a) => a.name).join(', '),
+            }),
           ]
         : []),
       `<<<MAIL\n${text}\nMAIL>>>`,
@@ -217,7 +231,7 @@ export async function callMailTool(
   if (toolName === MAIL_CHANGE_TOOL) {
     const { changes } = mailChanges(args, labels);
     for (const change of changes) await client.apply(change);
-    return 'Erledigt – die Änderung ist in Gmail übernommen.';
+    return tr('mail.done');
   }
   throw new Error(tr('error.toolMissing', { tool: toolName }));
 }
@@ -228,13 +242,19 @@ function summaryLine(m: MailSummary, allLabels: MailLabel[]): string {
     .filter((l): l is MailLabel => !!l && l.type === 'user')
     .map((l) => l.name);
   const flags = [
-    ...(m.unread ? ['ungelesen'] : []),
-    ...(m.starred ? ['Stern'] : []),
+    ...(m.unread ? [tr('mail.unread')] : []),
+    ...(m.starred ? [tr('mail.starred')] : []),
     ...(names.length > 0 ? [`Labels: ${names.join(', ')}`] : []),
   ];
   return [
-    `[id: ${m.id}] ${formatDate(m.date)} · Von: ${m.from || '–'} · Betreff: ${m.subject || '(ohne Betreff)'}${flags.length ? ` · ${flags.join(' · ')}` : ''}`,
-    `Vorschau: ${m.snippet}`,
+    tr('mail.summaryLine', {
+      id: m.id,
+      date: formatDate(m.date),
+      from: m.from || '–',
+      subject: m.subject || tr('mail.noSubject'),
+      flags: flags.length ? ` · ${flags.join(' · ')}` : '',
+    }),
+    tr('mail.previewLine', { snippet: m.snippet }),
   ].join('\n');
 }
 

@@ -6,6 +6,7 @@ import {
   type AccessToken,
 } from './google-auth';
 import type { Fetch } from './mail-fetch';
+import { tr } from '../../shared/messages';
 
 /** Verschlüsselt die Anmelde-Schlüssel (in der App: Electrons safeStorage). */
 export interface TokenCipher {
@@ -36,9 +37,7 @@ export class MailSessions {
   async remember(email: string, refreshToken: string, access: AccessToken) {
     try {
       if (!(await this.cipher.available())) {
-        throw new Error(
-          'Windows kann die Anmeldung gerade nicht verschlüsseln – deshalb wird sie nicht gespeichert.',
-        );
+        throw new Error(tr('mail.cannotStore'));
       }
       const account = this.accounts.save(
         'google',
@@ -60,7 +59,7 @@ export class MailSessions {
     const app = this.googleApp();
     const encrypted = this.accounts.encryptedToken(accountId);
     if (!app || !encrypted) {
-      throw new Error('Dieses Konto ist nicht (mehr) eingerichtet.');
+      throw new Error(tr('mail.accountGone'));
     }
     const fresh = await refreshGoogleAccess(
       this.fetch,

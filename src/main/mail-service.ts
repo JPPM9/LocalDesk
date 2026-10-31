@@ -80,8 +80,7 @@ export function registerMailHandlers(
     accounts.list().length > 0
       ? {
           ok: false,
-          error:
-            'Erst alle Konten abmelden – die Anmeldungen gehören zu dieser Google-App.',
+          error: tr('mail.appLocked'),
         }
       : null;
 
@@ -122,12 +121,11 @@ export function registerMailHandlers(
     IpcChannels.connectGoogle,
     async (): Promise<Result<MailAccountView>> => {
       const app = googleSecrets();
-      if (!app) return { ok: false, error: 'Erst die Google-App eintragen.' };
+      if (!app) return { ok: false, error: tr('mail.appMissing') };
       if (!(await safeStorageCipher.available())) {
         return {
           ok: false,
-          error:
-            'Windows kann die Anmeldung gerade nicht verschlüsseln – deshalb melde ich nicht an.',
+          error: tr('mail.cannotEncrypt'),
         };
       }
       signIn?.abort();
@@ -141,7 +139,7 @@ export function registerMailHandlers(
           openBrowser: async (url) => {
             // Nur Googles Anmeldeseite – nichts anderes wird im Browser geöffnet.
             if (!url.startsWith(`${GOOGLE_URLS.auth}?`)) {
-              throw new Error('Unerwartete Anmeldeadresse.');
+              throw new Error(tr('mail.unexpectedAuthUrl'));
             }
             await shell.openExternal(url);
           },
@@ -183,7 +181,7 @@ export function registerMailHandlers(
   const client = (accountId: unknown): MailClient => {
     const account =
       typeof accountId === 'string' ? accounts.get(accountId) : null;
-    if (!account) throw new Error('Dieses Konto ist nicht (mehr) angemeldet.');
+    if (!account) throw new Error(tr('mail.notSignedIn'));
     return new GmailClient(fetch, {
       token: () => sessions.accessToken(account.id),
       invalidate: () => sessions.invalidate(account.id),
@@ -214,7 +212,7 @@ export function registerMailHandlers(
       messageId: unknown,
     ): Promise<Result<MailMessage>> =>
       attempt(() => {
-        if (!isMailId(messageId)) throw new Error('Unbekannte Mail.');
+        if (!isMailId(messageId)) throw new Error(tr('mail.unknownMail'));
         return client(accountId).get(messageId);
       }),
   );
@@ -268,11 +266,11 @@ export function registerMailHandlers(
           ? { ok: true, value: answer.trim() }
           : {
               ok: false,
-              error: 'Das Modell hat keine Zusammenfassung geliefert.',
+              error: tr('mail.noSummary'),
             };
       } catch (error) {
         if (controller.signal.aborted)
-          return { ok: false, error: 'Abgebrochen' };
+          return { ok: false, error: tr('error.cancelled') };
         return { ok: false, error: describeChatError(error) };
       } finally {
         if (summary === controller) summary = null;
@@ -339,7 +337,7 @@ export function registerMailHandlers(
         return { ok: true, value: parseSuggestions(answer, mails, labels) };
       } catch (error) {
         if (controller.signal.aborted)
-          return { ok: false, error: 'Abgebrochen' };
+          return { ok: false, error: tr('error.cancelled') };
         return { ok: false, error: describeChatError(error) };
       } finally {
         if (sorting === controller) sorting = null;

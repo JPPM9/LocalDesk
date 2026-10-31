@@ -694,6 +694,12 @@
   Sprache; Werkzeug-BESCHREIBUNGEN und Schema-Texte für das Modell kommen erst in Schritt 3. Parameter-
   namen (`old_text`, `start_line`, `path`) bleiben unübersetzt. Test `tests/main/code-english.test.ts`
   führt echte Funktionen auf Englisch aus; in der gebauten App Deutsch↔Englisch geprüft.
+  2c ✓ E-Mail: Schlüssel `mail.*` (Google-Anmeldung samt Browser-Seite mit `<html lang>`, Gmail-/Token-
+  Fehler, Konto, Netzwerk-Regel, Ergebnisse und Vorschau der Mail-Werkzeuge, `error.cancelled`). Wichtig:
+  Die Oberfläche erkennt „bitte neu anmelden“ jetzt mit `isMailReauthMessage` (prüft BEIDE Sprachen, falls
+  zwischendurch umgeschaltet wurde) – nie mehr mit einem festen Text vergleichen. `serverName` der
+  Mail-Werkzeuge ist „E-Mail“/„E-mail“. Noch deutsch (Schritt 3): `FOREIGN`-Hinweis in Mail-Ergebnissen,
+  Beschreibungen, Sortier-/Zusammenfassungs-Prompts, `formatDate` (`de-DE`).
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

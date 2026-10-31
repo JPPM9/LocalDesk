@@ -1,8 +1,9 @@
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import { createServer, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { MAIL_REAUTH_MESSAGE, type GoogleAppInput } from '../../shared/mail';
+import { mailReauthMessage, type GoogleAppInput } from '../../shared/mail';
 import type { Fetch } from './mail-fetch';
+import { getMessageLanguage, tr } from '../../shared/messages';
 
 /** Lesen, Labels und Sterne ändern. Mehr als nötig – siehe docs/email-einrichten.md. */
 export const GOOGLE_SCOPE = 'https://www.googleapis.com/auth/gmail.modify';
@@ -23,7 +24,7 @@ const SIGN_IN_TIMEOUT_MS = 5 * 60_000;
  */
 export class MailReauthError extends Error {
   constructor() {
-    super(MAIL_REAUTH_MESSAGE);
+    super(mailReauthMessage());
   }
 }
 
@@ -107,46 +108,29 @@ export async function signInWithGoogle(
       return;
     }
     if (finished) {
-      page(
-        res,
-        200,
-        'Die Anmeldung ist schon abgeschlossen. Du kannst dieses Fenster schließen.',
-      );
+      page(res, 200, tr('mail.pageDone'));
       return;
     }
     // Fremde Aufrufe (ohne passenden state) ignorieren – die Anmeldung läuft weiter.
     if (!sameText(url.searchParams.get('state') ?? '', state)) {
-      page(res, 400, 'Diese Anfrage gehört nicht zu deiner Anmeldung.');
+      page(res, 400, tr('mail.pageForeign'));
       return;
     }
     finished = true;
     const code = url.searchParams.get('code');
     if (code) {
-      page(
-        res,
-        200,
-        'Angemeldet. Du kannst dieses Fenster schließen und zu LocalDesk zurückkehren.',
-      );
+      page(res, 200, tr('mail.pageSuccess'));
       resolve(code);
     } else {
-      page(
-        res,
-        200,
-        'Anmeldung abgebrochen. Du kannst dieses Fenster schließen.',
-      );
+      page(res, 200, tr('mail.pageCancelled'));
       reject(new Error(describeAuthError(url.searchParams.get('error'))));
     }
   });
 
-  const onAbort = () => reject(new Error('Anmeldung abgebrochen.'));
+  const onAbort = () => reject(new Error(tr('mail.signInCancelled')));
   deps.signal.addEventListener('abort', onAbort, { once: true });
   const timer = setTimeout(
-    () =>
-      reject(
-        new Error(
-          'Keine Anmeldung innerhalb von 5 Minuten – bitte noch einmal.',
-        ),
-      ),
+    () => reject(new Error(tr('mail.signInTimeout'))),
     deps.timeoutMs ?? SIGN_IN_TIMEOUT_MS,
   );
 
@@ -155,7 +139,7 @@ export async function signInWithGoogle(
       server.once('error', fail);
       server.listen(0, '127.0.0.1', ok);
     });
-    if (deps.signal.aborted) throw new Error('Anmeldung abgebrochen.');
+    if (deps.signal.aborted) throw new Error(tr('mail.signInCancelled'));
     const { port } = server.address() as AddressInfo;
     const redirectUri = `http://127.0.0.1:${port}`;
     await deps.openBrowser(
@@ -172,16 +156,12 @@ export async function signInWithGoogle(
       client_secret: app.clientSecret,
     });
     if (!tokens.refresh_token) {
-      throw new Error(
-        'Google hat keine dauerhafte Anmeldung geliefert – bitte noch einmal.',
-      );
+      throw new Error(tr('mail.noRefreshToken'));
     }
     // Bei Google kann man einzelne Rechte abwählen – ohne Gmail-Zugriff geht nichts.
     if (!tokens.scope?.split(' ').includes(GOOGLE_SCOPE)) {
       await revokeGoogleToken(deps.fetch, tokens.refresh_token).catch(() => {});
-      throw new Error(
-        'Der Zugriff auf Gmail wurde nicht erlaubt. Setze bei der Anmeldung den Haken bei Gmail.',
-      );
+      throw new Error(tr('mail.scopeDenied'));
     }
     const access = toAccess(tokens, deps.now());
     try {
@@ -225,7 +205,7 @@ export async function revokeGoogleToken(fetch: Fetch, token: string) {
   });
   // 400 = Schlüssel gilt schon nicht mehr – Ziel erreicht.
   if (!response.ok && response.status !== 400) {
-    throw new Error(`Google hat das Abmelden abgelehnt (${response.status}).`);
+    throw new Error(tr('mail.revokeRefused', { status: response.status }));
   }
 }
 
@@ -291,13 +271,14 @@ export function describeGmailError(
     reasons.includes('SERVICE_DISABLED') ||
     /has not been used|is disabled/i.test(message)
   ) {
-    return 'Die Gmail-API ist im Google-Projekt nicht aktiviert. Google Cloud Console → APIs & Dienste → Bibliothek → „Gmail API“ → Aktivieren, ein paar Minuten warten und dann neu anmelden.';
+    return tr('mail.apiDisabled');
   }
-  if (status === 401)
-    return 'Gmail hat die Anmeldung nicht angenommen – bitte neu anmelden.';
-  if (status === 429)
-    return 'Gmail meldet zu viele Anfragen – bitte kurz warten.';
-  return `Gmail lehnt die Anfrage ab (${status})${message ? `: ${message.slice(0, 300)}` : '.'}`;
+  if (status === 401) return tr('mail.gmailRejectedLogin');
+  if (status === 429) return tr('mail.gmailTooMany');
+  return tr('mail.gmailRefuses', {
+    status,
+    detail: message ? `: ${message.slice(0, 300)}` : '.',
+  });
 }
 
 function toAccess(
@@ -311,17 +292,17 @@ function toAccess(
 
 function describeAuthError(error: string | null): string {
   return error === 'access_denied'
-    ? 'Du hast die Anmeldung bei Google abgelehnt.'
-    : `Google hat die Anmeldung abgebrochen (${error ?? 'unbekannt'}).`;
+    ? tr('mail.authDenied')
+    : tr('mail.authAborted', { error: error ?? tr('mail.unknown') });
 }
 
 function describeTokenError(error: string | undefined, status: number): string {
   switch (error) {
     case 'invalid_client':
     case 'unauthorized_client':
-      return 'Google kennt diese App nicht – stimmen Client-ID und Clientschlüssel?';
+      return tr('mail.unknownApp');
     default:
-      return `Google hat die Anmeldung abgelehnt (${error ?? status}).`;
+      return tr('mail.tokenRejected', { error: error ?? status });
   }
 }
 
@@ -339,7 +320,7 @@ function page(res: ServerResponse, status: number, text: string) {
     'Cache-Control': 'no-store',
   });
   res.end(
-    `<!doctype html><html lang="de"><meta charset="utf-8"><title>LocalDesk</title>` +
+    `<!doctype html><html lang="${getMessageLanguage()}"><meta charset="utf-8"><title>LocalDesk</title>` +
       `<body style="font-family:system-ui,sans-serif;max-width:32rem;margin:15vh auto;padding:0 1rem;line-height:1.5">` +
       `<h1 style="font-size:1.2rem">LocalDesk</h1><p>${text}</p></body></html>`,
   );

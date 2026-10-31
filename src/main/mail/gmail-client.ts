@@ -13,6 +13,7 @@ import { describeGmailError, type GoogleApiError } from './google-auth';
 import { decodeEntities, htmlToText } from './html-to-text';
 import { mapLimit, type MailClient } from './mail-client';
 import type { Fetch } from './mail-fetch';
+import { tr } from '../../shared/messages';
 
 export const GMAIL_API = 'https://gmail.googleapis.com/gmail/v1/users/me';
 
@@ -140,7 +141,7 @@ export class GmailClient implements MailClient {
         (l) => l.id === change.labelId,
       );
       if (!label || label.type !== 'user') {
-        throw new Error('Dieses Label gibt es nicht (mehr).');
+        throw new Error(tr('mail.labelGone'));
       }
       body = { addLabelIds: [label.id] };
     } else {
@@ -180,7 +181,7 @@ export class GmailClient implements MailClient {
 }
 
 function checkedId(id: string): string {
-  if (!isMailId(id)) throw new Error('Unbekannte Kennung.');
+  if (!isMailId(id)) throw new Error(tr('mail.unknownId'));
   return id;
 }
 

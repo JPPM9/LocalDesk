@@ -12,6 +12,7 @@ import type {
 } from '../../shared/api';
 import { readNdjson } from './ndjson';
 import type { Provider } from './provider';
+import { tr } from '../../shared/messages';
 
 export const DEFAULT_OLLAMA_URL = 'http://localhost:11434';
 
@@ -267,7 +268,7 @@ export class OllamaProvider implements Provider {
       }
       return { ok: true, value: vectors };
     } catch (error) {
-      if (signal?.aborted) return { ok: false, error: 'Abgebrochen' };
+      if (signal?.aborted) return { ok: false, error: tr('error.cancelled') };
       return { ok: false, error: describeError(error) };
     }
   }

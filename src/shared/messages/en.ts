@@ -97,4 +97,80 @@ export const en: Record<MessageKey, string> = {
   'code.exitCode': 'Exit code: {code} ({seconds} s)',
   'code.noOutput': '(no output)',
   'code.outputSkipped': '[… {count} characters left out …]',
+  'error.cancelled': 'Cancelled',
+  'mail.reauth':
+    'The Google sign-in is no longer valid – please sign in again.',
+  'mail.serverName': 'E-mail',
+  'mail.pageDone': 'Sign-in is already complete. You can close this window.',
+  'mail.pageForeign': "This request doesn't belong to your sign-in.",
+  'mail.pageSuccess':
+    'Signed in. You can close this window and return to LocalDesk.',
+  'mail.pageCancelled': 'Sign-in cancelled. You can close this window.',
+  'mail.signInCancelled': 'Sign-in cancelled.',
+  'mail.signInTimeout': 'No sign-in within 5 minutes – please try again.',
+  'mail.noRefreshToken':
+    'Google did not provide a lasting sign-in – please try again.',
+  'mail.scopeDenied':
+    'Access to Gmail was not allowed. Tick the Gmail box when you sign in.',
+  'mail.revokeRefused': 'Google refused the sign-out ({status}).',
+  'mail.apiDisabled':
+    'The Gmail API is not enabled in the Google project. Google Cloud Console → APIs & Services → Library → “Gmail API” → Enable, wait a few minutes, then sign in again.',
+  'mail.gmailRejectedLogin':
+    'Gmail did not accept the sign-in – please sign in again.',
+  'mail.gmailTooMany':
+    'Gmail reports too many requests – please wait a moment.',
+  'mail.gmailRefuses': 'Gmail refuses the request ({status}){detail}',
+  'mail.authDenied': 'You declined the sign-in at Google.',
+  'mail.authAborted': 'Google cancelled the sign-in ({error}).',
+  'mail.unknown': 'unknown',
+  'mail.unknownApp':
+    'Google does not know this app – are the client ID and client secret correct?',
+  'mail.tokenRejected': 'Google rejected the sign-in ({error}).',
+  'mail.appLocked':
+    'Sign out all accounts first – the sign-ins belong to this Google app.',
+  'mail.appMissing': 'Enter the Google app first.',
+  'mail.cannotEncrypt':
+    "Windows can't encrypt the sign-in right now – so no sign-in is made.",
+  'mail.unexpectedAuthUrl': 'Unexpected sign-in address.',
+  'mail.notSignedIn': 'This account is not signed in (any more).',
+  'mail.unknownMail': 'Unknown mail.',
+  'mail.noSummary': 'The model did not deliver a summary.',
+  'mail.labelGone': "This label doesn't exist (any more).",
+  'mail.unknownId': 'Unknown identifier.',
+  'mail.cannotStore':
+    "Windows can't encrypt the sign-in right now – so it is not stored.",
+  'mail.accountGone': 'This account is not set up (any more).',
+  'mail.badAddress': 'Invalid address: {url}',
+  'mail.addressBlocked': 'Address not allowed (network rule): {host}',
+  'mail.unknownChange': 'LocalDesk has no such change.',
+  'mail.badClientId':
+    "The client ID doesn't look right – it ends in “.apps.googleusercontent.com”.",
+  'mail.badClientSecret':
+    "The client secret doesn't look right – it usually starts with “GOCSPX-”.",
+  'mail.idMissing': "The mail's identifier is missing.",
+  'mail.labelMissing': "The label “{label}” doesn't exist.",
+  'mail.noChange': 'No change given (label or star).',
+  'mail.hasLabel': 'The mail already has the label “{label}”.',
+  'mail.hasStar': 'The mail already has a star.',
+  'mail.hasNoStar': 'The mail has no star.',
+  'mail.addLabel': 'Add label “{label}”',
+  'mail.addStar': 'Add star',
+  'mail.removeStar': 'Remove star',
+  'mail.and': ' and ',
+  'mail.reason': 'Reason: {reason}',
+  'mail.noSubject': '(no subject)',
+  'mail.changePreview': 'Mail: {from} – “{subject}” ({date})',
+  'mail.noMails': 'No mail found.',
+  'mail.listQuery': '{count} mails for “{query}”, newest first:',
+  'mail.listInbox': '{count} mails in the inbox, newest first:',
+  'mail.restTruncated': '[… rest shortened]',
+  'mail.to': 'To: {value}',
+  'mail.cc': 'Cc: {value}',
+  'mail.attachments': 'Attachments (not loaded): {names}',
+  'mail.done': 'Done – the change has been applied in Gmail.',
+  'mail.unread': 'unread',
+  'mail.starred': 'starred',
+  'mail.summaryLine':
+    '[id: {id}] {date} · From: {from} · Subject: {subject}{flags}',
+  'mail.previewLine': 'Preview: {snippet}',
 };

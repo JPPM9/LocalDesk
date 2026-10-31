@@ -1,4 +1,5 @@
 import type { Result } from './api';
+import { tr, trIn } from './messages';
 
 /** Mail-Anbieter. Outlook folgt später (braucht ein Azure-Verzeichnis). */
 export type MailProvider = 'google';
@@ -81,8 +82,17 @@ export type MailChange =
   | { kind: 'star'; messageId: string; starred: boolean };
 
 /** Fehlertext bei abgelaufener Anmeldung – die Oberfläche bietet dann „neu anmelden“ an. */
-export const MAIL_REAUTH_MESSAGE =
-  'Die Anmeldung bei Google gilt nicht mehr – bitte neu anmelden.';
+export const mailReauthMessage = () => tr('mail.reauth');
+
+/**
+ * Ist das der Text „bitte neu anmelden“? Der Fehler kann in der anderen Sprache
+ * entstanden sein (Sprache zwischendurch umgeschaltet) – darum zählen beide.
+ */
+export function isMailReauthMessage(text: string): boolean {
+  return (['de', 'en'] as const).some((language) =>
+    text.includes(trIn(language, 'mail.reauth')),
+  );
+}
 
 /** Server-Kennung der eingebauten Mail-Werkzeuge im Chat. */
 export const MAIL_TOOL_SERVER = 'localdesk:mail';
@@ -103,7 +113,7 @@ export function isMailId(value: unknown): value is string {
 export function checkMailChange(input: unknown): Result<MailChange> {
   const raw = (input ?? {}) as Record<string, unknown>;
   if (!isMailId(raw.messageId)) {
-    return { ok: false, error: 'Unbekannte Mail.' };
+    return { ok: false, error: tr('mail.unknownMail') };
   }
   if (raw.kind === 'label' && isMailId(raw.labelId)) {
     return {
@@ -117,7 +127,7 @@ export function checkMailChange(input: unknown): Result<MailChange> {
       value: { kind: 'star', messageId: raw.messageId, starred: raw.starred },
     };
   }
-  return { ok: false, error: 'Diese Änderung gibt es in LocalDesk nicht.' };
+  return { ok: false, error: tr('mail.unknownChange') };
 }
 
 const GOOGLE_CLIENT_ID =
@@ -133,15 +143,13 @@ export function checkGoogleApp(input: unknown): Result<GoogleAppInput> {
   if (!GOOGLE_CLIENT_ID.test(clientId)) {
     return {
       ok: false,
-      error:
-        'Die Client-ID sieht nicht richtig aus – sie endet auf „.apps.googleusercontent.com“.',
+      error: tr('mail.badClientId'),
     };
   }
   if (!GOOGLE_CLIENT_SECRET.test(clientSecret)) {
     return {
       ok: false,
-      error:
-        'Der Clientschlüssel sieht nicht richtig aus – er beginnt meist mit „GOCSPX-“.',
+      error: tr('mail.badClientSecret'),
     };
   }
   return { ok: true, value: { clientId, clientSecret } };

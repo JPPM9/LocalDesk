@@ -1,3 +1,5 @@
+import { tr } from '../../shared/messages';
+
 /**
  * Netzwerk-Regel für E-Mail: Nur diese Adressen darf LocalDesk für Mails
  * ansprechen – und nur über HTTPS. Alles andere wird abgelehnt, bevor eine
@@ -18,11 +20,11 @@ export function guardedFetch(fetchImpl: Fetch): Fetch {
     try {
       parsed = new URL(url);
     } catch {
-      return Promise.reject(new Error(`Ungültige Adresse: ${url}`));
+      return Promise.reject(new Error(tr('mail.badAddress', { url })));
     }
     if (parsed.protocol !== 'https:' || !MAIL_HOSTS.has(parsed.hostname)) {
       return Promise.reject(
-        new Error(`Adresse nicht erlaubt (Netzwerk-Regel): ${parsed.host}`),
+        new Error(tr('mail.addressBlocked', { host: parsed.host })),
       );
     }
     return fetchImpl(url, init);
