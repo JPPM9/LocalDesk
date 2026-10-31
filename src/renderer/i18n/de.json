@@ -192,6 +192,25 @@
       "older": "Älter"
     }
   },
+  "compact": {
+    "button": "Älteren Teil verdichten",
+    "hint": "Das Modell fasst den älteren Teil des Chats zusammen. Du prüfst die Zusammenfassung, bevor sie gilt – die Nachrichten bleiben erhalten.",
+    "active": "Verdichtet: {{count}} ältere Nachrichten ersetzt, etwa {{saved}} Tokens gespart.",
+    "clear": "Verdichtung aufheben",
+    "title": "Älteren Teil verdichten",
+    "working": "Das Modell fasst den älteren Teil zusammen …",
+    "workingHint": "Das kann etwas dauern, je nach Länge des Chats und Modell.",
+    "cancel": "Abbrechen",
+    "review": "Prüfe die Zusammenfassung. Ab „Übernehmen“ schickt LocalDesk dem Modell sie statt der älteren Nachrichten – im Chat bleiben alle Nachrichten sichtbar.",
+    "covered": "Ersetzt {{count}} ältere Nachrichten.",
+    "tokens": "Verlauf: etwa {{before}} → {{after}} Tokens",
+    "apply": "Übernehmen",
+    "applying": "Speichere …",
+    "retry": "Nochmal versuchen",
+    "divider": "Bis hier verdichtet · {{count}} Nachrichten, etwa {{saved}} Tokens gespart",
+    "show": "Zusammenfassung ansehen",
+    "limits": "Eine Zusammenfassung verliert Details. Hebe die Verdichtung auf, wenn das Modell etwas Wichtiges vergisst."
+  },
   "sidePanel": {
     "button": "Seitenbereich (Quellen, Projekt, Kontext)",
     "close": "Seitenbereich schließen",
@@ -209,6 +228,7 @@
     "noDocuments": "Keine Projekt-Dokumente.",
     "used": "{{used}} von {{total}} Tokens",
     "part": {
+      "summary": "Zusammenfassung",
       "memory": "Erinnerungen",
       "instructions": "Anweisungen",
       "history": "Verlauf",

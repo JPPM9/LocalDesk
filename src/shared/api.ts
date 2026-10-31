@@ -16,6 +16,7 @@ import type {
 } from './mail';
 import type { CodeChangeState, CodeEntry, CodeFile } from './code';
 import type { CodeMode } from './code-agent';
+import type { ChatCompaction, CompactionDraft } from './compaction';
 import type { GithubSkill } from './github';
 import type { MailSuggestion } from './mail-sorting';
 import type {
@@ -530,6 +531,8 @@ export interface ChatFolder {
 export interface ChatDetail extends ChatSummary {
   settings: ChatSettings;
   messages: MessageRecord[];
+  /** Verdichtung des älteren Teils (fehlt = der ganze Verlauf geht ans Modell). */
+  compaction?: ChatCompaction;
   /** Zahl der Nachrichten, als zuletzt zusammengefasst oder abgelehnt wurde. */
   summaryAtCount?: number;
   /** Nur Code-Sitzungen: der Projektordner. */
@@ -729,6 +732,19 @@ export interface LocalDeskApi {
     model: string,
   ) => Promise<Result<SummaryDraft>>;
   cancelSummary: (chatId: string) => Promise<void>;
+  /** Das Modell fasst den älteren Teil des Chats zusammen – nur ein Vorschlag, gespeichert wird mit applyCompaction. */
+  compactChat: (
+    chatId: string,
+    model: string,
+  ) => Promise<Result<CompactionDraft>>;
+  cancelCompaction: (chatId: string) => Promise<void>;
+  /** Übernimmt die (bearbeitete) Zusammenfassung: Ab jetzt geht sie statt der älteren Nachrichten ans Modell. */
+  applyCompaction: (
+    chatId: string,
+    draft: { summary: string; upToMessageId: string },
+  ) => Promise<Result<ChatCompaction>>;
+  /** Hebt die Verdichtung auf – der ganze Verlauf geht wieder ans Modell. */
+  clearCompaction: (chatId: string) => Promise<void>;
   /** Speichert den (bearbeiteten) Entwurf nach `<Unterordner>/Zusammenfassungen/`. */
   saveSummary: (
     chatId: string,
@@ -917,6 +933,10 @@ export const IpcChannels = {
   saveChatNote: 'obsidian:save-chat',
   summarizeChat: 'summary:create',
   cancelSummary: 'summary:cancel',
+  compactChat: 'compaction:create',
+  cancelCompaction: 'compaction:cancel',
+  applyCompaction: 'compaction:apply',
+  clearCompaction: 'compaction:clear',
   saveSummary: 'summary:save',
   dismissSummary: 'summary:dismiss',
   mcpChanged: 'mcp:changed',

@@ -18,6 +18,7 @@ import { AppSettingsRepository } from './db/app-settings-repository';
 import { KnowledgeRepository } from './db/knowledge-repository';
 import { registerObsidianHandlers } from './obsidian-service';
 import { registerSummaryHandlers } from './summary-service';
+import { registerCompactionHandlers } from './compaction-service';
 import {
   DEFAULT_EMBEDDING_MODEL,
   registerKnowledgeHandlers,
@@ -118,6 +119,7 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
     writer: obsidian.writer,
     projects: () => folders.listFolders(),
   });
+  registerCompactionHandlers({ getProvider, chats });
   ipcMain.handle(IpcChannels.getOllamaStatus, () =>
     getProvider().checkStatus(),
   );

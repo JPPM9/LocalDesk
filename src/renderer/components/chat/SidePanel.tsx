@@ -13,6 +13,7 @@ import {
   type ContextPart,
   type ContextUsage,
 } from '../../../shared/context';
+import type { ChatCompaction } from '../../../shared/compaction';
 import { useCollections } from '../../hooks/useCollections';
 import { formatContext, formatMemory } from '../../utils/format';
 import {
@@ -36,6 +37,12 @@ interface SidePanelProps {
   model: ModelInfo | undefined;
   settings: ChatSettings;
   onChangeSettings: (settings: ChatSettings) => void;
+  /** Verdichtung des Chats (fehlt = keine). */
+  compaction?: ChatCompaction;
+  /** Der Chat ist gespeichert und es läuft keine Antwort – nur dann lässt er sich verdichten. */
+  canCompact: boolean;
+  onCompact: () => void;
+  onClearCompaction: () => void;
 }
 
 /** Seitenbereich neben dem Chat: Quellen, Projekt und Kontext-Füllstand. */
@@ -181,6 +188,7 @@ function ProjectTab({ project }: { project: ChatFolder | undefined }) {
 const PART_COLORS: Record<ContextPart, string> = {
   memory: 'bg-accent/50',
   skills: 'bg-[#8b5cf6]',
+  summary: 'bg-[#14b8a6]',
   instructions: 'bg-muted',
   history: 'bg-accent',
   knowledge: 'bg-ok',
@@ -194,6 +202,10 @@ function ContextTab({
   model,
   settings,
   onChangeSettings,
+  compaction,
+  canCompact,
+  onCompact,
+  onClearCompaction,
 }: SidePanelProps) {
   const { t } = useTranslation();
   const [kvBytes, setKvBytes] = useState<number | null | undefined>();
@@ -273,6 +285,27 @@ function ContextTab({
         <p className="text-[11px] text-muted">{t('sidePanel.estimateHint')}</p>
       </div>
 
+      {compaction && (
+        <div className="space-y-1.5 rounded border border-border bg-surface px-3 py-2 text-xs">
+          <p>
+            {t('compact.active', {
+              count: compaction.messagesCovered,
+              saved: Math.max(
+                0,
+                compaction.tokensBefore - compaction.tokensAfter,
+              ).toLocaleString(messageLocale()),
+            })}
+          </p>
+          <button
+            type="button"
+            onClick={onClearCompaction}
+            className="rounded border border-border px-2.5 py-1 hover:bg-surface-hover"
+          >
+            {t('compact.clear')}
+          </button>
+        </div>
+      )}
+
       {usage.level !== 'ok' && (
         <div
           className={`space-y-2 rounded border px-3 py-2 text-xs ${
@@ -318,6 +351,18 @@ function ContextTab({
             </>
           ) : (
             <p className="text-muted">{t('sidePanel.atMaximum')}</p>
+          )}
+          {canCompact && (
+            <div className="space-y-1 border-t border-border/60 pt-2">
+              <button
+                type="button"
+                onClick={onCompact}
+                className="rounded border border-border bg-surface px-2.5 py-1 hover:bg-surface-hover"
+              >
+                {t('compact.button')}
+              </button>
+              <p className="text-muted">{t('compact.hint')}</p>
+            </div>
           )}
         </div>
       )}

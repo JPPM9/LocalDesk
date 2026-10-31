@@ -7,6 +7,7 @@ import type {
   ToolDefinition,
 } from '../../shared/api';
 import { toRequestMessages } from '../../shared/chat';
+import { compactedHistory, type ChatCompaction } from '../../shared/compaction';
 import {
   contextUsage,
   estimateContextParts,
@@ -28,6 +29,8 @@ export function useContextUsage(
   project: ChatFolder | undefined,
   /** Kann das Modell Werkzeuge? Dann kommt die Skill-Liste („Skill laden“) dazu. */
   modelSupportsTools = false,
+  /** Verdichtung des Chats: Statt der älteren Nachrichten zählt ihre Zusammenfassung. */
+  compaction?: ChatCompaction,
 ): ContextUsage {
   const servers = useMcpServers();
   const [memories, setMemories] = useState<MemoryView[]>([]);
@@ -91,7 +94,12 @@ export function useContextUsage(
     const chatMemories = selectMemories(
       memories.filter((m) => !m.projectId || m.projectId === project?.id),
     );
+    const compacted = compactedHistory(
+      messages.filter((m) => m.status !== 'streaming'),
+      compaction,
+    );
     const parts = estimateContextParts({
+      summaryText: compacted.compaction?.summary,
       memoryText: memoryPrompt(chatMemories.map((m) => m.text)),
       skillsText: skillsPrompt(
         skills.filter((s) => activeSkills.includes(s.id) && !s.error),
@@ -99,9 +107,7 @@ export function useContextUsage(
       instructions: [project?.instructions, settings.systemPrompt]
         .filter(Boolean)
         .join('\n\n'),
-      history: toRequestMessages(
-        messages.filter((m) => m.status !== 'streaming'),
-      ),
+      history: toRequestMessages(compacted.messages),
       knowledgeActive: Boolean(
         settings.collections?.length || project?.collectionId,
       ),
@@ -120,5 +126,6 @@ export function useContextUsage(
     memories,
     skills,
     modelSupportsTools,
+    compaction,
   ]);
 }

@@ -19,6 +19,7 @@ describe('contextUsage', () => {
   const parts = {
     memory: 0,
     skills: 0,
+    summary: 0,
     instructions: 100,
     history: 1500,
     knowledge: 1800,

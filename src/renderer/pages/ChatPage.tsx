@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import {
   Link,
   useNavigate,
@@ -39,6 +39,8 @@ import { ChatSettingsPanel } from '../components/chat/ChatSettingsPanel';
 import { MessageView } from '../components/chat/MessageView';
 import { SaveNoteButton } from '../components/chat/SaveNoteButton';
 import { SummaryPanel } from '../components/chat/SummaryPanel';
+import { CompactionDialog } from '../components/chat/CompactionDialog';
+import { CompactionDivider } from '../components/chat/CompactionDivider';
 import { shouldSuggestSummary } from '../../shared/summary';
 import { ModelSelect } from '../components/chat/ModelSelect';
 import { KnowledgeButton } from '../components/knowledge/CollectionPicker';
@@ -82,6 +84,7 @@ export function ChatPage() {
     settings,
     isRunning,
     notFound,
+    refresh,
     send,
     resend,
     stop,
@@ -182,8 +185,11 @@ export function ChatPage() {
     settings,
     project,
     models.find((m) => m.name === model)?.capabilities.includes('tools'),
+    chat?.compaction,
   );
   const contextLevel = contextUsage.level;
+  // „Älteren Teil verdichten“: Dialog mit Vorschlag des Modells.
+  const [compactOpen, setCompactOpen] = useState(false);
 
   // „Merken“ gibt es nur mit eingerichtetem Vault (beim Öffnen des Chats geprüft).
   const [vaultReady, setVaultReady] = useState(false);
@@ -449,42 +455,57 @@ export function ChatPage() {
               </div>
             )}
             {messages.map((message) => (
-              <div
-                key={message.id}
-                id={`msg-${message.id}`}
-                className={`rounded-lg transition-shadow duration-500 ${
-                  highlightId === message.id
-                    ? 'ring-2 ring-accent ring-offset-4 ring-offset-bg'
-                    : ''
-                }`}
-              >
-                <MessageView
-                  message={message}
-                  onToolDecision={(callId, decision, args) =>
-                    void window.api.chatToolDecision(callId, decision, args)
-                  }
-                  project={project && { id: project.id, name: project.name }}
-                  canRemember={vaultReady}
-                  chatId={chatId ?? undefined}
-                  usesKnowledge={Boolean(
-                    settings.collections?.length || project?.collectionId,
-                  )}
-                  onEdit={
-                    chatId && message.role === 'user' && !isRunning
-                      ? (text) => void resend(message.id, text, model)
-                      : undefined
-                  }
-                  onRetry={
-                    chatId &&
-                    !isRunning &&
-                    message.role === 'assistant' &&
-                    message.id === messages.at(-1)?.id &&
-                    lastUser
-                      ? () => void resend(lastUser.id, lastUser.content, model)
-                      : undefined
-                  }
-                />
-              </div>
+              <Fragment key={message.id}>
+                <div
+                  id={`msg-${message.id}`}
+                  className={`rounded-lg transition-shadow duration-500 ${
+                    highlightId === message.id
+                      ? 'ring-2 ring-accent ring-offset-4 ring-offset-bg'
+                      : ''
+                  }`}
+                >
+                  <MessageView
+                    message={message}
+                    onToolDecision={(callId, decision, args) =>
+                      void window.api.chatToolDecision(callId, decision, args)
+                    }
+                    project={project && { id: project.id, name: project.name }}
+                    canRemember={vaultReady}
+                    chatId={chatId ?? undefined}
+                    usesKnowledge={Boolean(
+                      settings.collections?.length || project?.collectionId,
+                    )}
+                    onEdit={
+                      chatId && message.role === 'user' && !isRunning
+                        ? (text) => void resend(message.id, text, model)
+                        : undefined
+                    }
+                    onRetry={
+                      chatId &&
+                      !isRunning &&
+                      message.role === 'assistant' &&
+                      message.id === messages.at(-1)?.id &&
+                      lastUser
+                        ? () =>
+                            void resend(lastUser.id, lastUser.content, model)
+                        : undefined
+                    }
+                  />
+                </div>
+                {chat?.compaction?.upToMessageId === message.id && (
+                  <CompactionDivider
+                    compaction={chat.compaction}
+                    onClear={
+                      chatId && !isRunning
+                        ? () =>
+                            void window.api
+                              .clearCompaction(chatId)
+                              .then(() => refresh())
+                        : undefined
+                    }
+                  />
+                )}
+              </Fragment>
             ))}
           </div>
         </StickyScroll>
@@ -570,6 +591,24 @@ export function ChatPage() {
           model={models.find((m) => m.name === model)}
           settings={settings}
           onChangeSettings={updateSettings}
+          compaction={chat?.compaction}
+          canCompact={Boolean(chatId) && !isRunning && messages.length >= 4}
+          onCompact={() => setCompactOpen(true)}
+          onClearCompaction={() => {
+            if (!chatId) return;
+            void window.api.clearCompaction(chatId).then(() => refresh());
+          }}
+        />
+      )}
+      {compactOpen && chatId && (
+        <CompactionDialog
+          chatId={chatId}
+          model={model}
+          onClose={() => setCompactOpen(false)}
+          onApplied={() => {
+            setCompactOpen(false);
+            void refresh();
+          }}
         />
       )}
       {settingsOpen && (

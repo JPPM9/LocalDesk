@@ -47,6 +47,12 @@ export function useChat(
     setNotFound(detail === null);
   }, []);
 
+  /** Liest den geöffneten Chat neu aus der Datenbank (z. B. nach dem Verdichten). */
+  const refresh = useCallback(async () => {
+    const id = chatIdRef.current;
+    if (id) await reload(id);
+  }, [reload]);
+
   useEffect(() => {
     setNotFound(false);
     if (chatId === null) {
@@ -161,6 +167,7 @@ export function useChat(
     settings,
     isRunning,
     notFound,
+    refresh,
     send,
     resend,
     stop,

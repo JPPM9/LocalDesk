@@ -38,5 +38,5 @@ Erste installierbare Version.
   fremden Projekt-Einstellungen (Git-Hooks laufen bei Commits aus LocalDesk nicht), der Ordner .git bleibt
   gesperrt, Bilder aus Modellantworten werden nie geladen, und bei einem Ollama-Server auf einem anderen
   Rechner fragt jedes Werkzeug nach.
-- **Chat und Code:** Chat scrollt ruhig (nur mit, wenn du unten bist), eigene Rückfrage-Dialoge, Nachrichten kopieren/bearbeiten/Antwort wiederholen, Grafikkarten-Status als Popup und Reiter, Plan-Modus im Code-Bereich, Zugriff auf Postfach/Dateien per Karte im Chat, Skills von einem GitHub-Link laden.
+- **Chat und Code:** Chat scrollt ruhig (nur mit, wenn du unten bist), eigene Rückfrage-Dialoge, Nachrichten kopieren/bearbeiten/Antwort wiederholen, Grafikkarten-Status als Popup und Reiter, Plan-Modus im Code-Bereich, Zugriff auf Postfach/Dateien per Karte im Chat, Skills von einem GitHub-Link laden, „Älteren Teil verdichten“ für lange Chats (Zusammenfassung zum Prüfen und Bearbeiten, Nachrichten bleiben erhalten, aufhebbar).
 - **Sprache:** Oberfläche auf Deutsch oder Englisch umschaltbar (Einstellungen → Darstellung), Standard wie Windows.

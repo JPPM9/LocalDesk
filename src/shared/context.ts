@@ -28,6 +28,7 @@ export function estimateTokens(
 export type ContextPart =
   | 'memory'
   | 'skills'
+  | 'summary'
   | 'instructions'
   | 'history'
   | 'knowledge'
@@ -41,6 +42,8 @@ export interface ContextInput {
   memoryText: string;
   /** Der Skill-Teil der System-Nachricht (leer = keine Skills eingeschaltet). */
   skillsText?: string;
+  /** Die Zusammenfassung, die verdichtete ältere Nachrichten ersetzt (leer = keine Verdichtung). */
+  summaryText?: string;
   /** Projekt-Anweisungen und Systemprompt. */
   instructions: string;
   /** Verlauf, wie er ans Modell geht (inkl. Tool-Runden). */
@@ -81,6 +84,7 @@ export function estimateContextParts(
   return {
     memory: input.memoryText ? estimateTokens(input.memoryText) : 0,
     skills: input.skillsText ? estimateTokens(input.skillsText) : 0,
+    summary: input.summaryText ? estimateTokens(input.summaryText) + 40 : 0,
     instructions: input.instructions ? estimateTokens(input.instructions) : 0,
     history,
     knowledge,

@@ -192,6 +192,25 @@
       "older": "Older"
     }
   },
+  "compact": {
+    "button": "Condense older part",
+    "hint": "The model summarizes the older part of the chat. You check the summary before it applies – the messages are kept.",
+    "active": "Condensed: {{count}} older messages replaced, about {{saved}} tokens saved.",
+    "clear": "Undo condensing",
+    "title": "Condense older part",
+    "working": "The model is summarizing the older part …",
+    "workingHint": "This can take a while, depending on the length of the chat and the model.",
+    "cancel": "Cancel",
+    "review": "Check the summary. After “Apply” LocalDesk sends it to the model instead of the older messages – all messages stay visible in the chat.",
+    "covered": "Replaces {{count}} older messages.",
+    "tokens": "History: about {{before}} → {{after}} tokens",
+    "apply": "Apply",
+    "applying": "Saving …",
+    "retry": "Try again",
+    "divider": "Condensed up to here · {{count}} messages, about {{saved}} tokens saved",
+    "show": "Show summary",
+    "limits": "A summary loses details. Undo the condensing if the model forgets something important."
+  },
   "sidePanel": {
     "button": "Side panel (sources, project, context)",
     "close": "Close side panel",
@@ -209,6 +228,7 @@
     "noDocuments": "No project documents.",
     "used": "{{used}} of {{total}} tokens",
     "part": {
+      "summary": "Summary",
       "memory": "Memories",
       "instructions": "Instructions",
       "history": "History",

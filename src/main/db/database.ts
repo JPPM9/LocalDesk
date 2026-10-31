@@ -245,6 +245,11 @@ const migrations: string[] = [
   `
   ALTER TABLE chats ADD COLUMN workspace TEXT;
   `,
+  // 19: Verdichtung eines langen Chats (Zusammenfassung des älteren Teils, als JSON). Die
+  // Nachrichten selbst bleiben unverändert.
+  `
+  ALTER TABLE chats ADD COLUMN compaction_json TEXT;
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */

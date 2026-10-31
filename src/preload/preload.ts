@@ -110,6 +110,14 @@ const api: LocalDeskApi = {
     ipcRenderer.invoke(IpcChannels.summarizeChat, chatId, model),
   cancelSummary: (chatId) =>
     ipcRenderer.invoke(IpcChannels.cancelSummary, chatId),
+  compactChat: (chatId, model) =>
+    ipcRenderer.invoke(IpcChannels.compactChat, chatId, model),
+  cancelCompaction: (chatId) =>
+    ipcRenderer.invoke(IpcChannels.cancelCompaction, chatId),
+  applyCompaction: (chatId, draft) =>
+    ipcRenderer.invoke(IpcChannels.applyCompaction, chatId, draft),
+  clearCompaction: (chatId) =>
+    ipcRenderer.invoke(IpcChannels.clearCompaction, chatId),
   saveSummary: (chatId, model, draft) =>
     ipcRenderer.invoke(IpcChannels.saveSummary, chatId, model, draft),
   dismissSummary: (chatId) =>

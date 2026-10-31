@@ -12,6 +12,7 @@ import type {
   SourceRef,
   ToolCallRecord,
 } from '../../shared/api';
+import { parseCompaction, type ChatCompaction } from '../../shared/compaction';
 import {
   buildFtsQuery,
   HIGHLIGHT_END,
@@ -38,6 +39,7 @@ interface ChatDetailRow extends ChatRow {
   settings_json: string;
   summary_at_count: number | null;
   workspace: string | null;
+  compaction_json: string | null;
 }
 
 interface MessageRow {
@@ -100,7 +102,7 @@ export class ChatRepository {
     const chat = this.db
       .prepare(
         `SELECT id, title, model, updated_at, folder_id, settings_json, summary_at_count,
-                workspace
+                workspace, compaction_json
            FROM chats WHERE id = ?`,
       )
       .get(chatId) as unknown as ChatDetailRow | undefined;
@@ -120,7 +122,17 @@ export class ChatRepository {
         summaryAtCount: chat.summary_at_count,
       }),
       ...(chat.workspace && { workspace: chat.workspace }),
+      ...(parseCompaction(chat.compaction_json) && {
+        compaction: parseCompaction(chat.compaction_json),
+      }),
     };
+  }
+
+  /** Speichert die Verdichtung des Chats (oder hebt sie mit null auf). Ändert `updated_at` nicht. */
+  setCompaction(chatId: string, compaction: ChatCompaction | null): void {
+    this.db
+      .prepare('UPDATE chats SET compaction_json = ? WHERE id = ?')
+      .run(compaction ? JSON.stringify(compaction) : null, chatId);
   }
 
   /**
@@ -257,6 +269,16 @@ export class ChatRepository {
     this.db
       .prepare('DELETE FROM messages WHERE chat_id = ? AND position >= ?')
       .run(chatId, target.position);
+    // Eine Verdichtung, deren letzte Nachricht jetzt fehlt, würde Inhalt zeigen, den es nicht mehr gibt.
+    this.db
+      .prepare(
+        `UPDATE chats SET compaction_json = NULL
+          WHERE id = ? AND compaction_json IS NOT NULL
+            AND NOT EXISTS (
+              SELECT 1 FROM messages WHERE chat_id = chats.id
+                AND id = json_extract(chats.compaction_json, '$.upToMessageId'))`,
+      )
+      .run(chatId);
     // „Zusammenfassung vorschlagen“ zählt Nachrichten – der Merker darf nicht darüber liegen.
     this.db
       .prepare(

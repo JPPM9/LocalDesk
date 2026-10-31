@@ -908,6 +908,20 @@
   Echt geprüft (gebaute App): humanizer.zip + Warn-ZIP + kaputte ZIP + .md auf einmal abgelegt, Dateiauswahl; humanizer ohne
   Warnung (nur Wikipedia-Adresse + 2 übersprungene Dateien), nur references/ gespeichert, kein scripts/ und kein tool.exe.
 
+- **Kontext verdichten** (aus dem LocalAI-Vergleich, Plan freigegeben 2026-10-31): Wird der Kontext eng/voll, bietet die
+  Seitenleiste (Reiter Kontext) „Älteren Teil verdichten“. `main/compaction-service.ts`: Das Modell des Chats (Denken aus,
+  Temperatur 0,2) fasst den älteren Teil zusammen – abschnittsweise (`compactionChunks`, je ≤ 50 % des Kontexts, bisherige
+  Zusammenfassung wird mitgenommen), Länge ≈ ein Viertel des alten Teils (`targetWords`, 80–450 Wörter). Schnitt `pickCut`:
+  hinten bleibt, was in 40 % des Kontexts passt (mind. letzte 2 Nachrichten, beginnt mit Nutzer-Nachricht). Nur ein VORSCHLAG:
+  `CompactionDialog` zeigt ihn bearbeitbar mit „Tokens vorher → nachher“, erst „Übernehmen“ (`applyCompaction`, rechnet die Zahlen
+  selbst nach) speichert in `chats.compaction_json` (Migration 19: Zusammenfassung, `upToMessageId`, Zahlen). Die Nachrichten bleiben
+  unverändert; `chat-service` schickt `compactedHistory` (nur Nachrichten NACH der verdichteten) + `withCompaction` (Zusammenfassung
+  am Ende der System-Nachricht); `useContextUsage` zählt sie als eigenen Anteil „Zusammenfassung“. `truncateFrom` (Bearbeiten/Wiederholen)
+  löscht die Verdichtung, wenn ihre letzte Nachricht wegfällt. Trennlinie `CompactionDivider` im Chat (aufklappbar, „Verdichtung aufheben“).
+  Echt geprüft (gebaute App, gemma4:12b, Kontext 2 048): Fakt am Anfang („Hund heißt Bello, wohne in Hamburg“) nach 5 langen Antworten
+  vergessen („Ich habe keinen Zugriff …“); nach dem Verdichten (Verlauf 1 790 → 464 Tokens) antwortet das Modell richtig; Aufheben geht.
+  Bekannt: Eine Zusammenfassung verliert Details – darum Vorschau, Bearbeiten, Aufheben.
+
 ## Befehle
 
 - `npm start` – Entwicklungsmodus · `npm test` – Vitest (Tests in `tests/`) · `npm run typecheck` · `npm run lint` · `npm run dist` – Installer · `npm run make` – portable ZIP

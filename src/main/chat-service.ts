@@ -55,6 +55,7 @@ import type { ChatKnowledge } from './knowledge-service';
 import type { MailClient } from './mail/mail-client';
 import { callMailTool, describeMailTool, mailTools } from './mail/mail-tools';
 import { callSkill } from './skills/skill-call';
+import { compactedHistory, withCompaction } from '../shared/compaction';
 import { OLLAMA_DEFAULT_CONTEXT } from '../shared/context';
 import type { McpTools } from './mcp-service';
 import { checkMemoryArguments, memoryTool } from './obsidian/memory-tool';
@@ -191,14 +192,19 @@ export function registerChatHandlers(
 
     const controller = new AbortController();
     running.set(request.requestId, controller);
-    const chatRequest = buildChatRequest(
+    // Ein verdichteter Chat schickt statt der älteren Nachrichten ihre Zusammenfassung.
+    const compacted = compactedHistory(history, chat?.compaction);
+    const plainRequest = buildChatRequest(
       request.model,
-      [...history, userMessage],
+      [...compacted.messages, userMessage],
       settings,
       workspace
         ? codeAgentPrompt(path.basename(workspace), new Date(), codeMode)
         : project?.instructions,
     );
+    const chatRequest = compacted.compaction
+      ? withCompaction(plainRequest, compacted.compaction.summary)
+      : plainRequest;
     // Projekt-Dokumente werden immer durchsucht, dazu die per Wissen-Knopf gewählten.
     const collectionIds = [
       ...(project?.collectionId ? [project.collectionId] : []),
