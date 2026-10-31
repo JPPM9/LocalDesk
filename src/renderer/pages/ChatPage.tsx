@@ -82,6 +82,7 @@ export function ChatPage() {
     isRunning,
     notFound,
     send,
+    resend,
     stop,
     updateSettings,
   } = useChat(chatId, {
@@ -237,8 +238,8 @@ export function ChatPage() {
 
   // Mitscrollen übernimmt StickyScroll (nur, wenn du unten bist). Eine neue eigene
   // Nachricht holt dich immer nach unten.
-  const lastUserId =
-    [...messages].reverse().find((m) => m.role === 'user')?.id ?? null;
+  const lastUser = [...messages].reverse().find((m) => m.role === 'user');
+  const lastUserId = lastUser?.id ?? null;
 
   // Suchtreffer: /chat/<id>?m=<Nachricht> springt zur Nachricht und hebt sie kurz hervor.
   // Steht bewusst NACH dem Mitscrollen – so gewinnt der Sprung, wenn beides zugleich passiert.
@@ -467,6 +468,20 @@ export function ChatPage() {
                   usesKnowledge={Boolean(
                     settings.collections?.length || project?.collectionId,
                   )}
+                  onEdit={
+                    chatId && message.role === 'user' && !isRunning
+                      ? (text) => void resend(message.id, text, model)
+                      : undefined
+                  }
+                  onRetry={
+                    chatId &&
+                    !isRunning &&
+                    message.role === 'assistant' &&
+                    message.id === messages.at(-1)?.id &&
+                    lastUser
+                      ? () => void resend(lastUser.id, lastUser.content, model)
+                      : undefined
+                  }
                 />
               </div>
             ))}

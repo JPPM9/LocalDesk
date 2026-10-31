@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Sparkles, TriangleAlert } from 'lucide-react';
 import type { MessageRecord, ToolDecision } from '../../../shared/api';
 import { Markdown } from './Markdown';
+import { CopyButton, EditBox, EditButton, RetryButton } from './MessageActions';
 import { RememberButton } from './RememberButton';
 import { SaveNoteButton } from './SaveNoteButton';
 import { SourceList } from './SourceList';
@@ -23,6 +24,10 @@ interface MessageViewProps {
   chatId?: string;
   /** Dieser Chat durchsucht Wissen – solange Quellen fehlen, läuft die Suche noch. */
   usesKnowledge?: boolean;
+  /** Eigene Nachricht ändern und neu senden (fehlt = „Bearbeiten“ gibt es nicht). */
+  onEdit?: (text: string) => void;
+  /** Letzte Antwort neu erzeugen (nur an der letzten Antwort gesetzt). */
+  onRetry?: () => void;
 }
 
 export function MessageView({
@@ -32,13 +37,30 @@ export function MessageView({
   canRemember = false,
   chatId,
   usesKnowledge = false,
+  onEdit,
+  onRetry,
 }: MessageViewProps) {
   const { t } = useTranslation();
+  const [editing, setEditing] = useState(false);
   const [citeFocus, setCiteFocus] = useState<{ n: number; at: number } | null>(
     null,
   );
 
   if (message.role === 'user') {
+    if (editing && onEdit) {
+      return (
+        <div className="space-y-1">
+          <EditBox
+            initialText={message.content}
+            onSend={(text) => {
+              setEditing(false);
+              onEdit(text);
+            }}
+            onCancel={() => setEditing(false)}
+          />
+        </div>
+      );
+    }
     return (
       <div className="group space-y-1">
         <div className="flex justify-end">
@@ -46,13 +68,17 @@ export function MessageView({
             {message.content}
           </div>
         </div>
-        {canRemember && (
-          <RememberButton
-            text={message.content}
-            project={project}
-            align="end"
-          />
-        )}
+        <div className="flex flex-wrap items-start justify-end gap-1">
+          <CopyButton text={message.content} />
+          {onEdit && <EditButton onClick={() => setEditing(true)} />}
+          {canRemember && (
+            <RememberButton
+              text={message.content}
+              project={project}
+              align="end"
+            />
+          )}
+        </div>
       </div>
     );
   }
@@ -156,16 +182,20 @@ export function MessageView({
           })}
         </p>
       )}
-      {canRemember && !streaming && message.content && (
+      {!streaming && message.content && (
         <div className="flex flex-wrap items-start gap-1">
-          {chatId && (
+          <CopyButton text={message.content} />
+          {onRetry && <RetryButton onClick={onRetry} />}
+          {canRemember && chatId && (
             <SaveNoteButton
               chatId={chatId}
               answerId={message.id}
               variant="text"
             />
           )}
-          <RememberButton text={message.content} project={project} />
+          {canRemember && (
+            <RememberButton text={message.content} project={project} />
+          )}
         </div>
       )}
     </div>

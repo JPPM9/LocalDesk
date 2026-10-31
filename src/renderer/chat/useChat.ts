@@ -122,6 +122,26 @@ export function useChat(
     }
   }, []);
 
+  /**
+   * Nachricht ersetzen oder Antwort wiederholen: Alles ab `messageId` wird
+   * gelöscht, dann geht `text` als neue Nachricht raus. Läuft gerade eine Antwort
+   * oder geht das Löschen nicht, passiert nichts.
+   */
+  const resend = useCallback(
+    async (messageId: string, text: string, model: string) => {
+      const id = chatIdRef.current;
+      if (!id) return;
+      if (messagesRef.current.some((m) => m.status === 'streaming')) return;
+      if (!(await window.api.chatTruncate(id, messageId))) return;
+      setMessages((current) => {
+        const index = current.findIndex((m) => m.id === messageId);
+        return index < 0 ? current : current.slice(0, index);
+      });
+      send(text, model);
+    },
+    [send],
+  );
+
   const stop = useCallback(() => {
     const running = messagesRef.current.find((m) => m.status === 'streaming');
     if (running) void window.api.chatCancel(running.id);
@@ -142,6 +162,7 @@ export function useChat(
     isRunning,
     notFound,
     send,
+    resend,
     stop,
     updateSettings,
   };

@@ -818,6 +818,10 @@ export interface LocalDeskApi {
    */
   chatSend: (request: ChatSendRequest) => Promise<void>;
   chatCancel: (requestId: string) => Promise<void>;
+  /** Löscht die Nachricht und alle danach (Bearbeiten/Wiederholen); false = ging nicht (läuft gerade / gibt es nicht). */
+  chatTruncate: (chatId: string, messageId: string) => Promise<boolean>;
+  /** Text in die Zwischenablage (über den Main-Prozess). */
+  copyText: (text: string) => Promise<void>;
   /**
    * Antwort auf eine Rückfrage zu einem Tool-Aufruf; `args` nur bei bearbeitbaren
    * Werkzeugen (Erinnerung speichern) – der Main-Prozess prüft sie.
@@ -935,6 +939,8 @@ export const IpcChannels = {
   deleteTemplate: 'templates:delete',
   chatSend: 'chat:send',
   chatCancel: 'chat:cancel',
+  chatTruncate: 'chat:truncate',
+  copyText: 'clipboard:copy-text',
   chatToolDecision: 'chat:tool-decision',
   chatEvent: 'chat:event',
 } as const;

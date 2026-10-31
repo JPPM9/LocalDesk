@@ -203,6 +203,9 @@ const api: LocalDeskApi = {
   chatSend: (request) => ipcRenderer.invoke(IpcChannels.chatSend, request),
   chatCancel: (requestId) =>
     ipcRenderer.invoke(IpcChannels.chatCancel, requestId),
+  chatTruncate: (chatId, messageId) =>
+    ipcRenderer.invoke(IpcChannels.chatTruncate, chatId, messageId),
+  copyText: (text) => ipcRenderer.invoke(IpcChannels.copyText, text),
   chatToolDecision: (callId, decision, args) =>
     ipcRenderer.invoke(IpcChannels.chatToolDecision, callId, decision, args),
   onChatEvent: (listener) => {

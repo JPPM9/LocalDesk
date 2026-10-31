@@ -239,6 +239,34 @@ export class ChatRepository {
       .run(now, model, chatId);
   }
 
+  /**
+   * Löscht die Nachricht und alle danach (für „Bearbeiten“ und „Antwort wiederholen“).
+   * Läuft im Chat gerade eine Antwort oder gibt es die Nachricht nicht, passiert nichts.
+   */
+  truncateFrom(chatId: string, messageId: string): boolean {
+    const target = this.db
+      .prepare('SELECT position FROM messages WHERE id = ? AND chat_id = ?')
+      .get(messageId, chatId) as { position: number } | undefined;
+    if (!target) return false;
+    const running = this.db
+      .prepare(
+        "SELECT 1 AS running FROM messages WHERE chat_id = ? AND status = 'streaming' LIMIT 1",
+      )
+      .get(chatId);
+    if (running) return false;
+    this.db
+      .prepare('DELETE FROM messages WHERE chat_id = ? AND position >= ?')
+      .run(chatId, target.position);
+    // „Zusammenfassung vorschlagen“ zählt Nachrichten – der Merker darf nicht darüber liegen.
+    this.db
+      .prepare(
+        `UPDATE chats SET summary_at_count = MIN(summary_at_count, ?)
+          WHERE id = ? AND summary_at_count IS NOT NULL`,
+      )
+      .run(target.position, chatId);
+    return true;
+  }
+
   updateMessage(messageId: string, update: MessageUpdate) {
     this.db
       .prepare(

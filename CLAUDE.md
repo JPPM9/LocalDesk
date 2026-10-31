@@ -723,6 +723,14 @@
   F ✓: `components/ConfirmDialog.tsx` (`ConfirmProvider` in `App.tsx`, `useConfirm()` → `await confirm({ message,
   confirmLabel, danger })`) ersetzt ALLE 17 `window.confirm`. Fokus startet auf „Abbrechen“, Esc/Klick daneben =
   Nein, Tab bleibt im Dialog, rot bei `danger` (`bg-error text-bg`). Neue Regel: nie mehr `window.confirm`.
+  B ✓: Unter Nachrichten (`components/chat/MessageActions.tsx`): **Kopieren** (eigene Nachricht, Antwort, auch im
+  Code-Agent) über IPC `copyText` → `clipboard.writeText` im Main-Prozess (Oberfläche darf die Zwischenablage-API
+  nicht, siehe Berechtigungen), **Bearbeiten** der eigenen Nachricht (Textfeld, Strg+Enter sendet, Esc bricht ab)
+  und **Antwort wiederholen** (nur an der letzten Antwort, mit dem oben gewählten Modell). Beide laufen über
+  `useChat.resend` → IPC `chatTruncate` → `ChatRepository.truncateFrom` (löscht Nachricht + alles danach, nur wenn
+  nichts streamt; setzt `summary_at_count` zurück) → normales `send`. Bearbeiten/Wiederholen nur im normalen Chat,
+  nicht im Code-Agent (Datei-Änderungen ließen sich nicht mit zurücknehmen). Löschen einzelner Nachrichten wurde
+  bewusst nicht gebaut (nicht gewählt). In der gebauten App geprüft (neue Nachrichten-IDs nach Wiederholen).
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import path from 'node:path';
-import { ipcMain, type WebContents } from 'electron';
+import { clipboard, ipcMain, type WebContents } from 'electron';
 import {
   IpcChannels,
   type ChatFolder,
@@ -220,6 +220,22 @@ export function registerChatHandlers(
       answer,
       controller,
     ).finally(() => running.delete(request.requestId));
+  });
+
+  // „Bearbeiten“ und „Antwort wiederholen“: alles ab dieser Nachricht wegnehmen.
+  ipcMain.handle(
+    IpcChannels.chatTruncate,
+    (_event, chatId: unknown, messageId: unknown): boolean =>
+      typeof chatId === 'string' &&
+      typeof messageId === 'string' &&
+      chats.truncateFrom(chatId, messageId),
+  );
+
+  // Zwischenablage: nur Text, und nicht unbegrenzt viel.
+  ipcMain.handle(IpcChannels.copyText, (_event, text: unknown) => {
+    if (typeof text === 'string' && text.length <= 1_000_000) {
+      clipboard.writeText(text);
+    }
   });
 
   ipcMain.handle(IpcChannels.chatCancel, (_event, requestId: unknown) => {
