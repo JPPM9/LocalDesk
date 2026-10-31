@@ -15,6 +15,7 @@ import type {
   MailPage,
 } from './mail';
 import type { CodeChangeState, CodeEntry, CodeFile } from './code';
+import type { CodeMode } from './code-agent';
 import type { MailSuggestion } from './mail-sorting';
 import type { SkillInput, SkillView } from './skills';
 import type { UpdateState } from './update';
@@ -404,6 +405,8 @@ export interface ChatSettings {
   skills?: string[];
   /** Mail-Konto, das das Modell in diesem Chat lesen darf (Schalter „E-Mail“; höchstens eins). */
   mailAccounts?: string[];
+  /** Nur Code-Sitzungen: „plan“ = nur lesen und planen; fehlt = „manual“ (alles einzeln bestätigen). */
+  codeMode?: CodeMode;
 }
 
 /** Eine Textstelle aus einer Sammlung, die das Modell für eine Antwort bekommen hat. */

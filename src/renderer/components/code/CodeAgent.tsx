@@ -7,6 +7,8 @@ import { StickyScroll } from '../StickyScroll';
 import { ChatInput } from '../chat/ChatInput';
 import { MessageView } from '../chat/MessageView';
 import { ModelSelect } from '../chat/ModelSelect';
+import { CodeModeSwitch } from './CodeModeSwitch';
+import type { CodeMode } from '../../../shared/code-agent';
 
 const MODEL_KEY = 'localdesk.codeModel';
 
@@ -27,10 +29,30 @@ interface CodeAgentProps {
 /** Der Agent-Chat einer Code-Sitzung – gleiche Nachrichten wie im Chat, eigene Werkzeuge. */
 export function CodeAgent({ sessionId, onChanged }: CodeAgentProps) {
   const { t } = useTranslation();
-  const { messages, isRunning, send, stop } = useChat(sessionId, {
-    onCreated: () => {},
-    onChanged,
-  });
+  const { messages, settings, isRunning, send, stop, updateSettings } = useChat(
+    sessionId,
+    {
+      onCreated: () => {},
+      onChanged,
+    },
+  );
+  const mode: CodeMode = settings.codeMode ?? 'manual';
+  const setMode = (next: CodeMode) => {
+    const { codeMode: _old, ...rest } = settings;
+    updateSettings(next === 'plan' ? { ...rest, codeMode: 'plan' } : rest);
+  };
+  // Plan fertig: letzte Nachricht ist eine fertige Antwort des Agenten – dann darf der Plan freigegeben werden.
+  const last = messages.at(-1);
+  const planReady =
+    mode === 'plan' &&
+    !isRunning &&
+    last?.role === 'assistant' &&
+    last.status === 'done' &&
+    last.content.trim() !== '';
+  const approvePlan = () => {
+    setMode('manual');
+    send(t('code.plan.executeMessage'), model);
+  };
   const { models } = useChatModels();
   const [model, setModel] = useState('');
 
@@ -94,11 +116,36 @@ export function CodeAgent({ sessionId, onChanged }: CodeAgentProps) {
         </div>
       </StickyScroll>
       <div className="mx-auto w-full max-w-[820px] px-7 pb-4">
+        {planReady && (
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-accent/40 bg-accent-soft px-4 py-2.5">
+            <div className="min-w-0 text-sm">
+              <p className="font-medium text-accent-text">
+                {t('code.plan.ready')}
+              </p>
+              <p className="text-xs text-muted">{t('code.plan.executeHint')}</p>
+            </div>
+            <button
+              type="button"
+              onClick={approvePlan}
+              disabled={!model}
+              className="shrink-0 rounded-lg bg-accent px-3.5 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+            >
+              {t('code.plan.execute')}
+            </button>
+          </div>
+        )}
         <ChatInput
           disabled={!model}
           isRunning={isRunning}
           onSend={(text) => send(text, model)}
           onStop={stop}
+          tools={
+            <CodeModeSwitch
+              mode={mode}
+              onChange={setMode}
+              disabled={isRunning}
+            />
+          }
         />
       </div>
     </div>

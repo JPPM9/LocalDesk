@@ -277,6 +277,8 @@ export const de = {
     'Der LocalDesk-Ordner enthält eine Verknüpfung – aus Sicherheitsgründen wird dort nicht geschrieben.',
   'obsidian.driveNotVault':
     'Ein ganzes Laufwerk ist kein Vault – bitte den Vault-Ordner wählen.',
+  'code.planBlocked':
+    'Plan-Modus: Änderungen, Befehle und Commits sind gesperrt. Beschreibe sie im Plan – sie laufen erst nach der Freigabe.',
 } as const;
 
 export type MessageKey = keyof typeof de;

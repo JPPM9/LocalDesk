@@ -725,6 +725,19 @@
       "write_file": "File written",
       "delete_file": "File deleted"
     },
+    "mode": {
+      "title": "Agent working mode",
+      "manual": "Ask each time",
+      "plan": "Plan",
+      "manualHint": "Every change, command and commit is confirmed one by one.",
+      "planHint": "The agent only reads and writes a plan. Nothing is changed until you approve it."
+    },
+    "plan": {
+      "ready": "In plan mode the agent changed nothing. Does the plan look right?",
+      "execute": "Carry out plan",
+      "executeHint": "Switches to “Ask each time” – you still confirm every change one by one.",
+      "executeMessage": "The plan is approved. Now carry it out step by step and change only what the plan says."
+    },
     "undo": "Undo",
     "undone": "undone",
     "undoConflict": "{{error}} Reset to the state before the change anyway? Later changes to the file will be lost.",

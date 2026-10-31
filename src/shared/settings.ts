@@ -57,6 +57,8 @@ export function normalizeSettings(raw: unknown): ChatSettings {
   // Ein Konto pro Chat – die Werkzeuge arbeiten mit genau einem Postfach.
   const mailAccounts = idList(input.mailAccounts).slice(0, 1);
   if (mailAccounts.length > 0) result.mailAccounts = mailAccounts;
+  // „manual“ ist der Standard und wird nicht gespeichert.
+  if (input.codeMode === 'plan') result.codeMode = 'plan';
   return result;
 }
 

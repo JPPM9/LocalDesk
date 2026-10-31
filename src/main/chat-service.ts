@@ -16,6 +16,7 @@ import {
   CODE_CONTEXT_DEFAULT,
   CODE_MAX_ROUNDS,
   codeAgentPrompt,
+  type CodeMode,
 } from '../shared/code-agent';
 import { knowledgeQuery, withKnowledge } from '../shared/knowledge';
 import { MAIL_TOOL_SERVER, type MailLabel } from '../shared/mail';
@@ -47,6 +48,7 @@ import {
   editTools,
   planChange,
 } from './code/edit-tools';
+import { allowedInMode, filterForMode } from './code/code-mode';
 import { Workspace } from './code/workspace';
 import type { ChatRepository } from './db/chat-repository';
 import type { ChatKnowledge } from './knowledge-service';
@@ -157,6 +159,10 @@ export function registerChatHandlers(
       ...(chat?.settings ?? {}),
     };
     const project = chat?.folderId ? projectOf(chat.folderId) : null;
+    // Code-Sitzung: „Plan“ = nur lesen (gilt ab dieser Nachricht), sonst alles mit Rückfrage.
+    const codeMode: CodeMode = workspace
+      ? (settings.codeMode ?? 'manual')
+      : 'manual';
 
     const userMessage: MessageRecord = {
       id: request.userMessageId,
@@ -183,7 +189,7 @@ export function registerChatHandlers(
       [...history, userMessage],
       settings,
       workspace
-        ? codeAgentPrompt(path.basename(workspace), new Date())
+        ? codeAgentPrompt(path.basename(workspace), new Date(), codeMode)
         : project?.instructions,
     );
     // Projekt-Dokumente werden immer durchsucht, dazu die per Wissen-Knopf gewählten.
@@ -215,6 +221,7 @@ export function registerChatHandlers(
           ],
       workspace ? null : (settings.mailAccounts?.[0] ?? null),
       workspace,
+      codeMode,
       knowledgeSearch,
       { projectId: project?.id, question: request.content },
       answer,
@@ -279,16 +286,21 @@ export function registerChatHandlers(
     } | null,
     /** Projektordner einer Code-Sitzung (null = normaler Chat). */
     code: Workspace | null,
+    /** Plan-Modus: Ändern, Befehle und Commits werden nicht einmal angeboten. */
+    codeMode: CodeMode = 'manual',
   ): ToolRuntime {
     const codeOffers = code
-      ? [
-          ...readTools(),
-          ...editTools(async (toolName, args) =>
-            changePreview(await planChange(code, toolName, args)),
-          ),
-          commandTool(),
-          ...gitTools((args) => describeCommit(code.root, args)),
-        ]
+      ? filterForMode(
+          [
+            ...readTools(),
+            ...editTools(async (toolName, args) =>
+              changePreview(await planChange(code, toolName, args)),
+            ),
+            commandTool(),
+            ...gitTools((args) => describeCommit(code.root, args)),
+          ],
+          codeMode,
+        )
       : [];
     const mailOffers = mailbox
       ? mailTools(mailbox.labels, (args) =>
@@ -319,6 +331,10 @@ export function registerChatHandlers(
       ],
       call: async (tool, args, callSignal, callId) => {
         if (tool.serverId === CODE_TOOL_SERVER && code) {
+          // Doppelt gesichert: Im Plan-Modus läuft nichts außer Lesen, auch wenn ein Aufruf durchrutscht.
+          if (!allowedInMode(codeMode, tool.toolName)) {
+            return { text: tr('code.planBlocked'), isError: true };
+          }
           if ((GIT_TOOLS as readonly string[]).includes(tool.toolName)) {
             return {
               text: await callGitTool(code, tool.toolName, args),
@@ -416,6 +432,7 @@ export function registerChatHandlers(
     skillIds: string[],
     mailAccountId: string | null,
     workspacePath: string | null,
+    codeMode: CodeMode,
     knowledgeSearch: { collectionIds: string[]; query: string } | null,
     memoryContext: { projectId: string | undefined; question: string },
     initial: MessageRecord,
@@ -510,6 +527,7 @@ export function registerChatHandlers(
         skillCatalog,
         mailbox,
         code,
+        codeMode,
       );
       await runAnswer({
         provider,

@@ -736,6 +736,16 @@
   Chat (`SidePanelTab` + `'gpu'`) und Popup `components/StatusFlyout.tsx` am Status-Symbol der Leiste (Klick öffnet
   das Popup, Esc/Klick daneben/Seitenwechsel schließt, Link „Ganze Seite“ → `/status`). Das Status-Symbol ist damit
   KEIN NavLink mehr. In der gebauten App geprüft (Popup, Esc, Klick daneben, Link, Reiter).
+  G ✓: Code-Modi (`ChatSettings.codeMode`: 'plan' | fehlt = manuell; `shared/code-agent.ts` `CodeMode`, `main/code/code-mode.ts`).
+  PLAN: Es werden nur `list_files`, `read_file`, `search_text`, `git_status`, `git_diff` angeboten (Ändern, Befehl und
+  Commit fehlen ganz), zusätzlich blockt `toolRuntime.call` alles andere (`code.planBlocked`) und der Prompt bekommt
+  den PLAN-MODUS-Absatz. Der Modus wird bei jeder Nachricht frisch aus den Chat-Einstellungen gelesen. UI: Schalter
+  `CodeModeSwitch` im Eingabefeld (nicht während einer Antwort), nach einer fertigen Antwort im Plan-Modus die Leiste
+  „Plan umsetzen“ → schaltet auf Manuell und schickt die Freigabe-Nachricht (`code.plan.executeMessage`). Bewusst nicht
+  gebaut: „Änderungen automatisch annehmen“ und „Alles automatisch“ (nicht gewählt). Echt geprüft mit gemma4:12b in
+  einer Test-Sitzung: Plan-Modus nur list_files/read_file, Datei unverändert, nach Freigabe fragt edit_file, Ablehnen
+  lässt die Datei unberührt. Merke: Test-Sitzungen für den Code-Bereich lassen sich über das Test-Profil per
+  `node:sqlite` anlegen (der Ordner-Dialog ist nicht per Skript bedienbar).
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

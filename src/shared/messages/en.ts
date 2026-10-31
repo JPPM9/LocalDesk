@@ -272,4 +272,6 @@ export const en: Record<MessageKey, string> = {
     'The LocalDesk folder contains a link – for security reasons nothing is written there.',
   'obsidian.driveNotVault':
     'A whole drive is not a vault – please choose the vault folder.',
+  'code.planBlocked':
+    'Plan mode: changes, commands and commits are blocked. Describe them in the plan – they only run after approval.',
 };

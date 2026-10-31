@@ -725,6 +725,19 @@
       "write_file": "Datei geschrieben",
       "delete_file": "Datei gelöscht"
     },
+    "mode": {
+      "title": "Arbeitsweise des Agenten",
+      "manual": "Manuell fragen",
+      "plan": "Plan",
+      "manualHint": "Jede Änderung, jeder Befehl und jeder Commit wird einzeln bestätigt.",
+      "planHint": "Der Agent liest nur und schreibt einen Plan. Geändert wird erst nach deiner Freigabe."
+    },
+    "plan": {
+      "ready": "Der Agent hat im Plan-Modus nichts geändert. Passt der Plan?",
+      "execute": "Plan umsetzen",
+      "executeHint": "Wechselt auf „Manuell fragen“ – jede Änderung bestätigst du weiter einzeln.",
+      "executeMessage": "Der Plan ist freigegeben. Setze ihn jetzt Schritt für Schritt um und ändere nur, was im Plan steht."
+    },
     "undo": "Rückgängig",
     "undone": "rückgängig gemacht",
     "undoConflict": "{{error}} Trotzdem auf den Stand vor der Änderung zurücksetzen? Spätere Änderungen an der Datei gehen dabei verloren.",
