@@ -746,6 +746,20 @@
   einer Test-Sitzung: Plan-Modus nur list_files/read_file, Datei unverändert, nach Freigabe fragt edit_file, Ablehnen
   lässt die Datei unberührt. Merke: Test-Sitzungen für den Code-Bereich lassen sich über das Test-Profil per
   `node:sqlite` anlegen (der Ordner-Dialog ist nicht per Skript bedienbar).
+  C ✓: Freigabe per Karte im Chat. Eingebautes Werkzeug `request_access` (`shared/access.ts`, `main/access.ts`):
+  bietet das Modell nur an, wenn es etwas zu erbitten gibt (Postfach angemeldet und im Chat nicht an / laufender
+  Datei-Server nicht gewählt), nur in normalen Chats mit tool-fähigem Modell. `permission: 'ask'`, `alwaysAsk`, `editable`
+  (die Karte schickt Auswahl `ids` + Dauer `scope` als bearbeitete Eingaben; geprüft in `checkAccessArguments`, gewählt
+  wird von DIR, nicht vom Modell). `AccessGrants` hält Postfach + Server-IDs dieser Antwort VERÄNDERLICH: `toolRuntime`
+  fragt sie jede Runde neu (`tools()`, `call`), darum stehen Mail-/Datei-Werkzeuge nach „Erlauben“ schon in der
+  nächsten Runde bereit. „Für diesen Chat“ → `persist` schreibt `mailAccounts`/`mcpServers` in die Chat-Einstellungen
+  (wie die Schalter; die Oberfläche lädt sie nach der Antwort neu), „Nur diese Antwort“ bleibt im Speicher. Karte:
+  `components/chat/AccessCard.tsx` (Konto-Radio bzw. Server-Checkboxen mit Ordnern). Wissen ist bewusst NICHT dabei
+  (wird VOR der Antwort gesucht, nicht per Werkzeug). Die Schalter unten bleiben als Abkürzung. Geändert wird in Gmail/
+  Dateien weiter nur nach Rückfrage. Echt geprüft: qwen3:14b bat um Dateizugriff, Karte, Erlauben, `list_directory` +
+  `read_text_file`, richtiges Geheimwort, `mcpServers` gespeichert. gemma4:12b bat auch richtig, erfand danach aber
+  den Dateiinhalt (nur Ordner gelistet) – Modellschwäche; das Ergebnis mahnt jetzt „lies die Datei, erfinde nichts“.
+  Noch deutsch (Schritt 3): die Beschreibung von `request_access`.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

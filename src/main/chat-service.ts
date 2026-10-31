@@ -58,6 +58,8 @@ import type { McpTools } from './mcp-service';
 import { checkMemoryArguments, memoryTool } from './obsidian/memory-tool';
 import type { ChatMemory } from './obsidian-service';
 import type { Provider } from './providers/provider';
+import { AccessGrants, type Mailbox } from './access';
+import { ACCESS_TOOL_SERVER } from '../shared/access';
 import { runAnswer, type ToolRuntime } from './tool-loop';
 import { tr } from '../shared/messages';
 
@@ -91,6 +93,7 @@ export function registerChatHandlers(
   mail: {
     exists(accountId: string): boolean;
     client(accountId: string): MailClient;
+    accounts(): { id: string; email: string }[];
   },
   /** Sicherungen für „Rückgängig“ im Code-Bereich. */
   codeBackups: CodeBackups,
@@ -224,6 +227,7 @@ export function registerChatHandlers(
       codeMode,
       knowledgeSearch,
       { projectId: project?.id, question: request.content },
+      request.chatId,
       answer,
       controller,
     ).finally(() => running.delete(request.requestId));
@@ -273,21 +277,18 @@ export function registerChatHandlers(
    * Tools kann) kommt „Erinnerung speichern“ dazu – im Projekt mit Wahl des Ziels.
    */
   function toolRuntime(
-    serverIds: string[],
+    /** Freigaben dieser Antwort: Postfach und Datei-Server (können unterwegs dazukommen). */
+    grants: AccessGrants,
     signal: AbortSignal,
     memoryTarget: { projectId: string | undefined } | null,
     /** Skills, die das Modell selbst laden darf (leer = Werkzeug nicht anbieten). */
     skillCatalog: SkillView[],
-    /** Postfach für die Mail-Werkzeuge (null = Schalter aus). */
-    mailbox: {
-      client: MailClient;
-      labels: MailLabel[];
-      allLabels: MailLabel[];
-    } | null,
     /** Projektordner einer Code-Sitzung (null = normaler Chat). */
     code: Workspace | null,
     /** Plan-Modus: Ändern, Befehle und Commits werden nicht einmal angeboten. */
     codeMode: CodeMode = 'manual',
+    /** Das Modell darf mit „Zugriff anfragen“ um Postfach/Dateien bitten (nur Chats mit Tools). */
+    offerAccess = false,
   ): ToolRuntime {
     const codeOffers = code
       ? filterForMode(
@@ -302,11 +303,15 @@ export function registerChatHandlers(
           codeMode,
         )
       : [];
-    const mailOffers = mailbox
-      ? mailTools(mailbox.labels, (args) =>
-          describeMailChange(mailbox.client, args, mailbox.labels),
-        )
-      : [];
+    // Das Postfach kann unterwegs dazukommen (Freigabe-Karte) – darum jede Runde neu.
+    const mailOffers = (): OfferedTool[] => {
+      const mailbox = grants.mailbox;
+      return mailbox
+        ? mailTools(mailbox.labels, (args) =>
+            describeMailChange(mailbox.client, args, mailbox.labels),
+          )
+        : [];
+    };
     // Jeder Skill ein eigenes Werkzeug (siehe skillTools). Liest nur deinen
     // eigenen Text – keine Rückfrage nötig.
     const offeredSkills = skillTools(skillCatalog);
@@ -325,9 +330,10 @@ export function registerChatHandlers(
           ? [memoryTool(memoryTarget.projectId !== undefined)]
           : []),
         ...skillOffers,
-        ...mailOffers,
+        ...mailOffers(),
         ...codeOffers,
-        ...mcpTools.offered(serverIds),
+        ...mcpTools.offered(grants.serverIds),
+        ...(offerAccess ? [grants.tool()].filter((t) => t !== null) : []),
       ],
       call: async (tool, args, callSignal, callId) => {
         if (tool.serverId === CODE_TOOL_SERVER && code) {
@@ -368,6 +374,10 @@ export function registerChatHandlers(
           }
           return { text: result, isError: false };
         }
+        if (tool.serverId === ACCESS_TOOL_SERVER) {
+          return grants.grant(args);
+        }
+        const mailbox = grants.mailbox;
         if (tool.serverId === MAIL_TOOL_SERVER && mailbox) {
           return {
             text: await callMailTool(
@@ -435,6 +445,7 @@ export function registerChatHandlers(
     codeMode: CodeMode,
     knowledgeSearch: { collectionIds: string[]; query: string } | null,
     memoryContext: { projectId: string | undefined; question: string },
+    chatId: string,
     initial: MessageRecord,
     controller: AbortController,
   ) {
@@ -504,16 +515,47 @@ export function registerChatHandlers(
           : [];
       // Schalter „E-Mail“: Postfach lesen dürfen (nur Modelle mit Tools). Die
       // Labels holen wir einmal – fürs Vorschlagen nur deine eigenen.
-      let mailbox: Parameters<typeof toolRuntime>[4] = null;
-      if (canUseTools && mailAccountId && mail.exists(mailAccountId)) {
-        const client = mail.client(mailAccountId);
+      const openMailbox = async (
+        accountId: string,
+      ): Promise<Mailbox | null> => {
+        if (!mail.exists(accountId)) return null;
+        const client = mail.client(accountId);
         const allLabels = await client.labels().catch(() => []);
-        mailbox = {
+        return {
           client,
           labels: allLabels.filter(isSortableLabel),
           allLabels,
         };
-      }
+      };
+      const mailbox =
+        canUseTools && mailAccountId ? await openMailbox(mailAccountId) : null;
+      // Freigaben, die das Modell mit „Zugriff anfragen“ erbitten darf; „für diesen
+      // Chat“ landet dauerhaft in den Einstellungen des Chats (wie die Schalter).
+      const grants = new AccessGrants(
+        {
+          mailAccounts: () => mail.accounts(),
+          servers: () => mcpTools.available(),
+          openMailbox,
+          persist: (patch) => {
+            const current = chats.getChat(chatId)?.settings ?? {};
+            chats.updateSettings(chatId, {
+              ...current,
+              ...(patch.mailAccountId && {
+                mailAccounts: [patch.mailAccountId],
+              }),
+              ...(patch.serverIds && {
+                mcpServers: [
+                  ...new Set([
+                    ...(current.mcpServers ?? []),
+                    ...patch.serverIds,
+                  ]),
+                ],
+              }),
+            });
+          },
+        },
+        { mailbox, serverIds },
+      );
       // Code-Sitzung: Projektordner frisch prüfen (könnte verschoben worden sein).
       const code =
         workspacePath && canUseTools
@@ -521,13 +563,13 @@ export function registerChatHandlers(
           : null;
       controller.signal.throwIfAborted();
       const runtime = toolRuntime(
-        serverIds,
+        grants,
         controller.signal,
         offerMemory ? { projectId: memoryContext.projectId } : null,
         skillCatalog,
-        mailbox,
         code,
         codeMode,
+        canUseTools && !workspacePath,
       );
       await runAnswer({
         provider,

@@ -263,6 +263,8 @@
     "memorySaved": "saved",
     "skillTool": "Skill",
     "skillLoaded": "loaded",
+    "accessTool": "Access requested",
+    "accessGranted": "allowed",
     "mailAsk": "Apply change in Gmail?",
     "mailApply": "Apply",
     "mailTool": {
@@ -749,6 +751,18 @@
       "run_command": "Command",
       "git_commit": "Commit"
     }
+  },
+  "access": {
+    "askMail": "The model wants to use your mailbox",
+    "askFiles": "The model wants to access files",
+    "reasonLabel": "The model's reason:",
+    "pickAccount": "Mailbox",
+    "pickServers": "Share files through",
+    "mailHint": "The model may search and read mail. Changing anything (label, star) still needs your confirmation.",
+    "filesHint": "Reading runs right away. Writing and overwriting still ask on every call.",
+    "nothing": "There is nothing that could be shared – set it up in Settings.",
+    "allowChat": "Allow for this chat",
+    "allowOnce": "This answer only"
   },
   "dialog": {
     "cancel": "Cancel",

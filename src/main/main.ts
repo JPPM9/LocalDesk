@@ -198,6 +198,7 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
     {
       exists: (accountId) => mailAccounts.get(accountId) !== null,
       client: mail.client,
+      accounts: () => mailAccounts.list(),
     },
     codeBackups,
   );

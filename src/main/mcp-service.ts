@@ -111,6 +111,15 @@ export function registerMcpHandlers(servers: McpRepository) {
 
   /** Die Tools für den Chat – Freigaben gelten hier, im Main-Prozess. */
   const tools: McpTools = {
+    available() {
+      return servers
+        .listServers()
+        .filter(
+          (config) =>
+            config.enabled && manager.status(config.id).state === 'running',
+        )
+        .map(({ id, name, folders }) => ({ id, name, folders }));
+    },
     offered(serverIds) {
       const offered: OfferedTool[] = [];
       for (const serverId of serverIds) {
@@ -166,6 +175,8 @@ const TOOL_TIMEOUT_MS = 120_000;
 export interface McpTools {
   /** Tools der genannten Server, die laufen – ohne die ausgeschalteten. */
   offered(serverIds: string[]): OfferedTool[];
+  /** Server, die eingeschaltet sind und laufen (das Modell darf um sie bitten). */
+  available(): { id: string; name: string; folders: string[] }[];
   call(
     tool: NamedTool,
     args: Record<string, unknown>,

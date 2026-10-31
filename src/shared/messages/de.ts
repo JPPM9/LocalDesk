@@ -279,6 +279,17 @@ export const de = {
     'Ein ganzes Laufwerk ist kein Vault – bitte den Vault-Ordner wählen.',
   'code.planBlocked':
     'Plan-Modus: Änderungen, Befehle und Commits sind gesperrt. Beschreibe sie im Plan – sie laufen erst nach der Freigabe.',
+  'access.noChoice': 'Keine Auswahl getroffen.',
+  'access.alreadyGranted': 'Diesen Zugriff gibt es in diesem Chat schon.',
+  'access.noSuchAccount': 'Dieses Postfach gibt es nicht (mehr).',
+  'access.noSuchServer':
+    'Diesen Datei-Server gibt es nicht (mehr) oder er läuft nicht.',
+  'access.scopeChat': 'für diesen Chat',
+  'access.scopeOnce': 'nur für diese Antwort',
+  'access.mailGranted':
+    'Zugriff erlaubt: Postfach {email} ({scope}). Die E-Mail-Werkzeuge stehen jetzt bereit – nutze sie jetzt, statt zu raten.',
+  'access.filesGranted':
+    'Zugriff erlaubt: Dateien über {names} ({scope}). Die Dateiwerkzeuge dieser Server stehen jetzt bereit – lies die Datei damit, erfinde keine Inhalte.',
 } as const;
 
 export type MessageKey = keyof typeof de;

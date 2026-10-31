@@ -263,6 +263,8 @@
     "memorySaved": "gespeichert",
     "skillTool": "Skill",
     "skillLoaded": "geladen",
+    "accessTool": "Zugriff angefragt",
+    "accessGranted": "erlaubt",
     "mailAsk": "Änderung in Gmail übernehmen?",
     "mailApply": "Übernehmen",
     "mailTool": {
@@ -749,6 +751,18 @@
       "run_command": "Befehl",
       "git_commit": "Commit"
     }
+  },
+  "access": {
+    "askMail": "Das Modell möchte dein Postfach nutzen",
+    "askFiles": "Das Modell möchte auf Dateien zugreifen",
+    "reasonLabel": "Begründung des Modells:",
+    "pickAccount": "Postfach",
+    "pickServers": "Dateien freigeben über",
+    "mailHint": "Das Modell darf Mails suchen und lesen. Etwas ändern (Label, Stern) geht weiter nur nach deiner Bestätigung.",
+    "filesHint": "Lesen läuft sofort. Schreiben und Überschreiben fragt weiter bei jedem Aufruf nach.",
+    "nothing": "Es gibt nichts, was sich freigeben ließe – richte es in den Einstellungen ein.",
+    "allowChat": "Für diesen Chat erlauben",
+    "allowOnce": "Nur diese Antwort"
   },
   "dialog": {
     "cancel": "Abbrechen",

@@ -274,4 +274,15 @@ export const en: Record<MessageKey, string> = {
     'A whole drive is not a vault – please choose the vault folder.',
   'code.planBlocked':
     'Plan mode: changes, commands and commits are blocked. Describe them in the plan – they only run after approval.',
+  'access.noChoice': 'No choice was made.',
+  'access.alreadyGranted': 'This access already exists in this chat.',
+  'access.noSuchAccount': "This mailbox doesn't exist (any more).",
+  'access.noSuchServer':
+    "This file server doesn't exist (any more) or isn't running.",
+  'access.scopeChat': 'for this chat',
+  'access.scopeOnce': 'for this answer only',
+  'access.mailGranted':
+    'Access allowed: mailbox {email} ({scope}). The e-mail tools are now available – use them now instead of guessing.',
+  'access.filesGranted':
+    'Access allowed: files through {names} ({scope}). The file tools of these servers are now available – read the file with them, do not invent contents.',
 };

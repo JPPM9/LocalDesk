@@ -9,6 +9,7 @@ import {
   Wrench,
 } from 'lucide-react';
 import type { ToolCallRecord, ToolDecision } from '../../../shared/api';
+import { ACCESS_TOOL_SERVER } from '../../../shared/access';
 import { MEMORY_TOOL_SERVER } from '../../../shared/memory';
 import { CODE_CHANGE_TOOLS, CODE_TOOL_SERVER } from '../../../shared/code';
 import { MAIL_TOOL_SERVER } from '../../../shared/mail';
@@ -16,6 +17,7 @@ import { CodeChangeRow } from '../code/CodeChangeRow';
 import { DiffView } from '../code/DiffView';
 import { SKILL_TOOL_SERVER } from '../../../shared/skills';
 import { summarizeArguments } from '../../../shared/tools';
+import { AccessCard } from './AccessCard';
 import { MemoryEditor } from './MemoryEditor';
 
 interface ToolCallViewProps {
@@ -47,6 +49,7 @@ export function ToolCallView({
   const isMemory = call.serverId === MEMORY_TOOL_SERVER;
   const isSkill = call.serverId === SKILL_TOOL_SERVER;
   const isMail = call.serverId === MAIL_TOOL_SERVER;
+  const isAccess = call.serverId === ACCESS_TOOL_SERVER;
   // Datei-Änderungen des Code-Agenten: Vorher/Nachher und „Rückgängig“.
   const isCodeChange =
     call.serverId === CODE_TOOL_SERVER &&
@@ -73,6 +76,11 @@ export function ToolCallView({
         cancelLabel={t('toolCall.deny')}
       />
     );
+  }
+
+  // „Zugriff anfragen“: Auswahl und Dauer in einer eigenen Karte.
+  if (isAccess && call.status === 'asking') {
+    return <AccessCard call={call} onDecision={onDecision} />;
   }
 
   if (call.status === 'asking') {
@@ -150,23 +158,25 @@ export function ToolCallView({
     <details className="group rounded-xl border border-border text-[13px]">
       <summary className="flex cursor-pointer items-center gap-2 px-3 py-2 text-muted select-none hover:text-text">
         <StatusIcon status={call.status} />
-        {isMemory || isSkill || isMail || isCommand ? (
+        {isMemory || isSkill || isMail || isCommand || isAccess ? (
           <span>
             {t(
-              isSkill
-                ? 'toolCall.skillTool'
-                : isMail
-                  ? `toolCall.mailTool.${call.toolName}`
-                  : isCommand
-                    ? `code.label.${call.toolName}`
-                    : 'toolCall.memoryTool',
+              isAccess
+                ? 'toolCall.accessTool'
+                : isSkill
+                  ? 'toolCall.skillTool'
+                  : isMail
+                    ? `toolCall.mailTool.${call.toolName}`
+                    : isCommand
+                      ? `code.label.${call.toolName}`
+                      : 'toolCall.memoryTool',
               { defaultValue: call.toolName },
             )}
           </span>
         ) : (
           <span className="font-mono">{call.toolName}</span>
         )}
-        {summary && (
+        {summary && !isAccess && (
           <span
             className={`min-w-0 truncate text-muted ${isMemory || isSkill || isMail ? '' : 'font-mono'}`}
           >
@@ -178,7 +188,9 @@ export function ToolCallView({
             ? t('toolCall.memorySaved')
             : isSkill && call.status === 'done'
               ? t('toolCall.skillLoaded')
-              : t(`toolCall.status.${call.status}`)}
+              : isAccess && call.status === 'done'
+                ? t('toolCall.accessGranted')
+                : t(`toolCall.status.${call.status}`)}
         </span>
       </summary>
       <div className="space-y-2 border-t border-border px-3 py-2">
