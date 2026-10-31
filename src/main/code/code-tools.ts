@@ -38,17 +38,15 @@ export function readTools(): OfferedTool[] {
     {
       ...base,
       toolName: 'list_files',
-      description:
-        'Zeigt Ordner und Dateien im Projekt als Baum (Standard: 2 Ebenen). Große, ' +
-        'erzeugte Ordner wie node_modules werden nur genannt.',
+      description: tr('tool.listFiles'),
       inputSchema: {
         type: 'object',
         properties: {
           path: {
             type: 'string',
-            description: 'Ordner relativ zum Projekt; leer = oberste Ebene.',
+            description: tr('tool.folderInProject'),
           },
-          depth: { type: 'integer', description: 'Ebenen, 1–4.' },
+          depth: { type: 'integer', description: tr('tool.depth') },
         },
       },
       destructive: false,
@@ -57,15 +55,13 @@ export function readTools(): OfferedTool[] {
     {
       ...base,
       toolName: 'read_file',
-      description:
-        `Liest eine Textdatei mit Zeilennummern (höchstens ${READ_LINES_MAX} Zeilen pro Aufruf). ` +
-        'Für lange Dateien start_line/end_line angeben.',
+      description: tr('tool.readFile', { max: READ_LINES_MAX }),
       inputSchema: {
         type: 'object',
         properties: {
-          path: { type: 'string', description: 'Datei relativ zum Projekt.' },
-          start_line: { type: 'integer', description: 'Erste Zeile (ab 1).' },
-          end_line: { type: 'integer', description: 'Letzte Zeile.' },
+          path: { type: 'string', description: tr('tool.pathInProject') },
+          start_line: { type: 'integer', description: tr('tool.startLine') },
+          end_line: { type: 'integer', description: tr('tool.endLine') },
         },
         required: ['path'],
       },
@@ -75,17 +71,14 @@ export function readTools(): OfferedTool[] {
     {
       ...base,
       toolName: 'search_text',
-      description:
-        'Sucht Text in allen Dateien des Projekts (ohne Groß-/Kleinschreibung) und liefert ' +
-        '„Datei:Zeile: Inhalt“. Optional nur in einem Unterordner.',
+      description: tr('tool.searchText'),
       inputSchema: {
         type: 'object',
         properties: {
-          query: { type: 'string', description: 'Gesuchter Text.' },
+          query: { type: 'string', description: tr('tool.searchQuery') },
           path: {
             type: 'string',
-            description:
-              'Unterordner relativ zum Projekt; leer = ganzes Projekt.',
+            description: tr('tool.subfolderInProject'),
           },
         },
         required: ['query'],

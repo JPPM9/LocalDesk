@@ -41,19 +41,15 @@ export function editTools(
     {
       ...base,
       toolName: 'edit_file',
-      description:
-        'Ändert eine bestehende Datei: ersetzt old_text durch new_text. old_text muss genau ' +
-        'EINMAL in der Datei vorkommen – kopiere ihn exakt (mit Einrückung) aus read_file, ohne ' +
-        'Zeilennummern, und nimm genug Zeilen, damit er eindeutig ist. Für mehrere Stellen ' +
-        'mehrere Aufrufe. Der Nutzer sieht vorher die Änderung und bestätigt sie.',
+      description: tr('tool.editFile'),
       inputSchema: {
         type: 'object',
         properties: {
-          path: { type: 'string', description: 'Datei relativ zum Projekt.' },
-          old_text: { type: 'string', description: 'Exakter bisheriger Text.' },
+          path: { type: 'string', description: tr('tool.pathInProject') },
+          old_text: { type: 'string', description: tr('tool.oldText') },
           new_text: {
             type: 'string',
-            description: 'Neuer Text an seiner Stelle.',
+            description: tr('tool.newText'),
           },
         },
         required: ['path', 'old_text', 'new_text'],
@@ -63,14 +59,12 @@ export function editTools(
     {
       ...base,
       toolName: 'write_file',
-      description:
-        'Legt eine neue Datei an (Ordner werden angelegt) oder ersetzt eine Datei ganz. ' +
-        'Für Änderungen an bestehenden Dateien lieber edit_file. Der Nutzer bestätigt vorher.',
+      description: tr('tool.writeFile'),
       inputSchema: {
         type: 'object',
         properties: {
-          path: { type: 'string', description: 'Datei relativ zum Projekt.' },
-          content: { type: 'string', description: 'Vollständiger Inhalt.' },
+          path: { type: 'string', description: tr('tool.pathInProject') },
+          content: { type: 'string', description: tr('tool.fullContent') },
         },
         required: ['path', 'content'],
       },
@@ -79,12 +73,11 @@ export function editTools(
     {
       ...base,
       toolName: 'delete_file',
-      description:
-        'Löscht eine Datei (keine Ordner). Nur wenn der Nutzer es möchte; er bestätigt vorher.',
+      description: tr('tool.deleteFile'),
       inputSchema: {
         type: 'object',
         properties: {
-          path: { type: 'string', description: 'Datei relativ zum Projekt.' },
+          path: { type: 'string', description: tr('tool.pathInProject') },
         },
         required: ['path'],
       },

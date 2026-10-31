@@ -24,8 +24,7 @@ export function gitTools(
     {
       ...base,
       toolName: 'git_status',
-      description:
-        'Zeigt den Git-Stand des Projekts: Branch und geänderte Dateien.',
+      description: tr('tool.gitStatus'),
       inputSchema: { type: 'object', properties: {} },
       destructive: false,
       permission: 'always',
@@ -33,15 +32,13 @@ export function gitTools(
     {
       ...base,
       toolName: 'git_diff',
-      description:
-        'Zeigt alle noch nicht committeten Änderungen (gegenüber dem letzten Commit), ' +
-        'optional nur für eine Datei.',
+      description: tr('tool.gitDiff'),
       inputSchema: {
         type: 'object',
         properties: {
           path: {
             type: 'string',
-            description: 'Datei relativ zum Projekt (optional).',
+            description: tr('tool.gitDiffPath'),
           },
         },
       },
@@ -51,13 +48,11 @@ export function gitTools(
     {
       ...base,
       toolName: 'git_commit',
-      description:
-        'Committet ALLE Änderungen im Projektordner mit der Nachricht. Sieh dir VORHER mit git_diff an, was sich wirklich geändert hat, und beschreibe genau das. Nur wenn der Nutzer ' +
-        'einen Commit möchte; er sieht vorher Nachricht und Dateien und bestätigt. Push gibt es nicht.',
+      description: tr('tool.gitCommit'),
       inputSchema: {
         type: 'object',
         properties: {
-          message: { type: 'string', description: 'Commit-Nachricht.' },
+          message: { type: 'string', description: tr('tool.commitMessage') },
         },
         required: ['message'],
       },

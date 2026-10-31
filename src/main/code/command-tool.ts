@@ -17,17 +17,17 @@ export function commandTool(): OfferedTool {
     serverId: CODE_TOOL_SERVER,
     serverName: 'Code',
     toolName: COMMAND_TOOL,
-    description:
-      'Führt einen PowerShell-Befehl im Projektordner aus (z. B. „python -m pytest“, ' +
-      '„npm test“) und liefert Exit-Code und Ausgabe. Keine Eingaben möglich – nur Befehle, ' +
-      'die von selbst enden. Der Nutzer bestätigt jeden Befehl vorher.',
+    description: tr('tool.runCommand'),
     inputSchema: {
       type: 'object',
       properties: {
-        command: { type: 'string', description: 'Der Befehl (PowerShell).' },
+        command: { type: 'string', description: tr('tool.commandText') },
         timeout_seconds: {
           type: 'integer',
-          description: `Zeitlimit in Sekunden (Standard ${TIMEOUT_DEFAULT_S}, höchstens ${TIMEOUT_MAX_S}).`,
+          description: tr('tool.commandTimeout', {
+            default: TIMEOUT_DEFAULT_S,
+            max: TIMEOUT_MAX_S,
+          }),
         },
       },
       required: ['command'],

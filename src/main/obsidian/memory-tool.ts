@@ -4,6 +4,7 @@ import {
   MEMORY_TOOL_SERVER,
 } from '../../shared/memory';
 import type { OfferedTool } from '../../shared/tools';
+import { tr } from '../../shared/messages';
 
 export type MemoryScope = 'global' | 'projekt';
 
@@ -30,28 +31,21 @@ export function checkMemoryArguments(
 export function memoryTool(inProject: boolean): OfferedTool {
   return {
     serverId: MEMORY_TOOL_SERVER,
-    serverName: 'Erinnerungen',
+    serverName: tr('tool.memoryServer'),
     toolName: MEMORY_TOOL_NAME,
-    description:
-      'Schlägt vor, einen dauerhaften Fakt über den Nutzer als Erinnerung zu speichern ' +
-      '(z. B. Studium, Beruf, Wohnort, Vorlieben, wiederkehrende Wünsche an Antworten). ' +
-      'Nutze es, wenn der Nutzer so etwas über sich erzählt oder dich bittet, dir etwas zu merken – ' +
-      'nicht für einmalige Fragen oder allgemeines Wissen. Der Nutzer bestätigt oder ändert den ' +
-      'Text, bevor er gespeichert wird. Formuliere kurz in der Ich-Form des Nutzers, z. B. ' +
-      '„Ich studiere Statistik.“ Antworte danach ganz normal weiter.',
+    description: tr('tool.saveMemory'),
     inputSchema: {
       type: 'object',
       properties: {
         text: {
           type: 'string',
-          description: 'Der Fakt in einem kurzen Satz, Ich-Form des Nutzers.',
+          description: tr('tool.memoryText'),
         },
         ...(inProject && {
           scope: {
             type: 'string',
             enum: ['global', 'projekt'],
-            description:
-              '„projekt“, wenn der Fakt nur für dieses Projekt wichtig ist, sonst „global“.',
+            description: tr('tool.memoryScope'),
           },
         }),
       },

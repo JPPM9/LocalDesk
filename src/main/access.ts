@@ -93,24 +93,18 @@ export class AccessGrants {
       serverId: ACCESS_TOOL_SERVER,
       serverName: 'LocalDesk',
       toolName: ACCESS_TOOL_NAME,
-      description:
-        'Bittet den Nutzer um einen Zugriff, den du in diesem Chat noch nicht hast: ' +
-        '„mail“ = sein Gmail-Postfach lesen, „files“ = Dateien in den Ordnern lesen, die er für Datei-Server freigegeben hat. ' +
-        'Rufe es auf, sobald die Aufgabe das braucht (z. B. der Nutzer fragt nach Mails oder Dateien) – ' +
-        'behaupte nicht einfach, du hättest keinen Zugriff, ohne zu fragen. Der Nutzer entscheidet in einer Karte. ' +
-        'Sagt er ja, stehen die Werkzeuge ab der nächsten Runde bereit – benutze sie dann gleich.',
+      description: tr('tool.requestAccess'),
       inputSchema: {
         type: 'object',
         properties: {
           what: {
             type: 'string',
             enum: kinds,
-            description: 'Worum du bittest.',
+            description: tr('tool.accessWhat'),
           },
           reason: {
             type: 'string',
-            description:
-              'Ein kurzer Satz für den Nutzer: wofür du den Zugriff brauchst.',
+            description: tr('tool.accessReason'),
           },
         },
         required: ['what'],
