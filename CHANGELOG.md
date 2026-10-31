@@ -38,3 +38,4 @@ Erste installierbare Version.
   fremden Projekt-Einstellungen (Git-Hooks laufen bei Commits aus LocalDesk nicht), der Ordner .git bleibt
   gesperrt, Bilder aus Modellantworten werden nie geladen, und bei einem Ollama-Server auf einem anderen
   Rechner fragt jedes Werkzeug nach.
+- **Sprache:** Oberfläche auf Deutsch oder Englisch umschaltbar (Einstellungen → Darstellung), Standard wie Windows.

@@ -3,6 +3,7 @@
 // damit sich beide Seiten auf dieselben Datenformen verlassen können.
 
 import type { ThemeChoice } from './appearance';
+import type { Language, LanguageChoice, LanguageState } from './language';
 import type {
   GoogleAppInput,
   MailAccountView,
@@ -728,6 +729,9 @@ export interface LocalDeskApi {
   /** Farbschema (System / Hell / Dunkel) – wirkt sofort und bleibt gespeichert. */
   getTheme: () => Promise<ThemeChoice>;
   setTheme: (theme: ThemeChoice) => Promise<void>;
+  /** Sprache der Oberfläche (System / Deutsch / English) – wirkt sofort und bleibt gespeichert. */
+  getLanguage: () => Promise<LanguageState>;
+  setLanguage: (choice: LanguageChoice) => Promise<Language>;
 
   /** Update-Knopf: Stand abfragen, suchen, laden, abbrechen, installieren (Neustart). */
   getUpdateState: () => Promise<UpdateState>;
@@ -885,6 +889,8 @@ export const IpcChannels = {
   openSkillFolder: 'skills:open-folder',
   getTheme: 'appearance:get-theme',
   setTheme: 'appearance:set-theme',
+  getLanguage: 'appearance:get-language',
+  setLanguage: 'appearance:set-language',
   getUpdateState: 'update:state',
   checkForUpdates: 'update:check',
   downloadUpdate: 'update:download',

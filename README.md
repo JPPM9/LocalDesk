@@ -2,7 +2,7 @@
 
 A desktop app for chatting with AI models that run on your own computer, through [Ollama](https://ollama.com). No account, no cloud, no telemetry.
 
-> **Note on language:** LocalDesk was built entirely in German. The app interface, `CLAUDE.md` (project rules and decisions), `CHANGELOG.md` and the e-mail setup guide in `docs/` are in German. This README is in English. An English interface is being added.
+> **Note on language:** LocalDesk was built entirely in German. The app interface, `CLAUDE.md` (project rules and decisions), `CHANGELOG.md` and the e-mail setup guide in `docs/` are in German. This README is in English. The interface can be switched between German and English under **Settings → Appearance** (the default follows your Windows language). Error messages, the instructions sent to the model and the bundled example skills are still German while the translation continues.
 
 ## 1. Project Introduction
 

@@ -552,7 +552,12 @@
     "system": "Wie Windows",
     "light": "Hell",
     "dark": "Dunkel",
-    "railHint": "Farbschema: {{current}} – klicken zum Wechseln"
+    "railHint": "Farbschema: {{current}} – klicken zum Wechseln",
+    "language": "Sprache",
+    "languageIntro": "Sprache der Oberfläche. „Wie Windows“ nimmt Deutsch bei deutschem Windows, sonst Englisch.",
+    "languageSystem": "Wie Windows",
+    "languageDe": "Deutsch",
+    "languageEn": "English"
   },
   "skills": {
     "title": "Skills",

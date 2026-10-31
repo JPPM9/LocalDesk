@@ -668,6 +668,18 @@
   Markdown keine Bilder mehr rendert. Möglich später: `img-src` ohne `'self'` (nur wenn die App
   keine eigenen Bilddateien braucht). Nächster Schritt: Phase 7 zu Ende (Repo öffentlich, Pages,
   Release 0.1.0 nur nach Okay des Nutzers).
+- Sprachumschaltung (Deutsch/English) – in Arbeit. Entschieden (2026-10-31): in 3 Schritten, alles ·
+  Standard „Wie Windows“ (Deutsch bei deutscher Windows-Sprache, sonst Englisch) · README nur Englisch.
+  Schritt 1 ✓ Oberfläche: `renderer/i18n/en.json` (gleiche Schlüssel wie `de.json`, Test
+  `tests/renderer/i18n.test.ts` prüft Schlüssel, `{{Platzhalter}}` und vergessene Umlaute),
+  `shared/language.ts` (`resolveLanguage`: erste Windows-Sprache zählt), Einstellung
+  `appearance.language` im Main-Prozess (`appearance-service.ts`, IPC `getLanguage`/`setLanguage`),
+  Umschalter unter Einstellungen → Darstellung wirkt sofort (`applyLanguage`), `main.tsx` zeigt erst nach
+  `loadLanguage()` an (kein Aufblitzen). Gebaute App geprüft: alle Seiten und Einstellungs-Abschnitte auf
+  Englisch, Wahl bleibt nach Neustart. Noch deutsch (Schritt 2/3): Meldungen und Karten-Vorschauen aus
+  dem Main-Prozess, Anweisungen ans Modell, Skill-Beispiele (SKILL.md), Name „Dieser PC“ des
+  Standard-Servers in der Datenbank, Datums-/Zahlenformate (`de-DE` fest, 14 Stellen),
+  `docs/email-einrichten.md`. Die Datenschutzerklärung ist schon zweisprachig.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,
