@@ -19,7 +19,7 @@ import {
   type CodeMode,
 } from '../shared/code-agent';
 import { knowledgeQuery, withKnowledge } from '../shared/knowledge';
-import { MAIL_TOOL_SERVER, type MailLabel } from '../shared/mail';
+import { MAIL_TOOL_SERVER } from '../shared/mail';
 import { isSortableLabel } from '../shared/mail-sorting';
 import { MEMORY_TOOL_SERVER, withMemories } from '../shared/memory';
 import {

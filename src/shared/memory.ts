@@ -1,5 +1,6 @@
 import type { ChatMessage, ChatRequest, MemoryView } from './api';
 import { estimateTokens } from './context';
+import { tr } from './messages';
 
 /** Kennung des eingebauten Werkzeugs „Erinnerung speichern“ (statt eines MCP-Servers). */
 export const MEMORY_TOOL_SERVER = 'localdesk:memory';
@@ -64,7 +65,7 @@ export function withMemories(
 export function memoryPrompt(texts: string[]): string {
   if (texts.length === 0) return '';
   return [
-    'Was du über den Nutzer weißt (seine gespeicherten Erinnerungen – nutze sie, wenn sie passen, ohne sie ungefragt aufzuzählen):',
+    tr('prompt.memoryIntro'),
     ...texts.map((t) => `- ${t.replace(/\s*\n\s*/g, ' ')}`),
   ].join('\n');
 }

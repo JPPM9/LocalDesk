@@ -6,7 +6,7 @@ import {
   toRequestMessages,
 } from '../../src/shared/chat';
 import {
-  CANCELLED_RESULT,
+  cancelledResult,
   limitResult,
   nameTools,
   parseToolCalls,
@@ -153,7 +153,7 @@ describe('applyChatEvent mit Tool-Aufrufen', () => {
       'cancelled',
       'done',
     ]);
-    expect(aborted.toolCalls?.[0].result).toBe(CANCELLED_RESULT);
+    expect(aborted.toolCalls?.[0].result).toBe(cancelledResult());
   });
 });
 

@@ -4,6 +4,7 @@ import type {
   ToolCallStatus,
   ToolDefinition,
 } from './api';
+import { tr } from './messages';
 
 /** So viel Ergebnistext bekommt das Modell höchstens pro Aufruf (Kontext ist knapp). */
 export const TOOL_RESULT_MAX = 20_000;
@@ -93,18 +94,18 @@ export function toolRoundMessages(calls: ToolCallRecord[]): ChatMessage[] {
     ...calls.map((c): ChatMessage => ({
       role: 'tool',
       toolName: c.name,
-      content: c.result ?? CANCELLED_RESULT,
+      content: c.result ?? cancelledResult(),
     })),
   ];
 }
 
-export const DENIED_RESULT = 'Der Nutzer hat diesen Aufruf abgelehnt.';
-export const CANCELLED_RESULT = 'Der Aufruf wurde abgebrochen.';
+export const deniedResult = () => tr('prompt.denied');
+export const cancelledResult = () => tr('prompt.cancelled');
 
 /** Kürzt Ergebnisse, die den Kontext des Modells sprengen würden. */
 export function limitResult(text: string): string {
   if (text.length <= TOOL_RESULT_MAX) return text;
-  return `${text.slice(0, TOOL_RESULT_MAX)}\n[… gekürzt, ${text.length - TOOL_RESULT_MAX} Zeichen ausgelassen]`;
+  return `${text.slice(0, TOOL_RESULT_MAX)}\n${tr('prompt.toolResultTruncated', { count: text.length - TOOL_RESULT_MAX })}`;
 }
 
 /**
@@ -114,7 +115,7 @@ export function limitResult(text: string): string {
 export function settleToolCalls(calls: ToolCallRecord[]): ToolCallRecord[] {
   return calls.map((c) =>
     c.status === 'asking' || c.status === 'running'
-      ? { ...c, status: 'cancelled', result: c.result ?? CANCELLED_RESULT }
+      ? { ...c, status: 'cancelled', result: c.result ?? cancelledResult() }
       : c,
   );
 }

@@ -1,4 +1,5 @@
 import type { ChatRequest, MessageRecord, SourceRef } from './api';
+import { tr } from './messages';
 
 /** Gespeicherte Quellen lesen – eine kaputte Zeile soll die App nicht stoppen. */
 export function parseSources(
@@ -39,7 +40,9 @@ const STOPWORDS = new Set(
     'mein meine dein deine sein seine kann können muss müssen soll sollen wird werden hat ' +
     'haben habe bin bist mit von für auf aus bei nach über unter vor zum zur im in an am ' +
     'nicht kein keine auch noch nur schon sehr mal bitte gibt steht stehen dazu darin ' +
-    'the and for are was what which who how why with from this that have has can does'
+    'the and for are was what which who how why with from this that have has can does ' +
+    'is of to in on at it you your me my we our they their do did will would should could not no yes ' +
+    'also only very just please there here about into than then when where'
   ).split(' '),
 );
 
@@ -75,7 +78,9 @@ export function knowledgeQuery(
 /** Kurzbezeichnung einer Quelle für das Modell und die Anzeige, z. B. „skript.pdf, S. 12“. */
 export function sourceLabel(source: Pick<SourceRef, 'path' | 'page'>): string {
   const name = source.path.split(/[\\/]/).pop() ?? source.path;
-  return source.page ? `${name}, S. ${source.page}` : name;
+  return source.page
+    ? `${name}, ${tr('prompt.page', { page: source.page })}`
+    : name;
 }
 
 /**
@@ -98,10 +103,8 @@ export function withKnowledge(
   messages[last] = {
     ...messages[last],
     content:
-      'Hier sind Auszüge aus den Dokumenten des Nutzers. Nutze sie, wenn sie zur Frage ' +
-      'passen, und gib die Quelle mit ihrer Nummer an, z. B. [1]. Wenn die Auszüge die ' +
-      'Frage nicht beantworten, sag das ehrlich, statt etwas zu erfinden.\n\n' +
-      `${excerpts}\n\n---\n\nFrage: ${messages[last].content}`,
+      `${tr('prompt.knowledgeIntro')}\n\n` +
+      `${excerpts}\n\n---\n\n${tr('prompt.knowledgeQuestion', { question: messages[last].content })}`,
   };
   return { ...request, messages };
 }

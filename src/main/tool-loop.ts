@@ -8,7 +8,7 @@ import type {
 } from '../shared/api';
 import { combineStats } from '../shared/chat';
 import {
-  DENIED_RESULT,
+  deniedResult,
   limitResult,
   nameTools,
   toolRoundMessages,
@@ -198,7 +198,7 @@ async function runToolCall(
     const answer = await runtime.ask(record);
     signal.throwIfAborted();
     if (answer.decision === 'deny') {
-      update({ status: 'denied', result: DENIED_RESULT });
+      update({ status: 'denied', result: deniedResult() });
       return record;
     }
     // Geänderte Eingaben gelten nur bei bearbeitbaren Werkzeugen – und nur geprüft.

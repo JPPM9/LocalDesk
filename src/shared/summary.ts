@@ -1,4 +1,5 @@
 import type { ChatMessage, MessageRecord } from './api';
+import { tr } from './messages';
 
 /** Vereinbart: Vorschlag ab 6 Nachrichten … */
 export const SUMMARY_MIN_MESSAGES = 6;
@@ -31,26 +32,20 @@ export function summaryMessages(messages: MessageRecord[]): ChatMessage[] {
     .filter((m) => m.content.trim() !== '')
     .map(
       (m) =>
-        `${m.role === 'user' ? 'Nutzer' : 'Assistent'}: ${m.content.trim()}`,
+        `${m.role === 'user' ? tr('prompt.summaryUser') : tr('prompt.summaryAssistant')}: ${m.content.trim()}`,
     )
     .join('\n\n');
   if (transcript.length > SUMMARY_TRANSCRIPT_MAX) {
-    transcript = `[… ältere Teile ausgelassen]\n\n${transcript.slice(-SUMMARY_TRANSCRIPT_MAX)}`;
+    transcript = `${tr('prompt.summaryOlderOmitted')}\n\n${transcript.slice(-SUMMARY_TRANSCRIPT_MAX)}`;
   }
   return [
     {
       role: 'system',
-      content:
-        'Du fasst Gespräche für die persönliche Notizsammlung des Nutzers (Obsidian) zusammen. ' +
-        'Schreibe auf Deutsch in Markdown. Erste Zeile: ein kurzer, treffender Titel ' +
-        '(höchstens 8 Wörter, ohne # und ohne Anführungszeichen). Dann eine Leerzeile, dann ' +
-        'die Zusammenfassung: die wichtigsten Fragen, Ergebnisse und Entscheidungen als kurze ' +
-        'Stichpunkte; offene Punkte am Ende unter „Offen“, falls es welche gibt. ' +
-        'Nimm nur auf, was im Gespräch steht – nichts dazuerfinden.',
+      content: tr('prompt.summarySystem'),
     },
     {
       role: 'user',
-      content: `Fasse dieses Gespräch zusammen:\n\n${transcript}`,
+      content: tr('prompt.summaryRequest', { transcript }),
     },
   ];
 }

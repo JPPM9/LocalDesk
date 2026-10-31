@@ -118,7 +118,7 @@ export function checkSkillInput(
 export function skillsPrompt(skills: { name: string; body: string }[]): string {
   if (skills.length === 0) return '';
   return [
-    'Eingeschaltete Skills – Anleitungen des Nutzers. Befolge sie, wenn die Aufgabe dazu passt:',
+    tr('prompt.skillsIntro'),
     ...skills.map((s) => `## Skill: ${s.name}\n\n${s.body.trim()}`),
   ].join('\n\n');
 }
@@ -165,10 +165,10 @@ export function skillTools(
   return skills.slice(0, SKILL_CATALOG_MAX).map((s) => ({
     skillId: s.id,
     name: skillToolName(s.id),
-    description:
-      `Lädt den Skill „${s.name}“ (eine Anleitung des Nutzers). ` +
-      (s.description ? `${s.description} ` : '') +
-      'Rufe ihn ZUERST auf, wenn die Aufgabe passt, und befolge die Anleitung dann in deiner Antwort.',
+    description: tr('prompt.skillToolDescription', {
+      name: s.name,
+      description: s.description ? `${s.description} ` : '',
+    }),
     inputSchema: { type: 'object', properties: {} },
   }));
 }
