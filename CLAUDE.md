@@ -607,7 +607,7 @@
   Seitentitel = Tooltip der Leiste war schon überall gleich (Befund war ein Irrtum). Bewusst
   gelassen: Hover-Symbole in Chat-/Projektzeilen (dichte Liste, WCAG-Abstandsausnahme), Links im
   Fließtext.
-- Phase 13: Datenschutz, Lizenzen, Sicherheit – in Arbeit. Entschieden (2026-10-31): volles Audit mit
+- Phase 13 ✓: Datenschutz, Lizenzen, Sicherheit – fertig (2026-10-31). Entschieden (2026-10-31): volles Audit mit
   Skill „security-audit“, Funde erst als Bericht, dann wählt der Nutzer · Datenschutz als App-Seite,
   PRIVACY.md und GitHub-Pages-Seite (`site/`, online erst mit öffentlichem Repo) · Lizenzen als
   Datei + in der App. Reihenfolge: 1 Lizenzen · 2 CSP/Härtung · 3 Datenschutz · 4 Audit · 5 Funde
@@ -661,6 +661,13 @@
   später: Freigabe pro Server. (5) `Markdown`: Bilder aus Modellantworten werden nie geladen
   (Platzhalter „[Bild nicht geladen: …]“) – gab es vorher auch nicht, jetzt aber ohne
   Netzwerkpfad-Risiko. (6) siehe (3). 511 Tests.
+  Schritt 6 ✓: Gesamtprüfung (Lint, Typen, Lizenzliste, 511 Tests) und gebaute App mit eigenem
+  Profil gestartet: Seite lädt, CSP aktiv. Per CDP bestätigt: Das Bild `//192.0.2.10/…` und
+  `file://192.0.2.10/…` blockt die CSP NICHT (`'self'` passt auf file:-Hosts, die Ladung hing – also
+  ein Netzwerkzugriff), https-Bilder werden geblockt. Fund 5 war damit echt; behoben, weil
+  Markdown keine Bilder mehr rendert. Möglich später: `img-src` ohne `'self'` (nur wenn die App
+  keine eigenen Bilddateien braucht). Nächster Schritt: Phase 7 zu Ende (Repo öffentlich, Pages,
+  Release 0.1.0 nur nach Okay des Nutzers).
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

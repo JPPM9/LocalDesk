@@ -32,3 +32,9 @@ Erste installierbare Version.
 - **Installer** mit Ordnerwahl; deine Daten bleiben beim Deinstallieren erhalten.
 - **Update-Knopf** unter Einstellungen → Über LocalDesk: sucht nur auf Klick, lädt und installiert
   nach Bestätigung.
+- **Datenschutz und Sicherheit:** Datenschutzerklärung und Lizenzen in der App (Einstellungen), MIT-Lizenz.
+  Strenge Inhaltsrichtlinie (CSP) und keine Berechtigungen für Kamera, Mikrofon oder Standort. Nach einem
+  Sicherheits-Audit: Programme wie Git starten nur mit vollem Pfad, Git-Aufrufe ignorieren Programme aus
+  fremden Projekt-Einstellungen (Git-Hooks laufen bei Commits aus LocalDesk nicht), der Ordner .git bleibt
+  gesperrt, Bilder aus Modellantworten werden nie geladen, und bei einem Ollama-Server auf einem anderen
+  Rechner fragt jedes Werkzeug nach.

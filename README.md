@@ -248,6 +248,12 @@ Keine Telemetrie, kein Konto, keine Werbung – deine Daten bleiben auf deinem P
 Detail: [docs/privacy.md](docs/privacy.md) (auch in der App unter **Einstellungen →
 Datenschutz**).
 
+## Sicherheit
+
+Das Modell darf nichts ohne dich ändern: Dateien, Befehle, Commits und Mail-Änderungen fragen jedes Mal
+nach. Bei einem Ollama-Server auf einem anderen Rechner fragt auch jedes Lesen nach. Ein Sicherheits-Audit
+vom Oktober 2026 ist in [CLAUDE.md](CLAUDE.md) (Phase 13) zusammengefasst.
+
 ## Lizenz
 
 LocalDesk steht unter der [MIT-Lizenz](LICENSE). Die Lizenzen der mitgelieferten Pakete stehen in
