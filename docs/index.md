@@ -28,4 +28,4 @@ Deine Daten bleiben auf deinem PC. Alles Weitere: [Datenschutzerklärung](privac
 ## Quellcode und Lizenz
 
 Der Quellcode liegt auf [GitHub](https://github.com/JPPM9/LocalDesk) und steht unter der
-[MIT-Lizenz](https://github.com/JPPM9/LocalDesk/blob/main/LICENSE).
+[MIT-Lizenz](https://github.com/JPPM9/LocalDesk/blob/master/LICENSE).
