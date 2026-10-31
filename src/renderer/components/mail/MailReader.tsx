@@ -7,6 +7,7 @@ import { fileSize } from '../../mail/format';
 import { ReauthLink } from './ReauthLink';
 import { PageHeader } from '../PageHeader';
 import { ModelSelect } from '../chat/ModelSelect';
+import { messageLocale } from '../../../shared/messages';
 
 type SummaryState =
   | { kind: 'idle' }
@@ -111,7 +112,7 @@ export function MailReader({ accountId, messageId }: MailReaderProps) {
               )}
               <dt className="text-muted">{t('mail.date')}</dt>
               <dd className="tabular-nums">
-                {new Date(mail.date).toLocaleString('de-DE', {
+                {new Date(mail.date).toLocaleString(messageLocale(), {
                   dateStyle: 'full',
                   timeStyle: 'short',
                 })}

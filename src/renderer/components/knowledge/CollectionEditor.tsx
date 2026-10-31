@@ -15,6 +15,7 @@ import type {
   KnowledgeSource,
 } from '../../../shared/api';
 import { formatBytes } from '../../utils/format';
+import { messageLocale } from '../../../shared/messages';
 
 // Bausteine zum Bearbeiten einer Sammlung – genutzt auf der Seite „Wissen“ und
 // für die Projekt-Dokumente auf der Projekt-Seite.
@@ -217,10 +218,13 @@ export function ProgressBox({ view }: { view: CollectionView }) {
         <span className="text-muted">
           {stats.indexedAt
             ? t('knowledge.indexedAt', {
-                date: new Date(stats.indexedAt).toLocaleString('de-DE', {
-                  dateStyle: 'short',
-                  timeStyle: 'short',
-                }),
+                date: new Date(stats.indexedAt).toLocaleString(
+                  messageLocale(),
+                  {
+                    dateStyle: 'short',
+                    timeStyle: 'short',
+                  },
+                ),
               })
             : t('knowledge.neverIndexed')}
         </span>

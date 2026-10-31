@@ -8,6 +8,7 @@ import { RememberButton } from './RememberButton';
 import { SaveNoteButton } from './SaveNoteButton';
 import { SourceList } from './SourceList';
 import { ToolCallView } from './ToolCallView';
+import { messageLocale } from '../../../shared/messages';
 
 interface MessageViewProps {
   message: MessageRecord;
@@ -173,12 +174,18 @@ export function MessageView({
         <p className="text-xs text-subtle tabular-nums">
           {t('chat.stats', {
             tokens: message.stats.outputTokens,
-            speed: message.stats.tokensPerSecond.toLocaleString('de-DE', {
-              maximumFractionDigits: 1,
-            }),
-            seconds: (message.stats.totalMs / 1000).toLocaleString('de-DE', {
-              maximumFractionDigits: 1,
-            }),
+            speed: message.stats.tokensPerSecond.toLocaleString(
+              messageLocale(),
+              {
+                maximumFractionDigits: 1,
+              },
+            ),
+            seconds: (message.stats.totalMs / 1000).toLocaleString(
+              messageLocale(),
+              {
+                maximumFractionDigits: 1,
+              },
+            ),
           })}
         </p>
       )}

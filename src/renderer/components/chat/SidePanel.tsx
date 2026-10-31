@@ -22,6 +22,7 @@ import {
 } from '../knowledge/CollectionEditor';
 import { StatusPanel } from '../status/StatusPanel';
 import { SourceList } from './SourceList';
+import { messageLocale } from '../../../shared/messages';
 
 export type SidePanelTab = 'sources' | 'project' | 'context' | 'gpu';
 
@@ -231,7 +232,7 @@ function ContextTab({
         <div className="flex items-baseline justify-between">
           <span className="font-semibold">
             {t('sidePanel.used', {
-              used: usage.used.toLocaleString('de-DE'),
+              used: usage.used.toLocaleString(messageLocale()),
               total: formatContext(usage.contextLength),
             })}
           </span>
@@ -264,7 +265,7 @@ function ContextTab({
               <span className={`h-2 w-2 rounded-sm ${PART_COLORS[part]}`} />
               <span className="flex-1">{t(`sidePanel.part.${part}`)}</span>
               <span className="text-muted tabular-nums">
-                {usage.parts[part].toLocaleString('de-DE')}
+                {usage.parts[part].toLocaleString(messageLocale())}
               </span>
             </li>
           ))}
@@ -326,8 +327,8 @@ function ContextTab({
           <p className="font-medium">{t('sidePanel.measured')}</p>
           <p className="text-muted">
             {t('sidePanel.measuredValue', {
-              prompt: last.stats.promptTokens.toLocaleString('de-DE'),
-              output: last.stats.outputTokens.toLocaleString('de-DE'),
+              prompt: last.stats.promptTokens.toLocaleString(messageLocale()),
+              output: last.stats.outputTokens.toLocaleString(messageLocale()),
             })}
           </p>
           {last.stats.promptTokens + last.stats.outputTokens >=

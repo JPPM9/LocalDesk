@@ -1,3 +1,5 @@
+import { messageLocale } from '../../shared/messages';
+
 // Kleine Helfer, um Zahlen und Daten lesbar anzuzeigen.
 
 /** Dateigröße wie bei `ollama list`: 1 GB = 1.000.000.000 Bytes. */
@@ -11,7 +13,7 @@ export function formatBytes(bytes: number): string {
     unit++;
   }
   const digits = unit >= 3 ? 1 : 0;
-  return `${value.toLocaleString('de-DE', { minimumFractionDigits: digits, maximumFractionDigits: digits })} ${units[unit]}`;
+  return `${value.toLocaleString(messageLocale(), { minimumFractionDigits: digits, maximumFractionDigits: digits })} ${units[unit]}`;
 }
 
 /**
@@ -22,9 +24,9 @@ export function formatMemory(bytes: number | undefined): string {
   if (bytes === undefined || bytes < 0) return '–';
   const gib = bytes / 1024 ** 3;
   if (gib >= 1) {
-    return `${gib.toLocaleString('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} GB`;
+    return `${gib.toLocaleString(messageLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })} GB`;
   }
-  return `${Math.round(bytes / 1024 ** 2).toLocaleString('de-DE')} MB`;
+  return `${Math.round(bytes / 1024 ** 2).toLocaleString(messageLocale())} MB`;
 }
 
 /** Kontextlänge in Tokens, z. B. 131072 → "128K" (Modelle zählen in 1024er-Schritten). */
@@ -38,7 +40,7 @@ export function formatContext(tokens: number | undefined): string {
 export function formatDate(iso: string): string {
   const date = new Date(iso);
   if (!iso || Number.isNaN(date.getTime())) return '–';
-  return date.toLocaleDateString('de-DE', {
+  return date.toLocaleDateString(messageLocale(), {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',

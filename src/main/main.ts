@@ -171,9 +171,6 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
   // Beim ersten Start kommen vier Beispiele dazu (danach nie wieder).
   const skills = new SkillStore(path.join(app.getPath('userData'), 'skills'));
   registerSkillHandlers(skills);
-  void createExampleSkills(skills, new AppSettingsRepository(db)).catch(
-    (error) => console.error('Beispiel-Skills nicht angelegt:', error),
-  );
 
   // Code-Bereich: Sicherungen vor jeder Änderung, für „Rückgängig“.
   const codeBackups = new CodeBackups(
@@ -205,6 +202,10 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
 
   registerUpdateHandlers();
   registerAppearanceHandlers(new AppSettingsRepository(db));
+  // Erst jetzt (die Sprache steht fest): Beim ersten Start vier Beispiele in dieser Sprache.
+  void createExampleSkills(skills, new AppSettingsRepository(db)).catch(
+    (error) => console.error('Beispiel-Skills nicht angelegt:', error),
+  );
 
   ipcMain.handle(IpcChannels.getAppInfo, (): AppInfo => ({
     name: app.getName(),

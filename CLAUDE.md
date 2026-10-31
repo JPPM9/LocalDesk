@@ -668,7 +668,7 @@
   Markdown keine Bilder mehr rendert. Möglich später: `img-src` ohne `'self'` (nur wenn die App
   keine eigenen Bilddateien braucht). Nächster Schritt: Phase 7 zu Ende (Repo öffentlich, Pages,
   Release 0.1.0 nur nach Okay des Nutzers).
-- Sprachumschaltung (Deutsch/English) – in Arbeit. Entschieden (2026-10-31): in 3 Schritten, alles ·
+- Sprachumschaltung (Deutsch/English) ✓ fertig (2026-10-31, Schritte 1, 2a–2d, 3a–3c). Entschieden (2026-10-31): in 3 Schritten, alles ·
   Standard „Wie Windows“ (Deutsch bei deutscher Windows-Sprache, sonst Englisch) · README nur Englisch.
   Schritt 1 ✓ Oberfläche: `renderer/i18n/en.json` (gleiche Schlüssel wie `de.json`, Test
   `tests/renderer/i18n.test.ts` prüft Schlüssel, `{{Platzhalter}}` und vergessene Umlaute),
@@ -709,6 +709,17 @@
   `edit-tools`, `git-tools`, `command-tool`, `mail-tools`, `memory-tool`), die vier Beispiel-Skills
   (`skill-examples.ts`, nur beim ersten Start angelegt), Datumsformate in Meldungen (`formatDate` `de-DE`),
   Name „Dieser PC“ des Standard-Servers (`database.ts`), `docs/email-einrichten.md`, UI-`de-DE`-Stellen.
+  Schritt 3 ✓ (Rest, alles in `shared/messages/` mit Präfixen `prompt.*` und `tool.*`): Anweisungen ans Modell (Mail/
+  Gespräch zusammenfassen, Mails sortieren, Erinnerungen, Skills, Wissen, Code-Agent inkl. Plan-Modus, gekürzte/abgelehnte
+  Ergebnisse: `deniedResult()`/`cancelledResult()` sind jetzt FUNKTIONEN), alle Werkzeug-Beschreibungen und Eingabefelder,
+  die vier Beispiel-Skills (`EXAMPLE_SKILLS` DE / `EXAMPLE_SKILLS_EN`, `exampleSkills()`; werden beim ERSTEN Start in der
+  dann gültigen Sprache angelegt – darum erst nach `registerAppearanceHandlers` in `main.ts`), Datums-/Zahlenformate
+  (`messageLocale()` statt fest `'de-DE'`, auch im Renderer), Name „Dieser PC“ (`DEFAULT_SERVER_NAME`, wird nur ANGEZEIGT
+  als „This PC“), englische E-Mail-Anleitung `docs/email-setup.md`. Bewusst deutsch geblieben: Stoppwörter der
+  Wissenssuche (beide Sprachen zugleich), `console.error`-Meldungen, `CLAUDE.md`/`CHANGELOG`. Echt geprüft (erster Start auf
+  Englisch): englische Beispiel-Skills, „This PC“, englisches Zahlenformat, Antwort von qwen3:14b auf eine englische
+  Anweisung. Regel für künftige Texte: NIE deutschen Text fest in `src/main` oder `src/shared` schreiben – immer `tr()`
+  (Test `prompts-english.test.ts` und `i18n.test.ts` fangen vergessene Stellen teilweise ab).
 - Fix-Liste des Nutzers (2026-10-31, nach Sprachumschaltung 2d): A Chat wackelt/Scrollen · B Nachrichten
   kopieren/bearbeiten/wiederholen · C Freigabe per Karte im Chat statt Schalter (Modell fragt „Zugriff anfragen“) ·
   D Skills von GitHub-Link (nur Skills, keine Plugins mit Programmen) · E GPU-Status als Reiter im Seitenbereich +

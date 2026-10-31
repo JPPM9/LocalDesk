@@ -6,7 +6,7 @@ import {
 } from '../../shared/mail';
 import type { OfferedTool } from '../../shared/tools';
 import type { MailClient } from './mail-client';
-import { tr } from '../../shared/messages';
+import { messageLocale, tr } from '../../shared/messages';
 
 export const MAIL_SEARCH_TOOL = 'mail_search';
 export const MAIL_READ_TOOL = 'mail_read';
@@ -248,7 +248,7 @@ function summaryLine(m: MailSummary, allLabels: MailLabel[]): string {
 }
 
 function formatDate(time: number): string {
-  return new Date(time).toLocaleString('de-DE', {
+  return new Date(time).toLocaleString(messageLocale(), {
     weekday: 'short',
     day: '2-digit',
     month: '2-digit',

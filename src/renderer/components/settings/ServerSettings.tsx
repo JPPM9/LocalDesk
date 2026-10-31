@@ -6,6 +6,7 @@ import type {
   ServerProfile,
   ServerProfileInput,
 } from '../../../shared/api';
+import { DEFAULT_SERVER_NAME } from '../../../shared/server';
 import { notifyServerChanged } from '../../serverEvents';
 import { Field } from './SettingsFields';
 import { useConfirm } from '../ConfirmDialog';
@@ -14,6 +15,8 @@ import { useConfirm } from '../ConfirmDialog';
 export function ServerSettings() {
   const { t } = useTranslation();
   const confirm = useConfirm();
+  const displayName = (name: string) =>
+    name === DEFAULT_SERVER_NAME ? t('servers.thisPc') : name;
   const [profiles, setProfiles] = useState<ServerProfile[]>([]);
   // Formular zum Anlegen/Bearbeiten; null = geschlossen.
   const [form, setForm] = useState<ServerProfileInput | null>(null);
@@ -37,7 +40,9 @@ export function ServerSettings() {
   const remove = async (profile: ServerProfile) => {
     if (
       !(await confirm({
-        message: t('servers.confirmDelete', { name: profile.name }),
+        message: t('servers.confirmDelete', {
+          name: displayName(profile.name),
+        }),
         confirmLabel: t('dialog.delete'),
         danger: true,
       }))
@@ -79,13 +84,17 @@ export function ServerSettings() {
                 name="active-server"
                 checked={profile.active}
                 onChange={() => void activate(profile)}
-                aria-label={t('servers.useThis', { name: profile.name })}
+                aria-label={t('servers.useThis', {
+                  name: displayName(profile.name),
+                })}
                 className="h-4 w-4 accent-[var(--ld-accent)]"
               />
             </label>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <span className="truncate font-medium">{profile.name}</span>
+                <span className="truncate font-medium">
+                  {displayName(profile.name)}
+                </span>
                 {profile.active && (
                   <span className="rounded bg-accent-soft px-1.5 text-[11px] text-accent-text">
                     {t('servers.active')}

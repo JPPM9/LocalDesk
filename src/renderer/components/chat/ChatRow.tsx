@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { FolderInput, Pencil, Trash2 } from 'lucide-react';
 import type { ChatFolder, ChatSummary } from '../../../shared/api';
 import { MoveMenu } from './MoveMenu';
+import { messageLocale } from '../../../shared/messages';
 
 /** Datentyp beim Ziehen – so erkennen Ordner, dass ein Chat ankommt. */
 export const CHAT_DRAG_TYPE = 'application/x-localdesk-chat';
@@ -60,7 +61,7 @@ export function ChatRow({
     <div className="relative">
       <NavLink
         to={`/chat/${chat.id}`}
-        title={new Date(chat.updatedAt).toLocaleString('de-DE')}
+        title={new Date(chat.updatedAt).toLocaleString(messageLocale())}
         draggable
         onDragStart={(event) => {
           event.dataTransfer.setData(CHAT_DRAG_TYPE, chat.id);

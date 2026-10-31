@@ -8,6 +8,7 @@ import type {
 } from '../../../shared/api';
 import { TEMPERATURE_MAX, thinkStyle } from '../../../shared/settings';
 import { formatContext } from '../../utils/format';
+import { messageLocale } from '../../../shared/messages';
 
 /** Ollama nutzt ohne Angabe 4096 Tokens Kontext (gemessen mit Ollama 0.40). */
 const OLLAMA_DEFAULT_CONTEXT = 4096;
@@ -110,7 +111,7 @@ export function SettingsFields({
         hint={t('settingsPanel.temperatureHint')}
         value={
           settings.temperature !== undefined
-            ? settings.temperature.toLocaleString('de-DE')
+            ? settings.temperature.toLocaleString(messageLocale())
             : t('settingsPanel.default')
         }
         onReset={

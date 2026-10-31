@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { BookOpen, ExternalLink } from 'lucide-react';
 import type { SourceRef } from '../../../shared/api';
 import { sourceLabel } from '../../../shared/knowledge';
+import { messageLocale } from '../../../shared/messages';
 
 interface SourceListProps {
   sources: SourceRef[];
@@ -96,7 +97,7 @@ export function SourceList({ sources, focus, expanded }: SourceListProps) {
                 </p>
                 <p className="text-[10px] text-muted">
                   {t('sources.score', {
-                    score: source.score.toLocaleString('de-DE', {
+                    score: source.score.toLocaleString(messageLocale(), {
                       maximumFractionDigits: 2,
                     }),
                   })}

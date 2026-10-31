@@ -9,6 +9,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import type { UpdateState } from '../../../shared/update';
+import { messageLocale } from '../../../shared/messages';
 
 /**
  * „Nach Updates suchen“ – nur auf Knopfdruck. Eine neue Version wird erst nach
@@ -86,7 +87,7 @@ export function UpdateSection({ version }: { version: string }) {
           {state.date && (
             <p className="text-xs text-muted">
               {t('update.released', {
-                date: new Date(state.date).toLocaleDateString('de-DE'),
+                date: new Date(state.date).toLocaleDateString(messageLocale()),
               })}
             </p>
           )}
@@ -162,7 +163,7 @@ export function UpdateSection({ version }: { version: string }) {
 }
 
 function megabytes(bytes: number): string {
-  return (bytes / 1024 / 1024).toLocaleString('de-DE', {
+  return (bytes / 1024 / 1024).toLocaleString(messageLocale(), {
     maximumFractionDigits: 1,
   });
 }

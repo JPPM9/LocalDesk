@@ -380,6 +380,7 @@
     "lanHelp1": "Ollama must listen on the network: set the environment variable OLLAMA_HOST=0.0.0.0 and restart Ollama.",
     "lanHelp2": "The Windows firewall there must allow incoming connections on port 11434 (private network only).",
     "lanHelp3": "Enter that computer's IP address here and check it with “Test”. Note: LocalDesk can only show GPU load for a server on this PC.",
+    "thisPc": "This PC",
     "lanHelp4": "For security, LocalDesk asks before every tool when the server is on another computer – even when reading mail or files. The server gets to see every result."
   },
   "memories": {
@@ -619,7 +620,7 @@
   "mailSettings": {
     "title": "E-mail",
     "intro": "LocalDesk reads your mail directly from Google – through your own app that you create there. There is no sending or deleting; LocalDesk changes labels and stars only after you confirm.",
-    "guide": "Step by step (German): docs/email-einrichten.md in the LocalDesk folder.",
+    "guide": "Step by step: docs/email-setup.md in the LocalDesk folder.",
     "gmail": "Gmail",
     "setUp": "Set up Gmail",
     "notSetUp": "No Google app entered yet.",

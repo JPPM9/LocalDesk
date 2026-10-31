@@ -4,6 +4,13 @@ import { tr } from './messages';
 export const OLLAMA_DEFAULT_PORT = 11434;
 
 /**
+ * So heißt der Server, den die Datenbank beim ersten Start anlegt (steht in database.ts).
+ * Angezeigt wird er in der gewählten Sprache („Dieser PC“ / „This PC“); alles andere
+ * ist ein Name, den du selbst vergeben hast.
+ */
+export const DEFAULT_SERVER_NAME = 'Dieser PC';
+
+/**
  * Macht aus einer Eingabe wie „192.168.1.20“ oder „pc-wohnzimmer:11434“ eine
  * vollständige Server-Adresse (http://…:11434). Erlaubt sind nur http und https
  * ohne Pfad, Benutzername oder Passwort – es geht ausschließlich um einen Ollama-Server.

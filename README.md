@@ -2,7 +2,7 @@
 
 A desktop app for chatting with AI models that run on your own computer, through [Ollama](https://ollama.com). No account, no cloud, no telemetry.
 
-> **Note on language:** LocalDesk was built entirely in German. The app interface, `CLAUDE.md` (project rules and decisions), `CHANGELOG.md` and the e-mail setup guide in `docs/` are in German. This README is in English. The interface can be switched between German and English under **Settings → Appearance** (the default follows your Windows language). Error messages, the instructions sent to the model and the bundled example skills are still German while the translation continues.
+> **Note on language:** LocalDesk was built in German. The app (interface, messages, and the instructions it sends to the model) is available in German and English – switch under **Settings → Appearance**; the default follows your Windows language. The project rules in `CLAUDE.md` and the `CHANGELOG.md` are still in German. This README is in English, and the e-mail setup guide exists in both languages.
 
 ## 1. Project Introduction
 
@@ -48,7 +48,7 @@ Status: the first release (0.1.0) is not published yet. The installer and the up
 
 **E-mail (Gmail)**
 
-- Reads Gmail directly from Google and passes mail only to your local model. Read, search, summarize and suggest labels and stars. LocalDesk can add your own labels and set or remove stars, only after your click. It never sends, deletes or archives. Setup needs your own Google app: [docs/email-einrichten.md](docs/email-einrichten.md) (German).
+- Reads Gmail directly from Google and passes mail only to your local model. Read, search, summarize and suggest labels and stars. LocalDesk can add your own labels and set or remove stars, only after your click. It never sends, deletes or archives. Setup needs your own Google app: [docs/email-setup.md](docs/email-setup.md) ([German version](docs/email-einrichten.md)).
 - Outlook is planned (Microsoft requires an Azure directory for it).
 
 **Code area**

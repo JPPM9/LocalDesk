@@ -15,7 +15,9 @@ import { AppSettingsRepository } from '../../src/main/db/app-settings-repository
 import {
   createExampleSkills,
   EXAMPLE_SKILLS,
+  EXAMPLE_SKILLS_EN,
 } from '../../src/main/skills/skill-examples';
+import { setMessageLanguage } from '../../src/shared/messages';
 import { SkillStore } from '../../src/main/skills/skill-store';
 
 let root: string;
@@ -118,5 +120,32 @@ describe('Beispiel-Skills', () => {
     await store.remove(list[0].id);
     expect(await createExampleSkills(store, settings)).toBe(0);
     expect(await store.list()).toHaveLength(EXAMPLE_SKILLS.length - 1);
+  });
+});
+
+describe('Beispiel-Skills auf Englisch', () => {
+  afterEach(() => setMessageLanguage('de'));
+
+  it('kommen in der gewählten Sprache (und genauso viele wie auf Deutsch)', async () => {
+    setMessageLanguage('en');
+    const settings = new AppSettingsRepository(openDatabase(':memory:'));
+    expect(await createExampleSkills(store, settings)).toBe(
+      EXAMPLE_SKILLS_EN.length,
+    );
+    expect(EXAMPLE_SKILLS_EN).toHaveLength(EXAMPLE_SKILLS.length);
+    const list = await store.list();
+    expect(list.map((s) => s.name).sort()).toEqual([
+      'Code review',
+      'Create flashcards',
+      'Reply to an e-mail',
+      'Summarize briefly',
+    ]);
+    expect(list.every((s) => !s.error && s.description && s.body)).toBe(true);
+    // Kein deutscher Text in den englischen Anleitungen.
+    for (const skill of list) {
+      expect(`${skill.description} ${skill.body}`, skill.name).not.toMatch(
+        /[äöüß]|(und|nicht|der|die|das|Nutzer)/,
+      );
+    }
   });
 });

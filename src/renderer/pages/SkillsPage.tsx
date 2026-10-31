@@ -24,6 +24,7 @@ import { EmptyState } from '../components/EmptyState';
 import { Field } from '../components/settings/SettingsFields';
 import { useSkills } from '../skills/useSkills';
 import { useConfirm } from '../components/ConfirmDialog';
+import { messageLocale } from '../../shared/messages';
 
 /** Adresse für einen noch nicht gespeicherten Skill. */
 const NEW = 'new';
@@ -327,8 +328,8 @@ export function SkillsPage() {
               <Field
                 label={t('skills.body')}
                 hint={t('skills.bodyHint', {
-                  count: draft.body.length.toLocaleString('de-DE'),
-                  max: SKILL_BODY_MAX.toLocaleString('de-DE'),
+                  count: draft.body.length.toLocaleString(messageLocale()),
+                  max: SKILL_BODY_MAX.toLocaleString(messageLocale()),
                 })}
               >
                 <textarea
