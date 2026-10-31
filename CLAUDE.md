@@ -642,7 +642,7 @@
   Root oder `/docs` kann. Test: jede Adresse aus `MAIL_HOSTS` steht in der Erklärung, Limited-Use-
   Satz vorhanden. Pages einschalten = Nutzer, nach öffentlichem Repo.
   Schritt 4 ✓ (Audit mit Skill „security-audit“, 2026-10-31, Bericht liegt außerhalb des Repos in
-  `%USERPROFILE%security-audit-skill\LocalDesk\run-1\`): 7 Jäger + 3 Gegenprüfer, nur am
+  `%USERPROFILE%\security-audit-skill\LocalDesk\run-1\`): 7 Jäger + 3 Gegenprüfer, nur am
   Quellcode (keine Sandbox, Prüfskripte laufen unter Windows nicht → Lauf „unvollständig“). 6
   Kandidaten „muss geprüft werden“, 3 verworfen (`npx` im Startordner, Updates ohne Signatur,
   Bilder im Dev-Build – nur Härtungs-Hinweise). Ohne Befund: Gmail-OAuth/-Netzwerksperre,
