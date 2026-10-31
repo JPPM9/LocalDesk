@@ -55,6 +55,12 @@ interface AnswerOptions {
   signal: AbortSignal;
   newId: () => string;
   maxRounds?: number;
+  /**
+   * Der Server läuft nicht auf diesem PC. Er bestimmt dann selbst, welche Tools
+   * „das Modell“ aufruft, und bekommt jedes Ergebnis zurück – also fragt jedes
+   * Tool nach (auch reines Lesen), und „Immer erlauben“ entfällt.
+   */
+  confirmAll?: boolean;
 }
 
 /**
@@ -73,6 +79,7 @@ export async function runAnswer({
   signal,
   newId,
   maxRounds = MAX_TOOL_ROUNDS,
+  confirmAll = false,
 }: AnswerOptions): Promise<void> {
   const messages = [...request.messages];
   const stats: ChatStats[] = [];
@@ -125,6 +132,7 @@ export async function runAnswer({
           emit,
           signal,
           newId,
+          confirmAll,
         }),
       );
     }
@@ -138,10 +146,11 @@ async function runToolCall(
   tool: NamedTool | undefined,
   context: Pick<
     AnswerOptions,
-    'requestId' | 'runtime' | 'emit' | 'signal' | 'newId'
+    'requestId' | 'runtime' | 'emit' | 'signal' | 'newId' | 'confirmAll'
   >,
 ): Promise<ToolCallRecord> {
   const { requestId, runtime, emit, signal } = context;
+  const alwaysAsk = !!tool && (!!tool.alwaysAsk || !!context.confirmAll);
   let record: ToolCallRecord = {
     id: context.newId(),
     round,
@@ -152,7 +161,7 @@ async function runToolCall(
     arguments: call.arguments,
     status: 'running',
     ...(tool?.destructive && { destructive: true }),
-    ...(tool?.alwaysAsk && { alwaysAsk: true }),
+    ...(alwaysAsk && { alwaysAsk: true }),
   };
   const update = (patch: Partial<ToolCallRecord>) => {
     record = { ...record, ...patch };
@@ -169,7 +178,7 @@ async function runToolCall(
   }
 
   let args = call.arguments;
-  if (tool.permission === 'ask') {
+  if (tool.permission === 'ask' || context.confirmAll) {
     // Erst prüfen und verständlich beschreiben – Unsinn erreicht dich gar nicht.
     let preview: string | undefined;
     if (tool.describe) {
@@ -206,7 +215,7 @@ async function runToolCall(
       update({ arguments: args });
     }
     // „Immer erlauben“ gibt es bei bearbeitbaren Werkzeugen nicht.
-    if (answer.decision === 'always' && !tool.editable && !tool.alwaysAsk) {
+    if (answer.decision === 'always' && !tool.editable && !alwaysAsk) {
       runtime.allowAlways(tool);
     }
   }

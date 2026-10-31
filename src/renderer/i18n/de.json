@@ -153,6 +153,7 @@
   },
   "chat": {
     "title": "Chat",
+    "imageBlocked": "Bild nicht geladen",
     "model": "Modell",
     "noModels": "Keine Modelle",
     "newChat": "Neuer Chat",
@@ -366,7 +367,8 @@
     "lanHelpTitle": "Was muss auf dem anderen Rechner eingestellt sein?",
     "lanHelp1": "Ollama muss im Netzwerk lauschen: Umgebungsvariable OLLAMA_HOST=0.0.0.0 setzen und Ollama neu starten.",
     "lanHelp2": "Die Windows-Firewall dort muss eingehende Verbindungen auf Port 11434 erlauben (nur im privaten Netzwerk).",
-    "lanHelp3": "Hier die IP-Adresse dieses Rechners eintragen und mit „Testen“ prüfen. Hinweis: Die GPU-Auslastung kann LocalDesk nur bei einem Server auf diesem PC anzeigen."
+    "lanHelp3": "Hier die IP-Adresse dieses Rechners eintragen und mit „Testen“ prüfen. Hinweis: Die GPU-Auslastung kann LocalDesk nur bei einem Server auf diesem PC anzeigen.",
+    "lanHelp4": "Aus Sicherheitsgründen fragt LocalDesk bei einem Server auf einem anderen Rechner vor jedem Werkzeug nach – auch beim Lesen von Mails oder Dateien. Der Server bekommt jedes Ergebnis zu sehen."
   },
   "memories": {
     "title_one": "{{count}} Erinnerung",

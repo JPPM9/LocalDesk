@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process';
 import { CODE_TOOL_SERVER } from '../../shared/code';
 import type { OfferedTool } from '../../shared/tools';
+import { powershellPath, taskkillPath } from './executables';
 
 export const COMMAND_TOOL = 'run_command';
 const TIMEOUT_DEFAULT_S = 120;
@@ -69,8 +70,9 @@ export function runCommand(
       '[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false); ' +
       '$OutputEncoding = [Console]::OutputEncoding; ' +
       command;
+    // Voller Pfad: ein Name würde zuerst im Projektordner gesucht (siehe executables.ts).
     const child = spawn(
-      'powershell.exe',
+      powershellPath(),
       ['-NoLogo', '-NoProfile', '-NonInteractive', '-Command', script],
       {
         cwd,
@@ -95,7 +97,7 @@ export function runCommand(
       if (ended || child.pid === undefined) return;
       ended = reason;
       // /T: mit allen Kindprozessen (z. B. python, node), /F: erzwingen.
-      spawn('taskkill', ['/pid', String(child.pid), '/T', '/F'], {
+      spawn(taskkillPath(), ['/pid', String(child.pid), '/T', '/F'], {
         windowsHide: true,
         stdio: 'ignore',
       });

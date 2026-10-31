@@ -59,6 +59,36 @@ describe('Workspace.resolve', () => {
     await expect(ws.resolve('.git/config')).rejects.toThrow('.git');
   });
 
+  it('sperrt .git auch unter anderer Schreibweise (Windows)', async () => {
+    const ws = await Workspace.open(root);
+    for (const bad of ['.GIT/config', '.Git/config', '.git./config']) {
+      await expect(ws.resolve(bad), bad).rejects.toThrow();
+    }
+    // Neue Dateien in .git (z. B. Hooks) ebenso.
+    for (const bad of ['.GIT/hooks/pre-commit', '.git/hooks/pre-commit']) {
+      await expect(ws.resolve(bad, false), bad).rejects.toThrow();
+    }
+    // Ähnliche Namen bleiben erlaubt.
+    expect(await ws.resolve('.gitignore', false)).toBe(
+      path.join(ws.root, '.gitignore'),
+    );
+  });
+
+  it('lehnt „:“ ab: Datenströme, Laufwerke und Git-Pfadzauber', async () => {
+    const ws = await Workspace.open(root);
+    for (const bad of [
+      ':(top)',
+      ':(top)geheim',
+      'src/:(glob)*',
+      'README.md:strom',
+      '.git::$INDEX_ALLOCATION/config',
+    ]) {
+      await expect(ws.resolve(bad, false), bad).rejects.toThrow(
+        'Projektordner',
+      );
+    }
+  });
+
   it('lässt sich nicht über Verknüpfungen nach draußen locken', async () => {
     // Junctions gehen unter Windows ohne Adminrechte.
     await symlink(outside, path.join(root, 'abkuerzung'), 'junction');

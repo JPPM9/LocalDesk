@@ -73,7 +73,11 @@ function fakeRuntime(
 async function run(
   rounds: ChatChunk[][],
   runtime: ToolRuntime,
-  options: { maxRounds?: number; signal?: AbortSignal } = {},
+  options: {
+    maxRounds?: number;
+    signal?: AbortSignal;
+    confirmAll?: boolean;
+  } = {},
 ) {
   const { provider, requests } = fakeProvider(rounds);
   const events: ChatStreamEvent[] = [];
@@ -90,6 +94,7 @@ async function run(
     signal: options.signal ?? new AbortController().signal,
     newId: () => `call-${++id}`,
     maxRounds: options.maxRounds,
+    confirmAll: options.confirmAll,
   });
   return { events, requests };
 }
@@ -160,6 +165,48 @@ describe('runAnswer', () => {
     ]);
     const done = events.at(-1);
     expect(done).toMatchObject({ type: 'done', stats: { outputTokens: 20 } });
+  });
+
+  it('Server auf anderem Rechner: auch Lese-Tools fragen, „Immer erlauben“ entfällt', async () => {
+    const runtime = fakeRuntime([readTool], 'always');
+    const { events } = await run(
+      [
+        [
+          {
+            type: 'tool-calls',
+            calls: [{ name: 'read_text_file', arguments: { path: 'a.md' } }],
+          },
+        ],
+        [],
+      ],
+      runtime,
+      { confirmAll: true },
+    );
+    expect(runtime.ask).toHaveBeenCalledOnce();
+    expect(runtime.allowed).toEqual([]);
+    expect(runtime.calls).toEqual(['read_text_file({"path":"a.md"})']);
+    const asked = events.find(
+      (e) => e.type === 'tool-call' && e.call.status === 'asking',
+    );
+    expect(asked).toMatchObject({ call: { alwaysAsk: true } });
+  });
+
+  it('Server auf anderem Rechner: nach Ablehnung läuft das Lese-Tool nicht', async () => {
+    const runtime = fakeRuntime([readTool], 'deny');
+    await run(
+      [
+        [
+          {
+            type: 'tool-calls',
+            calls: [{ name: 'read_text_file', arguments: { path: 'a.md' } }],
+          },
+        ],
+        [],
+      ],
+      runtime,
+      { confirmAll: true },
+    );
+    expect(runtime.calls).toEqual([]);
   });
 
   it('fragt bei „ask“ und führt nach Ablehnung nichts aus', async () => {

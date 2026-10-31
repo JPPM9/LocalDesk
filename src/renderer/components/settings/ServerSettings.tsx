@@ -180,6 +180,7 @@ export function ServerSettings() {
           <li>{t('servers.lanHelp1')}</li>
           <li>{t('servers.lanHelp2')}</li>
           <li>{t('servers.lanHelp3')}</li>
+          <li>{t('servers.lanHelp4')}</li>
         </ol>
       </details>
     </section>

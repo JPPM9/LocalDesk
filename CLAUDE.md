@@ -641,6 +641,26 @@
   Startseite `docs/index.md`). Abweichung vom Plan: nicht `site/`, weil Pages ohne Actions nur
   Root oder `/docs` kann. Test: jede Adresse aus `MAIL_HOSTS` steht in der Erklärung, Limited-Use-
   Satz vorhanden. Pages einschalten = Nutzer, nach öffentlichem Repo.
+  Schritt 4 ✓ (Audit mit Skill „security-audit“, 2026-10-31, Bericht liegt außerhalb des Repos in
+  `C:\Users\nutzer\security-audit-skill\LocalDesk\run-1\`): 7 Jäger + 3 Gegenprüfer, nur am
+  Quellcode (keine Sandbox, Prüfskripte laufen unter Windows nicht → Lauf „unvollständig“). 6
+  Kandidaten „muss geprüft werden“, 3 verworfen (`npx` im Startordner, Updates ohne Signatur,
+  Bilder im Dev-Build – nur Härtungs-Hinweise). Ohne Befund: Gmail-OAuth/-Netzwerksperre,
+  Mail-Änderungen, IPC-Brücke, Bestätigung jedes ändernden Aufrufs, Erinnerungen, Wissen, Obsidian.
+  Schritt 5 ✓ (alle 6 behoben, je mit Test): (1) `code/executables.ts`: git/PowerShell/taskkill nur
+  mit vollem Pfad (git nur aus PATH-Ordnern außerhalb des Projekts, PowerShell aus System32) –
+  Probe mit Node: eine untergeschobene git.exe lief schon vorher NICHT, die Lücke war hier also
+  nicht nachstellbar; Schutz bleibt als Vorsicht. (2) `GIT_SAFE_CONFIG`: `core.fsmonitor=false`,
+  `core.hooksPath=NUL`, Diff mit `--no-ext-diff --no-textconv` → Folge: Git-Hooks laufen bei
+  Commits aus LocalDesk NICHT (steht in der Rückfrage). Offen: `filter.*.clean` aus einer
+  fremden `.git/config` lässt sich nicht per `-c` abschalten. (3) `Workspace.resolve`: `.git`-Sperre
+  prüft den echten Ort (realpath) + Rest, ohne Groß/Klein und ohne Punkte/Leerzeichen am Ende;
+  jedes „:“ im Pfad wird abgelehnt (Datenströme, `:(top)`); Git bekommt `GIT_LITERAL_PATHSPECS=1`.
+  (4) `runAnswer({ confirmAll })`: Ist der Ollama-Server nicht lokal (`isLocalServer`), fragt JEDES
+  Werkzeug nach (auch Lesen), „Immer erlauben“ entfällt; Hinweis in Einstellungen → Server. Kann
+  später: Freigabe pro Server. (5) `Markdown`: Bilder aus Modellantworten werden nie geladen
+  (Platzhalter „[Bild nicht geladen: …]“) – gab es vorher auch nicht, jetzt aber ohne
+  Netzwerkpfad-Risiko. (6) siehe (3). 511 Tests.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

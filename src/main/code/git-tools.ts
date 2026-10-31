@@ -1,6 +1,7 @@
 import { execFile } from 'node:child_process';
 import { CODE_TOOL_SERVER } from '../../shared/code';
 import type { OfferedTool } from '../../shared/tools';
+import { findProgram } from './executables';
 import type { Workspace } from './workspace';
 
 export const GIT_TOOLS = ['git_status', 'git_diff', 'git_commit'] as const;
@@ -67,13 +68,44 @@ export function gitTools(
   ];
 }
 
+/**
+ * Git liest die Einstellungen aus dem Projekt selbst (.git/config). Ein fremdes
+ * Projekt könnte dort Programme eintragen, die bei „status“ oder „diff“ mitlaufen
+ * (core.fsmonitor, Hooks). Auf der Kommandozeile gesetzt, gelten diese Werte
+ * vor allem anderen. Dazu kommt `--no-ext-diff --no-textconv` beim Diff.
+ * Folge: Git-Hooks des Projekts laufen bei Commits aus LocalDesk nicht.
+ */
+export const GIT_SAFE_CONFIG = [
+  '-c',
+  'core.quotepath=false',
+  '-c',
+  'color.ui=false',
+  '-c',
+  'core.fsmonitor=false',
+  '-c',
+  `core.hooksPath=${process.platform === 'win32' ? 'NUL' : '/dev/null'}`,
+];
+
 /** Führt git ohne Shell aus; wirft mit Gits eigener Meldung. */
 export function git(cwd: string, args: string[]): Promise<string> {
   return new Promise((resolve, reject) => {
+    // Voller Pfad, nie aus dem Projektordner (siehe executables.ts).
+    const program = findProgram('git', cwd);
+    if (!program) {
+      reject(new Error('Git wurde nicht gefunden – ist Git installiert?'));
+      return;
+    }
     execFile(
-      'git',
-      ['-c', 'core.quotepath=false', '-c', 'color.ui=false', ...args],
-      { cwd, windowsHide: true, timeout: 60_000, maxBuffer: 10_000_000 },
+      program,
+      [...GIT_SAFE_CONFIG, ...args],
+      {
+        cwd,
+        windowsHide: true,
+        timeout: 60_000,
+        maxBuffer: 10_000_000,
+        // Pfade sind immer Pfade – nie Git-Zeichenfolgen wie „:(top)“.
+        env: { ...process.env, GIT_LITERAL_PATHSPECS: '1' },
+      },
       (error, stdout, stderr) => {
         if (error) {
           const text = `${stderr}`.trim() || error.message;
@@ -115,7 +147,7 @@ export async function describeCommit(
   ]);
   if (!files)
     throw new Error('Nichts zu committen – keine Änderungen im Projektordner.');
-  return `Nachricht:\n${message}\n\nDateien:\n${files}`;
+  return `Nachricht:\n${message}\n\nDateien:\n${files}\n\nGit-Hooks des Projekts laufen dabei nicht.`;
 }
 
 /** Führt ein Git-Werkzeug aus (Commit erst nach deiner Freigabe). */
@@ -147,6 +179,8 @@ export async function callGitTool(
         .catch(() => false);
       const diff = await git(cwd, [
         'diff',
+        '--no-ext-diff',
+        '--no-textconv',
         ...(hasHead ? ['HEAD'] : []),
         '--',
         path,

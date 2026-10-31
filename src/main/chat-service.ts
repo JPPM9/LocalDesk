@@ -28,6 +28,7 @@ import {
   type SkillView,
 } from '../shared/skills';
 import type { OfferedTool } from '../shared/tools';
+import { isLocalServer } from '../shared/server';
 import { buildChatRequest } from '../shared/settings';
 import { describeChatError } from './chat-errors';
 import { CODE_CHANGE_TOOLS } from '../shared/code';
@@ -502,6 +503,8 @@ export function registerChatHandlers(
         signal: controller.signal,
         newId: randomUUID,
         ...(code && { maxRounds: CODE_MAX_ROUNDS }),
+        // Server auf einem anderen Rechner: jedes Werkzeug fragt nach.
+        confirmAll: !isLocalServer(provider.baseUrl),
       });
     } catch (error) {
       if (controller.signal.aborted) {

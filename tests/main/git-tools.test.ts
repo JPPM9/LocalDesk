@@ -73,7 +73,7 @@ describe('Git im Projektordner', () => {
     await writeFile(path.join(repo, 'nachbar', 'geheim.txt'), 'b\n');
 
     expect(await describeCommit(project, { message: 'Teilen prüfen' })).toBe(
-      'Nachricht:\nTeilen prüfen\n\nDateien:\n M rechner.py\n?? neu.py',
+      'Nachricht:\nTeilen prüfen\n\nDateien:\n M rechner.py\n?? neu.py\n\nGit-Hooks des Projekts laufen dabei nicht.',
     );
     expect(
       await callGitTool(ws, 'git_commit', { message: 'Teilen prüfen' }),
@@ -94,6 +94,67 @@ describe('Git im Projektordner', () => {
     await expect(describeCommit(project, { message: ' ' })).rejects.toThrow(
       'Nachricht fehlt',
     );
+  });
+
+  it('startet nie eine git.exe aus dem Projektordner', async () => {
+    // Eine Fälschung im Projekt: Würde sie gestartet, schlüge der Aufruf fehl.
+    await writeFile(path.join(project, 'git.exe'), 'kein Programm');
+    await writeFile(path.join(project, 'git.com'), 'kein Programm');
+    const status = await callGitTool(ws, 'git_status', {});
+    expect(status).toContain('## main');
+    expect(status).toContain('?? git.exe');
+    // Auch die Vorschau vor der Rückfrage startet nur das echte Git.
+    expect(await describeCommit(project, { message: 'x' })).toContain(
+      '?? git.exe',
+    );
+  });
+
+  it('Einstellungen aus dem Projekt führen nichts aus', async () => {
+    const config = path.join(repo, '.git', 'config');
+    await git(repo, ['config', '--local', 'core.fsmonitor', 'boese-befehl']);
+    await git(repo, ['config', '--local', 'core.hooksPath', 'boese-hooks']);
+    // Die Befehlszeile gewinnt gegen die Projekt-Einstellung.
+    expect(await git(repo, ['config', '--get', 'core.fsmonitor'])).toBe(
+      'false',
+    );
+    expect(await git(repo, ['config', '--get', 'core.hooksPath'])).toMatch(
+      /^(NUL|\/dev\/null)$/,
+    );
+    expect(config).toContain('.git');
+
+    // Ein Diff-Programm und ein Textumwandler im Projekt dürfen nicht laufen:
+    // Gäbe es sie, schlüge „git diff“ fehl (die Programme existieren nicht).
+    await git(repo, ['config', '--local', 'diff.external', 'gibt-es-nicht']);
+    await git(repo, [
+      'config',
+      '--local',
+      'diff.boese.textconv',
+      'gibt-es-nicht',
+    ]);
+    await writeFile(path.join(project, '.gitattributes'), '*.py diff=boese\n');
+    await writeFile(path.join(project, 'rechner.py'), 'x = 2\n');
+    expect(await callGitTool(ws, 'git_diff', {})).toContain('+x = 2');
+  });
+
+  it('Git-Hooks des Projekts laufen beim Commit nicht', async () => {
+    const hook = path.join(repo, '.git', 'hooks', 'pre-commit');
+    await writeFile(
+      hook,
+      '#!/bin/sh\necho Hook lief > hook-lief.txt\nexit 1\n',
+    );
+    await writeFile(path.join(project, 'neu.py'), 'neu\n');
+    expect(
+      await callGitTool(ws, 'git_commit', { message: 'Ohne Hook' }),
+    ).toMatch(/^Committet: /);
+  });
+
+  it('versteht „:(top)“ nur als Dateinamen, nie als Git-Pfadzauber', async () => {
+    await writeFile(path.join(repo, 'nachbar', 'geheim.txt'), 'b\n');
+    await expect(
+      callGitTool(ws, 'git_diff', { path: ':(top)' }),
+    ).rejects.toThrow('Projektordner');
+    // Auch Git selbst liest den Wert nur noch wörtlich.
+    expect(await git(project, ['diff', 'HEAD', '--', ':(top)'])).toBe('');
   });
 
   it('erkennt Ordner ohne Git', async () => {

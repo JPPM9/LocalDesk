@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
@@ -15,7 +16,16 @@ interface MarkdownProps {
  * ausgeführt (Standard von react-markdown) – ein Modell kann so keinen Code einschleusen.
  */
 export function Markdown({ text, sourceCount = 0, onCite }: MarkdownProps) {
+  const { t } = useTranslation();
   const components: Components = {
+    // Bilder aus Modellantworten werden nie geladen: Eine Adresse wie „//rechner/x.png“
+    // würde im Programm zu einem Netzwerkpfad (und Windows könnte sich dort anmelden).
+    img: ({ node: _node, alt }) => (
+      <span className="italic opacity-70">
+        [{t('chat.imageBlocked')}
+        {alt ? `: ${alt}` : ''}]
+      </span>
+    ),
     // Links öffnen immer im normalen Browser (siehe setWindowOpenHandler im Main-Prozess).
     a: ({ node: _node, ...props }) => (
       <a {...props} target="_blank" rel="noreferrer" />

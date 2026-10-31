@@ -48,12 +48,19 @@ export class Workspace {
       if (clean === '' || clean === '.') return this.root;
       throw new Error(`Nur Pfade im Projektordner sind erlaubt: ${relative}`);
     }
+    // Ein „:“ gehört unter Windows in keinen Dateinamen: Es steht für Laufwerke,
+    // versteckte Datenströme („datei:strom“, „.git::$INDEX_ALLOCATION“) und
+    // Git-Pfadzauber („:(top)“).
+    if (clean.includes(':')) {
+      throw new Error(`Nur Pfade im Projektordner sind erlaubt: ${relative}`);
+    }
     const full = path.resolve(this.root, clean);
     if (!this.contains(full)) {
       throw new Error(`Nur Pfade im Projektordner sind erlaubt: ${relative}`);
     }
     // Verknüpfungen auflösen: Der echte Ort muss ebenfalls im Projekt liegen.
     let existing = full;
+    let realExisting = '';
     for (;;) {
       try {
         const real = await realpath(existing);
@@ -62,6 +69,7 @@ export class Workspace {
             `Der Pfad führt aus dem Projektordner hinaus: ${relative}`,
           );
         }
+        realExisting = real;
         break;
       } catch (error) {
         if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
@@ -73,7 +81,11 @@ export class Workspace {
         existing = parent;
       }
     }
-    if (this.isHidden(full)) {
+    // .git auch unter anderer Schreibweise sperren („.GIT“, „.git.“, Kurznamen):
+    // Geprüft wird der echte Ort (Windows liefert dort den wahren Namen) samt dem
+    // Rest des Pfads, den es noch nicht gibt.
+    const rest = path.relative(existing, full);
+    if (this.isHidden(full) || this.isHidden(path.join(realExisting, rest))) {
       throw new Error(`Der Ordner .git ist gesperrt: ${relative}`);
     }
     return full;
@@ -142,9 +154,14 @@ export class Workspace {
   }
 
   private isHidden(full: string): boolean {
-    return this.relative(full)
-      .split('/')
-      .some((part) => HIDDEN_DIRS.has(part));
+    return (
+      this.relative(full)
+        .split('/')
+        // Windows ignoriert Groß-/Kleinschreibung und Punkte/Leerzeichen am Ende.
+        .some((part) =>
+          HIDDEN_DIRS.has(part.replace(/[. ]+$/, '').toLowerCase()),
+        )
+    );
   }
 }
 

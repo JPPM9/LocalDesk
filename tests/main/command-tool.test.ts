@@ -1,4 +1,4 @@
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -54,6 +54,13 @@ describe('runCommand (echte PowerShell)', () => {
     expect(result).toMatch(/^Exit-Code: 3 \(\d+\.\d s\)\n/);
     expect(result).toContain('Grüße aus dem Ordner');
     expect(result).toContain(path.basename(dir));
+  }, 30_000);
+
+  it('startet nie eine PowerShell aus dem Projektordner', async () => {
+    // Eine Fälschung im Projekt: Würde sie gestartet, käme keine Ausgabe an.
+    await writeFile(path.join(dir, 'powershell.exe'), 'kein Programm');
+    const result = await runCommand(dir, { command: "'echt'" }, never);
+    expect(result).toContain('echt');
   }, 30_000);
 
   it('beendet Befehle nach dem Zeitlimit', async () => {
