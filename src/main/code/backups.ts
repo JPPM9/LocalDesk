@@ -2,6 +2,7 @@ import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import type { CodeChangeState } from '../../shared/code';
 import { Workspace } from './workspace';
+import { tr } from '../../shared/messages';
 
 /** Eine übernommene Änderung: Stand vorher und nachher (null = Datei gab es nicht). */
 interface Backup {
@@ -84,7 +85,7 @@ export class CodeBackups {
   }
 
   private file(id: string): string {
-    if (!ID.test(id)) throw new Error('Ungültige Kennung.');
+    if (!ID.test(id)) throw new Error(tr('error.invalidIdentifier'));
     return path.join(this.dir, `${id}.json`);
   }
 }

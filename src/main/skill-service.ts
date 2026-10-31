@@ -3,6 +3,7 @@ import { ipcMain, shell } from 'electron';
 import { IpcChannels, type Result } from '../shared/api';
 import { checkSkillInput, isSkillId, type SkillView } from '../shared/skills';
 import type { SkillStore } from './skills/skill-store';
+import { tr } from '../shared/messages';
 
 /** Skills für die Oberfläche: auflisten, speichern, löschen, Ordner im Explorer zeigen. */
 export function registerSkillHandlers(store: SkillStore) {
@@ -39,7 +40,7 @@ export function registerSkillHandlers(store: SkillStore) {
     IpcChannels.deleteSkill,
     async (_event, id: unknown): Promise<Result<void>> => {
       if (typeof id !== 'string' || !isSkillId(id)) {
-        return { ok: false, error: 'Ungültige Skill-Kennung' };
+        return { ok: false, error: tr('error.invalidSkillId') };
       }
       try {
         await store.remove(id);
@@ -56,7 +57,7 @@ export function registerSkillHandlers(store: SkillStore) {
     IpcChannels.openSkillFolder,
     async (_event, id: unknown): Promise<Result<void>> => {
       if (id !== undefined && (typeof id !== 'string' || !isSkillId(id))) {
-        return { ok: false, error: 'Ungültige Skill-Kennung' };
+        return { ok: false, error: tr('error.invalidSkillId') };
       }
       const target =
         id === undefined ? store.root : path.join(store.root, id as string);

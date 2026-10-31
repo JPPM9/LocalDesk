@@ -17,6 +17,7 @@ import {
   type SkillView,
 } from '../../shared/skills';
 import { atomicWrite } from '../obsidian/vault';
+import { tr } from '../../shared/messages';
 
 export const SKILL_FILE = 'SKILL.md';
 /** Größer darf eine SKILL.md nicht sein (Kopf + Anleitung, großzügig). */
@@ -56,7 +57,8 @@ export class SkillStore {
     const id = input.id ?? (await this.freeId(skillIdFromName(input.name)));
     const dir = this.dir(id);
     if (input.id) {
-      if (!(await this.isRealDir(dir))) throw new Error('Skill nicht gefunden');
+      if (!(await this.isRealDir(dir)))
+        throw new Error(tr('error.skillNotFound'));
     } else {
       await mkdir(dir);
     }
@@ -69,7 +71,7 @@ export class SkillStore {
    * andere Dateien, bleibt der Ordner stehen (die gehören nicht LocalDesk).
    */
   async remove(id: string): Promise<void> {
-    if (!isSkillId(id)) throw new Error('Ungültige Skill-Kennung');
+    if (!isSkillId(id)) throw new Error(tr('error.invalidSkillId'));
     const dir = this.dir(id);
     if (!(await this.isRealDir(dir))) return;
     await unlink(path.join(dir, SKILL_FILE)).catch((error) => {

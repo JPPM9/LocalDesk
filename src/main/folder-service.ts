@@ -2,6 +2,7 @@ import { ipcMain } from 'electron';
 import { IpcChannels, type CollectionConfig, type Result } from '../shared/api';
 import type { ChatRepository } from './db/chat-repository';
 import type { FolderRepository } from './db/folder-repository';
+import { tr } from '../shared/messages';
 
 /** Was Projekte vom Wissen brauchen (die Projekt-Dokumente sind eine Sammlung). */
 export interface ProjectKnowledge {
@@ -32,7 +33,7 @@ export function registerFolderHandlers(
     IpcChannels.renameFolder,
     (_event, folderId: unknown, name: unknown) => {
       if (typeof folderId !== 'string') {
-        return { ok: false, error: 'Ungültige ID' };
+        return { ok: false, error: tr('error.invalidId') };
       }
       const result = folders.renameFolder(folderId, name);
       if (result.ok) knowledge.changed(); // Projekt-Dokumente heißen wie das Projekt
@@ -69,7 +70,7 @@ export function registerFolderHandlers(
     (_event, folderId: unknown): Result<CollectionConfig> => {
       const folder =
         typeof folderId === 'string' ? folders.getFolder(folderId) : null;
-      if (!folder) return { ok: false, error: 'Projekt nicht gefunden' };
+      if (!folder) return { ok: false, error: tr('error.projectNotFound') };
       const collection = knowledge.ensureCollection(folder.id, folder.name);
       knowledge.changed();
       return { ok: true, value: collection };

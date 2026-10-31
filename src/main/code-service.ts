@@ -7,6 +7,7 @@ import { CODE_CONTEXT_DEFAULT } from '../shared/code-agent';
 import type { CodeBackups } from './code/backups';
 import { Workspace } from './code/workspace';
 import type { ChatRepository } from './db/chat-repository';
+import { tr } from '../shared/messages';
 
 /**
  * Seite „Code“: Sitzungen mit Projektordner, Dateibaum und Datei-Ansicht.
@@ -21,7 +22,7 @@ export function registerCodeHandlers(
   const workspaceOf = async (sessionId: unknown): Promise<Workspace> => {
     const chat =
       typeof sessionId === 'string' ? chats.getChat(sessionId) : null;
-    if (!chat?.workspace) throw new Error('Diese Code-Sitzung gibt es nicht.');
+    if (!chat?.workspace) throw new Error(tr('error.codeSessionMissing'));
     return Workspace.open(chat.workspace);
   };
 
@@ -85,7 +86,7 @@ export function registerCodeHandlers(
       { ok: true } | { ok: false; error: string; conflict?: true }
     > => {
       if (typeof callId !== 'string') {
-        return { ok: false, error: 'Ungültige Kennung.' };
+        return { ok: false, error: tr('error.invalidIdentifier') };
       }
       try {
         const result = await backups.undo(callId, force === true);
@@ -114,7 +115,8 @@ export function registerCodeHandlers(
       relative: unknown,
     ): Promise<Result<CodeFile>> =>
       attempt(async () => {
-        if (typeof relative !== 'string') throw new Error('Ungültiger Pfad.');
+        if (typeof relative !== 'string')
+          throw new Error(tr('error.invalidPath'));
         return (await workspaceOf(sessionId)).read(relative);
       }),
   );

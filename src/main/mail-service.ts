@@ -31,6 +31,7 @@ import { GmailClient } from './mail/gmail-client';
 import type { MailClient } from './mail/mail-client';
 import { guardedFetch } from './mail/mail-fetch';
 import { MailSessions, type TokenCipher } from './mail/mail-sessions';
+import { tr } from '../shared/messages';
 
 const GOOGLE_ID_KEY = 'mail.google.clientId';
 const GOOGLE_SECRET_KEY = 'mail.google.clientSecret';
@@ -172,7 +173,7 @@ export function registerMailHandlers(
     IpcChannels.disconnectMailAccount,
     async (_event, id: unknown): Promise<Result<{ revoked: boolean }>> => {
       if (typeof id !== 'string' || !accounts.get(id)) {
-        return { ok: false, error: 'Dieses Konto gibt es nicht.' };
+        return { ok: false, error: tr('error.accountMissing') };
       }
       return { ok: true, value: await sessions.signOut(id) };
     },
@@ -237,7 +238,7 @@ export function registerMailHandlers(
       model: unknown,
     ): Promise<Result<string>> => {
       if (!isMailId(messageId) || typeof model !== 'string' || !model) {
-        return { ok: false, error: 'Ungültige Eingabe' };
+        return { ok: false, error: tr('error.invalidInput') };
       }
       summary?.abort();
       const controller = new AbortController();
@@ -300,7 +301,7 @@ export function registerMailHandlers(
         typeof model !== 'string' ||
         !model
       ) {
-        return { ok: false, error: 'Ungültige Eingabe' };
+        return { ok: false, error: tr('error.invalidInput') };
       }
       sorting?.abort();
       const controller = new AbortController();
@@ -357,7 +358,7 @@ export function registerMailHandlers(
       changes: unknown,
     ): Promise<Result<{ applied: number; failed: string[] }>> => {
       if (!Array.isArray(changes) || changes.length > APPLY_CHANGES_MAX) {
-        return { ok: false, error: 'Ungültige Eingabe' };
+        return { ok: false, error: tr('error.invalidInput') };
       }
       const checked = changes.map(checkMailChange);
       const invalid = checked.find((c) => !c.ok);

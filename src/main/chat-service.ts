@@ -57,6 +57,7 @@ import { checkMemoryArguments, memoryTool } from './obsidian/memory-tool';
 import type { ChatMemory } from './obsidian-service';
 import type { Provider } from './providers/provider';
 import { runAnswer, type ToolRuntime } from './tool-loop';
+import { tr } from '../shared/messages';
 
 /** Wie oft eine laufende Antwort zwischengespeichert wird (falls die App abstürzt). */
 const SAVE_INTERVAL_MS = 1000;
@@ -133,7 +134,7 @@ export function registerChatHandlers(
 
   ipcMain.handle(IpcChannels.chatSend, (event, request: unknown) => {
     if (!isChatSendRequest(request)) {
-      throw new Error('Ungültige Chat-Anfrage');
+      throw new Error(tr('error.invalidChatRequest'));
     }
     if (running.has(request.requestId)) return;
 
@@ -329,7 +330,7 @@ export function registerChatHandlers(
           const result = await callReadTool(code, tool.toolName, args);
           if (result === null) {
             return {
-              text: `Das Werkzeug „${tool.toolName}“ gibt es nicht.`,
+              text: tr('error.toolMissing', { tool: tool.toolName }),
               isError: true,
             };
           }
@@ -353,7 +354,7 @@ export function registerChatHandlers(
           const skill = found ? await skills.get(found.skillId) : null;
           if (!skill || skill.error) {
             return {
-              text: 'Diesen Skill gibt es nicht (mehr).',
+              text: tr('error.skillGone'),
               isError: true,
             };
           }
@@ -366,7 +367,7 @@ export function registerChatHandlers(
           return mcpTools.call(tool, args, callSignal);
         }
         const checked = checkMemoryArguments(args);
-        if (!checked) return { text: 'Ungültige Erinnerung.', isError: true };
+        if (!checked) return { text: tr('error.invalidMemory'), isError: true };
         const projectId =
           checked.scope === 'projekt' ? memoryTarget?.projectId : undefined;
         const saved = await memory.save(checked.text, projectId);

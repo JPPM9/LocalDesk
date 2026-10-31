@@ -1,6 +1,7 @@
 import type { DatabaseSync } from 'node:sqlite';
 import type { ChatFolder, Result } from '../../shared/api';
 import { normalizeSettings } from '../../shared/settings';
+import { tr } from '../../shared/messages';
 
 const NAME_MAX_LENGTH = 80;
 /** Wie beim Systemprompt eines Chats. */
@@ -61,7 +62,7 @@ export class FolderRepository {
       .prepare('UPDATE folders SET name = ? WHERE id = ?')
       .run(checked.value, folderId);
     if (Number(result.changes) === 0) {
-      return { ok: false, error: 'Projekt nicht gefunden' };
+      return { ok: false, error: tr('error.projectNotFound') };
     }
     // Die Projekt-Dokumente heißen wie das Projekt (so stehen sie bei den Quellen).
     this.db

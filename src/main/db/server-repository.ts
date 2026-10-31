@@ -1,6 +1,7 @@
 import type { DatabaseSync } from 'node:sqlite';
 import type { Result, ServerProfile } from '../../shared/api';
 import { normalizeServerUrl } from '../../shared/server';
+import { tr } from '../../shared/messages';
 
 interface ProfileRow {
   id: string;
@@ -39,7 +40,7 @@ export class ServerRepository {
    */
   saveProfile(input: unknown): Result<ServerProfile> {
     if (typeof input !== 'object' || input === null) {
-      return { ok: false, error: 'Ungültige Eingabe' };
+      return { ok: false, error: tr('error.invalidInput') };
     }
     const raw = input as Record<string, unknown>;
     if (typeof raw.id !== 'string' || raw.id === '') {
@@ -80,7 +81,7 @@ export class ServerRepository {
 
   setActive(profileId: string): Result<ServerProfile> {
     const profile = this.listProfiles().find((p) => p.id === profileId);
-    if (!profile) return { ok: false, error: 'Server nicht gefunden' };
+    if (!profile) return { ok: false, error: tr('error.serverNotFound') };
     this.db
       .prepare(
         `INSERT INTO app_settings (key, value) VALUES (?, ?)

@@ -680,6 +680,15 @@
   dem Main-Prozess, Anweisungen ans Modell, Skill-Beispiele (SKILL.md), Name „Dieser PC“ des
   Standard-Servers in der Datenbank, Datums-/Zahlenformate (`de-DE` fest, 14 Stellen),
   `docs/email-einrichten.md`. Die Datenschutzerklärung ist schon zweisprachig.
+  Schritt 2 (Meldungen) in Teilen: Eigener Übersetzer `shared/messages/` (`de.ts` = Vorlage, `en.ts` mit
+  `Record<MessageKey, string>` → TypeScript meldet fehlende Schlüssel beim Bauen; Platzhalter `{name}`;
+  `tr(key, params)`; Standard Deutsch, damit alle alten Tests gelten; `trIn` für Tests). Der Main-Prozess
+  setzt die Sprache beim Start und bei `setLanguage` (`appearance-service.ts`), die Oberfläche in
+  `applyLanguage`. Wichtig: `tr()` immer zur Laufzeit aufrufen, nie in einer Konstante beim Laden
+  (darum `emptyAnswer()` statt `EMPTY_ANSWER`). Schon gespeicherte Werkzeug-Ergebnisse im Verlauf bleiben in
+  ihrer Sprache. 2a ✓: allgemeine Fehler (Ungültige Eingabe/ID/Kennung, … nicht gefunden, Werkzeug
+  fehlt, leere Antwort); in der gebauten App Deutsch↔Englisch ohne Neustart geprüft. Offen: 2b Code-Bereich,
+  2c E-Mail, 2d Wissen/Obsidian/MCP/Skills/Updates/Downloads/Ollama.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

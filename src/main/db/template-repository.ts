@@ -1,6 +1,7 @@
 import type { DatabaseSync } from 'node:sqlite';
 import type { ChatTemplate, Result, TemplateInput } from '../../shared/api';
 import { normalizeSettings } from '../../shared/settings';
+import { tr } from '../../shared/messages';
 
 interface TemplateRow {
   id: string;
@@ -76,7 +77,7 @@ export class TemplateRepository {
 
 function validateInput(input: unknown): Result<TemplateInput> {
   if (typeof input !== 'object' || input === null) {
-    return { ok: false, error: 'Ungültige Vorlage' };
+    return { ok: false, error: tr('error.invalidTemplate') };
   }
   const raw = input as Record<string, unknown>;
   if (typeof raw.id !== 'string' || raw.id === '') {

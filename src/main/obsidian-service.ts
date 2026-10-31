@@ -19,6 +19,7 @@ import {
 } from './obsidian/vault';
 import type { Provider } from './providers/provider';
 import { normalize, queryText, similarity } from './rag/vectors';
+import { tr } from '../shared/messages';
 
 const VAULT_KEY = 'obsidian.vault';
 const FOLDER_KEY = 'obsidian.folder';
@@ -136,7 +137,7 @@ export function registerObsidianHandlers(
       const store = memories();
       if (!store) return noVault;
       if (typeof text !== 'string')
-        return { ok: false, error: 'Ungültige Eingabe' };
+        return { ok: false, error: tr('error.invalidInput') };
       const project =
         typeof projectId === 'string'
           ? projects().find((p) => p.id === projectId)
@@ -158,7 +159,7 @@ export function registerObsidianHandlers(
       const store = memories();
       if (!store) return noVault;
       try {
-        if (typeof id !== 'string') throw new Error('Ungültige Eingabe');
+        if (typeof id !== 'string') throw new Error(tr('error.invalidInput'));
         await store.remove(id);
         return { ok: true, value: undefined };
       } catch (error) {
@@ -195,7 +196,7 @@ export function registerObsidianHandlers(
       const w = writer();
       if (!w) return noVault;
       const chat = typeof chatId === 'string' ? deps.getChat(chatId) : null;
-      if (!chat) return { ok: false, error: 'Chat nicht gefunden' };
+      if (!chat) return { ok: false, error: tr('error.chatNotFound') };
       const note = formatChatNote(chat, new Date(), {
         ...(typeof answerId === 'string' && { answerId }),
         projectName: deps.projects().find((p) => p.id === chat.folderId)?.name,

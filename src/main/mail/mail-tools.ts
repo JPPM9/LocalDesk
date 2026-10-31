@@ -6,6 +6,7 @@ import {
 } from '../../shared/mail';
 import type { OfferedTool } from '../../shared/tools';
 import type { MailClient } from './mail-client';
+import { tr } from '../../shared/messages';
 
 export const MAIL_SEARCH_TOOL = 'mail_search';
 export const MAIL_READ_TOOL = 'mail_read';
@@ -218,7 +219,7 @@ export async function callMailTool(
     for (const change of changes) await client.apply(change);
     return 'Erledigt – die Änderung ist in Gmail übernommen.';
   }
-  throw new Error(`Das Werkzeug „${toolName}“ gibt es nicht.`);
+  throw new Error(tr('error.toolMissing', { tool: toolName }));
 }
 
 function summaryLine(m: MailSummary, allLabels: MailLabel[]): string {

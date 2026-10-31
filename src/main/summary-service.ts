@@ -13,6 +13,7 @@ import type { ChatRepository } from './db/chat-repository';
 import { formatSummaryNote, SUMMARIES_DIR } from './obsidian/summary-notes';
 import type { VaultWriter } from './obsidian/vault';
 import type { Provider } from './providers/provider';
+import { tr } from '../shared/messages';
 
 /** Längster Text, den die Oberfläche als Zusammenfassung speichern darf. */
 const SUMMARY_TEXT_MAX = 20_000;
@@ -41,10 +42,10 @@ export function registerSummaryHandlers(deps: SummaryDeps) {
       model: unknown,
     ): Promise<Result<SummaryDraft>> => {
       if (typeof chatId !== 'string' || typeof model !== 'string' || !model) {
-        return { ok: false, error: 'Ungültige Eingabe' };
+        return { ok: false, error: tr('error.invalidInput') };
       }
       const chat = deps.chats.getChat(chatId);
-      if (!chat) return { ok: false, error: 'Chat nicht gefunden' };
+      if (!chat) return { ok: false, error: tr('error.chatNotFound') };
       if (
         !chat.messages.some((m) => m.role === 'assistant' && m.content.trim())
       ) {
@@ -116,7 +117,7 @@ export function registerSummaryHandlers(deps: SummaryDeps) {
       }
       const chat =
         typeof chatId === 'string' ? deps.chats.getChat(chatId) : null;
-      if (!chat) return { ok: false, error: 'Chat nicht gefunden' };
+      if (!chat) return { ok: false, error: tr('error.chatNotFound') };
       const checked = checkDraft(draft);
       if (!checked)
         return { ok: false, error: 'Titel und Text dürfen nicht leer sein.' };

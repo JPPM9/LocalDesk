@@ -3,6 +3,7 @@ import { CODE_TOOL_SERVER } from '../../shared/code';
 import type { OfferedTool } from '../../shared/tools';
 import { findProgram } from './executables';
 import type { Workspace } from './workspace';
+import { tr } from '../../shared/messages';
 
 export const GIT_TOOLS = ['git_status', 'git_diff', 'git_commit'] as const;
 const DIFF_MAX = 20_000;
@@ -210,6 +211,6 @@ export async function callGitTool(
       return `Committet: ${await git(cwd, ['log', '-1', '--format=%h %s'])}`;
     }
     default:
-      throw new Error(`Das Werkzeug „${toolName}“ gibt es nicht.`);
+      throw new Error(tr('error.toolMissing', { tool: toolName }));
   }
 }

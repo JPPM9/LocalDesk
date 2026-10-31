@@ -5,6 +5,7 @@ import { CODE_TOOL_SERVER } from '../../shared/code';
 import type { OfferedTool } from '../../shared/tools';
 import type { CodeBackups } from './backups';
 import { CODE_FILE_MAX, type Workspace } from './workspace';
+import { tr } from '../../shared/messages';
 
 /** So viele Zeilen zeigt die Vorher/Nachher-Ansicht höchstens. */
 const PREVIEW_LINES_MAX = 400;
@@ -150,7 +151,7 @@ export async function planChange(
       return { path: rel, full, before, after: null };
     }
     default:
-      throw new Error(`Das Werkzeug „${toolName}“ gibt es nicht.`);
+      throw new Error(tr('error.toolMissing', { tool: toolName }));
   }
 }
 

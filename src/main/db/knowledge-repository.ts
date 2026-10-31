@@ -12,6 +12,7 @@ import type {
 import type { Chunk } from '../rag/chunk';
 import { toBlob } from '../rag/vectors';
 import { isDriveRoot } from './mcp-repository';
+import { tr } from '../../shared/messages';
 
 const NAME_MAX_LENGTH = 80;
 const MAX_SOURCES = 20;
@@ -410,7 +411,7 @@ export function checkCollectionInput(
   input: unknown,
 ): Result<{ id: string; name: string; sources: KnowledgeSource[] }> {
   if (typeof input !== 'object' || input === null) {
-    return { ok: false, error: 'Ungültige Eingabe' };
+    return { ok: false, error: tr('error.invalidInput') };
   }
   const raw = input as Record<string, unknown>;
   if (typeof raw.id !== 'string' || raw.id === '' || raw.id.length > 100) {

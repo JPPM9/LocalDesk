@@ -8,6 +8,7 @@ import {
   type LanguageChoice,
   type LanguageState,
 } from '../shared/language';
+import { setMessageLanguage } from '../shared/messages';
 import type { AppSettingsRepository } from './db/app-settings-repository';
 
 const THEME_KEY = 'appearance.theme';
@@ -45,6 +46,9 @@ export function registerAppearanceHandlers(settings: AppSettingsRepository) {
       app.getLocale(),
     ]);
 
+  // Meldungen aus dem Hauptprozess folgen derselben Sprache – ab dem Start.
+  setMessageLanguage(resolve(readChoice()));
+
   ipcMain.handle(IpcChannels.getLanguage, (): LanguageState => {
     const choice = readChoice();
     return { choice, language: resolve(choice) };
@@ -55,7 +59,9 @@ export function registerAppearanceHandlers(settings: AppSettingsRepository) {
     (_event, choice: unknown): Language => {
       if (!isLanguageChoice(choice)) return resolve(readChoice());
       settings.set(LANGUAGE_KEY, choice);
-      return resolve(choice);
+      const language = resolve(choice);
+      setMessageLanguage(language);
+      return language;
     },
   );
 }

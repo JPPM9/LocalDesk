@@ -4,6 +4,7 @@ import { normalizeServerUrl } from '../shared/server';
 import type { ServerRepository } from './db/server-repository';
 import { OllamaProvider } from './providers/ollama';
 import type { Provider } from './providers/provider';
+import { tr } from '../shared/messages';
 
 /**
  * Verwaltet die Server-Profile und hält den Provider für den aktiven Server.
@@ -30,7 +31,7 @@ export function registerServerHandlers(servers: ServerRepository) {
 
   ipcMain.handle(IpcChannels.deleteServer, (_event, profileId: unknown) => {
     if (typeof profileId !== 'string')
-      return { ok: false, error: 'Ungültige ID' };
+      return { ok: false, error: tr('error.invalidId') };
     const result = servers.deleteProfile(profileId);
     reloadActive();
     return result;
@@ -38,7 +39,7 @@ export function registerServerHandlers(servers: ServerRepository) {
 
   ipcMain.handle(IpcChannels.setActiveServer, (_event, profileId: unknown) => {
     if (typeof profileId !== 'string')
-      return { ok: false, error: 'Ungültige ID' };
+      return { ok: false, error: tr('error.invalidId') };
     const result = servers.setActive(profileId);
     reloadActive();
     return result;

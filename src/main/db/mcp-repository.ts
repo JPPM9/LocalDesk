@@ -2,6 +2,7 @@ import path from 'node:path';
 import type { DatabaseSync } from 'node:sqlite';
 import type { McpServerConfig, Result, ToolPermission } from '../../shared/api';
 import { isToolPermission } from '../../shared/permissions';
+import { tr } from '../../shared/messages';
 
 interface ServerRow {
   id: string;
@@ -113,7 +114,7 @@ export function checkInput(
   input: unknown,
 ): Result<{ id: string; name: string; folders: string[] }> {
   if (typeof input !== 'object' || input === null) {
-    return { ok: false, error: 'Ungültige Eingabe' };
+    return { ok: false, error: tr('error.invalidInput') };
   }
   const raw = input as Record<string, unknown>;
   if (typeof raw.id !== 'string' || raw.id === '') {

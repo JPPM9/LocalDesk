@@ -7,7 +7,7 @@ import type {
 } from '../../src/shared/api';
 import type { Provider } from '../../src/main/providers/provider';
 import {
-  EMPTY_ANSWER,
+  emptyAnswer,
   runAnswer,
   type ToolRuntime,
 } from '../../src/main/tool-loop';
@@ -285,7 +285,10 @@ describe('runAnswer', () => {
     expect(requests).toHaveLength(3);
     expect(requests[2]).not.toHaveProperty('tools');
     // Die dritte Runde wollte wieder ein Tool, schrieb aber keinen Text → Hinweis statt leerer Antwort.
-    expect(events.at(-1)).toMatchObject({ type: 'error', error: EMPTY_ANSWER });
+    expect(events.at(-1)).toMatchObject({
+      type: 'error',
+      error: emptyAnswer(),
+    });
   });
 
   it('meldet eine leere Antwort statt einer leeren Blase', async () => {
@@ -295,7 +298,7 @@ describe('runAnswer', () => {
     );
     expect(empty.events.at(-1)).toMatchObject({
       type: 'error',
-      error: EMPTY_ANSWER,
+      error: emptyAnswer(),
     });
     const fine = await run(
       [[{ type: 'content', text: 'Hallo' }]],

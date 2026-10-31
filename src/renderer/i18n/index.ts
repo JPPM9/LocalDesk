@@ -4,6 +4,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import type { Language } from '../../shared/language';
+import { setMessageLanguage } from '../../shared/messages';
 import de from './de.json';
 import en from './en.json';
 
@@ -16,6 +17,7 @@ void i18n.use(initReactI18next).init({
 
 /** Stellt die Oberfläche auf die Sprache um (sofort, ohne Neustart). */
 export async function applyLanguage(language: Language): Promise<void> {
+  setMessageLanguage(language); // auch Meldungen aus geteiltem Code
   await i18n.changeLanguage(language);
   document.documentElement.lang = language;
 }

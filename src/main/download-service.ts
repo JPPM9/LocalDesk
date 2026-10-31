@@ -6,6 +6,7 @@ import {
   newDownload,
 } from '../shared/download';
 import type { Provider } from './providers/provider';
+import { tr } from '../shared/messages';
 
 /** Die Oberfläche bekommt höchstens alle 250 ms einen neuen Stand – sonst flackert es. */
 const BROADCAST_INTERVAL_MS = 250;
@@ -76,7 +77,7 @@ export function registerDownloadHandlers(getProvider: () => Provider) {
     (_event, model: unknown): Result<void> => {
       const name = typeof model === 'string' ? model.trim() : '';
       if (!isValidModelName(name)) {
-        return { ok: false, error: 'Ungültiger Modellname' };
+        return { ok: false, error: tr('error.invalidModelName') };
       }
       if (controllers.has(name)) {
         return {

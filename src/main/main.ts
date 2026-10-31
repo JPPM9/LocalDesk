@@ -41,6 +41,7 @@ import { registerMailHandlers } from './mail-service';
 import { registerCodeHandlers } from './code-service';
 import { CodeBackups } from './code/backups';
 import { MailAccountRepository } from './db/mail-account-repository';
+import { tr } from '../shared/messages';
 
 // Gleiche Kennung wie im Installer (electron-builder.yml, appId): Taskleiste und
 // Verknüpfungen gehören so zusammen.
@@ -130,7 +131,7 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
     (_event, model: unknown): Promise<Result<void>> | Result<void> =>
       typeof model === 'string' && isValidModelName(model)
         ? getProvider().deleteModel(model)
-        : { ok: false, error: 'Ungültiger Modellname' },
+        : { ok: false, error: tr('error.invalidModelName') },
   );
   // Die Grafikkarte lässt sich nur messen, wenn Ollama auf diesem PC rechnet –
   // bei einem Server im LAN wäre es die falsche Karte.

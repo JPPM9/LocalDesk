@@ -1,4 +1,5 @@
 import type { ChatMessage, ChatRequest } from './api';
+import { tr } from './messages';
 
 /**
  * Skills: Arbeitsanleitungen als Markdown (Format wie Claudes SKILL.md):
@@ -70,7 +71,7 @@ export function checkSkillInput(
   value: unknown,
 ): { ok: true; value: SkillInput } | { ok: false; error: string } {
   if (typeof value !== 'object' || value === null) {
-    return { ok: false, error: 'Ungültige Eingabe' };
+    return { ok: false, error: tr('error.invalidInput') };
   }
   const raw = value as Record<string, unknown>;
   const text = (key: string) =>
@@ -97,7 +98,7 @@ export function checkSkillInput(
   }
   const id = raw.id;
   if (id !== undefined && (typeof id !== 'string' || !isSkillId(id))) {
-    return { ok: false, error: 'Ungültige Skill-Kennung' };
+    return { ok: false, error: tr('error.invalidSkillId') };
   }
   return {
     ok: true,

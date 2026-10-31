@@ -15,6 +15,7 @@ import type { Provider } from './providers/provider';
 import { WorkerExtractor } from './rag/extractor';
 import { indexCollection } from './rag/indexer';
 import { KnowledgeSearch } from './rag/search';
+import { tr } from '../shared/messages';
 
 /** Standard-Embedding-Modell für neue Sammlungen (vereinbart in Phase 5). */
 export const DEFAULT_EMBEDDING_MODEL = 'qwen3-embedding:0.6b';
@@ -110,10 +111,11 @@ export function registerKnowledgeHandlers(
     IpcChannels.indexCollection,
     (_event, collectionId: unknown): Result<void> => {
       if (typeof collectionId !== 'string') {
-        return { ok: false, error: 'Ungültige Sammlung' };
+        return { ok: false, error: tr('error.invalidCollection') };
       }
       const collection = repo.getCollection(collectionId);
-      if (!collection) return { ok: false, error: 'Sammlung nicht gefunden' };
+      if (!collection)
+        return { ok: false, error: tr('error.collectionNotFound') };
       if (running) {
         return {
           ok: false,
@@ -202,7 +204,7 @@ export function registerKnowledgeHandlers(
     async (_event, documentId: unknown): Promise<Result<void>> => {
       const filePath =
         typeof documentId === 'string' ? repo.documentPath(documentId) : null;
-      if (!filePath) return { ok: false, error: 'Datei nicht gefunden' };
+      if (!filePath) return { ok: false, error: tr('error.fileNotFound') };
       // Notizen aus dem Vault direkt in Obsidian öffnen – sofern Obsidian installiert ist.
       if (
         repo.documentInObsidian(documentId as string) &&
