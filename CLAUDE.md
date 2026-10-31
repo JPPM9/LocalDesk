@@ -890,6 +890,24 @@
   gespeichert; Modell lädt ihn selbst; bei 4 096 Kontext klare Meldung, bei 16 384 wird er geladen und befolgt;
   `file` liest references/beispiele.md; Skript (.ps1) wird nicht gelistet.
 
+- **Skills hinzufügen per Ziehen/ZIP** (Wunschliste Schritt 2b, Plan freigegeben; neue Abhängigkeit **fflate** 0.8.3, MIT,
+  mit Freigabe; in THIRD_PARTY_NOTICES). Weg: Seite „Skills“ (Knopf oder Dateien auf die Seite ziehen) →
+  `SkillImportDialog` liest die Dateien als Bytes (`File.arrayBuffer`, KEIN Pfad – der Hauptprozess liest nichts von der Platte)
+  → IPC `inspectSkillFiles` → `main/skills/skill-import.ts` (`SkillImports`: hält die geprüften Skills 15 Min./max. 5 im
+  Speicher; `installSkills(importId, picks)` bekommt nur Kennung + Auswahl, nie den Inhalt) → Vorschau, gespeichert wird erst
+  mit „Hinzufügen“. ZIP: `readZip` prüft jeden Eintrag VOR dem Entpacken (Pfad `safeSkillPath`: kein „..“/absolut/Laufwerk/„:“/
+  Gerätename/Punkt am Ende; `isJunkPath` übergeht __MACOSX und versteckte Dateien; Skripte/Programme/Nicht-Text werden gar nicht
+  entpackt; angegebene Größe ≤ 200 KB je Datei, ≤ 5 MB gesamt, ≤ 200 Einträge) und gleicht danach die echte mit der angegebenen
+  Größe ab. Ein Skill = jeder Ordner mit SKILL.md (≤ 20); Dateien gehören zum nächsten Skill-Ordner darüber; je Skill ≤ 50
+  Textdateien/2 MB/3 Ordner tief. Skripte werden NICHT gespeichert (strenger als „nie ausgeführt“). `SkillStore.install`
+  legt immer einen neuen Ordner an (freeId, nie überschreiben), prüft Pfade noch einmal, räumt bei Fehler den eigenen Ordner auf.
+  Sicherheitsprüfung `shared/skill-scan.ts` (`scanSkillFiles`): Heuristik, KEIN Beweis – warnt bei unsichtbaren/Richtungs-
+  Zeichen, „ignoriere alle bisherigen Anweisungen“ (de/en), Befehlen (curl|sh, iex, -EncodedCommand, rm -rf …), Base64-Blöcken,
+  „Schicke das Passwort“; Hinweis bei Webadressen und übersprungenen Skripten. Skills mit Warnung sind nicht vorausgewählt und
+  brauchen „Ich habe die Warnungen gelesen“. Auch der GitHub-Import zeigt die Befunde (`GithubSkill.findings`).
+  Echt geprüft (gebaute App): humanizer.zip + Warn-ZIP + kaputte ZIP + .md auf einmal abgelegt, Dateiauswahl; humanizer ohne
+  Warnung (nur Wikipedia-Adresse + 2 übersprungene Dateien), nur references/ gespeichert, kein scripts/ und kein tool.exe.
+
 ## Befehle
 
 - `npm start` – Entwicklungsmodus · `npm test` – Vitest (Tests in `tests/`) · `npm run typecheck` · `npm run lint` · `npm run dist` – Installer · `npm run make` – portable ZIP

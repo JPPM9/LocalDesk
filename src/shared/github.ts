@@ -1,5 +1,6 @@
 import type { Result } from './api';
 import { tr } from './messages';
+import type { SkillFinding } from './skill-import';
 import type { SkillInput } from './skills';
 
 /**
@@ -14,6 +15,8 @@ export const GITHUB_RAW_HOST = 'raw.githubusercontent.com';
 export interface GithubSkill extends SkillInput {
   /** Woher er kommt: „besitzer/projekt/pfad“. */
   source: string;
+  /** Ergebnis der Sicherheitsprüfung (Heuristik, kein Beweis). */
+  findings: SkillFinding[];
 }
 
 export interface GithubSkillSource {

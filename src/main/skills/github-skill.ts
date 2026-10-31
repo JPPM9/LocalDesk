@@ -5,6 +5,7 @@ import {
   type GithubSkill,
 } from '../../shared/github';
 import { tr } from '../../shared/messages';
+import { scanSkillFiles } from '../../shared/skill-scan';
 import {
   parseSkill,
   SKILL_DESCRIPTION_MAX,
@@ -68,6 +69,7 @@ export async function fetchGithubSkill(
         description: parsed.description.slice(0, SKILL_DESCRIPTION_MAX),
         body: parsed.body,
         source: source.value.label,
+        findings: scanSkillFiles([{ path: 'SKILL.md', text }]),
       },
     };
   } catch (error) {

@@ -20,6 +20,8 @@ export const SKILL_DESCRIPTION_MAX = 1_024;
  * Kontext – ob er in den Chat passt, zeigt `skillContextAdvice`.
  */
 export const SKILL_BODY_MAX = 60_000;
+/** Größer darf eine SKILL.md nicht sein (Kopf + Anleitung, großzügig: 4 Bytes je Zeichen). */
+export const SKILL_MD_MAX_BYTES = SKILL_BODY_MAX * 4 + 4096;
 
 /** Eine Zusatzdatei eines Skills (z. B. references/stil.md), Pfad relativ zum Skill-Ordner. */
 export interface SkillFile {

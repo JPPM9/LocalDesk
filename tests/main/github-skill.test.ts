@@ -43,6 +43,7 @@ describe('fetchGithubSkill', () => {
         description: 'Prüft Code auf Fehler',
         body: '# Anleitung\n1. Lies den Code.',
         source: 'o/r/review',
+        findings: [],
       },
     });
     // Nur dieser eine Aufruf, nur zu diesem Host, ohne Weiterleitung.

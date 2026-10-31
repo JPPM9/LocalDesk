@@ -257,6 +257,46 @@ export const de = {
     'Der Skill „{name}“ braucht etwa {tokens} Tokens, dieser Chat hat aber nur {context} Tokens Kontext. Sage dem Nutzer, dass er in den Chat-Einstellungen die Kontextlänge auf mindestens {suggested} erhöhen kann, und mache vorerst ohne den Skill weiter.',
   'skills.tooBigForModel':
     'Der Skill „{name}“ braucht etwa {tokens} Tokens und passt nicht in den Kontext dieses Chats ({context} Tokens). Sage dem Nutzer, dass er hier nicht benutzt werden kann, und mache ohne ihn weiter.',
+  'skills.import.unsupported':
+    'Dateityp nicht unterstützt: {name} (erlaubt sind .md, .zip und .skill).',
+  'skills.import.tooManyFiles': 'Höchstens {max} Dateien auf einmal.',
+  'skills.import.badInput': 'Ungültige Dateien.',
+  'skills.import.fileTooBig': '{name} ist zu groß (höchstens {max}).',
+  'skills.import.totalTooBig': 'Zusammen zu viele Daten (höchstens {max}).',
+  'skills.import.zipBroken':
+    '{name} lässt sich nicht als ZIP lesen oder ist beschädigt.',
+  'skills.import.zipEntries':
+    '{name} enthält zu viele Dateien (höchstens {max}).',
+  'skills.import.zipUnpacked':
+    '{name} wäre entpackt zu groß (höchstens {max}).',
+  'skills.import.noSkill': 'In {name} gibt es keine SKILL.md.',
+  'skills.import.tooManySkills': 'In {name} stecken mehr als {max} Skills.',
+  'skills.import.notText': '{name} ist keine gültige Textdatei (UTF-8).',
+  'skills.import.outside':
+    '{count} Datei(en) in {name} gehören zu keinem Skill und werden ignoriert.',
+  'skills.import.expired':
+    'Diese Vorschau ist abgelaufen – bitte lege die Dateien noch einmal ab.',
+  'skills.import.badPicks': 'Ungültige Auswahl.',
+  'skills.import.skipScript':
+    'Skript oder Programm – wird nie gespeichert oder ausgeführt',
+  'skills.import.skipNotText': 'kein unterstütztes Textformat',
+  'skills.import.skipTooBig': 'zu groß',
+  'skills.import.skipUnsafe': 'unzulässiger Pfad',
+  'skills.import.skipNotUtf8': 'kein gültiger Text (UTF-8)',
+  'skills.import.skipTooMany': 'zu viele Zusatzdateien',
+  'skills.import.skipDeep': 'zu tief verschachtelt',
+  'skills.import.skipDuplicate': 'doppelter Dateiname',
+  'scan.hidden':
+    'Unsichtbare oder die Leserichtung ändernde Zeichen in {where}.',
+  'scan.override': 'Auffällige Anweisung an das Modell in {where}: „{text}“',
+  'scan.command':
+    'Befehl, der auf deinem PC etwas laden, ändern oder löschen könnte, in {where}: „{text}“',
+  'scan.base64': 'Langer, verschlüsselt wirkender Block (Base64) in {where}.',
+  'scan.secrets':
+    'Aufforderung, Zugangsdaten zu verschicken, in {where}: „{text}“',
+  'scan.urls': 'Verweist auf Webadressen: {hosts}',
+  'scan.skipped':
+    '{count} Datei(en) nicht übernommen (Skripte oder Programme): {names}',
   'mcp.foldersNotFound': 'Ordner nicht gefunden: {paths}',
   'mcp.notRunning': 'Der MCP-Server läuft nicht mehr.',
   'mcp.noId': 'Server ohne ID',

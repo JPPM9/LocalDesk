@@ -10,17 +10,17 @@ import {
   SKILL_FILE_MAX_BYTES,
   SKILL_FILE_TEXT_MAX,
   SKILL_FILES_MAX,
+  SKILL_MD_MAX_BYTES,
   skillIdFromName,
   type SkillFile,
   type SkillInput,
   type SkillView,
 } from '../../shared/skills';
 import { atomicWrite } from '../obsidian/vault';
+import { safeSkillPath } from './skill-paths';
 import { tr } from '../../shared/messages';
 
 export const SKILL_FILE = 'SKILL.md';
-/** Größer darf eine SKILL.md nicht sein (Kopf + Anleitung, großzügig). */
-const MAX_FILE_BYTES = SKILL_BODY_MAX * 4 + 4096;
 
 /**
  * Skills als Ordner mit je einer SKILL.md unter `root` (z. B. %APPDATA%\LocalDesk\skills).
@@ -63,6 +63,44 @@ export class SkillStore {
       await mkdir(dir);
     }
     await atomicWrite(path.join(dir, SKILL_FILE), formatSkill(input));
+    return (await this.read(id))!;
+  }
+
+  /**
+   * Legt einen Skill aus einem Import an (SKILL.md und Zusatzdateien), immer als neuer
+   * Ordner mit freiem Namen – vorhandene Skills werden nie überschrieben. Schlägt etwas
+   * fehl, wird der gerade angelegte Ordner wieder entfernt.
+   */
+  async install(skill: {
+    name: string;
+    description: string;
+    body: string;
+    files: { path: string; text: string }[];
+  }): Promise<SkillView> {
+    await this.ensureRoot();
+    const id = await this.freeId(skillIdFromName(skill.name));
+    const dir = this.dir(id);
+    await mkdir(dir);
+    try {
+      await atomicWrite(path.join(dir, SKILL_FILE), formatSkill(skill));
+      for (const file of skill.files) {
+        // Doppelt gesichert: Pfad und Format noch einmal prüfen, bevor etwas geschrieben wird.
+        const rel = safeSkillPath(file.path);
+        if (!rel || !isSkillTextFile(rel)) {
+          throw new Error(tr('skills.onlyInFolder'));
+        }
+        const target = path.join(dir, ...rel.split('/'));
+        const inside = path.relative(dir, target);
+        if (inside.startsWith('..') || path.isAbsolute(inside)) {
+          throw new Error(tr('skills.onlyInFolder'));
+        }
+        await mkdir(path.dirname(target), { recursive: true });
+        await atomicWrite(target, file.text);
+      }
+    } catch (error) {
+      await rm(dir, { recursive: true, force: true });
+      throw error;
+    }
     return (await this.read(id))!;
   }
 
@@ -128,7 +166,8 @@ export class SkillStore {
       error,
     });
     if (!info.isFile()) return broken(tr('skills.notRegularFile'));
-    if (info.size > MAX_FILE_BYTES) return broken(tr('skills.fileTooLarge'));
+    if (info.size > SKILL_MD_MAX_BYTES)
+      return broken(tr('skills.fileTooLarge'));
     const skill = parseSkill(await readFile(file, 'utf8'), id);
     if (skill.body.length > SKILL_BODY_MAX) {
       return { id, ...skill, body: '', error: tr('skills.bodyTooLong') };

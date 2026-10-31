@@ -25,7 +25,7 @@ Erste installierbare Version.
   Dateien ändern mit Vorher/Nachher-Ansicht und „Rückgängig“, Befehle und Commits nur nach
   Freigabe (jeder einzeln, kein Push).
 - **Skills:** Anleitungen als SKILL.md (vier Beispiele dabei) – von Hand einschalten, in Projekten
-  und Vorlagen voreinstellen oder vom Modell passend laden lassen. Auch mehrzeilige Beschreibungen (YAML „|“/„>“), große Skills bis 60.000 Zeichen mit Größenanzeige in Tokens und Zusatzdateien (Textdateien im Skill-Ordner, vom Modell bei Bedarf lesbar; Skripte werden nie ausgeführt).
+  und Vorlagen voreinstellen oder vom Modell passend laden lassen. Auch mehrzeilige Beschreibungen (YAML „|“/„>“), große Skills bis 60.000 Zeichen mit Größenanzeige in Tokens und Zusatzdateien (Textdateien im Skill-Ordner, vom Modell bei Bedarf lesbar; Skripte werden nie ausgeführt). Hinzufügen per Ziehen und Ablegen (.md, .zip, .skill, auch mehrere): Vorschau mit Sicherheitsprüfung (Heuristik), gespeichert wird erst nach „Hinzufügen“; Skripte und Programme aus ZIPs werden nicht übernommen.
 - **Oberfläche** im Stil „Arbeitsplatz“: Symbolleiste links, Chatliste mit Tagesgruppen, Wissen und
   Werkzeuge als Schalter im Eingabefeld, Seitenbereich für Quellen und Kontext. Hell, dunkel oder wie
   Windows; Schrift Inter; Kontraste nach WCAG geprüft.

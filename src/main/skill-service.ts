@@ -4,6 +4,7 @@ import { IpcChannels, type Result } from '../shared/api';
 import type { GithubSkill } from '../shared/github';
 import { checkSkillInput, isSkillId, type SkillView } from '../shared/skills';
 import { fetchGithubSkill, type SkillFetch } from './skills/github-skill';
+import { SkillImports } from './skills/skill-import';
 import type { SkillStore } from './skills/skill-store';
 import { tr } from '../shared/messages';
 
@@ -13,6 +14,7 @@ export function registerSkillHandlers(
   /** Für Tests austauschbar; sonst das normale fetch. */
   skillFetch: SkillFetch = (url, init) => globalThis.fetch(url, init),
 ) {
+  const imports = new SkillImports(store);
   const failed = (error: unknown) => ({
     ok: false as const,
     error: error instanceof Error ? error.message : String(error),
@@ -49,6 +51,17 @@ export function registerSkillHandlers(
       typeof link === 'string' && link.length <= 500
         ? fetchGithubSkill(link, skillFetch)
         : Promise.resolve({ ok: false, error: tr('github.invalidLink') }),
+  );
+
+  // „Skill hinzufügen“: Die Dateien kommen als Bytes aus der Oberfläche (kein Pfad, nichts
+  // wird von der Platte gelesen). Erst die Vorschau, gespeichert wird mit installSkills.
+  ipcMain.handle(IpcChannels.inspectSkillFiles, (_event, files: unknown) =>
+    imports.inspect(files),
+  );
+  ipcMain.handle(
+    IpcChannels.installSkills,
+    (_event, importId: unknown, picks: unknown) =>
+      imports.install(importId, picks),
   );
 
   ipcMain.handle(

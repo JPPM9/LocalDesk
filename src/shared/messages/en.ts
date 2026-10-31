@@ -253,6 +253,42 @@ export const en: Record<MessageKey, string> = {
     'The skill “{name}” needs about {tokens} tokens, but this chat only has {context} tokens of context. Tell the user they can raise the context length to at least {suggested} in the chat settings, and carry on without the skill for now.',
   'skills.tooBigForModel':
     'The skill “{name}” needs about {tokens} tokens and does not fit into the context of this chat ({context} tokens). Tell the user it cannot be used here, and carry on without it.',
+  'skills.import.unsupported':
+    'File type not supported: {name} (allowed are .md, .zip and .skill).',
+  'skills.import.tooManyFiles': 'At most {max} files at once.',
+  'skills.import.badInput': 'Invalid files.',
+  'skills.import.fileTooBig': '{name} is too large (at most {max}).',
+  'skills.import.totalTooBig': 'Too much data together (at most {max}).',
+  'skills.import.zipBroken': '{name} cannot be read as a ZIP or is damaged.',
+  'skills.import.zipEntries': '{name} contains too many files (at most {max}).',
+  'skills.import.zipUnpacked':
+    '{name} would be too large when unpacked (at most {max}).',
+  'skills.import.noSkill': 'There is no SKILL.md in {name}.',
+  'skills.import.tooManySkills': '{name} contains more than {max} skills.',
+  'skills.import.notText': '{name} is not a valid text file (UTF-8).',
+  'skills.import.outside':
+    '{count} file(s) in {name} belong to no skill and are ignored.',
+  'skills.import.expired':
+    'This preview has expired – please drop the files again.',
+  'skills.import.badPicks': 'Invalid selection.',
+  'skills.import.skipScript': 'script or program – is never saved or run',
+  'skills.import.skipNotText': 'not a supported text format',
+  'skills.import.skipTooBig': 'too large',
+  'skills.import.skipUnsafe': 'path not allowed',
+  'skills.import.skipNotUtf8': 'not valid text (UTF-8)',
+  'skills.import.skipTooMany': 'too many extra files',
+  'skills.import.skipDeep': 'nested too deeply',
+  'skills.import.skipDuplicate': 'duplicate file name',
+  'scan.hidden':
+    'Invisible characters or ones that change the reading direction in {where}.',
+  'scan.override': 'Suspicious instruction to the model in {where}: “{text}”',
+  'scan.command':
+    'Command that could download, change or delete something on your PC, in {where}: “{text}”',
+  'scan.base64': 'Long block that looks encoded (Base64) in {where}.',
+  'scan.secrets': 'Request to send credentials somewhere, in {where}: “{text}”',
+  'scan.urls': 'Points to web addresses: {hosts}',
+  'scan.skipped':
+    '{count} file(s) not taken over (scripts or programs): {names}',
   'mcp.foldersNotFound': 'Folder not found: {paths}',
   'mcp.notRunning': 'The MCP server is no longer running.',
   'mcp.noId': 'Server without ID',

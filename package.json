@@ -45,6 +45,7 @@
     "@modelcontextprotocol/sdk": "1.32.2",
     "diff": "9.0.0",
     "electron-updater": "6.8.10",
+    "fflate": "^0.8.3",
     "i18next": "^26.5.11",
     "lucide-react": "^1.61.0",
     "mammoth": "1.13.0",

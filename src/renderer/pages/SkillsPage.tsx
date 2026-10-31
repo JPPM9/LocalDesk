@@ -9,6 +9,7 @@ import {
   RefreshCw,
   Save,
   Trash2,
+  Upload,
   WandSparkles,
 } from 'lucide-react';
 import { OLLAMA_DEFAULT_CONTEXT } from '../../shared/context';
@@ -18,11 +19,15 @@ import {
   SKILL_NAME_MAX,
   skillContextAdvice,
   type SkillInput,
+  type SkillView,
 } from '../../shared/skills';
+import type { SkillFinding } from '../../shared/skill-import';
 import { formatBytes } from '../utils/format';
 import type { GithubSkill } from '../../shared/github';
 import { PageHeader } from '../components/PageHeader';
 import { GithubSkillDialog } from '../components/skills/GithubSkillDialog';
+import { SkillFindings } from '../components/skills/SkillFindings';
+import { SkillImportDialog } from '../components/skills/SkillImportDialog';
 import { EmptyState } from '../components/EmptyState';
 import { Field } from '../components/settings/SettingsFields';
 import { useSkills } from '../skills/useSkills';
@@ -34,6 +39,8 @@ const NEW = 'new';
 
 const ICON_BTN =
   'grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text';
+const SIDEBAR_BTN =
+  'grid h-8 w-7 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text';
 const FIELD =
   'w-full rounded border border-border bg-bg px-2.5 py-1.5 outline-none focus:border-accent';
 
@@ -60,19 +67,32 @@ export function SkillsPage() {
   const [githubOpen, setGithubOpen] = useState(false);
   const [importedFrom, setImportedFrom] = useState<string | null>(null);
   const pendingImport = useRef<GithubSkill | null>(null);
+  const [importedFindings, setImportedFindings] = useState<SkillFinding[]>([]);
+  // „Skill hinzufügen“: Dateien aus dem Dialog oder auf die Seite gezogen (null = Dialog zu).
+  const [importFiles, setImportFiles] = useState<File[] | null>(null);
+  const [dragging, setDragging] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!notice) return;
+    const timer = setTimeout(() => setNotice(null), 8000);
+    return () => clearTimeout(timer);
+  }, [notice]);
 
   // Beim Wechsel des Skills (oder nach „Neu laden“) den Entwurf neu befüllen.
   const fill = () => {
     setError(null);
     setDirty(false);
     setImportedFrom(null);
+    setImportedFindings([]);
     if (skillId === NEW) {
       const imported = pendingImport.current;
       pendingImport.current = null;
       if (imported) {
-        const { source, ...skill } = imported;
+        const { source, findings, ...skill } = imported;
         setDraft(skill);
         setImportedFrom(source);
+        setImportedFindings(findings);
         setDirty(true); // Erst „Speichern“ legt die Datei an.
         return;
       }
@@ -102,6 +122,17 @@ export function SkillsPage() {
     if (skillId === NEW) fill();
     else navigate(`/skills/${NEW}`);
   };
+
+  const onInstalled = async (installed: SkillView[]) => {
+    setImportFiles(null);
+    await reload();
+    setNotice(t('skills.import.done', { count: installed.length }));
+    if (installed[0]) navigate(`/skills/${installed[0].id}`);
+  };
+
+  // Dateien auf die Seite ziehen öffnet „Skill hinzufügen“ (Ablegen ist nirgends sonst erlaubt).
+  const carriesFiles = (event: React.DragEvent) =>
+    importFiles === null && event.dataTransfer.types.includes('Files');
 
   // Passt der Skill in den Standard-Kontext von Ollama? Sonst Hinweis, was einzustellen ist.
   const advice = draft ? skillContextAdvice(draft.body) : null;
@@ -176,13 +207,37 @@ export function SkillsPage() {
   };
 
   return (
-    <div className="flex h-full">
+    <div
+      className="relative flex h-full"
+      onDragOver={(event) => {
+        if (!carriesFiles(event)) return;
+        event.preventDefault();
+        setDragging(true);
+      }}
+      onDragLeave={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setDragging(false);
+        }
+      }}
+      onDrop={(event) => {
+        if (!carriesFiles(event)) return;
+        event.preventDefault();
+        setDragging(false);
+        const files = [...event.dataTransfer.files];
+        if (files.length > 0) setImportFiles(files);
+      }}
+    >
+      {dragging && (
+        <div className="pointer-events-none absolute inset-2 z-40 grid place-items-center rounded-xl border-2 border-dashed border-accent bg-accent-soft/70 text-sm font-medium">
+          {t('skills.dropHere')}
+        </div>
+      )}
       <aside className="flex w-[270px] shrink-0 flex-col border-r border-border bg-surface">
         <div className="flex gap-1.5 px-2.5 pt-3 pb-2">
           <button
             type="button"
             onClick={() => navigate(`/skills/${NEW}`)}
-            className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg bg-accent px-3 py-1.5 font-medium text-white hover:opacity-90"
+            className="flex min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-accent px-2.5 py-1.5 font-medium text-white hover:opacity-90"
           >
             <Plus size={16} />
             {t('skills.new')}
@@ -192,16 +247,25 @@ export function SkillsPage() {
             onClick={() => setGithubOpen(true)}
             title={t('skills.github.title')}
             aria-label={t('skills.github.title')}
-            className={ICON_BTN}
+            className={SIDEBAR_BTN}
           >
             <Download size={16} />
+          </button>
+          <button
+            type="button"
+            onClick={() => setImportFiles([])}
+            title={t('skills.addFiles')}
+            aria-label={t('skills.addFiles')}
+            className={SIDEBAR_BTN}
+          >
+            <Upload size={16} />
           </button>
           <button
             type="button"
             onClick={() => void reload()}
             title={t('skills.reload')}
             aria-label={t('skills.reload')}
-            className={ICON_BTN}
+            className={SIDEBAR_BTN}
           >
             <RefreshCw size={16} />
           </button>
@@ -210,11 +274,16 @@ export function SkillsPage() {
             onClick={() => void window.api.openSkillFolder()}
             title={t('skills.openFolder')}
             aria-label={t('skills.openFolder')}
-            className={ICON_BTN}
+            className={SIDEBAR_BTN}
           >
             <FolderOpen size={16} />
           </button>
         </div>
+        {notice && (
+          <p className="mx-2.5 mb-2 rounded-lg border border-ok/40 bg-ok/10 px-2.5 py-1.5 text-xs">
+            {notice}
+          </p>
+        )}
         <nav className="min-h-0 flex-1 overflow-y-auto px-2.5 pb-2">
           {listError && (
             <p className="px-2 py-2 text-xs text-error">{listError}</p>
@@ -315,6 +384,11 @@ export function SkillsPage() {
                   {t('skills.github.imported', { source: importedFrom })}
                 </p>
               )}
+              {importedFrom && !draft.id && (
+                <div className="rounded-xl border border-border bg-surface px-3.5 py-2.5">
+                  <SkillFindings findings={importedFindings} />
+                </div>
+              )}
               <Field label={t('skills.name')}>
                 <input
                   autoFocus={skillId === NEW}
@@ -399,6 +473,13 @@ export function SkillsPage() {
           )}
         </div>
       </div>
+      {importFiles !== null && (
+        <SkillImportDialog
+          initialFiles={importFiles}
+          onClose={() => setImportFiles(null)}
+          onInstalled={(installed) => void onInstalled(installed)}
+        />
+      )}
       {githubOpen && (
         <GithubSkillDialog
           onLoaded={onImported}
