@@ -689,6 +689,11 @@
   ihrer Sprache. 2a ✓: allgemeine Fehler (Ungültige Eingabe/ID/Kennung, … nicht gefunden, Werkzeug
   fehlt, leere Antwort); in der gebauten App Deutsch↔Englisch ohne Neustart geprüft. Offen: 2b Code-Bereich,
   2c E-Mail, 2d Wissen/Obsidian/MCP/Skills/Updates/Downloads/Ollama.
+  2b ✓ Code-Bereich: Schlüssel `code.*` (Pfad-/Ordnerfehler, Datei ändern samt Vorschau und Ergebnis,
+  Git, Befehl, Rückgängig, Dateien lesen/suchen). Regel: Meldungen und Werkzeug-ERGEBNISSE folgen der
+  Sprache; Werkzeug-BESCHREIBUNGEN und Schema-Texte für das Modell kommen erst in Schritt 3. Parameter-
+  namen (`old_text`, `start_line`, `path`) bleiben unübersetzt. Test `tests/main/code-english.test.ts`
+  führt echte Funktionen auf Englisch aus; in der gebauten App Deutsch↔Englisch geprüft.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

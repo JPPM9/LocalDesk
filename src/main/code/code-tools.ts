@@ -5,6 +5,7 @@ import { CODE_FILE_MAX, HIDDEN_DIRS, type Workspace } from './workspace';
 
 export { CODE_TOOL_SERVER } from '../../shared/code';
 import { CODE_TOOL_SERVER } from '../../shared/code';
+import { tr } from '../../shared/messages';
 
 /** Ordner, die beim Auflisten und Suchen übersprungen werden (riesig, erzeugt). */
 const SKIPPED_DIRS = new Set([
@@ -150,7 +151,7 @@ async function listFiles(
         if (HIDDEN_DIRS.has(entry.name)) continue;
         count++;
         if (SKIPPED_DIRS.has(entry.name)) {
-          lines.push(`${indent}${entry.name}/ (ausgelassen)`);
+          lines.push(`${indent}${tr('code.skippedDir', { name: entry.name })}`);
         } else {
           lines.push(`${indent}${entry.name}/`);
           if (level + 1 < depth)
@@ -164,13 +165,11 @@ async function listFiles(
   };
   await walk(start, 0);
   const title = ws.relative(start) || '.';
-  if (lines.length === 0) return `${title}: leer`;
+  if (lines.length === 0) return tr('code.emptyDir', { title });
   return [
     `${title}/`,
     ...lines.map((l) => `  ${l}`),
-    ...(count >= LIST_MAX
-      ? [`[… mehr als ${LIST_MAX} Einträge – Unterordner einzeln ansehen]`]
-      : []),
+    ...(count >= LIST_MAX ? [tr('code.listTruncated', { max: LIST_MAX })] : []),
   ].join('\n');
 }
 
@@ -180,11 +179,12 @@ async function readLines(
   startLine?: number,
   endLine?: number,
 ): Promise<string> {
-  if (!relative) throw new Error('Pfad fehlt.');
+  if (!relative) throw new Error(tr('code.pathMissing'));
   const file = await ws.read(relative);
-  if (file.tooLarge) throw new Error(`${file.path} ist größer als 1 MB.`);
+  if (file.tooLarge)
+    throw new Error(tr('code.fileTooLarge', { path: file.path }));
   if (file.binary || file.text === undefined) {
-    throw new Error(`${file.path} ist keine Textdatei.`);
+    throw new Error(tr('code.notText', { path: file.path }));
   }
   const all = file.text.split(/\r?\n/);
   const from = Math.max(1, startLine ?? 1);
@@ -203,9 +203,9 @@ async function readLines(
   }
   const more =
     to < all.length
-      ? `\n[… Datei hat ${all.length} Zeilen – weiter mit start_line=${to + 1}]`
+      ? `\n${tr('code.readMore', { total: all.length, next: to + 1 })}`
       : '';
-  return `${file.path} (Zeilen ${from}–${to} von ${all.length}):\n${out.join('\n')}${more}`;
+  return `${tr('code.readHeader', { path: file.path, from, to, total: all.length })}\n${out.join('\n')}${more}`;
 }
 
 async function searchText(
@@ -214,7 +214,7 @@ async function searchText(
   relative: string,
 ): Promise<string> {
   const needle = query.trim().toLowerCase();
-  if (!needle) throw new Error('Suchtext fehlt.');
+  if (!needle) throw new Error(tr('code.queryMissing'));
   const start = await ws.resolve(relative);
   const hits: string[] = [];
   let files = 0;
@@ -246,9 +246,12 @@ async function searchText(
     }
   };
   await walk(start);
-  if (hits.length === 0) return `Kein Treffer für „${query.trim()}“.`;
+  if (hits.length === 0) return tr('code.noHit', { query: query.trim() });
   return [
-    `${hits.length}${hits.length >= SEARCH_HITS_MAX ? '+' : ''} Treffer für „${query.trim()}“:`,
+    tr('code.hits', {
+      count: `${hits.length}${hits.length >= SEARCH_HITS_MAX ? '+' : ''}`,
+      query: query.trim(),
+    }),
     ...hits,
   ].join('\n');
 }

@@ -100,7 +100,7 @@ export async function planChange(
   args: Record<string, unknown>,
 ): Promise<Planned> {
   const relative = typeof args.path === 'string' ? args.path : '';
-  if (!relative.trim()) throw new Error('Pfad fehlt.');
+  if (!relative.trim()) throw new Error(tr('code.pathMissing'));
   // Nur write_file darf eine neue Datei anlegen.
   const full = await ws.resolve(relative, toolName !== 'write_file');
   const rel = ws.relative(full);
@@ -108,26 +108,21 @@ export async function planChange(
 
   switch (toolName) {
     case 'edit_file': {
-      if (before === null) throw new Error(`Gibt es nicht: ${rel}`);
+      if (before === null) throw new Error(tr('code.notFound', { path: rel }));
       const oldText = typeof args.old_text === 'string' ? args.old_text : '';
       const newText = typeof args.new_text === 'string' ? args.new_text : '';
-      if (!oldText) throw new Error('old_text fehlt.');
-      if (oldText === newText)
-        throw new Error('old_text und new_text sind gleich.');
+      if (!oldText) throw new Error(tr('code.oldTextMissing'));
+      if (oldText === newText) throw new Error(tr('code.textsEqual'));
       // Windows-Zeilenenden: vergleichen mit \n, zurückschreiben wie vorher.
       const crlf = before.includes('\r\n');
       const text = crlf ? before.replace(/\r\n/g, '\n') : before;
       const find = oldText.replace(/\r\n/g, '\n');
       const count = text.split(find).length - 1;
       if (count === 0) {
-        throw new Error(
-          `old_text kommt in ${rel} nicht vor – erst mit read_file den genauen Text nachsehen.`,
-        );
+        throw new Error(tr('code.oldTextNotFound', { path: rel }));
       }
       if (count > 1) {
-        throw new Error(
-          `old_text kommt in ${rel} ${count}-mal vor – mehr Zeilen drumherum mitnehmen, damit er eindeutig ist.`,
-        );
+        throw new Error(tr('code.oldTextAmbiguous', { path: rel, count }));
       }
       const replaced = text.replace(find, () => newText.replace(/\r\n/g, '\n'));
       return {
@@ -139,15 +134,15 @@ export async function planChange(
     }
     case 'write_file': {
       const content = typeof args.content === 'string' ? args.content : null;
-      if (content === null) throw new Error('content fehlt.');
+      if (content === null) throw new Error(tr('code.contentMissing'));
       if (content.length > CODE_FILE_MAX)
-        throw new Error('Inhalt ist größer als 1 MB.');
+        throw new Error(tr('code.contentTooLarge'));
       if (before === content)
-        throw new Error(`${rel} hat schon genau diesen Inhalt.`);
+        throw new Error(tr('code.sameContent', { path: rel }));
       return { path: rel, full, before, after: content };
     }
     case 'delete_file': {
-      if (before === null) throw new Error(`Gibt es nicht: ${rel}`);
+      if (before === null) throw new Error(tr('code.notFound', { path: rel }));
       return { path: rel, full, before, after: null };
     }
     default:
@@ -172,7 +167,7 @@ export function changePreview(plan: Planned): string {
   if (lines.length > PREVIEW_LINES_MAX) {
     return [
       ...lines.slice(0, PREVIEW_LINES_MAX),
-      `[… ${lines.length - PREVIEW_LINES_MAX} weitere Zeilen]`,
+      tr('code.moreLines', { count: lines.length - PREVIEW_LINES_MAX }),
     ].join('\n');
   }
   return lines.join('\n');
@@ -196,23 +191,24 @@ export async function applyChange(
   });
   if (plan.after === null) {
     await rm(plan.full);
-    return `Gelöscht: ${plan.path}`;
+    return tr('code.deleted', { path: plan.path });
   }
   await mkdir(path.dirname(plan.full), { recursive: true });
   await writeFile(plan.full, plan.after, 'utf8');
   return plan.before === null
-    ? `Angelegt: ${plan.path}`
-    : `Geändert: ${plan.path}`;
+    ? tr('code.created', { path: plan.path })
+    : tr('code.changed', { path: plan.path });
 }
 
 async function readText(full: string, rel: string): Promise<string | null> {
   const info = await stat(full).catch(() => null);
   if (!info) return null;
-  if (!info.isFile()) throw new Error(`Keine Datei: ${rel}`);
-  if (info.size > CODE_FILE_MAX) throw new Error(`${rel} ist größer als 1 MB.`);
+  if (!info.isFile()) throw new Error(tr('code.notAFile', { path: rel }));
+  if (info.size > CODE_FILE_MAX)
+    throw new Error(tr('code.fileTooLarge', { path: rel }));
   const bytes = await readFile(full);
   if (bytes.subarray(0, 8000).includes(0)) {
-    throw new Error(`${rel} ist keine Textdatei.`);
+    throw new Error(tr('code.notText', { path: rel }));
   }
   return bytes.toString('utf8');
 }

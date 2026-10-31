@@ -26,4 +26,75 @@ export const en: Record<MessageKey, string> = {
   'error.toolUnavailable': "The tool “{tool}” doesn't exist or is turned off.",
   'chat.emptyAnswer':
     "The model didn't write an answer – it probably tried to call a tool incorrectly. Please ask again or pick a different model.",
+  'code.invalidFolder': 'Not a valid folder.',
+  'code.folderMissing': "The folder doesn't exist (any more): {folder}",
+  'code.notAFolder': 'That is not a folder: {folder}',
+  'code.pathOutside':
+    'Only paths inside the project folder are allowed: {path}',
+  'code.pathEscapes': 'The path leads out of the project folder: {path}',
+  'code.notFound': "Doesn't exist: {path}",
+  'code.gitBlocked': 'The .git folder is blocked: {path}',
+  'code.notAFile': 'Not a file: {path}',
+  'code.rootDrive':
+    "A whole drive doesn't work – please choose a project folder.",
+  'code.rootSystem':
+    "System folders don't work – please choose a project folder.",
+  'code.rootHome':
+    "The whole user folder doesn't work – please choose a project folder.",
+  'code.pathMissing': 'Path is missing.',
+  'code.oldTextMissing': 'old_text is missing.',
+  'code.textsEqual': 'old_text and new_text are the same.',
+  'code.oldTextNotFound':
+    "old_text doesn't occur in {path} – look up the exact text with read_file first.",
+  'code.oldTextAmbiguous':
+    'old_text occurs {count} times in {path} – include more surrounding lines so it is unique.',
+  'code.contentMissing': 'content is missing.',
+  'code.contentTooLarge': 'The content is larger than 1 MB.',
+  'code.sameContent': '{path} already has exactly this content.',
+  'code.moreLines': '[… {count} more lines]',
+  'code.deleted': 'Deleted: {path}',
+  'code.created': 'Created: {path}',
+  'code.changed': 'Changed: {path}',
+  'code.fileTooLarge': '{path} is larger than 1 MB.',
+  'code.notText': '{path} is not a text file.',
+  'code.queryMissing': 'Search text is missing.',
+  'code.skippedDir': '{name}/ (skipped)',
+  'code.emptyDir': '{title}: empty',
+  'code.listTruncated':
+    '[… more than {max} entries – look at subfolders one by one]',
+  'code.readMore':
+    '[… file has {total} lines – continue with start_line={next}]',
+  'code.readHeader': '{path} (lines {from}–{to} of {total}):',
+  'code.noHit': 'No match for “{query}”.',
+  'code.hits': '{count} matches for “{query}”:',
+  'code.noBackup': 'There is no backup for this change.',
+  'code.alreadyUndone': 'Already undone.',
+  'code.changedSince': '{path} has been changed again since then.',
+  'code.pickFolderTitle': 'Choose project folder',
+  'code.sessionNotCreated': 'Session was not created.',
+  'code.undoneNote':
+    'Undone by the user – the file is back to how it was before this change.',
+  'code.gitMissing': 'Git was not found – is Git installed?',
+  'code.notGitRepo': 'The project folder is not a Git project.',
+  'code.gitSays': 'Git says: {text}',
+  'code.commitMessageMissing': 'Commit message is missing.',
+  'code.commitMessageTooLong': 'The commit message is too long.',
+  'code.nothingToCommit':
+    'Nothing to commit – no changes in the project folder.',
+  'code.commitPreview':
+    "Message:\n{message}\n\nFiles:\n{files}\n\nThe project's Git hooks do not run.",
+  'code.noChanges': '(no changes)',
+  'code.noKnownChanges': '(no changes to known files)',
+  'code.newFiles': 'New files (not in Git yet):\n{files}',
+  'code.diffTruncated': '[… shortened – look at single files with path]',
+  'code.committed': 'Committed: {commit}',
+  'code.commandPreview':
+    '{command}\n\nFolder: project folder · Time limit: {seconds} s',
+  'code.commandMissing': 'Command is missing.',
+  'code.commandTooLong': 'The command is too long.',
+  'code.commandTimeout': 'Cancelled after {seconds} s (time limit).',
+  'code.commandStopped': 'Stopped by the user.',
+  'code.exitCode': 'Exit code: {code} ({seconds} s)',
+  'code.noOutput': '(no output)',
+  'code.outputSkipped': '[… {count} characters left out …]',
 };

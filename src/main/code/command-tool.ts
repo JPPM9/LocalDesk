@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process';
 import { CODE_TOOL_SERVER } from '../../shared/code';
 import type { OfferedTool } from '../../shared/tools';
 import { powershellPath, taskkillPath } from './executables';
+import { tr } from '../../shared/messages';
 
 export const COMMAND_TOOL = 'run_command';
 const TIMEOUT_DEFAULT_S = 120;
@@ -36,15 +37,15 @@ export function commandTool(): OfferedTool {
     alwaysAsk: true,
     describe: async (args) => {
       const { command, timeoutS } = commandArgs(args);
-      return `${command}\n\nOrdner: Projektordner · Zeitlimit: ${timeoutS} s`;
+      return tr('code.commandPreview', { command, seconds: timeoutS });
     },
   };
 }
 
 export function commandArgs(args: Record<string, unknown>) {
   const command = typeof args.command === 'string' ? args.command.trim() : '';
-  if (!command) throw new Error('Befehl fehlt.');
-  if (command.length > 2000) throw new Error('Der Befehl ist zu lang.');
+  if (!command) throw new Error(tr('code.commandMissing'));
+  if (command.length > 2000) throw new Error(tr('code.commandTooLong'));
   const wanted =
     typeof args.timeout_seconds === 'number' &&
     Number.isFinite(args.timeout_seconds)
@@ -117,16 +118,16 @@ export function runCommand(
       const seconds = ((Date.now() - started) / 1000).toFixed(1);
       const head =
         ended === 'timeout'
-          ? `Abgebrochen nach ${timeoutS} s (Zeitlimit).`
+          ? tr('code.commandTimeout', { seconds: timeoutS })
           : ended === 'aborted'
-            ? 'Vom Nutzer gestoppt.'
-            : `Exit-Code: ${code ?? '–'} (${seconds} s)`;
-      resolve(`${head}\n${shorten(output.trim()) || '(keine Ausgabe)'}`);
+            ? tr('code.commandStopped')
+            : tr('code.exitCode', { code: code ?? '–', seconds });
+      resolve(`${head}\n${shorten(output.trim()) || tr('code.noOutput')}`);
     });
   });
 }
 
 function shorten(text: string): string {
   if (text.length <= OUTPUT_HEAD + OUTPUT_TAIL) return text;
-  return `${text.slice(0, OUTPUT_HEAD)}\n[… ${text.length - OUTPUT_HEAD - OUTPUT_TAIL} Zeichen ausgelassen …]\n${text.slice(-OUTPUT_TAIL)}`;
+  return `${text.slice(0, OUTPUT_HEAD)}\n${tr('code.outputSkipped', { count: text.length - OUTPUT_HEAD - OUTPUT_TAIL })}\n${text.slice(-OUTPUT_TAIL)}`;
 }

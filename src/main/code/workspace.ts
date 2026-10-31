@@ -1,6 +1,7 @@
 import { open, readdir, realpath, stat } from 'node:fs/promises';
 import path from 'node:path';
 import type { CodeEntry, CodeFile } from '../../shared/code';
+import { tr } from '../../shared/messages';
 
 /** Größte Datei, die angezeigt oder dem Modell gegeben wird. */
 export const CODE_FILE_MAX = 1_000_000;
@@ -19,12 +20,12 @@ export class Workspace {
 
   /** Prüft den Ordner und merkt sich seinen echten Pfad (Verknüpfungen aufgelöst). */
   static async open(folder: string): Promise<Workspace> {
-    if (!path.isAbsolute(folder)) throw new Error('Kein gültiger Ordner.');
+    if (!path.isAbsolute(folder)) throw new Error(tr('code.invalidFolder'));
     const real = await realpath(folder).catch(() => {
-      throw new Error(`Den Ordner gibt es nicht (mehr): ${folder}`);
+      throw new Error(tr('code.folderMissing', { folder }));
     });
     if (!(await stat(real)).isDirectory()) {
-      throw new Error(`Das ist kein Ordner: ${folder}`);
+      throw new Error(tr('code.notAFolder', { folder }));
     }
     const problem = unsafeRoot(real);
     if (problem) throw new Error(problem);
@@ -46,17 +47,17 @@ export class Workspace {
       clean.includes('\0')
     ) {
       if (clean === '' || clean === '.') return this.root;
-      throw new Error(`Nur Pfade im Projektordner sind erlaubt: ${relative}`);
+      throw new Error(tr('code.pathOutside', { path: relative }));
     }
     // Ein „:“ gehört unter Windows in keinen Dateinamen: Es steht für Laufwerke,
     // versteckte Datenströme („datei:strom“, „.git::$INDEX_ALLOCATION“) und
     // Git-Pfadzauber („:(top)“).
     if (clean.includes(':')) {
-      throw new Error(`Nur Pfade im Projektordner sind erlaubt: ${relative}`);
+      throw new Error(tr('code.pathOutside', { path: relative }));
     }
     const full = path.resolve(this.root, clean);
     if (!this.contains(full)) {
-      throw new Error(`Nur Pfade im Projektordner sind erlaubt: ${relative}`);
+      throw new Error(tr('code.pathOutside', { path: relative }));
     }
     // Verknüpfungen auflösen: Der echte Ort muss ebenfalls im Projekt liegen.
     let existing = full;
@@ -65,19 +66,18 @@ export class Workspace {
       try {
         const real = await realpath(existing);
         if (!this.contains(real)) {
-          throw new Error(
-            `Der Pfad führt aus dem Projektordner hinaus: ${relative}`,
-          );
+          throw new Error(tr('code.pathEscapes', { path: relative }));
         }
         realExisting = real;
         break;
       } catch (error) {
         if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
         if (mustExist && existing === full) {
-          throw new Error(`Gibt es nicht: ${relative}`);
+          throw new Error(tr('code.notFound', { path: relative }));
         }
         const parent = path.dirname(existing);
-        if (parent === existing) throw new Error(`Gibt es nicht: ${relative}`);
+        if (parent === existing)
+          throw new Error(tr('code.notFound', { path: relative }));
         existing = parent;
       }
     }
@@ -86,7 +86,7 @@ export class Workspace {
     // Rest des Pfads, den es noch nicht gibt.
     const rest = path.relative(existing, full);
     if (this.isHidden(full) || this.isHidden(path.join(realExisting, rest))) {
-      throw new Error(`Der Ordner .git ist gesperrt: ${relative}`);
+      throw new Error(tr('code.gitBlocked', { path: relative }));
     }
     return full;
   }
@@ -134,7 +134,8 @@ export class Workspace {
   async read(relative: string): Promise<CodeFile> {
     const full = await this.resolve(relative);
     const info = await stat(full);
-    if (!info.isFile()) throw new Error(`Keine Datei: ${relative}`);
+    if (!info.isFile())
+      throw new Error(tr('code.notAFile', { path: relative }));
     const base = { path: this.relative(full), size: info.size };
     if (info.size > CODE_FILE_MAX) return { ...base, tooLarge: true };
     const handle = await open(full, 'r');
@@ -168,7 +169,7 @@ export class Workspace {
 /** Ganze Laufwerke und Systemordner sind als Projekt zu gefährlich. */
 function unsafeRoot(real: string): string | null {
   if (path.parse(real).root === real) {
-    return 'Ein ganzes Laufwerk geht nicht – bitte einen Projektordner wählen.';
+    return tr('code.rootDrive');
   }
   const lower = real.toLowerCase();
   const system = [
@@ -179,11 +180,11 @@ function unsafeRoot(real: string): string | null {
     .filter((p): p is string => !!p)
     .map((p) => p.toLowerCase());
   if (system.some((p) => lower === p || lower.startsWith(p + path.sep))) {
-    return 'Systemordner gehen nicht – bitte einen Projektordner wählen.';
+    return tr('code.rootSystem');
   }
   const home = process.env.USERPROFILE?.toLowerCase();
   if (home && lower === home) {
-    return 'Der ganze Benutzerordner geht nicht – bitte einen Projektordner wählen.';
+    return tr('code.rootHome');
   }
   return null;
 }

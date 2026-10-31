@@ -93,7 +93,7 @@ export function git(cwd: string, args: string[]): Promise<string> {
     // Voller Pfad, nie aus dem Projektordner (siehe executables.ts).
     const program = findProgram('git', cwd);
     if (!program) {
-      reject(new Error('Git wurde nicht gefunden – ist Git installiert?'));
+      reject(new Error(tr('code.gitMissing')));
       return;
     }
     execFile(
@@ -113,8 +113,8 @@ export function git(cwd: string, args: string[]): Promise<string> {
           reject(
             new Error(
               /not a git repository/i.test(text)
-                ? 'Der Projektordner ist kein Git-Projekt.'
-                : `Git meldet: ${text.slice(0, 1000)}`,
+                ? tr('code.notGitRepo')
+                : tr('code.gitSays', { text: text.slice(0, 1000) }),
             ),
           );
         } else {
@@ -127,9 +127,9 @@ export function git(cwd: string, args: string[]): Promise<string> {
 
 function commitMessage(args: Record<string, unknown>): string {
   const message = typeof args.message === 'string' ? args.message.trim() : '';
-  if (!message) throw new Error('Commit-Nachricht fehlt.');
+  if (!message) throw new Error(tr('code.commitMessageMissing'));
   if (message.length > MESSAGE_MAX)
-    throw new Error('Die Commit-Nachricht ist zu lang.');
+    throw new Error(tr('code.commitMessageTooLong'));
   return message;
 }
 
@@ -146,9 +146,8 @@ export async function describeCommit(
     '--',
     '.',
   ]);
-  if (!files)
-    throw new Error('Nichts zu committen – keine Änderungen im Projektordner.');
-  return `Nachricht:\n${message}\n\nDateien:\n${files}\n\nGit-Hooks des Projekts laufen dabei nicht.`;
+  if (!files) throw new Error(tr('code.nothingToCommit'));
+  return tr('code.commitPreview', { message, files });
 }
 
 /** Führt ein Git-Werkzeug aus (Commit erst nach deiner Freigabe). */
@@ -161,7 +160,7 @@ export async function callGitTool(
   switch (toolName) {
     case 'git_status': {
       const out = await git(cwd, ['status', '--short', '--branch', '--', '.']);
-      return out.includes('\n') ? out : `${out}\n(keine Änderungen)`;
+      return out.includes('\n') ? out : `${out}\n${tr('code.noChanges')}`;
     }
     case 'git_diff': {
       // Auch hier gilt der Pfad-Schutz – das Git-Projekt kann größer sein als der Ordner.
@@ -194,21 +193,21 @@ export async function callGitTool(
         path,
       ]);
       const parts = [
-        diff || '(keine Änderungen an bekannten Dateien)',
-        ...(untracked
-          ? [`Neue Dateien (noch nicht in Git):\n${untracked}`]
-          : []),
+        diff || tr('code.noKnownChanges'),
+        ...(untracked ? [tr('code.newFiles', { files: untracked })] : []),
       ];
       const text = parts.join('\n\n');
       return text.length > DIFF_MAX
-        ? `${text.slice(0, DIFF_MAX)}\n[… gekürzt – einzelne Dateien mit path ansehen]`
+        ? `${text.slice(0, DIFF_MAX)}\n${tr('code.diffTruncated')}`
         : text;
     }
     case 'git_commit': {
       const message = commitMessage(args);
       await git(cwd, ['add', '--all', '--', '.']);
       await git(cwd, ['commit', '-m', message, '--', '.']);
-      return `Committet: ${await git(cwd, ['log', '-1', '--format=%h %s'])}`;
+      return tr('code.committed', {
+        commit: await git(cwd, ['log', '-1', '--format=%h %s']),
+      });
     }
     default:
       throw new Error(tr('error.toolMissing', { tool: toolName }));

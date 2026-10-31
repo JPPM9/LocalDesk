@@ -48,9 +48,9 @@ export class CodeBackups {
     if (!backup)
       return {
         ok: false,
-        error: 'Zu dieser Änderung gibt es keine Sicherung.',
+        error: tr('code.noBackup'),
       };
-    if (backup.undone) return { ok: false, error: 'Schon rückgängig gemacht.' };
+    if (backup.undone) return { ok: false, error: tr('code.alreadyUndone') };
     const ws = await Workspace.open(backup.workspace);
     const full = await ws.resolve(backup.path, false);
     const current = await readFile(full, 'utf8').catch(() => null);
@@ -58,7 +58,7 @@ export class CodeBackups {
       return {
         ok: false,
         conflict: true,
-        error: `${backup.path} wurde seither noch einmal geändert.`,
+        error: tr('code.changedSince', { path: backup.path }),
       };
     }
     if (backup.before === null) {

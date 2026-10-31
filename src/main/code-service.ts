@@ -33,7 +33,7 @@ export function registerCodeHandlers(
     async (event): Promise<Result<CodeSession> | null> => {
       const window = BrowserWindow.fromWebContents(event.sender);
       const options: Electron.OpenDialogOptions = {
-        title: 'Projektordner wählen',
+        title: tr('code.pickFolderTitle'),
         properties: ['openDirectory'],
       };
       const picked = window
@@ -51,7 +51,7 @@ export function registerCodeHandlers(
           workspace: workspace.root,
         });
         const session = chats.listCodeSessions().find((s) => s.id === id);
-        if (!session) throw new Error('Sitzung nicht angelegt.');
+        if (!session) throw new Error(tr('code.sessionNotCreated'));
         return session;
       });
     },
@@ -92,10 +92,7 @@ export function registerCodeHandlers(
         const result = await backups.undo(callId, force === true);
         // Der Agent soll im Verlauf sehen, dass die Änderung nicht mehr gilt.
         if (result.ok) {
-          chats.appendToolResult(
-            callId,
-            'Vom Nutzer rückgängig gemacht – die Datei ist wieder wie vor dieser Änderung.',
-          );
+          chats.appendToolResult(callId, tr('code.undoneNote'));
         }
         return result;
       } catch (error) {
