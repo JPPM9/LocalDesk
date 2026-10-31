@@ -8,6 +8,7 @@ import { EmptyState } from '../components/EmptyState';
 import { FileTree } from '../components/code/FileTree';
 import { CodeAgent } from '../components/code/CodeAgent';
 import { FileView } from '../components/code/FileView';
+import { useConfirm } from '../components/ConfirmDialog';
 
 /**
  * Seite „Code“: links die Sitzungen (je ein Projektordner), daneben der
@@ -15,6 +16,7 @@ import { FileView } from '../components/code/FileView';
  */
 export function CodePage() {
   const { t } = useTranslation();
+  const confirm = useConfirm();
   const navigate = useNavigate();
   const sessionId = useParams().sessionId ?? null;
   const [sessions, setSessions] = useState<CodeSession[] | null>(null);
@@ -43,7 +45,14 @@ export function CodePage() {
   };
 
   const remove = async (s: CodeSession) => {
-    if (!window.confirm(t('code.confirmDelete', { name: s.title }))) return;
+    if (
+      !(await confirm({
+        message: t('code.confirmDelete', { name: s.title }),
+        confirmLabel: t('dialog.delete'),
+        danger: true,
+      }))
+    )
+      return;
     await window.api.deleteChat(s.id);
     await load();
     if (s.id === sessionId) navigate('/code');

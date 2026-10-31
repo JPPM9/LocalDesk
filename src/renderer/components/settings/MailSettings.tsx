@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { CircleCheck, LoaderCircle, Lock, Mail } from 'lucide-react';
 import type { MailAccountView, MailAppView } from '../../../shared/mail';
 import { Field } from './SettingsFields';
+import { useConfirm } from '../ConfirmDialog';
 
 /** Abschnitt „E-Mail“ in den Einstellungen: eigene Google-App und Konten. */
 export function MailSettings() {
   const { t } = useTranslation();
+  const confirm = useConfirm();
   const [google, setGoogle] = useState<MailAppView | null | undefined>();
   const [accounts, setAccounts] = useState<MailAccountView[]>([]);
   const [editing, setEditing] = useState(false);
@@ -46,7 +48,14 @@ export function MailSettings() {
   };
 
   const remove = async () => {
-    if (!window.confirm(t('mailSettings.confirmRemove'))) return;
+    if (
+      !(await confirm({
+        message: t('mailSettings.confirmRemove'),
+        confirmLabel: t('dialog.remove'),
+        danger: true,
+      }))
+    )
+      return;
     const result = await window.api.clearGoogleApp();
     if (result.ok) setGoogle(null);
     else setError(result.error);
@@ -64,9 +73,11 @@ export function MailSettings() {
 
   const disconnect = async (account: MailAccountView) => {
     if (
-      !window.confirm(
-        t('mailSettings.confirmDisconnect', { email: account.email }),
-      )
+      !(await confirm({
+        message: t('mailSettings.confirmDisconnect', { email: account.email }),
+        confirmLabel: t('mailSettings.disconnect'),
+        danger: true,
+      }))
     ) {
       return;
     }

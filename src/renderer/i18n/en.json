@@ -154,6 +154,7 @@
   "chat": {
     "title": "Chat",
     "imageBlocked": "Image not loaded",
+    "jumpToBottom": "Jump to bottom",
     "model": "Model",
     "noModels": "No models",
     "newChat": "New chat",
@@ -726,6 +727,16 @@
       "run_command": "Command",
       "git_commit": "Commit"
     }
+  },
+  "dialog": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "remove": "Remove",
+    "deleteTitle": "Delete this?",
+    "confirmTitle": "Are you sure?",
+    "undoAnyway": "Reset anyway",
+    "discardReload": "Discard and reload"
   },
   "privacy": {
     "title": "Privacy",

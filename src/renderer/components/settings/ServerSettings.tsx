@@ -8,10 +8,12 @@ import type {
 } from '../../../shared/api';
 import { notifyServerChanged } from '../../serverEvents';
 import { Field } from './SettingsFields';
+import { useConfirm } from '../ConfirmDialog';
 
 /** Abschnitt „Ollama-Server“ in den Einstellungen: Profile anlegen, testen, umschalten. */
 export function ServerSettings() {
   const { t } = useTranslation();
+  const confirm = useConfirm();
   const [profiles, setProfiles] = useState<ServerProfile[]>([]);
   // Formular zum Anlegen/Bearbeiten; null = geschlossen.
   const [form, setForm] = useState<ServerProfileInput | null>(null);
@@ -33,7 +35,13 @@ export function ServerSettings() {
   };
 
   const remove = async (profile: ServerProfile) => {
-    if (!window.confirm(t('servers.confirmDelete', { name: profile.name })))
+    if (
+      !(await confirm({
+        message: t('servers.confirmDelete', { name: profile.name }),
+        confirmLabel: t('dialog.delete'),
+        danger: true,
+      }))
+    )
       return;
     const result = await window.api.deleteServer(profile.id);
     setError(result.ok ? null : result.error);

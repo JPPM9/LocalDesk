@@ -20,6 +20,7 @@ import { PageHeader } from '../components/PageHeader';
 import { EmptyState } from '../components/EmptyState';
 import { Field } from '../components/settings/SettingsFields';
 import { useSkills } from '../skills/useSkills';
+import { useConfirm } from '../components/ConfirmDialog';
 
 /** Adresse für einen noch nicht gespeicherten Skill. */
 const NEW = 'new';
@@ -31,6 +32,7 @@ const FIELD =
 
 export function SkillsPage() {
   const { t } = useTranslation();
+  const confirm = useConfirm();
   const navigate = useNavigate();
   const skillId = useParams().skillId ?? null;
   const {
@@ -93,7 +95,14 @@ export function SkillsPage() {
   };
 
   const onReload = async () => {
-    if (dirty && !window.confirm(t('skills.confirmReload'))) return;
+    if (
+      dirty &&
+      !(await confirm({
+        message: t('skills.confirmReload'),
+        confirmLabel: t('dialog.discardReload'),
+      }))
+    )
+      return;
     const result = await reload();
     if (result.ok) {
       const fresh = result.value.find((s) => s.id === skillId);
@@ -112,7 +121,13 @@ export function SkillsPage() {
 
   const onDelete = async () => {
     if (!draft?.id) return;
-    if (!window.confirm(t('skills.confirmDelete', { name: draft.name })))
+    if (
+      !(await confirm({
+        message: t('skills.confirmDelete', { name: draft.name }),
+        confirmLabel: t('dialog.delete'),
+        danger: true,
+      }))
+    )
       return;
     const result = await remove(draft.id);
     if (!result.ok) {

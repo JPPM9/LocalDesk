@@ -709,6 +709,20 @@
   `edit-tools`, `git-tools`, `command-tool`, `mail-tools`, `memory-tool`), die vier Beispiel-Skills
   (`skill-examples.ts`, nur beim ersten Start angelegt), Datumsformate in Meldungen (`formatDate` `de-DE`),
   Name „Dieser PC“ des Standard-Servers (`database.ts`), `docs/email-einrichten.md`, UI-`de-DE`-Stellen.
+- Fix-Liste des Nutzers (2026-10-31, nach Sprachumschaltung 2d): A Chat wackelt/Scrollen · B Nachrichten
+  kopieren/bearbeiten/wiederholen · C Freigabe per Karte im Chat statt Schalter (Modell fragt „Zugriff anfragen“) ·
+  D Skills von GitHub-Link (nur Skills, keine Plugins mit Programmen) · E GPU-Status als Reiter im Seitenbereich +
+  Popup · F schönere Löschen-Dialoge · G Code-Modi Plan + Manuell. Reihenfolge A, F, B, E, G, C, D, danach
+  Sprache Schritt 3.
+  A ✓ (2026-10-31): Ursache war `scrollIntoView` bei JEDEM Textstück (zog auch nach dem Hochscrollen zurück, ließ
+  die Seite wackeln). Neu `components/StickyScroll.tsx`: scrollt nur den eigenen Bereich, nur wenn du unten bist
+  (`isNearBottom`, 48 px), ResizeObserver für wachsenden Inhalt, Knopf „Nach unten“, `scrollbar-gutter: stable`
+  (kein seitliches Wackeln), neue eigene Nachricht holt nach unten (`followKey`). Auch im Code-Agent (hatte
+  denselben Fehler). In der gebauten App mit echtem Streaming geprüft. Das Video des Nutzers war nicht lesbar –
+  falls es danach noch wackelt: Beschreibung nötig.
+  F ✓: `components/ConfirmDialog.tsx` (`ConfirmProvider` in `App.tsx`, `useConfirm()` → `await confirm({ message,
+  confirmLabel, danger })`) ersetzt ALLE 17 `window.confirm`. Fokus startet auf „Abbrechen“, Esc/Klick daneben =
+  Nein, Tab bleibt im Dialog, rot bei `danger` (`bg-error text-bg`). Neue Regel: nie mehr `window.confirm`.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

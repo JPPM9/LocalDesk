@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useChat } from '../../chat/useChat';
 import { useChatModels } from '../../hooks/useChatModels';
 import { PageHeader } from '../PageHeader';
+import { StickyScroll } from '../StickyScroll';
 import { ChatInput } from '../chat/ChatInput';
 import { MessageView } from '../chat/MessageView';
 import { ModelSelect } from '../chat/ModelSelect';
@@ -32,7 +33,6 @@ export function CodeAgent({ sessionId, onChanged }: CodeAgentProps) {
   });
   const { models } = useChatModels();
   const [model, setModel] = useState('');
-  const bottomRef = useRef<HTMLDivElement>(null);
 
   // Nur Modelle, die Werkzeuge können, taugen als Agent.
   const toolModels = models.filter((m) => m.capabilities.includes('tools'));
@@ -44,9 +44,8 @@ export function CodeAgent({ sessionId, onChanged }: CodeAgentProps) {
     );
   }, [toolModels, model]);
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ block: 'end' });
-  }, [messages]);
+  const lastUserId =
+    [...messages].reverse().find((m) => m.role === 'user')?.id ?? null;
 
   const choose = (name: string) => {
     setModel(name);
@@ -70,7 +69,7 @@ export function CodeAgent({ sessionId, onChanged }: CodeAgentProps) {
           />
         }
       />
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <StickyScroll resetKey={sessionId} followKey={lastUserId}>
         <div className="mx-auto max-w-[820px] space-y-7 px-7 py-7">
           {models.length > 0 && toolModels.length === 0 && (
             <p className="rounded border border-warn/40 bg-warn/10 px-3 py-2 text-warn">
@@ -92,9 +91,8 @@ export function CodeAgent({ sessionId, onChanged }: CodeAgentProps) {
               }
             />
           ))}
-          <div ref={bottomRef} />
         </div>
-      </div>
+      </StickyScroll>
       <div className="mx-auto w-full max-w-[820px] px-7 pb-4">
         <ChatInput
           disabled={!model}

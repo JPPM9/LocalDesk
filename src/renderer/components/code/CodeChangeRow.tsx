@@ -11,6 +11,7 @@ import {
 import type { CodeChangeState } from '../../../shared/code';
 import type { ToolCallRecord } from '../../../shared/api';
 import { DiffView } from './DiffView';
+import { useConfirm } from '../ConfirmDialog';
 
 /**
  * Eine Datei-Änderung des Agenten im Verlauf: eingeklappt mit Pfad, aufgeklappt
@@ -18,6 +19,7 @@ import { DiffView } from './DiffView';
  */
 export function CodeChangeRow({ call }: { call: ToolCallRecord }) {
   const { t } = useTranslation();
+  const confirm = useConfirm();
   const [state, setState] = useState<CodeChangeState | null>(null);
   const [error, setError] = useState<string | null>(null);
   const path =
@@ -35,7 +37,10 @@ export function CodeChangeRow({ call }: { call: ToolCallRecord }) {
       setState('undone');
     } else if (
       result.conflict &&
-      window.confirm(t('code.undoConflict', { error: result.error }))
+      (await confirm({
+        message: t('code.undoConflict', { error: result.error }),
+        confirmLabel: t('dialog.undoAnyway'),
+      }))
     ) {
       await undo(true);
     } else if (!result.conflict) {

@@ -18,6 +18,7 @@ import {
   useModelMissing,
 } from '../components/knowledge/CollectionEditor';
 import { useCollections } from '../hooks/useCollections';
+import { useConfirm } from '../components/ConfirmDialog';
 
 /**
  * Ein Projekt: Anweisungen und Dokumente, die für alle seine Chats gelten.
@@ -25,6 +26,7 @@ import { useCollections } from '../hooks/useCollections';
  */
 export function ProjectPage() {
   const { t } = useTranslation();
+  const confirm = useConfirm();
   const navigate = useNavigate();
   const projectId = useParams().projectId ?? '';
   const [project, setProject] = useState<ChatFolder | null | undefined>();
@@ -95,7 +97,13 @@ export function ProjectPage() {
   };
 
   const remove = async () => {
-    if (!window.confirm(t('projects.confirmDelete', { name: project.name })))
+    if (
+      !(await confirm({
+        message: t('projects.confirmDelete', { name: project.name }),
+        confirmLabel: t('dialog.delete'),
+        danger: true,
+      }))
+    )
       return;
     await window.api.deleteFolder(project.id);
     navigate('/chat');

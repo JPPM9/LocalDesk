@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink, Plus, Trash2 } from 'lucide-react';
 import type { ChatFolder, MemoryView } from '../../../shared/api';
+import { useConfirm } from '../ConfirmDialog';
 
 /**
  * Erinnerungen über dich: anzeigen, hinzufügen, öffnen, löschen. Gespeichert sind
@@ -9,6 +10,7 @@ import type { ChatFolder, MemoryView } from '../../../shared/api';
  */
 export function MemoryList() {
   const { t } = useTranslation();
+  const confirm = useConfirm();
   const [memories, setMemories] = useState<MemoryView[]>([]);
   const [projects, setProjects] = useState<ChatFolder[]>([]);
   const [text, setText] = useState('');
@@ -37,7 +39,13 @@ export function MemoryList() {
   };
 
   const remove = async (memory: MemoryView) => {
-    if (!window.confirm(t('memories.confirmDelete', { text: memory.text })))
+    if (
+      !(await confirm({
+        message: t('memories.confirmDelete', { text: memory.text }),
+        confirmLabel: t('dialog.delete'),
+        danger: true,
+      }))
+    )
       return;
     const result = await window.api.deleteMemory(memory.id);
     setError(result.ok ? null : result.error);

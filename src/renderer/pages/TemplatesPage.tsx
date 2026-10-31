@@ -18,12 +18,14 @@ import { CollectionPicker } from '../components/knowledge/CollectionPicker';
 import { McpServerPicker } from '../components/mcp/McpServerPicker';
 import { SkillPicker } from '../components/skills/SkillPicker';
 import { useTemplates } from '../templates/useTemplates';
+import { useConfirm } from '../components/ConfirmDialog';
 
 /** Adresse für eine noch nicht gespeicherte Vorlage. */
 const NEW = 'new';
 
 export function TemplatesPage() {
   const { t } = useTranslation();
+  const confirm = useConfirm();
   const navigate = useNavigate();
   const templateId = useParams().templateId ?? null;
   const { templates, loaded, save, remove } = useTemplates();
@@ -94,7 +96,13 @@ export function TemplatesPage() {
 
   const onDelete = async () => {
     if (!draft || templateId === NEW) return;
-    if (!window.confirm(t('templates.confirmDelete', { name: draft.name })))
+    if (
+      !(await confirm({
+        message: t('templates.confirmDelete', { name: draft.name }),
+        confirmLabel: t('dialog.delete'),
+        danger: true,
+      }))
+    )
       return;
     await remove(draft.id);
     navigate('/templates');

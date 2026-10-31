@@ -6,12 +6,14 @@ import type { ObsidianStatus } from '../../../shared/api';
 import { useCollections } from '../../hooks/useCollections';
 import { MemoryList } from './MemoryList';
 import { Field } from './SettingsFields';
+import { useConfirm } from '../ConfirmDialog';
 
 const DEFAULT_FOLDER = 'LocalDesk';
 
 /** Abschnitt „Obsidian“ in den Einstellungen: Vault und eigener Unterordner. */
 export function ObsidianSettings() {
   const { t } = useTranslation();
+  const confirm = useConfirm();
   const [status, setStatus] = useState<ObsidianStatus | null | undefined>();
   const [editing, setEditing] = useState(false);
   const [vaultPath, setVaultPath] = useState('');
@@ -46,7 +48,14 @@ export function ObsidianSettings() {
   };
 
   const remove = async () => {
-    if (!window.confirm(t('obsidian.confirmRemove'))) return;
+    if (
+      !(await confirm({
+        message: t('obsidian.confirmRemove'),
+        confirmLabel: t('dialog.remove'),
+        danger: true,
+      }))
+    )
+      return;
     await window.api.clearObsidian();
     setStatus(null);
   };

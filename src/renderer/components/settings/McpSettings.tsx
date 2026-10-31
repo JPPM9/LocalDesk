@@ -21,10 +21,12 @@ import {
 } from '../../../shared/permissions';
 import { useMcpServers } from '../../hooks/useMcpServers';
 import { Field } from './SettingsFields';
+import { useConfirm } from '../ConfirmDialog';
 
 /** Abschnitt „MCP-Server“ in den Einstellungen. */
 export function McpSettings() {
   const { t } = useTranslation();
+  const confirm = useConfirm();
   const servers = useMcpServers();
   const [form, setForm] = useState<McpServerInput | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +51,13 @@ export function McpSettings() {
   };
 
   const remove = async (server: McpServerView) => {
-    if (!window.confirm(t('mcp.confirmDelete', { name: server.config.name })))
+    if (
+      !(await confirm({
+        message: t('mcp.confirmDelete', { name: server.config.name }),
+        confirmLabel: t('dialog.delete'),
+        danger: true,
+      }))
+    )
       return;
     await window.api.deleteMcpServer(server.config.id);
   };
@@ -312,20 +320,25 @@ function ToolRow({
   onChange: (permission: ToolPermission | null) => void;
 }) {
   const { t } = useTranslation();
+  const confirm = useConfirm();
   const current = effectivePermission(
     tool,
     override ? { [tool.name]: override } : {},
   );
   const standard = defaultPermission(tool);
 
-  const choose = (permission: ToolPermission) => {
+  const choose = async (permission: ToolPermission) => {
     if (permission === current) return;
     // Ein Tool, das Dateien überschreiben kann, ohne Rückfrage laufen zu lassen,
     // ist eine bewusste Entscheidung – deshalb noch einmal nachfragen.
     if (
       permission === 'always' &&
       tool.destructive &&
-      !window.confirm(t('mcp.confirmAlways', { name: tool.name }))
+      !(await confirm({
+        message: t('mcp.confirmAlways', { name: tool.name }),
+        confirmLabel: t('toolCall.allowAlways'),
+        danger: true,
+      }))
     ) {
       return;
     }

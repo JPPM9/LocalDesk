@@ -154,6 +154,7 @@
   "chat": {
     "title": "Chat",
     "imageBlocked": "Bild nicht geladen",
+    "jumpToBottom": "Nach unten",
     "model": "Modell",
     "noModels": "Keine Modelle",
     "newChat": "Neuer Chat",
@@ -726,6 +727,16 @@
       "run_command": "Befehl",
       "git_commit": "Commit"
     }
+  },
+  "dialog": {
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "delete": "Löschen",
+    "remove": "Entfernen",
+    "deleteTitle": "Wirklich löschen?",
+    "confirmTitle": "Bist du sicher?",
+    "undoAnyway": "Trotzdem zurücksetzen",
+    "discardReload": "Verwerfen und neu laden"
   },
   "privacy": {
     "title": "Datenschutz",

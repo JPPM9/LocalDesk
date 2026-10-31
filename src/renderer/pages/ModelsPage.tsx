@@ -6,12 +6,14 @@ import { PageHeader } from '../components/PageHeader';
 import { DownloadPanel } from '../components/models/DownloadPanel';
 import { useDownloads } from '../hooks/useDownloads';
 import { formatBytes, formatContext, formatDate } from '../utils/format';
+import { useConfirm } from '../components/ConfirmDialog';
 
 // "completion" (Text erzeugen) können alle Chat-Modelle – das Abzeichen wäre nur Rauschen.
 const HIDDEN_CAPABILITIES = new Set(['completion']);
 
 export function ModelsPage() {
   const { t } = useTranslation();
+  const confirm = useConfirm();
   const [result, setResult] = useState<Result<ModelInfo[]> | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -35,7 +37,14 @@ export function ModelsPage() {
       name: model.name,
       size: formatBytes(model.sizeBytes),
     });
-    if (!window.confirm(question)) return;
+    if (
+      !(await confirm({
+        message: question,
+        confirmLabel: t('dialog.delete'),
+        danger: true,
+      }))
+    )
+      return;
     const result = await window.api.deleteModel(model.name);
     setDeleteError(
       result.ok

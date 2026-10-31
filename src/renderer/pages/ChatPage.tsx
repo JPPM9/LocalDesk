@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Link,
   useNavigate,
@@ -32,6 +32,7 @@ import { shortcutLabel } from '../shortcuts/keymap';
 import { useShortcut } from '../shortcuts/useShortcut';
 import type { LayoutContext } from '../components/AppLayout';
 import { PageHeader } from '../components/PageHeader';
+import { StickyScroll } from '../components/StickyScroll';
 import { ChatInput } from '../components/chat/ChatInput';
 import { ChatList } from '../components/chat/ChatList';
 import { ChatSettingsPanel } from '../components/chat/ChatSettingsPanel';
@@ -44,6 +45,7 @@ import { KnowledgeButton } from '../components/knowledge/CollectionPicker';
 import { McpButton } from '../components/mcp/McpButton';
 import { SkillsButton } from '../components/skills/SkillPicker';
 import { MailButton } from '../components/mail/MailButton';
+import { useConfirm } from '../components/ConfirmDialog';
 
 // Nur eine Bequemlichkeit pro Rechner: das zuletzt gewählte Modell für neue Chats.
 // Gespeicherte Chats merken sich ihr Modell in der Datenbank.
@@ -67,6 +69,7 @@ function saveLastModel(model: string) {
 
 export function ChatPage() {
   const { t } = useTranslation();
+  const confirm = useConfirm();
   const navigate = useNavigate();
   const chatId = useParams().chatId ?? null;
   const { listCollapsed, toggleList } = useOutletContext<LayoutContext>();
@@ -119,7 +122,6 @@ export function ChatPage() {
 
   const { models, loaded: modelsLoaded, error: loadError } = useChatModels();
   const [model, setModel] = useState('');
-  const bottomRef = useRef<HTMLDivElement>(null);
 
   const {
     templates,
@@ -233,10 +235,10 @@ export function ChatPage() {
     if (notFound) navigate('/chat', { replace: true });
   }, [notFound, navigate]);
 
-  // Beim Streamen mitscrollen, damit die neueste Zeile sichtbar bleibt.
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ block: 'end' });
-  }, [messages]);
+  // Mitscrollen übernimmt StickyScroll (nur, wenn du unten bist). Eine neue eigene
+  // Nachricht holt dich immer nach unten.
+  const lastUserId =
+    [...messages].reverse().find((m) => m.role === 'user')?.id ?? null;
 
   // Suchtreffer: /chat/<id>?m=<Nachricht> springt zur Nachricht und hebt sie kurz hervor.
   // Steht bewusst NACH dem Mitscrollen – so gewinnt der Sprung, wenn beides zugleich passiert.
@@ -275,14 +277,26 @@ export function ChatPage() {
   };
 
   const deleteChat = async (target: ChatSummary) => {
-    if (!window.confirm(t('chat.confirmDelete', { title: target.title })))
+    if (
+      !(await confirm({
+        message: t('chat.confirmDelete', { title: target.title }),
+        confirmLabel: t('dialog.delete'),
+        danger: true,
+      }))
+    )
       return;
     await chatList.remove(target.id);
     if (target.id === chatId) navigate('/chat');
   };
 
   const deleteFolder = async (folder: ChatFolder) => {
-    if (!window.confirm(t('folders.confirmDelete', { name: folder.name })))
+    if (
+      !(await confirm({
+        message: t('folders.confirmDelete', { name: folder.name }),
+        confirmLabel: t('dialog.delete'),
+        danger: true,
+      }))
+    )
       return;
     await chatList.deleteFolder(folder.id);
   };
@@ -413,7 +427,7 @@ export function ChatPage() {
           }
         />
 
-        <div className="min-h-0 flex-1 overflow-y-auto">
+        <StickyScroll resetKey={chatId} followKey={lastUserId}>
           <div className="mx-auto max-w-[820px] space-y-7 px-7 py-7">
             {loadError && (
               <p className="rounded border border-error/40 bg-error/10 px-3 py-2 text-error">
@@ -456,9 +470,8 @@ export function ChatPage() {
                 />
               </div>
             ))}
-            <div ref={bottomRef} />
           </div>
-        </div>
+        </StickyScroll>
 
         <div className="mx-auto w-full max-w-[820px] px-7 pb-4">
           {summary && chatId && (

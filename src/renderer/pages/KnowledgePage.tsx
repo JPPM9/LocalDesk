@@ -20,6 +20,7 @@ import {
   useModelMissing,
 } from '../components/knowledge/CollectionEditor';
 import { useCollections } from '../hooks/useCollections';
+import { useConfirm } from '../components/ConfirmDialog';
 
 export function KnowledgePage() {
   const { t } = useTranslation();
@@ -110,6 +111,7 @@ export function KnowledgePage() {
 
 function CollectionDetail({ view }: { view: CollectionView }) {
   const { t } = useTranslation();
+  const confirm = useConfirm();
   const navigate = useNavigate();
   const { config } = view;
   const [name, setName] = useState(config.name);
@@ -134,7 +136,13 @@ function CollectionDetail({ view }: { view: CollectionView }) {
   };
 
   const remove = async () => {
-    if (!window.confirm(t('knowledge.confirmDelete', { name: config.name })))
+    if (
+      !(await confirm({
+        message: t('knowledge.confirmDelete', { name: config.name }),
+        confirmLabel: t('dialog.delete'),
+        danger: true,
+      }))
+    )
       return;
     await window.api.deleteCollection(config.id);
     navigate('/knowledge');
