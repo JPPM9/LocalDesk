@@ -243,6 +243,16 @@ export const en: Record<MessageKey, string> = {
   'skills.descriptionTooLong': 'Description: {max} characters at most.',
   'skills.bodyEmpty': 'The instructions are empty.',
   'skills.bodyMax': 'Instructions: {max} characters at most.',
+  'skills.fileUnknown': 'This file does not exist in the skill: {file}',
+  'skills.fileNotText': 'This file is not a text file.',
+  'skills.extraFileTooLarge': 'This file is too large.',
+  'skills.fileTruncated': '[Rest of the file left out – it is very long.]',
+  'skills.hasLinks':
+    'The skill folder contains links – please delete it by hand in Explorer.',
+  'skills.tooBigForChat':
+    'The skill “{name}” needs about {tokens} tokens, but this chat only has {context} tokens of context. Tell the user they can raise the context length to at least {suggested} in the chat settings, and carry on without the skill for now.',
+  'skills.tooBigForModel':
+    'The skill “{name}” needs about {tokens} tokens and does not fit into the context of this chat ({context} tokens). Tell the user it cannot be used here, and carry on without it.',
   'mcp.foldersNotFound': 'Folder not found: {paths}',
   'mcp.notRunning': 'The MCP server is no longer running.',
   'mcp.noId': 'Server without ID',
@@ -336,6 +346,14 @@ export const en: Record<MessageKey, string> = {
     'Skills that are turned on – instructions from the user. Follow them when the task fits:',
   'prompt.skillToolDescription':
     'Loads the skill “{name}” (an instruction from the user). {description}Call it FIRST when the task fits, and then follow the instruction in your answer.',
+  'prompt.skillLoaded': 'Skill “{name}” – follow these instructions:',
+  'prompt.skillToolFiles':
+    'The skill has extra files; their list is at the end of the instructions.',
+  'prompt.skillFileParam':
+    'Path of an extra file from the list at the end of the instructions. Leave out to load the instructions.',
+  'prompt.skillFilesList':
+    'Extra files of this skill – read one when needed by calling the skill again with the parameter “file”:',
+  'prompt.skillFileHeader': 'File “{file}” of the skill “{name}”:',
   'prompt.knowledgeIntro':
     "Here are excerpts from the user's documents. Use them when they fit the question, and give the source with its number, e.g. [1]. If the excerpts do not answer the question, say so honestly instead of making something up.",
   'prompt.knowledgeQuestion': 'Question: {question}',

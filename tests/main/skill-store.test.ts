@@ -78,16 +78,27 @@ describe('SkillStore', () => {
     expect(list.some((s) => s.id === 'ohne-datei')).toBe(false);
   });
 
-  it('löscht nur die eigene Datei und lässt fremde Dateien stehen', async () => {
+  it('löscht den ganzen Skill-Ordner mit Zusatzdateien', async () => {
     const { id } = await store.save(input);
     await store.remove(id);
     expect(existsSync(path.join(root, id))).toBe(false);
 
     const other = await store.save(input);
+    mkdirSync(path.join(root, other.id, 'references'));
+    writeFileSync(path.join(root, other.id, 'references', 'a.md'), 'Text');
     writeFileSync(path.join(root, other.id, 'skript.py'), 'print(1)');
     await store.remove(other.id);
-    expect(existsSync(path.join(root, other.id, 'SKILL.md'))).toBe(false);
-    expect(existsSync(path.join(root, other.id, 'skript.py'))).toBe(true);
+    expect(existsSync(path.join(root, other.id))).toBe(false);
+    expect(existsSync(root)).toBe(true);
+  });
+
+  it('löscht nichts, wenn im Skill-Ordner eine Verknüpfung liegt', async () => {
+    const { id } = await store.save(input);
+    writeFileSync(path.join(outside, 'wichtig.md'), 'Bleibt');
+    symlinkSync(outside, path.join(root, id, 'link'), 'junction');
+    await expect(store.remove(id)).rejects.toThrow('Verknüpfungen');
+    expect(existsSync(path.join(root, id, 'SKILL.md'))).toBe(true);
+    expect(existsSync(path.join(outside, 'wichtig.md'))).toBe(true);
   });
 
   it('folgt keinen Verknüpfungen nach draußen und nimmt keine fremden Kennungen', async () => {
@@ -102,6 +113,113 @@ describe('SkillStore', () => {
     expect(await store.get('../draussen')).toBeNull();
     await expect(store.remove('..')).rejects.toThrow();
     expect(existsSync(path.join(outside, 'SKILL.md'))).toBe(true);
+  });
+});
+
+describe('SkillStore: Zusatzdateien', () => {
+  /** Skill mit Zusatzdateien, wie ihn eine ZIP oder ein GitHub-Ordner liefert. */
+  async function skillWithFiles() {
+    const { id } = await store.save(input);
+    const dir = path.join(root, id);
+    mkdirSync(path.join(dir, 'references', 'tief'), { recursive: true });
+    mkdirSync(path.join(dir, 'scripts'));
+    writeFileSync(path.join(dir, 'references', 'stil.md'), '# Stil\nKurz.');
+    writeFileSync(path.join(dir, 'references', 'tief', 'liste.txt'), 'a\nb');
+    writeFileSync(path.join(dir, 'scripts', 'lauf.ps1'), 'Write-Host x');
+    writeFileSync(path.join(dir, 'programm.exe'), 'MZ');
+    writeFileSync(path.join(dir, '.versteckt.md'), 'versteckt');
+    writeFileSync(path.join(dir, 'binaer.md'), 'a\0b');
+    return id;
+  }
+
+  it('listet nur echte Textdateien und keine Skripte, Programme oder versteckten Namen', async () => {
+    const id = await skillWithFiles();
+    const skill = (await store.get(id))!;
+    expect(skill.files?.map((f) => f.path)).toEqual([
+      'binaer.md',
+      'references/stil.md',
+      'references/tief/liste.txt',
+    ]);
+    expect(
+      skill.files?.find((f) => f.path === 'references/stil.md')?.size,
+    ).toBe(12);
+    // Auch die Liste aller Skills enthält sie.
+    expect((await store.list())[0].files).toHaveLength(3);
+  });
+
+  it('liest eine Zusatzdatei – nur aus der Liste, egal wie der Pfad geschrieben ist', async () => {
+    const id = await skillWithFiles();
+    expect(await store.readFile(id, 'references/stil.md')).toBe(
+      '# Stil\nKurz.',
+    );
+    expect(await store.readFile(id, 'references\\stil.md')).toBe(
+      '# Stil\nKurz.',
+    );
+    expect(await store.readFile(id, './References/Stil.MD')).toBe(
+      '# Stil\nKurz.',
+    );
+    expect(await store.readFile(id, ' references/tief/liste.txt ')).toBe(
+      'a\nb',
+    );
+  });
+
+  it('lehnt alles andere ab: Pfade nach draußen, SKILL.md, Skripte, Binärdateien', async () => {
+    const id = await skillWithFiles();
+    writeFileSync(path.join(outside, 'geheim.md'), 'geheim');
+    for (const file of [
+      '../draussen/geheim.md',
+      '..\\..\\draussen\\geheim.md',
+      '../../skills/' + id + '/SKILL.md',
+      'SKILL.md',
+      'scripts/lauf.ps1',
+      'programm.exe',
+      '.versteckt.md',
+      'C:\\Windows\\win.ini',
+      'references',
+      '',
+      'gibt-es-nicht.md',
+    ]) {
+      await expect(store.readFile(id, file), file).rejects.toThrow(
+        /gibt es in dem Skill nicht/,
+      );
+    }
+    await expect(store.readFile(id, 'binaer.md')).rejects.toThrow(
+      'keine Textdatei',
+    );
+    await expect(store.readFile('..', 'a.md')).rejects.toThrow();
+    await expect(store.readFile('gibt-es-nicht', 'a.md')).rejects.toThrow();
+  });
+
+  it('kürzt sehr lange Dateien und lehnt riesige ab', async () => {
+    const id = await skillWithFiles();
+    const dir = path.join(root, id);
+    writeFileSync(path.join(dir, 'lang.md'), 'x'.repeat(40_000));
+    writeFileSync(path.join(dir, 'riesig.md'), 'x'.repeat(300_000));
+    const text = await store.readFile(id, 'lang.md');
+    expect(text.length).toBeLessThan(31_000);
+    expect(text).toContain('Rest der Datei weggelassen');
+    await expect(store.readFile(id, 'riesig.md')).rejects.toThrow('zu groß');
+  });
+
+  it('folgt Verknüpfungen im Skill-Ordner nicht', async () => {
+    const id = await skillWithFiles();
+    writeFileSync(path.join(outside, 'fremd.md'), 'fremd');
+    symlinkSync(outside, path.join(root, id, 'link'), 'junction');
+    const skill = (await store.get(id))!;
+    expect(skill.files?.some((f) => f.path.startsWith('link'))).toBe(false);
+    await expect(store.readFile(id, 'link/fremd.md')).rejects.toThrow();
+  });
+
+  it('zählt höchstens 50 Dateien und geht höchstens 3 Ordner tief', async () => {
+    const { id } = await store.save(input);
+    const dir = path.join(root, id);
+    mkdirSync(path.join(dir, 'a', 'b', 'c', 'd'), { recursive: true });
+    writeFileSync(path.join(dir, 'a', 'b', 'c', 'ok.md'), 'x');
+    writeFileSync(path.join(dir, 'a', 'b', 'c', 'd', 'zu-tief.md'), 'x');
+    for (let i = 0; i < 60; i++) writeFileSync(path.join(dir, `n${i}.md`), 'x');
+    const files = (await store.get(id))!.files!;
+    expect(files).toHaveLength(50);
+    expect(files.some((f) => f.path.includes('zu-tief'))).toBe(false);
   });
 });
 

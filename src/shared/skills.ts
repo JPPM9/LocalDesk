@@ -1,4 +1,10 @@
 import type { ChatMessage, ChatRequest } from './api';
+import {
+  ANSWER_RESERVE,
+  estimateTokens,
+  OLLAMA_DEFAULT_CONTEXT,
+  suggestContextLength,
+} from './context';
 import { messageLocale, tr } from './messages';
 
 /**
@@ -8,9 +14,43 @@ import { messageLocale, tr } from './messages';
  */
 
 export const SKILL_NAME_MAX = 80;
-export const SKILL_DESCRIPTION_MAX = 300;
-/** Längste Anleitung – ein eingeschalteter Skill kostet so viel Kontext. */
-export const SKILL_BODY_MAX = 20_000;
+export const SKILL_DESCRIPTION_MAX = 1_024;
+/**
+ * Längste Anleitung. Ein eingeschalteter oder geladener Skill kostet so viel
+ * Kontext – ob er in den Chat passt, zeigt `skillContextAdvice`.
+ */
+export const SKILL_BODY_MAX = 60_000;
+
+/** Eine Zusatzdatei eines Skills (z. B. references/stil.md), Pfad relativ zum Skill-Ordner. */
+export interface SkillFile {
+  path: string;
+  size: number;
+}
+/** Höchstens so viele Zusatzdateien, so tief verschachtelt, so groß – und nur Text. */
+export const SKILL_FILES_MAX = 50;
+export const SKILL_FILE_DEPTH_MAX = 3;
+export const SKILL_FILE_MAX_BYTES = 200_000;
+/** So viel einer Zusatzdatei bekommt das Modell auf einmal. */
+export const SKILL_FILE_TEXT_MAX = 30_000;
+const TEXT_EXTENSIONS = new Set([
+  '.md',
+  '.markdown',
+  '.txt',
+  '.rst',
+  '.json',
+  '.yaml',
+  '.yml',
+  '.csv',
+  '.tsv',
+  '.xml',
+  '.html',
+]);
+
+/** Ist das eine Textdatei, die zu einem Skill gehören darf? Skripte und Programme nie. */
+export function isSkillTextFile(filePath: string): boolean {
+  const dot = filePath.lastIndexOf('.');
+  return dot > 0 && TEXT_EXTENSIONS.has(filePath.slice(dot).toLowerCase());
+}
 
 /** Ein Skill, wie Oberfläche und Chat ihn sehen. */
 export interface SkillView {
@@ -19,6 +59,8 @@ export interface SkillView {
   name: string;
   description: string;
   body: string;
+  /** Zusatzdateien (ohne SKILL.md); das Modell kann sie bei Bedarf lesen. */
+  files?: SkillFile[];
   /** Datei kaputt oder zu groß – wird angezeigt, aber nicht benutzt. */
   error?: string;
 }
@@ -38,15 +80,70 @@ export function parseSkill(
 ): { name: string; description: string; body: string } {
   const match = /^---\r?\n([\s\S]*?)\r?\n---[ \t]*(\r?\n|$)/.exec(text);
   const front = match?.[1] ?? '';
-  const field = (key: string) => {
-    const line = new RegExp(`^${key}\\s*:\\s*(.*)$`, 'mi').exec(front)?.[1];
-    return line === undefined ? '' : unquote(line.trim());
-  };
   return {
-    name: field('name') || fallbackName,
-    description: field('description'),
+    name: oneLine(frontValue(front, 'name')) || fallbackName,
+    description: oneLine(frontValue(front, 'description')),
     body: (match ? text.slice(match[0].length) : text).trim(),
   };
+}
+
+/**
+ * Der Wert eines Kopf-Schlüssels (YAML-Teilmenge, wie Claude-Skills sie schreiben):
+ * einzeilig, in Anführungszeichen, über mehrere eingerückte Zeilen und als Block
+ * mit „|“ (Zeilen bleiben) oder „>“ (Zeilen werden zu einem Absatz), auch „|-“ und
+ * „>-“. Listen und verschachtelte Werte gelten als leer.
+ */
+function frontValue(front: string, key: string): string {
+  const lines = front.split(/\r?\n/);
+  const start = lines.findIndex((line) =>
+    new RegExp(`^${key}\\s*:`, 'i').test(line),
+  );
+  if (start < 0) return '';
+  const first = lines[start]
+    .replace(new RegExp(`^${key}\\s*:\\s*`, 'i'), '')
+    .trim();
+  // Fortsetzung: eingerückte oder leere Zeilen bis zur nächsten Zeile ohne Einrückung.
+  const rest: string[] = [];
+  for (const line of lines.slice(start + 1)) {
+    if (line.trim() !== '' && !/^\s/.test(line)) break;
+    rest.push(line);
+  }
+  while (rest.length > 0 && rest[rest.length - 1].trim() === '') rest.pop();
+
+  const block = /^([|>])[+-]?\d*\s*(?:#.*)?$/.exec(first);
+  if (block) {
+    const indent = Math.min(
+      ...rest
+        .filter((line) => line.trim() !== '')
+        .map((line) => /^\s*/.exec(line)![0].length),
+    );
+    const text = rest.map((line) =>
+      line.trim() === '' ? '' : line.slice(indent),
+    );
+    return (block[1] === '|' ? text.join('\n') : fold(text)).trim();
+  }
+  const continuation = rest.map((line) => line.trim()).filter(Boolean);
+  // Verschachtelt („metadata:“ mit eingerückten Schlüsseln) oder Liste: kein Text.
+  if (!first && /^(-\s|[\w-]+\s*:(\s|$))/.test(continuation[0] ?? '')) {
+    return '';
+  }
+  return unquote([first, ...continuation].filter(Boolean).join(' '));
+}
+
+/** Block mit „>“: aufeinanderfolgende Zeilen ergeben einen Absatz, eine Leerzeile trennt Absätze. */
+function fold(lines: string[]): string {
+  const paragraphs: string[] = [];
+  let current: string[] = [];
+  for (const line of lines) {
+    if (line === '') {
+      if (current.length > 0) paragraphs.push(current.join(' '));
+      current = [];
+    } else {
+      current.push(line.trim());
+    }
+  }
+  if (current.length > 0) paragraphs.push(current.join(' '));
+  return paragraphs.join('\n');
 }
 
 /** Schreibt eine SKILL.md (Kopf mit Anführungszeichen, damit „:“ im Text nicht stört). */
@@ -155,7 +252,12 @@ export function skillToolName(id: string): string {
  * qwen3 und gpt-oss passend (18 von 18) und bei unpassenden Fragen nichts.
  */
 export function skillTools(
-  skills: { id: string; name: string; description: string }[],
+  skills: {
+    id: string;
+    name: string;
+    description: string;
+    files?: SkillFile[];
+  }[],
 ): {
   skillId: string;
   name: string;
@@ -165,12 +267,53 @@ export function skillTools(
   return skills.slice(0, SKILL_CATALOG_MAX).map((s) => ({
     skillId: s.id,
     name: skillToolName(s.id),
-    description: tr('prompt.skillToolDescription', {
-      name: s.name,
-      description: s.description ? `${s.description} ` : '',
-    }),
-    inputSchema: { type: 'object', properties: {} },
+    description:
+      tr('prompt.skillToolDescription', {
+        name: s.name,
+        description: s.description ? `${s.description} ` : '',
+      }) + (s.files?.length ? ` ${tr('prompt.skillToolFiles')}` : ''),
+    // Nur Skills mit Zusatzdateien nehmen ein „file“ an; alle anderen bleiben ohne Eingaben.
+    inputSchema: {
+      type: 'object',
+      properties: s.files?.length
+        ? { file: { type: 'string', description: tr('prompt.skillFileParam') } }
+        : {},
+    },
   }));
+}
+
+/** Der Text, den das Modell beim Laden eines Skills bekommt: Anleitung und Liste der Zusatzdateien. */
+export function skillLoadedText(skill: {
+  name: string;
+  body: string;
+  files?: SkillFile[];
+}): string {
+  const files = skill.files ?? [];
+  const list =
+    files.length > 0
+      ? `\n\n${tr('prompt.skillFilesList')}\n${files
+          .map((f) => `- ${f.path} (${f.size} bytes)`)
+          .join('\n')}`
+      : '';
+  return `${tr('prompt.skillLoaded', { name: skill.name })}\n\n${skill.body}${list}`;
+}
+
+/**
+ * Passt ein Skilltext in den Kontext? Der Standard von Ollama sind 4.096 Tokens –
+ * ein großer Skill braucht eine höhere Kontextlänge (Einstellungen des Chats).
+ * `suggested` ist die nächste passende Stufe (null, wenn er schon passt).
+ */
+export function skillContextAdvice(
+  text: string,
+  contextLength: number = OLLAMA_DEFAULT_CONTEXT,
+): { tokens: number; fits: boolean; suggested: number | null } {
+  const tokens = estimateTokens(text);
+  const fits = tokens + ANSWER_RESERVE <= contextLength;
+  return {
+    tokens,
+    fits,
+    suggested: fits ? null : suggestContextLength(tokens, contextLength),
+  };
 }
 
 /** Ordnername eines Skills: nur Kleinbuchstaben, Ziffern und Bindestriche. */

@@ -11,12 +11,15 @@ import {
   Trash2,
   WandSparkles,
 } from 'lucide-react';
+import { OLLAMA_DEFAULT_CONTEXT } from '../../shared/context';
 import {
   SKILL_BODY_MAX,
   SKILL_DESCRIPTION_MAX,
   SKILL_NAME_MAX,
+  skillContextAdvice,
   type SkillInput,
 } from '../../shared/skills';
+import { formatBytes } from '../utils/format';
 import type { GithubSkill } from '../../shared/github';
 import { PageHeader } from '../components/PageHeader';
 import { GithubSkillDialog } from '../components/skills/GithubSkillDialog';
@@ -100,6 +103,9 @@ export function SkillsPage() {
     else navigate(`/skills/${NEW}`);
   };
 
+  // Passt der Skill in den Standard-Kontext von Ollama? Sonst Hinweis, was einzustellen ist.
+  const advice = draft ? skillContextAdvice(draft.body) : null;
+
   const update = (patch: Partial<SkillInput>) => {
     setDraft((current) => (current ? { ...current, ...patch } : current));
     setDirty(true);
@@ -146,9 +152,16 @@ export function SkillsPage() {
 
   const onDelete = async () => {
     if (!draft?.id) return;
+    const fileCount = selected?.files?.length ?? 0;
     if (
       !(await confirm({
-        message: t('skills.confirmDelete', { name: draft.name }),
+        message:
+          fileCount > 0
+            ? t('skills.confirmDeleteFiles', {
+                name: draft.name,
+                count: fileCount,
+              })
+            : t('skills.confirmDelete', { name: draft.name }),
         confirmLabel: t('dialog.delete'),
         danger: true,
       }))
@@ -330,6 +343,7 @@ export function SkillsPage() {
                 hint={t('skills.bodyHint', {
                   count: draft.body.length.toLocaleString(messageLocale()),
                   max: SKILL_BODY_MAX.toLocaleString(messageLocale()),
+                  tokens: (advice?.tokens ?? 0).toLocaleString(messageLocale()),
                 })}
               >
                 <textarea
@@ -341,6 +355,34 @@ export function SkillsPage() {
                   className={`${FIELD} resize-y font-mono text-[13px] leading-relaxed`}
                 />
               </Field>
+              {advice && !advice.fits && advice.suggested !== null && (
+                <p className="rounded-xl border border-warn/40 bg-warn/10 px-3.5 py-2.5 text-sm">
+                  {t('skills.tooBig', {
+                    context:
+                      OLLAMA_DEFAULT_CONTEXT.toLocaleString(messageLocale()),
+                    suggested: advice.suggested.toLocaleString(messageLocale()),
+                  })}
+                </p>
+              )}
+              {draft.id && selected?.files && selected.files.length > 0 && (
+                <Field label={t('skills.files')} hint={t('skills.filesHint')}>
+                  <ul className="divide-y divide-border rounded-lg border border-border bg-surface">
+                    {selected.files.map((file) => (
+                      <li
+                        key={file.path}
+                        className="flex items-center gap-3 px-3 py-1.5 text-xs"
+                      >
+                        <span className="min-w-0 flex-1 truncate font-mono">
+                          {file.path}
+                        </span>
+                        <span className="shrink-0 text-subtle">
+                          {formatBytes(file.size)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </Field>
+              )}
               {draft.id && (
                 <p className="text-xs text-subtle">
                   {t('skills.fileHint')}{' '}

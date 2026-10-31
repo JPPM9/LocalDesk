@@ -247,6 +247,16 @@ export const de = {
   'skills.descriptionTooLong': 'Beschreibung höchstens {max} Zeichen.',
   'skills.bodyEmpty': 'Die Anleitung ist leer.',
   'skills.bodyMax': 'Anleitung höchstens {max} Zeichen.',
+  'skills.fileUnknown': 'Diese Datei gibt es in dem Skill nicht: {file}',
+  'skills.fileNotText': 'Diese Datei ist keine Textdatei.',
+  'skills.extraFileTooLarge': 'Diese Datei ist zu groß.',
+  'skills.fileTruncated': '[Rest der Datei weggelassen – sie ist sehr lang.]',
+  'skills.hasLinks':
+    'Der Skill-Ordner enthält Verknüpfungen – bitte lösche ihn von Hand im Explorer.',
+  'skills.tooBigForChat':
+    'Der Skill „{name}“ braucht etwa {tokens} Tokens, dieser Chat hat aber nur {context} Tokens Kontext. Sage dem Nutzer, dass er in den Chat-Einstellungen die Kontextlänge auf mindestens {suggested} erhöhen kann, und mache vorerst ohne den Skill weiter.',
+  'skills.tooBigForModel':
+    'Der Skill „{name}“ braucht etwa {tokens} Tokens und passt nicht in den Kontext dieses Chats ({context} Tokens). Sage dem Nutzer, dass er hier nicht benutzt werden kann, und mache ohne ihn weiter.',
   'mcp.foldersNotFound': 'Ordner nicht gefunden: {paths}',
   'mcp.notRunning': 'Der MCP-Server läuft nicht mehr.',
   'mcp.noId': 'Server ohne ID',
@@ -340,6 +350,14 @@ export const de = {
     'Eingeschaltete Skills – Anleitungen des Nutzers. Befolge sie, wenn die Aufgabe dazu passt:',
   'prompt.skillToolDescription':
     'Lädt den Skill „{name}“ (eine Anleitung des Nutzers). {description}Rufe ihn ZUERST auf, wenn die Aufgabe passt, und befolge die Anleitung dann in deiner Antwort.',
+  'prompt.skillLoaded': 'Skill „{name}“ – befolge diese Anleitung:',
+  'prompt.skillToolFiles':
+    'Der Skill hat Zusatzdateien; ihre Liste steht am Ende der Anleitung.',
+  'prompt.skillFileParam':
+    'Pfad einer Zusatzdatei aus der Liste am Ende der Anleitung. Weglassen, um die Anleitung zu laden.',
+  'prompt.skillFilesList':
+    'Zusatzdateien dieses Skills – lies eine bei Bedarf, indem du den Skill erneut mit dem Parameter „file“ aufrufst:',
+  'prompt.skillFileHeader': 'Datei „{file}“ des Skills „{name}“:',
   'prompt.knowledgeIntro':
     'Hier sind Auszüge aus den Dokumenten des Nutzers. Nutze sie, wenn sie zur Frage passen, und gib die Quelle mit ihrer Nummer an, z. B. [1]. Wenn die Auszüge die Frage nicht beantworten, sag das ehrlich, statt etwas zu erfinden.',
   'prompt.knowledgeQuestion': 'Frage: {question}',

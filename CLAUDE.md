@@ -872,6 +872,24 @@
   Bestätigung. Geprüft mit Test-Antworten (Gmail-Nachbau, Oberfläche per Vite-Harness mit Stub-API);
   KEIN Test im echten Gmail (so verabredet). Datenschutzseite/Anleitungen/README/CHANGELOG nennen es.
 
+- **Skills: lesen, groß, Zusatzdateien** (Wunschliste Schritt 2a, Plan freigegeben; 2b Import per Ziehen/ZIP mit
+  fflate und Prüfung, 2c Modell-Nutzung messen, 2d GitHub-Suche folgen einzeln). Gefundener Fehler: Der Kopf-Leser
+  nahm bei `description: |` (YAML-Block, z. B. humanizer) nur „|“ → das Modell kannte keinen Auslöser. Jetzt
+  `frontValue` in `shared/skills.ts` (`|`, `>`, `|-`/`>-`, eingerückte Fortsetzung, Anführungszeichen; Listen und
+  verschachtelte Werte = leer; Namen/Beschreibung einzeilig). Grenzen: Anleitung 60 000, Beschreibung 1 024 Zeichen.
+  **Kontext beachten:** Ollama-Standard sind 4 096 Tokens – schon 20 000 Zeichen (~5 000 Tokens) passten nie.
+  `skillContextAdvice` (Tokens, passt es?, nächste Kontextstufe); Editor zeigt „etwa N Tokens“ und warnt;
+  `main/skills/skill-call.ts` (`callSkill`) lädt einen Skill, der nicht in den Kontext des Chats passt, NICHT,
+  sondern gibt dem Modell eine Meldung für den Nutzer (Kontextlänge auf mindestens X) – statt stillem Abschneiden.
+  Zusatzdateien: `SkillView.files` (nur Textdateien `isSkillTextFile`, ≤ 50, ≤ 3 Ordner tief, keine
+  Verknüpfungen/versteckte Namen, Skripte nie), `SkillStore.readFile` erlaubt nur Pfade aus der eigenen Liste (kein „..“
+  möglich; ≤ 200 KB, 30 000 Zeichen pro Lesen). Skill-Werkzeug nimmt bei Skills mit Dateien den Parameter `file`
+  (ein Werkzeug je Skill bleibt – so laden die Modelle zuverlässig). `SkillStore.remove` löscht jetzt den GANZEN
+  Skill-Ordner (verweigert bei Verknüpfungen darin); Rückfrage nennt die Zahl der Zusatzdateien.
+  Echt geprüft (gebaute App, qwen3:14b): humanizer von GitHub → Beschreibung 341 Zeichen statt „|“, 31 878 Zeichen
+  gespeichert; Modell lädt ihn selbst; bei 4 096 Kontext klare Meldung, bei 16 384 wird er geladen und befolgt;
+  `file` liest references/beispiele.md; Skript (.ps1) wird nicht gelistet.
+
 ## Befehle
 
 - `npm start` – Entwicklungsmodus · `npm test` – Vitest (Tests in `tests/`) · `npm run typecheck` · `npm run lint` · `npm run dist` – Installer · `npm run make` – portable ZIP

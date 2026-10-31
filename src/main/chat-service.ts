@@ -54,6 +54,8 @@ import type { ChatRepository } from './db/chat-repository';
 import type { ChatKnowledge } from './knowledge-service';
 import type { MailClient } from './mail/mail-client';
 import { callMailTool, describeMailTool, mailTools } from './mail/mail-tools';
+import { callSkill } from './skills/skill-call';
+import { OLLAMA_DEFAULT_CONTEXT } from '../shared/context';
 import type { McpTools } from './mcp-service';
 import { checkMemoryArguments, memoryTool } from './obsidian/memory-tool';
 import type { ChatMemory } from './obsidian-service';
@@ -88,6 +90,8 @@ export function registerChatHandlers(
   skills: {
     get(id: string): Promise<SkillView | null>;
     list(): Promise<SkillView[]>;
+    /** Text einer Zusatzdatei eines Skills. */
+    readFile(id: string, file: string): Promise<string>;
   },
   /** Angemeldete Mail-Konten (Schalter „E-Mail“). */
   mail: {
@@ -289,6 +293,8 @@ export function registerChatHandlers(
     codeMode: CodeMode = 'manual',
     /** Das Modell darf mit „Zugriff anfragen“ um Postfach/Dateien bitten (nur Chats mit Tools). */
     offerAccess = false,
+    /** Kontextlänge dieses Chats – ein Skill, der nicht hineinpasst, wird nicht geladen. */
+    contextLength: number = OLLAMA_DEFAULT_CONTEXT,
   ): ToolRuntime {
     const codeOffers = code
       ? filterForMode(
@@ -406,10 +412,12 @@ export function registerChatHandlers(
               isError: true,
             };
           }
-          return {
-            text: `Skill „${skill.name}“ – befolge diese Anleitung:\n\n${skill.body}`,
-            isError: false,
-          };
+          return callSkill(
+            skill,
+            args,
+            (id, file) => skills.readFile(id, file),
+            contextLength,
+          );
         }
         if (tool.serverId !== MEMORY_TOOL_SERVER) {
           return mcpTools.call(tool, args, callSignal);
@@ -576,6 +584,7 @@ export function registerChatHandlers(
         code,
         codeMode,
         canUseTools && !workspacePath,
+        request.options?.contextLength ?? OLLAMA_DEFAULT_CONTEXT,
       );
       await runAnswer({
         provider,

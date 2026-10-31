@@ -74,12 +74,12 @@ describe('fetchGithubSkill', () => {
     const long = fakeFetch(
       () =>
         new Response(
-          `---\nname: ${'N'.repeat(300)}\ndescription: ${'D'.repeat(900)}\n---\nText`,
+          `---\nname: ${'N'.repeat(300)}\ndescription: ${'D'.repeat(1_500)}\n---\nText`,
         ),
     );
     const b = await fetchGithubSkill('https://github.com/o/r', long.fetch);
     expect(b.ok && b.value.name.length).toBe(80);
-    expect(b.ok && b.value.description.length).toBe(300);
+    expect(b.ok && b.value.description.length).toBe(1_024);
   });
 
   it('ein ungültiger Link geht gar nicht erst ins Netz', async () => {

@@ -40,7 +40,7 @@ Status: the first release (0.1.0) is not published yet. The installer and the up
 
 **Skills**
 
-- Instructions as `SKILL.md` files (same format as Claude skills). Turn them on by hand, preset them in projects and templates, or let the model load a fitting one itself. You can also load a skill from a GitHub link: LocalDesk fetches only the text and shows it to you first. A skill is plain text. It runs nothing.
+- Instructions as `SKILL.md` files (same format as Claude skills). Turn them on by hand, preset them in projects and templates, or let the model load a fitting one itself. You can also load a skill from a GitHub link: LocalDesk fetches only the text and shows it to you first. Skills up to 60,000 characters work (LocalDesk shows the size in tokens and tells you which context length a chat needs), and text files next to the `SKILL.md` (for example `references/…`) can be read by the model when needed. A skill is plain text. It runs nothing, and scripts are never executed.
 
 **Obsidian**
 
