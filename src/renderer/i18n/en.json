@@ -71,6 +71,8 @@
     "online": "Ollama {{version}}",
     "offline": "Ollama offline",
     "pageTitle": "Status",
+    "openPage": "Full page",
+    "close": "Close",
     "loadedTitle": "Loaded models",
     "loadedIntro": "Ollama loads a model into memory at the first chat and unloads it after a while without requests (default: 5 minutes). The size depends heavily on the context length.",
     "loading": "Asking Ollama …",
@@ -196,7 +198,8 @@
     "tab": {
       "sources": "Sources",
       "project": "Project",
-      "context": "Context"
+      "context": "Context",
+      "gpu": "GPU"
     },
     "noSources": "No sources yet – they appear here as soon as an answer has used knowledge.",
     "sourcesOf": "Passages the model received from your knowledge for the last answer.",

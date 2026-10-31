@@ -731,6 +731,11 @@
   nichts streamt; setzt `summary_at_count` zurück) → normales `send`. Bearbeiten/Wiederholen nur im normalen Chat,
   nicht im Code-Agent (Datei-Änderungen ließen sich nicht mit zurücknehmen). Löschen einzelner Nachrichten wurde
   bewusst nicht gebaut (nicht gewählt). In der gebauten App geprüft (neue Nachrichten-IDs nach Wiederholen).
+  E ✓: `components/status/StatusPanel.tsx` (Grafikkarte + geladene Modelle, `compact` für schmale Orte; fragt nur
+  ab, solange es offen ist) wird an drei Stellen benutzt: Status-Seite, Reiter „GPU“ im Seitenbereich neben dem
+  Chat (`SidePanelTab` + `'gpu'`) und Popup `components/StatusFlyout.tsx` am Status-Symbol der Leiste (Klick öffnet
+  das Popup, Esc/Klick daneben/Seitenwechsel schließt, Link „Ganze Seite“ → `/status`). Das Status-Symbol ist damit
+  KEIN NavLink mehr. In der gebauten App geprüft (Popup, Esc, Klick daneben, Link, Reiter).
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,

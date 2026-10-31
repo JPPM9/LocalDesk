@@ -20,9 +20,10 @@ import {
   IndexButton,
   ProgressBox,
 } from '../knowledge/CollectionEditor';
+import { StatusPanel } from '../status/StatusPanel';
 import { SourceList } from './SourceList';
 
-export type SidePanelTab = 'sources' | 'project' | 'context';
+export type SidePanelTab = 'sources' | 'project' | 'context' | 'gpu';
 
 interface SidePanelProps {
   tab: SidePanelTab;
@@ -39,7 +40,7 @@ interface SidePanelProps {
 /** Seitenbereich neben dem Chat: Quellen, Projekt und Kontext-Füllstand. */
 export function SidePanel(props: SidePanelProps) {
   const { t } = useTranslation();
-  const tabs: SidePanelTab[] = ['sources', 'project', 'context'];
+  const tabs: SidePanelTab[] = ['sources', 'project', 'context', 'gpu'];
 
   return (
     <aside className="flex w-[310px] shrink-0 flex-col border-l border-border bg-bg">
@@ -81,6 +82,7 @@ export function SidePanel(props: SidePanelProps) {
         {props.tab === 'sources' && <SourcesTab messages={props.messages} />}
         {props.tab === 'project' && <ProjectTab project={props.project} />}
         {props.tab === 'context' && <ContextTab {...props} />}
+        {props.tab === 'gpu' && <StatusPanel compact />}
       </div>
     </aside>
   );

@@ -1,7 +1,6 @@
 import { NavLink } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
-  Activity,
   BookMarked,
   FolderCode,
   Boxes,
@@ -18,6 +17,7 @@ import {
 import appIcon from '../../../assets/icon.png';
 import type { ThemeChoice } from '../../shared/appearance';
 import { useOllamaStatus } from '../hooks/useOllamaStatus';
+import { StatusFlyout } from './StatusFlyout';
 import { useTheme } from '../hooks/useTheme';
 
 interface NavItem {
@@ -35,7 +35,6 @@ const ITEMS: NavItem[] = [
   { to: '/knowledge', labelKey: 'nav.knowledge', icon: Library },
   { to: '/skills', labelKey: 'nav.skills', icon: WandSparkles },
   { to: '/models', labelKey: 'nav.models', icon: Boxes },
-  { to: '/status', labelKey: 'nav.status', icon: Activity },
 ];
 
 const THEME_NEXT: Record<ThemeChoice, ThemeChoice> = {
@@ -84,26 +83,23 @@ export function NavRail() {
         title="LocalDesk"
         className="mb-2 h-8 w-8 rounded-[9px]"
       />
-      {ITEMS.map(({ to, labelKey, icon: Icon }) => {
-        const label =
-          to === '/status' ? `${t(labelKey)} – ${statusText}` : t(labelKey);
-        return (
-          <NavLink
-            key={to}
-            to={to}
-            title={label}
-            aria-label={label}
-            className={itemClass}
-          >
-            <Icon size={19} />
-            {to === '/status' && (
-              <span
-                className={`absolute top-2 right-2 h-2 w-2 rounded-full ring-2 ring-sidebar ${statusDot}`}
-              />
-            )}
-          </NavLink>
-        );
-      })}
+      {ITEMS.map(({ to, labelKey, icon: Icon }) => (
+        <NavLink
+          key={to}
+          to={to}
+          title={t(labelKey)}
+          aria-label={t(labelKey)}
+          className={itemClass}
+        >
+          <Icon size={19} />
+        </NavLink>
+      ))}
+      {/* Status: Popup mit Grafikkarte und geladenen Modellen (die Seite ist über das Popup erreichbar). */}
+      <StatusFlyout
+        dotClass={statusDot}
+        statusText={statusText}
+        itemClass={itemClass}
+      />
 
       <span className="flex-1" />
 
