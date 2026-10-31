@@ -73,7 +73,10 @@ export function useContextUsage(
       (s) => !s.error && !activeSkills.includes(s.id),
     );
     if (modelSupportsTools) {
-      for (const tool of skillTools(catalog)) {
+      for (const tool of skillTools(
+        catalog,
+        settings.contextLength ?? OLLAMA_DEFAULT_CONTEXT,
+      )) {
         tools.push({
           name: tool.name,
           description: tool.description,

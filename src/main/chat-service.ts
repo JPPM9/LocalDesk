@@ -326,7 +326,7 @@ export function registerChatHandlers(
     };
     // Jeder Skill ein eigenes Werkzeug (siehe skillTools). Liest nur deinen
     // eigenen Text – keine Rückfrage nötig.
-    const offeredSkills = skillTools(skillCatalog);
+    const offeredSkills = skillTools(skillCatalog, contextLength);
     const skillOffers: OfferedTool[] = offeredSkills.map((t) => ({
       serverId: SKILL_TOOL_SERVER,
       serverName: 'Skills',

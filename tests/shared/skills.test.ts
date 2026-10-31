@@ -5,9 +5,12 @@ import {
   skillTools,
   formatSkill,
   isSkillId,
+  fitSkillCatalog,
   isSkillTextFile,
   parseSkill,
   skillContextAdvice,
+  skillDescriptionHint,
+  trimDescription,
   skillIdFromName,
   skillLoadedText,
   skillsPrompt,
@@ -153,6 +156,26 @@ describe('checkSkillInput', () => {
       false,
     );
     expect(checkSkillInput(null).ok).toBe(false);
+  });
+});
+
+describe('trimDescription / skillDescriptionHint', () => {
+  it('kürzt an der Wortgrenze und mit „…“', () => {
+    expect(trimDescription('kurz', 10)).toBe('kurz');
+    const trimmed = trimDescription('eins zwei drei vier fünf sechs', 16);
+    expect(trimmed).toBe('eins zwei drei…');
+    expect(trimDescription('x'.repeat(50), 10)).toBe(`${'x'.repeat(9)}…`);
+  });
+
+  it('merkt, wenn die Beschreibung fehlt oder sehr kurz ist', () => {
+    expect(skillDescriptionHint('')).toBe('missing');
+    expect(skillDescriptionHint('   ')).toBe('missing');
+    expect(skillDescriptionHint('Prüft Code.')).toBe('short');
+    expect(
+      skillDescriptionHint(
+        'Prüft Code auf Fehler, wenn der Nutzer Code zeigt.',
+      ),
+    ).toBeNull();
   });
 });
 
@@ -318,13 +341,60 @@ describe('Skills als Werkzeuge', () => {
     expect(text).toContain('- references/stil.md (120 bytes)');
   });
 
-  it('begrenzt die Zahl, damit die Liste den Kontext nicht sprengt', () => {
+  it('zeigt nie mehr als 40 Skills, auch bei viel Kontext', () => {
     const many = Array.from({ length: 60 }, (_, i) => ({
       id: `s-${i}`,
       name: `Skill ${i}`,
       description: '',
     }));
-    expect(skillTools(many)).toHaveLength(40);
+    expect(skillTools(many, 32_768)).toHaveLength(40);
+  });
+
+  it('der Katalog belegt nur einen Teil des Kontexts: erst kürzen, dann Skills weglassen', () => {
+    const skill = (i: number, description: string) => ({
+      id: `s-${i}`,
+      name: `Skill ${i}`,
+      description,
+    });
+    const word = 'Beschreibung ';
+    // Viel Platz: 5 lange Beschreibungen werden nur auf 600 Zeichen gekürzt.
+    const roomy = fitSkillCatalog(
+      Array.from({ length: 5 }, (_, i) => skill(i, word.repeat(100))),
+      16_384,
+    );
+    expect(roomy.descriptionMax).toBe(600);
+    expect(roomy.hidden).toBe(0);
+    expect(roomy.skills.every((s) => s.description.length <= 600)).toBe(true);
+    expect(roomy.skills[0].description.endsWith('…')).toBe(true);
+
+    // Standard-Kontext, 10 lange Beschreibungen: auf 150 gekürzt, ein Skill fällt weg.
+    const tight = fitSkillCatalog(
+      Array.from({ length: 10 }, (_, i) => skill(i, word.repeat(80))),
+      4096,
+    );
+    expect(tight.descriptionMax).toBe(150);
+    expect(tight.skills.length).toBeLessThan(10);
+    expect(tight.hidden).toBe(10 - tight.skills.length);
+    // Die Beschreibung bleibt im Skill selbst ungekürzt (nur das Werkzeug ist kürzer).
+    expect(tight.skills.every((s) => s.description.length <= 150)).toBe(true);
+
+    // Wenige kurze Beschreibungen bleiben unverändert.
+    const small = fitSkillCatalog([skill(1, 'Prüft Code.')], 4096);
+    expect(small.skills[0].description).toBe('Prüft Code.');
+    expect(small.hidden).toBe(0);
+  });
+
+  it('hält die Werkzeug-Beschreibungen im Rahmen des Kontexts', () => {
+    const many = Array.from({ length: 40 }, (_, i) => ({
+      id: `s-${i}`,
+      name: `Skill ${i}`,
+      description: 'Beschreibung '.repeat(70),
+    }));
+    for (const context of [4096, 8192, 16_384]) {
+      const size = JSON.stringify(skillTools(many, context)).length;
+      // höchstens ein Fünftel des Kontexts (Tokens × 5,5 Zeichen), mit etwas Spiel für das JSON-Gerüst
+      expect(size, String(context)).toBeLessThan(context * 0.2 * 5.5 * 1.35);
+    }
   });
 
   it('hält Werkzeug-Namen kurz genug', () => {

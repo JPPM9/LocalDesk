@@ -593,6 +593,8 @@
     "name": "Name",
     "namePlaceholder": "z. B. „Code-Review“",
     "description": "Wann passt dieser Skill?",
+    "descMissing": "Ohne Beschreibung findet das Modell diesen Skill nicht von selbst. Schreibe, wofür er gut ist und wann er passt.",
+    "descShort": "Die Beschreibung ist sehr kurz. Das Modell erkennt den Skill leichter, wenn sie Aufgabe und Auslöser nennt, z. B. „wenn der Nutzer …“.",
     "descriptionHint": "Danach entscheidet das Modell, ob es den Skill selbst lädt – beschreibe Aufgabe und Auslöser, z. B. „wenn der Nutzer Code zeigt und eine Prüfung möchte“.",
     "descriptionPlaceholder": "Prüft Code auf Fehler … – wenn der Nutzer …",
     "body": "Anleitung (Markdown)",
@@ -655,7 +657,9 @@
     "intro": "Eingeschaltete Skills gelten für jede Antwort in diesem Chat – ihr Text kostet entsprechend Kontext.",
     "none": "Noch keine Skills.",
     "toSkills": "Zur Seite „Skills“",
-    "manage": "Skills verwalten …"
+    "manage": "Skills verwalten …",
+    "noTools": "Dieses Modell kann keine Werkzeuge und lädt Skills deshalb nicht selbst. Es gelten nur die Skills, die du hier einschaltest.",
+    "hidden": "Bei {{context}} Tokens Kontext sieht das Modell nur {{shown}} von {{total}} Skills als Auswahl. Erhöhe die Kontextlänge oder schalte wichtige Skills hier selbst ein."
   },
   "mailSettings": {
     "title": "E-Mail",

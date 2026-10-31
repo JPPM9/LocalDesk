@@ -242,6 +242,81 @@ export const SKILL_TOOL_SERVER = 'localdesk:skills';
 /** So viele Skills bekommt das Modell höchstens als Werkzeug (Kontext!). */
 export const SKILL_CATALOG_MAX = 40;
 
+/** So viel vom Kontext darf der Skill-Katalog (alle Werkzeug-Beschreibungen) höchstens belegen. */
+export const SKILL_CATALOG_SHARE = 0.2;
+/**
+ * Zeichen je Skill ohne Beschreibung: Rahmentext der Werkzeug-Beschreibung, Name und
+ * JSON-Gerüst (gemessen an den Eingabe-Tokens bei qwen3:14b; ein Token sind etwa
+ * 5,5 Zeichen JSON).
+ */
+const SKILL_TOOL_OVERHEAD_CHARS = 330;
+const JSON_CHARS_PER_TOKEN = 5.5;
+/** Längen, auf die Beschreibungen im Werkzeug-Katalog gekürzt werden – die größte, die noch passt. */
+const DESCRIPTION_STEPS = [600, 400, 250, 150];
+
+/** Kürzt auf `max` Zeichen, möglichst an einer Wortgrenze, mit „…“. */
+export function trimDescription(text: string, max: number): string {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max - 1);
+  const space = cut.lastIndexOf(' ');
+  return `${(space > max * 0.6 ? cut.slice(0, space) : cut).trimEnd()}…`;
+}
+
+/**
+ * Welche Skills das Modell als Werkzeug sieht, und mit welchen Beschreibungen. Die
+ * Beschreibungen kosten Kontext (in jeder Runde); darum darf der ganze Katalog nur
+ * `SKILL_CATALOG_SHARE` des Kontexts belegen: erst werden die Beschreibungen gekürzt
+ * (auf 600, 400, 250, zuletzt 150 Zeichen), reicht das nicht, fallen Skills weg –
+ * `hidden` sagt, wie viele. Gespeichert wird weiter die volle Beschreibung.
+ */
+export function fitSkillCatalog<
+  T extends { name: string; description: string },
+>(
+  skills: T[],
+  contextLength: number = OLLAMA_DEFAULT_CONTEXT,
+): { skills: T[]; hidden: number; descriptionMax: number } {
+  const budget = Math.floor(
+    contextLength * SKILL_CATALOG_SHARE * JSON_CHARS_PER_TOKEN,
+  );
+  const candidates = skills.slice(0, SKILL_CATALOG_MAX);
+  const cost = (list: T[], cap: number) =>
+    list.reduce(
+      (sum, s) =>
+        sum +
+        SKILL_TOOL_OVERHEAD_CHARS +
+        s.name.length +
+        Math.min(s.description.length, cap),
+      0,
+    );
+  const cap = DESCRIPTION_STEPS.find((c) => cost(candidates, c) <= budget);
+  let chosen = candidates;
+  const descriptionMax = cap ?? DESCRIPTION_STEPS[DESCRIPTION_STEPS.length - 1];
+  if (cap === undefined) {
+    chosen = [];
+    for (const skill of candidates) {
+      if (cost([...chosen, skill], descriptionMax) > budget) break;
+      chosen.push(skill);
+    }
+  }
+  return {
+    skills: chosen.map((s) => ({
+      ...s,
+      description: trimDescription(s.description, descriptionMax),
+    })),
+    hidden: skills.length - chosen.length,
+    descriptionMax,
+  };
+}
+
+/** Wie gut kann das Modell einen Skill an seiner Beschreibung erkennen? Null = ausreichend. */
+export function skillDescriptionHint(
+  description: string,
+): 'missing' | 'short' | null {
+  const text = description.trim();
+  if (!text) return 'missing';
+  return text.length < 40 ? 'short' : null;
+}
+
 /** Werkzeug-Name eines Skills für das Modell: „code-review“ → „skill_code_review“. */
 export function skillToolName(id: string): string {
   return `skill_${id.replace(/-/g, '_')}`.slice(0, 64);
@@ -260,13 +335,15 @@ export function skillTools(
     description: string;
     files?: SkillFile[];
   }[],
+  /** Kontextlänge des Chats – der Katalog der Werkzeuge belegt davon nur einen kleinen Teil. */
+  contextLength: number = OLLAMA_DEFAULT_CONTEXT,
 ): {
   skillId: string;
   name: string;
   description: string;
   inputSchema: Record<string, unknown>;
 }[] {
-  return skills.slice(0, SKILL_CATALOG_MAX).map((s) => ({
+  return fitSkillCatalog(skills, contextLength).skills.map((s) => ({
     skillId: s.id,
     name: skillToolName(s.id),
     description:

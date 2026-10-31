@@ -250,7 +250,7 @@ export const en: Record<MessageKey, string> = {
   'skills.hasLinks':
     'The skill folder contains links – please delete it by hand in Explorer.',
   'skills.tooBigForChat':
-    'The skill “{name}” needs about {tokens} tokens, but this chat only has {context} tokens of context. Tell the user they can raise the context length to at least {suggested} in the chat settings, and carry on without the skill for now.',
+    'The skill “{name}” needs about {tokens} tokens, but this chat only has {context} tokens of context. Tell the user they can raise the context length to at least {suggested} in the chat settings, and carry on without the skill for now. If they have changed that, call the skill again the next time it fits.',
   'skills.tooBigForModel':
     'The skill “{name}” needs about {tokens} tokens and does not fit into the context of this chat ({context} tokens). Tell the user it cannot be used here, and carry on without it.',
   'skills.import.unsupported':

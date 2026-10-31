@@ -18,6 +18,7 @@ import {
   SKILL_DESCRIPTION_MAX,
   SKILL_NAME_MAX,
   skillContextAdvice,
+  skillDescriptionHint,
   type SkillInput,
   type SkillView,
 } from '../../shared/skills';
@@ -403,6 +404,15 @@ export function SkillsPage() {
                 label={t('skills.description')}
                 hint={t('skills.descriptionHint')}
               >
+                {skillDescriptionHint(draft.description) && (
+                  <p className="mb-1.5 text-xs text-warn">
+                    {t(
+                      skillDescriptionHint(draft.description) === 'missing'
+                        ? 'skills.descMissing'
+                        : 'skills.descShort',
+                    )}
+                  </p>
+                )}
                 <textarea
                   value={draft.description}
                   maxLength={SKILL_DESCRIPTION_MAX}

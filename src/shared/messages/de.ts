@@ -254,7 +254,7 @@ export const de = {
   'skills.hasLinks':
     'Der Skill-Ordner enthält Verknüpfungen – bitte lösche ihn von Hand im Explorer.',
   'skills.tooBigForChat':
-    'Der Skill „{name}“ braucht etwa {tokens} Tokens, dieser Chat hat aber nur {context} Tokens Kontext. Sage dem Nutzer, dass er in den Chat-Einstellungen die Kontextlänge auf mindestens {suggested} erhöhen kann, und mache vorerst ohne den Skill weiter.',
+    'Der Skill „{name}“ braucht etwa {tokens} Tokens, dieser Chat hat aber nur {context} Tokens Kontext. Sage dem Nutzer, dass er in den Chat-Einstellungen die Kontextlänge auf mindestens {suggested} erhöhen kann, und mache vorerst ohne den Skill weiter. Falls er das geändert hat, rufe den Skill beim nächsten passenden Wunsch noch einmal auf.',
   'skills.tooBigForModel':
     'Der Skill „{name}“ braucht etwa {tokens} Tokens und passt nicht in den Kontext dieses Chats ({context} Tokens). Sage dem Nutzer, dass er hier nicht benutzt werden kann, und mache ohne ihn weiter.',
   'skills.import.unsupported':

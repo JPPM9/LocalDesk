@@ -43,6 +43,7 @@ import { shouldSuggestSummary } from '../../shared/summary';
 import { ModelSelect } from '../components/chat/ModelSelect';
 import { KnowledgeButton } from '../components/knowledge/CollectionPicker';
 import { McpButton } from '../components/mcp/McpButton';
+import { OLLAMA_DEFAULT_CONTEXT } from '../../shared/context';
 import { SkillsButton } from '../components/skills/SkillPicker';
 import { MailButton } from '../components/mail/MailButton';
 import { useConfirm } from '../components/ConfirmDialog';
@@ -531,6 +532,12 @@ export function ChatPage() {
                 <SkillsButton
                   selected={settings.skills ?? []}
                   onChange={(ids) => setList('skills', ids)}
+                  contextLength={
+                    settings.contextLength ?? OLLAMA_DEFAULT_CONTEXT
+                  }
+                  modelSupportsTools={models
+                    .find((m) => m.name === model)
+                    ?.capabilities.includes('tools')}
                 />
                 <MailButton
                   selected={settings.mailAccounts ?? []}

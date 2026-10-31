@@ -5,7 +5,7 @@ import type {
   SkillCandidateView,
   SkillImportPreview,
 } from '../../../shared/skill-import';
-import type { SkillView } from '../../../shared/skills';
+import { skillDescriptionHint, type SkillView } from '../../../shared/skills';
 import { formatBytes } from '../../utils/format';
 import { messageLocale } from '../../../shared/messages';
 import { SkillFindings } from './SkillFindings';
@@ -250,6 +250,16 @@ export function SkillImportDialog({
                     {candidate.duplicate && (
                       <p className="text-xs text-warn">
                         {t('skills.import.duplicate')}
+                      </p>
+                    )}
+                    {skillDescriptionHint(candidate.description) && (
+                      <p className="text-xs text-warn">
+                        {t(
+                          skillDescriptionHint(candidate.description) ===
+                            'missing'
+                            ? 'skills.descMissing'
+                            : 'skills.descShort',
+                        )}
                       </p>
                     )}
                     <SkillFindings findings={candidate.findings} />

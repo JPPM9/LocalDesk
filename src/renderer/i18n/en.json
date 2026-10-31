@@ -593,6 +593,8 @@
     "name": "Name",
     "namePlaceholder": "e.g. “Code review”",
     "description": "When does this skill apply?",
+    "descMissing": "Without a description the model will not find this skill on its own. Write what it is good for and when it applies.",
+    "descShort": "The description is very short. The model recognizes the skill more easily if it names the task and the trigger, e.g. “when the user …”.",
     "descriptionHint": "The model uses this to decide whether to load the skill itself – describe the task and the trigger, e.g. “when the user shows code and wants it reviewed”.",
     "descriptionPlaceholder": "Checks code for errors … – when the user …",
     "body": "Instructions (Markdown)",
@@ -655,7 +657,9 @@
     "intro": "Skills that are turned on apply to every answer in this chat – their text costs context accordingly.",
     "none": "No skills yet.",
     "toSkills": "Go to “Skills”",
-    "manage": "Manage skills …"
+    "manage": "Manage skills …",
+    "noTools": "This model cannot use tools, so it does not load skills on its own. Only the skills you switch on here apply.",
+    "hidden": "With {{context}} tokens of context the model only sees {{shown}} of {{total}} skills to choose from. Raise the context length or switch important skills on here yourself."
   },
   "mailSettings": {
     "title": "E-mail",
