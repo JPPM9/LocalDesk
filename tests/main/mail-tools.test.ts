@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import type { MailClient } from '../../src/main/mail/mail-client';
 import {
   callMailTool,
+  describeCreateLabel,
   describeMailChange,
+  describeRenameLabel,
   mailChanges,
   mailTools,
 } from '../../src/main/mail/mail-tools';
@@ -35,6 +37,8 @@ const summary: MailSummary = {
 function fakeClient() {
   const applied: MailChange[] = [];
   const queries: unknown[] = [];
+  const created: string[] = [];
+  const renamed: [string, string][] = [];
   const client: MailClient = {
     list: async (options) => {
       queries.push(options);
@@ -50,12 +54,26 @@ function fakeClient() {
     }),
     summaries: async () => [summary],
     labels: async () => ALL,
+    createLabel: async (name) => {
+      created.push(name);
+      return { id: 'Label_9', name, type: 'user' };
+    },
+    renameLabel: async (id, name) => {
+      renamed.push([id, name]);
+      return { id, name, type: 'user' };
+    },
     apply: async (change) => {
       applied.push(change);
     },
   };
-  return { client, applied, queries };
+  return { client, applied, queries, created, renamed };
 }
+
+/** Eigene Kopien – die Werkzeuge ändern die Listen der laufenden Antwort. */
+const lists = () => ({
+  all: ALL.map((l) => ({ ...l })),
+  own: ALL.filter((l) => l.type === 'user').map((l) => ({ ...l })),
+});
 
 describe('mailTools', () => {
   it('bietet Suchen/Lesen ohne und Ändern mit Rückfrage an', () => {
@@ -65,20 +83,168 @@ describe('mailTools', () => {
         ['mail_search', 'always', false],
         ['mail_read', 'always', false],
         ['mail_change', 'ask', true],
+        ['mail_create_label', 'ask', true],
+        ['mail_rename_label', 'ask', true],
       ],
     );
     const change = tools[2].inputSchema as {
       properties: { label: { enum: string[] } };
     };
     expect(change.properties.label.enum).toEqual(['Rechnungen']);
+    const rename = tools[4].inputSchema as {
+      properties: { label: { enum: string[] } };
+      required: string[];
+    };
+    expect(rename.properties.label.enum).toEqual(['Rechnungen']);
+    expect(rename.required).toEqual(['label', 'newName']);
   });
 
-  it('ohne eigene Labels nur Sterne', () => {
-    const [, , change] = mailTools([], async () => '');
+  it('ohne eigene Labels nur Sterne und Anlegen, kein Umbenennen', () => {
+    const tools = mailTools([], async () => '');
+    const change = tools[2];
     expect(
       (change.inputSchema as { properties: object }).properties,
     ).not.toHaveProperty('label');
     expect(change.description).toContain('nur Sterne');
+    expect(change.description).toContain('mail_create_label');
+    expect(tools.map((t) => t.toolName)).toEqual([
+      'mail_search',
+      'mail_read',
+      'mail_change',
+      'mail_create_label',
+    ]);
+  });
+
+  it('reicht die Vorschau je Werkzeug weiter', async () => {
+    const seen: string[] = [];
+    const tools = mailTools(OWN, async (toolName) => {
+      seen.push(toolName);
+      return '';
+    });
+    for (const tool of tools) await tool.describe?.({});
+    expect(seen).toEqual([
+      'mail_change',
+      'mail_create_label',
+      'mail_rename_label',
+    ]);
+  });
+});
+
+describe('Label anlegen', () => {
+  it('beschreibt und legt an, danach kennt die Antwort das Label', async () => {
+    const { client, created } = fakeClient();
+    const { all, own } = lists();
+    expect(
+      describeCreateLabel({ name: ' Reisen ', reason: ' Urlaub ' }, all),
+    ).toBe('Neues Label „Reisen“ in Gmail anlegen\nGrund: Urlaub');
+    expect(
+      await callMailTool(
+        client,
+        'mail_create_label',
+        { name: ' Reisen ' },
+        own,
+        all,
+      ),
+    ).toBe('Erledigt – das Label „Reisen“ ist in Gmail angelegt.');
+    expect(created).toEqual(['Reisen']);
+    expect(own.map((l) => l.name)).toEqual(['Rechnungen', 'Reisen']);
+    expect(all.map((l) => l.name)).toContain('Reisen');
+    // Jetzt darf mail_change es verwenden.
+    expect(mailChanges({ id: 'm1', label: 'Reisen' }, own).changes).toEqual([
+      { kind: 'label', messageId: 'm1', labelId: 'Label_9' },
+    ]);
+  });
+
+  it('lehnt unbrauchbare Namen ab, bevor Gmail gefragt wird', async () => {
+    const { client, created } = fakeClient();
+    const { all, own } = lists();
+    for (const [name, text] of [
+      ['', 'fehlt'],
+      ['   ', 'fehlt'],
+      [undefined, 'fehlt'],
+      ['x'.repeat(101), 'höchstens 100'],
+      ['Mit\u0007Steuerzeichen', 'unzulässige'],
+      ['INBOX', 'Gmail selbst'],
+      ['trash', 'Gmail selbst'],
+      ['CATEGORY_PROMOTIONS', 'Gmail selbst'],
+      ['[Gmail]/Entwürfe', 'Gmail selbst'],
+      ['rechnungen', 'gibt es schon'],
+    ] as const) {
+      await expect(
+        callMailTool(client, 'mail_create_label', { name }, own, all),
+        String(name),
+      ).rejects.toThrow(text);
+      expect(() => describeCreateLabel({ name }, all)).toThrow(text);
+    }
+    expect(created).toEqual([]);
+  });
+});
+
+describe('Label umbenennen', () => {
+  it('beschreibt und benennt um, die Listen ziehen mit', async () => {
+    const { client, renamed } = fakeClient();
+    const { all, own } = lists();
+    expect(
+      describeRenameLabel(
+        { label: 'Rechnungen', newName: 'Belege', reason: 'passender' },
+        own,
+        all,
+      ),
+    ).toBe(
+      'Label „Rechnungen“ in „Belege“ umbenennen (gilt für alle Mails mit diesem Label)\nGrund: passender',
+    );
+    expect(
+      await callMailTool(
+        client,
+        'mail_rename_label',
+        { label: 'Rechnungen', newName: ' Belege ' },
+        own,
+        all,
+      ),
+    ).toBe('Erledigt – das Label „Rechnungen“ heißt jetzt „Belege“.');
+    expect(renamed).toEqual([['Label_1', 'Belege']]);
+    expect(own.map((l) => l.name)).toEqual(['Belege']);
+    expect(all.find((l) => l.id === 'Label_1')?.name).toBe('Belege');
+  });
+
+  it('erlaubt nur eigene Labels und gültige neue Namen', async () => {
+    const { client, renamed } = fakeClient();
+    const { all, own } = lists();
+    // Systemlabels stehen nicht in der Liste der eigenen Labels.
+    await expect(
+      callMailTool(
+        client,
+        'mail_rename_label',
+        { label: 'INBOX', newName: 'Eingang' },
+        own,
+        all,
+      ),
+    ).rejects.toThrow('gibt es nicht');
+    for (const [newName, text] of [
+      ['', 'fehlt'],
+      ['SPAM', 'Gmail selbst'],
+      ['Rechnungen', 'heißt schon so'],
+    ] as const) {
+      await expect(
+        callMailTool(
+          client,
+          'mail_rename_label',
+          { label: 'Rechnungen', newName },
+          own,
+          all,
+        ),
+        newName,
+      ).rejects.toThrow(text);
+    }
+    // Nur die Groß-/Kleinschreibung ändern ist erlaubt (es ist ja dasselbe Label).
+    await callMailTool(
+      client,
+      'mail_rename_label',
+      { label: 'Rechnungen', newName: 'RECHNUNGEN' },
+      own,
+      all,
+    );
+    expect(renamed).toEqual([['Label_1', 'RECHNUNGEN']]);
   });
 });
 

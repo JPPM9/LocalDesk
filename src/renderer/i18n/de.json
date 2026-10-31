@@ -270,7 +270,9 @@
     "mailTool": {
       "mail_search": "Mails gesucht",
       "mail_read": "Mail gelesen",
-      "mail_change": "Mail-Änderung"
+      "mail_change": "Mail-Änderung",
+      "mail_create_label": "Label anlegen",
+      "mail_rename_label": "Label umbenennen"
     }
   },
   "downloads": {
@@ -682,9 +684,10 @@
     "open": "Sortieren vorschlagen",
     "title": "Sortieren vorschlagen",
     "start": "Vorschläge holen",
-    "intro_one": "Das Modell sieht Absender, Betreff und Vorschau der ersten Mail in der Liste und schlägt eigene Labels und Sterne vor. In Gmail ändert sich nur, was du anhakst und übernimmst.",
-    "intro_other": "Das Modell sieht Absender, Betreff und Vorschau der ersten {{count}} Mails in der Liste und schlägt eigene Labels und Sterne vor. In Gmail ändert sich nur, was du anhakst und übernimmst.",
-    "noLabels": "Du hast in Gmail noch keine eigenen Labels – das Modell kann deshalb nur Sterne vorschlagen. Labels legst du in Gmail an.",
+    "intro_one": "Das Modell sieht Absender, Betreff und Vorschau der ersten Mail in der Liste und schlägt eigene Labels (auch neue) und Sterne vor. In Gmail ändert sich nur, was du anhakst und übernimmst.",
+    "intro_other": "Das Modell sieht Absender, Betreff und Vorschau der ersten {{count}} Mails in der Liste und schlägt eigene Labels (auch neue) und Sterne vor. In Gmail ändert sich nur, was du anhakst und übernimmst.",
+    "noLabels": "Du hast in Gmail noch keine eigenen Labels – das Modell kann neue Labels vorschlagen (du bestätigst sie) oder Sterne setzen. Oder lege unten selbst eines an.",
+    "addNewLabel": "Neues Label „{{name}}“ anlegen und hinzufügen",
     "running_one": "Das Modell sieht sich 1 Mail an …",
     "running_other": "Das Modell sieht sich {{count}} Mails an …",
     "none": "Keine Vorschläge – das Modell sieht nichts, das klar zu einem Label oder Stern passt.",
@@ -699,11 +702,23 @@
     "applied_one": "1 Änderung übernommen.",
     "applied_other": "{{count}} Änderungen übernommen."
   },
+  "mailLabels": {
+    "title": "Labels verwalten",
+    "intro": "Hier legst du eigene Gmail-Labels an oder benennst sie um. Beim Umbenennen ändert sich der Name bei allen Mails mit diesem Label. Labels löschen geht nur in Gmail.",
+    "none": "Du hast noch keine eigenen Labels.",
+    "newPlaceholder": "Name des neuen Labels",
+    "create": "Anlegen",
+    "created": "Label „{{name}}“ angelegt.",
+    "rename": "Umbenennen",
+    "renamed": "Label ist jetzt „{{name}}“.",
+    "save": "Speichern",
+    "cancel": "Abbrechen"
+  },
   "mailChat": {
     "button": "E-Mail: Postfach im Chat nutzen",
     "chip": "E-Mail",
     "title": "E-Mail im Chat",
-    "intro": "Das Modell darf in diesem Chat Mails suchen und lesen. Labels und Sterne schlägt es nur vor – du bestätigst jede Änderung. Senden und Löschen gibt es nicht.",
+    "intro": "Das Modell darf in diesem Chat Mails suchen und lesen. Labels (auch eigene anlegen oder umbenennen) und Sterne schlägt es nur vor – du bestätigst jede Änderung. Senden und Löschen gibt es nicht.",
     "none": "Noch kein Mail-Konto angemeldet.",
     "toSettings": "Zu den Einstellungen",
     "noTools": "Das gewählte Modell kann keine Werkzeuge benutzen – wähle eines mit „Tools“, damit es Mails lesen kann."

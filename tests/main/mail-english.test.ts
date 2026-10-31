@@ -9,7 +9,9 @@ import type { MailClient } from '../../src/main/mail/mail-client';
 import { guardedFetch, type Fetch } from '../../src/main/mail/mail-fetch';
 import {
   callMailTool,
+  describeCreateLabel,
   describeMailChange,
+  describeRenameLabel,
   mailChanges,
   mailTools,
 } from '../../src/main/mail/mail-tools';
@@ -54,6 +56,8 @@ const client: MailClient = {
   }),
   summaries: async () => [summary],
   labels: async () => ALL,
+  createLabel: async (name) => ({ id: 'Label_9', name, type: 'user' }),
+  renameLabel: async (id, name) => ({ id, name, type: 'user' }),
   apply: async () => {},
 };
 
@@ -196,6 +200,61 @@ describe('E-Mail auf Englisch', () => {
     expect(
       await message(() => callMailTool(client, 'mail_read', {}, OWN, ALL)),
     ).toBe("The mail's identifier is missing.");
+  });
+
+  it('Labels anlegen und umbenennen: Vorschau, Ergebnis, Fehler', async () => {
+    const own = OWN.map((l) => ({ ...l }));
+    const all = ALL.map((l) => ({ ...l }));
+    expect(
+      describeCreateLabel({ name: ' Reisen ', reason: 'trips' }, all),
+    ).toBe('Create new label “Reisen” in Gmail\nReason: trips');
+    expect(
+      describeRenameLabel({ label: 'Rechnungen', newName: 'Bills' }, own, all),
+    ).toBe(
+      'Rename label “Rechnungen” to “Bills” (applies to all mails with this label)',
+    );
+    expect(
+      await message(() => describeCreateLabel({ name: 'inbox' }, all)),
+    ).toBe('“inbox” is a name Gmail uses itself – please choose another one.');
+    expect(
+      await message(() => describeCreateLabel({ name: 'RECHNUNGEN' }, all)),
+    ).toBe('A label “RECHNUNGEN” already exists.');
+    expect(await message(() => describeCreateLabel({}, all))).toBe(
+      'The label name is missing.',
+    );
+    expect(
+      await message(() => describeCreateLabel({ name: 'x'.repeat(101) }, all)),
+    ).toBe('The label name may be at most 100 characters long.');
+    expect(
+      await message(() =>
+        describeRenameLabel(
+          { label: 'Rechnungen', newName: 'Rechnungen' },
+          own,
+          all,
+        ),
+      ),
+    ).toBe('The label already has this name.');
+
+    expect(
+      await callMailTool(
+        client,
+        'mail_create_label',
+        { name: 'Reisen' },
+        own,
+        all,
+      ),
+    ).toBe('Done – the label “Reisen” has been created in Gmail.');
+    expect(
+      await callMailTool(
+        client,
+        'mail_rename_label',
+        { label: 'Rechnungen', newName: 'Bills' },
+        own,
+        all,
+      ),
+    ).toBe('Done – the label “Rechnungen” is now called “Bills”.');
+    const toolNames = mailTools(own, async () => '').map((t) => t.toolName);
+    expect(toolNames).toContain('mail_create_label');
   });
 });
 

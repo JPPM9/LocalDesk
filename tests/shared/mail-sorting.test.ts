@@ -172,6 +172,90 @@ describe('parseSuggestions', () => {
     ).toEqual([expect.objectContaining({ messageId: 'm2', star: false })]);
   });
 
+  it('übernimmt neue Labels – gleiche Namen zusammen, höchstens 3 verschiedene', () => {
+    const many = [mail('m1'), mail('m2'), mail('m3'), mail('m4'), mail('m5')];
+    const result = parseSuggestions(
+      answer([
+        { mail: 1, label: '', newLabel: ' Versicherung ', reason: 'a' },
+        { mail: 2, label: '', newLabel: 'versicherung', reason: 'b' },
+        { mail: 3, label: '', newLabel: 'Steuern', reason: 'c' },
+        { mail: 4, label: '', newLabel: 'Arzt', reason: 'd' },
+        {
+          mail: 5,
+          label: '',
+          newLabel: 'Sport',
+          reason: 'zu viele neue',
+          star: true,
+        },
+      ]),
+      many,
+      OWN,
+      ALL,
+    );
+    expect(result.map((s) => [s.messageId, s.newLabel])).toEqual([
+      ['m1', 'Versicherung'],
+      ['m2', 'Versicherung'],
+      ['m3', 'Steuern'],
+      ['m4', 'Arzt'],
+      // Das vierte neue Label entfällt, der Stern bleibt.
+      ['m5', undefined],
+    ]);
+    expect(result[4]).toMatchObject({ messageId: 'm5', star: true });
+    expect(suggestionChanges(result[0])).toEqual([
+      { kind: 'newLabel', messageId: 'm1', name: 'Versicherung' },
+    ]);
+  });
+
+  it('nimmt ein vorhandenes Label, wenn der neue Name schon eines ist', () => {
+    const result = parseSuggestions(
+      answer([{ mail: 1, label: '', newLabel: 'REISEN', reason: 'x' }]),
+      MAILS,
+      OWN,
+      ALL,
+    );
+    expect(result).toEqual([
+      expect.objectContaining({ label: { id: 'Label_2', name: 'Reisen' } }),
+    ]);
+    expect(result[0]).not.toHaveProperty('newLabel');
+  });
+
+  it('lehnt unbrauchbare neue Namen ab', () => {
+    const result = parseSuggestions(
+      answer([
+        { mail: 1, label: '', newLabel: 'INBOX', reason: 'Systemname' },
+        { mail: 3, label: '', newLabel: '   ', reason: 'leer' },
+        {
+          mail: 2,
+          label: '',
+          newLabel: 'x'.repeat(101),
+          reason: 'zu lang',
+          star: false,
+        },
+      ]),
+      MAILS,
+      OWN,
+      ALL,
+    );
+    // Nur der Stern von m2 bleibt übrig.
+    expect(result).toEqual([
+      expect.objectContaining({ messageId: 'm2', star: false }),
+    ]);
+    expect(result[0]).not.toHaveProperty('newLabel');
+  });
+
+  it('zeigt dem Modell das Feld „newLabel“ im Antwortformat', () => {
+    const schema = sortingSchema(OWN) as {
+      properties: {
+        suggestions: {
+          items: { properties: Record<string, unknown>; required: string[] };
+        };
+      };
+    };
+    const item = schema.properties.suggestions.items;
+    expect(item.properties.newLabel).toEqual({ type: 'string' });
+    expect(item.required).not.toContain('newLabel');
+  });
+
   it('meldet unlesbare Antworten', () => {
     expect(() => parseSuggestions('kein JSON', MAILS, OWN)).toThrow('lesbaren');
     expect(() => parseSuggestions('{"x":1}', MAILS, OWN)).toThrow('lesbaren');

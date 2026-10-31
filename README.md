@@ -48,7 +48,7 @@ Status: the first release (0.1.0) is not published yet. The installer and the up
 
 **E-mail (Gmail)**
 
-- Reads Gmail directly from Google and passes mail only to your local model. Read, search, summarize and suggest labels and stars. LocalDesk can add your own labels and set or remove stars, only after your click. It never sends, deletes or archives. Setup needs your own Google app: [docs/email-setup.md](docs/email-setup.md) ([German version](docs/email-einrichten.md)).
+- Reads Gmail directly from Google and passes mail only to your local model. Read, search, summarize and suggest labels and stars. LocalDesk can add your own labels, create new ones, rename them and set or remove stars, only after your click. It never sends, deletes or archives mail and never deletes labels. Setup needs your own Google app: [docs/email-setup.md](docs/email-setup.md) ([German version](docs/email-einrichten.md)).
 - Outlook is planned (Microsoft requires an Azure directory for it).
 
 **Code area**

@@ -91,6 +91,10 @@ const api: LocalDeskApi = {
   cancelMailSorting: () => ipcRenderer.invoke(IpcChannels.cancelMailSorting),
   applyMailChanges: (accountId, changes) =>
     ipcRenderer.invoke(IpcChannels.applyMailChanges, accountId, changes),
+  createMailLabel: (accountId, name) =>
+    ipcRenderer.invoke(IpcChannels.createMailLabel, accountId, name),
+  renameMailLabel: (accountId, labelId, name) =>
+    ipcRenderer.invoke(IpcChannels.renameMailLabel, accountId, labelId, name),
   getObsidian: () => ipcRenderer.invoke(IpcChannels.getObsidian),
   setObsidian: (vaultPath, folder) =>
     ipcRenderer.invoke(IpcChannels.setObsidian, vaultPath, folder),

@@ -9,6 +9,8 @@ import {
   type MailPage,
   type MailSummary,
 } from '../../shared/mail';
+import { checkLabelName } from '../../shared/mail-labels';
+import { isSortableLabel } from '../../shared/mail-sorting';
 import { describeGmailError, type GoogleApiError } from './google-auth';
 import { decodeEntities, htmlToText } from './html-to-text';
 import { mapLimit, type MailClient } from './mail-client';
@@ -50,8 +52,9 @@ interface GmailMessage {
 }
 
 /**
- * Gmail über die REST-API. Geschrieben wird nur über `modify` – und nur ein
- * Label hinzufügen oder den Stern setzen/entfernen.
+ * Gmail über die REST-API. Geschrieben wird nur über `modify` (ein Label
+ * hinzufügen oder den Stern setzen/entfernen) sowie eigene Labels anlegen und
+ * umbenennen.
  */
 export class GmailClient implements MailClient {
   private labelCheck: Promise<MailLabel[]> | null = null;
@@ -130,7 +133,47 @@ export class GmailClient implements MailClient {
       .sort((a, b) => a.name.localeCompare(b.name, 'de'));
   }
 
+  async createLabel(name: string): Promise<MailLabel> {
+    const checked = checkLabelName(name, await this.labels());
+    if (!checked.ok) throw new Error(checked.error);
+    const created = await this.request<GmailLabel>('/labels', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: checked.value,
+        labelListVisibility: 'labelShow',
+        messageListVisibility: 'show',
+      }),
+    });
+    this.labelCheck = null;
+    return createdLabel(created);
+  }
+
+  async renameLabel(labelId: string, name: string): Promise<MailLabel> {
+    const id = checkedId(labelId);
+    const labels = await this.labels();
+    // Nur eigene Labels – Systemlabels und „[Gmail]/…“ bleiben, wie sie sind.
+    const current = labels.find((l) => l.id === id);
+    if (!current || !isSortableLabel(current)) {
+      throw new Error(tr('mail.labelGone'));
+    }
+    const checked = checkLabelName(name, labels, id);
+    if (!checked.ok) throw new Error(checked.error);
+    if (checked.value === current.name) {
+      throw new Error(tr('mail.labelSameName'));
+    }
+    const renamed = await this.request<GmailLabel>(`/labels/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: checked.value }),
+    });
+    this.labelCheck = null;
+    return createdLabel(renamed);
+  }
+
   async apply(change: MailChange): Promise<void> {
+    // „newLabel“ wird vorher zu „label“ (das Label legt createLabel an).
+    if (change.kind === 'newLabel') throw new Error(tr('mail.unknownChange'));
     const messageId = checkedId(change.messageId);
     let body: { addLabelIds?: string[]; removeLabelIds?: string[] };
     if (change.kind === 'label') {
@@ -178,6 +221,19 @@ export class GmailClient implements MailClient {
       return body;
     }
   }
+}
+
+interface GmailLabel {
+  id?: string;
+  name?: string;
+}
+
+/** Das Label aus Gmails Antwort – ohne gültige Kennung und Namen gilt es als fehlgeschlagen. */
+function createdLabel(label: GmailLabel): MailLabel {
+  if (!isMailId(label.id) || typeof label.name !== 'string') {
+    throw new Error(tr('mail.labelCreateFailed'));
+  }
+  return { id: label.id, name: label.name, type: 'user' };
 }
 
 function checkedId(id: string): string {

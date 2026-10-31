@@ -4,6 +4,8 @@ import {
   type MailLabel,
   type MailSummary,
 } from '../../shared/mail';
+import { checkLabelName, LABEL_NAME_MAX } from '../../shared/mail-labels';
+import { isSortableLabel } from '../../shared/mail-sorting';
 import type { OfferedTool } from '../../shared/tools';
 import type { MailClient } from './mail-client';
 import { messageLocale, tr } from '../../shared/messages';
@@ -11,6 +13,8 @@ import { messageLocale, tr } from '../../shared/messages';
 export const MAIL_SEARCH_TOOL = 'mail_search';
 export const MAIL_READ_TOOL = 'mail_read';
 export const MAIL_CHANGE_TOOL = 'mail_change';
+export const MAIL_CREATE_LABEL_TOOL = 'mail_create_label';
+export const MAIL_RENAME_LABEL_TOOL = 'mail_rename_label';
 
 /** So viele Mails liefert eine Suche dem Modell höchstens. */
 const SEARCH_MAX = 20;
@@ -21,12 +25,17 @@ const foreign = () => tr('tool.mailForeign');
 
 /**
  * Die E-Mail-Werkzeuge im Chat (nur mit eingeschaltetem Schalter „E-Mail“):
- * suchen und lesen ohne Rückfrage, Änderungen IMMER mit Rückfrage – und nur
- * eigenes Label hinzufügen oder Stern. Senden und Löschen gibt es nicht.
+ * suchen und lesen ohne Rückfrage, Änderungen IMMER mit Rückfrage – eigenes
+ * Label hinzufügen, Stern, eigenes Label anlegen oder umbenennen. Senden und
+ * Löschen gibt es nicht. `describe` liefert die Vorschau für die Rückfrage
+ * (`describeMailTool`).
  */
 export function mailTools(
   labels: MailLabel[],
-  describe: (args: Record<string, unknown>) => Promise<string>,
+  describe: (
+    toolName: string,
+    args: Record<string, unknown>,
+  ) => Promise<string>,
 ): OfferedTool[] {
   const base = {
     serverId: MAIL_TOOL_SERVER,
@@ -72,7 +81,8 @@ export function mailTools(
       toolName: MAIL_CHANGE_TOOL,
       description:
         tr('tool.mailChange') +
-        (labels.length === 0 ? tr('tool.mailNoLabels') : ''),
+        (labels.length === 0 ? tr('tool.mailNoLabels') : '') +
+        tr('tool.mailChangeHint'),
       inputSchema: {
         type: 'object',
         properties: {
@@ -98,8 +108,65 @@ export function mailTools(
       destructive: false,
       permission: 'ask',
       alwaysAsk: true,
-      describe,
+      describe: (args) => describe(MAIL_CHANGE_TOOL, args),
     },
+    {
+      ...base,
+      toolName: MAIL_CREATE_LABEL_TOOL,
+      description: tr('tool.mailCreateLabel'),
+      inputSchema: {
+        type: 'object',
+        properties: {
+          name: {
+            type: 'string',
+            description: tr('tool.mailLabelName', { max: LABEL_NAME_MAX }),
+          },
+          reason: {
+            type: 'string',
+            description: tr('tool.mailReason'),
+          },
+        },
+        required: ['name'],
+      },
+      destructive: false,
+      permission: 'ask',
+      alwaysAsk: true,
+      describe: (args) => describe(MAIL_CREATE_LABEL_TOOL, args),
+    },
+    // Umbenennen gibt es nur, wenn es eigene Labels gibt.
+    ...(labels.length > 0
+      ? [
+          {
+            ...base,
+            toolName: MAIL_RENAME_LABEL_TOOL,
+            description: tr('tool.mailRenameLabel'),
+            inputSchema: {
+              type: 'object',
+              properties: {
+                label: {
+                  type: 'string',
+                  enum: labels.map((l) => l.name),
+                  description: tr('tool.mailRenameFrom'),
+                },
+                newName: {
+                  type: 'string',
+                  description: tr('tool.mailNewName', { max: LABEL_NAME_MAX }),
+                },
+                reason: {
+                  type: 'string',
+                  description: tr('tool.mailReason'),
+                },
+              },
+              required: ['label', 'newName'],
+            },
+            destructive: false,
+            permission: 'ask' as const,
+            alwaysAsk: true,
+            describe: (args: Record<string, unknown>) =>
+              describe(MAIL_RENAME_LABEL_TOOL, args),
+          },
+        ]
+      : []),
   ];
 }
 
@@ -156,18 +223,88 @@ export async function describeMailChange(
       ? [star ? tr('mail.addStar') : tr('mail.removeStar')]
       : []),
   ].join(tr('mail.and'));
-  const reason =
-    typeof args.reason === 'string' && args.reason.trim()
-      ? `\n${tr('mail.reason', { reason: args.reason.trim().slice(0, 200) })}`
-      : '';
   return `${what}\n${tr('mail.changePreview', {
     from: mail.from,
     subject: mail.subject || tr('mail.noSubject'),
     date: formatDate(mail.date),
-  })}${reason}`;
+  })}${reasonLine(args)}`;
 }
 
-/** Führt ein Mail-Werkzeug aus (Änderungen erst nach deiner Bestätigung). */
+const reasonLine = (args: Record<string, unknown>) =>
+  typeof args.reason === 'string' && args.reason.trim()
+    ? `\n${tr('mail.reason', { reason: args.reason.trim().slice(0, 200) })}`
+    : '';
+
+/** Der Name aus den Eingaben des Modells, geprüft gegen alle Labels des Postfachs. */
+function checkedLabelName(
+  input: unknown,
+  allLabels: MailLabel[],
+  ignoreId?: string,
+): string {
+  const checked = checkLabelName(input, allLabels, ignoreId);
+  if (!checked.ok) throw new Error(checked.error);
+  return checked.value;
+}
+
+/** Das eigene Label, das umbenannt werden soll (nach Namen, gegen die eigenen Labels geprüft). */
+function labelToRename(
+  args: Record<string, unknown>,
+  labels: MailLabel[],
+): MailLabel {
+  const label = labels.find((l) => l.name === args.label);
+  if (!label) {
+    throw new Error(
+      tr('mail.labelMissing', { label: String(args.label ?? '') }),
+    );
+  }
+  return label;
+}
+
+/** Vorschau für die Rückfrage beim Anlegen eines Labels. */
+export function describeCreateLabel(
+  args: Record<string, unknown>,
+  allLabels: MailLabel[],
+): string {
+  const name = checkedLabelName(args.name, allLabels);
+  return `${tr('mail.createLabelPreview', { name })}${reasonLine(args)}`;
+}
+
+/** Vorschau für die Rückfrage beim Umbenennen eines Labels. */
+export function describeRenameLabel(
+  args: Record<string, unknown>,
+  labels: MailLabel[],
+  allLabels: MailLabel[],
+): string {
+  const label = labelToRename(args, labels);
+  const name = checkedLabelName(args.newName, allLabels, label.id);
+  if (name === label.name) throw new Error(tr('mail.labelSameName'));
+  return `${tr('mail.renameLabelPreview', { old: label.name, name })}${reasonLine(args)}`;
+}
+
+/** Vorschau für die Rückfrage – je nach Werkzeug. */
+export function describeMailTool(
+  client: MailClient,
+  toolName: string,
+  args: Record<string, unknown>,
+  labels: MailLabel[],
+  allLabels: MailLabel[],
+): Promise<string> {
+  if (toolName === MAIL_CREATE_LABEL_TOOL) {
+    return Promise.resolve().then(() => describeCreateLabel(args, allLabels));
+  }
+  if (toolName === MAIL_RENAME_LABEL_TOOL) {
+    return Promise.resolve().then(() =>
+      describeRenameLabel(args, labels, allLabels),
+    );
+  }
+  return describeMailChange(client, args, labels);
+}
+
+/**
+ * Führt ein Mail-Werkzeug aus (Änderungen erst nach deiner Bestätigung). Legt es
+ * ein Label an oder benennt es um, werden `labels` und `allLabels` gleich mit
+ * angepasst – die nächste Runde der Antwort kennt das Label dann schon.
+ */
 export async function callMailTool(
   client: MailClient,
   toolName: string,
@@ -221,6 +358,25 @@ export async function callMailTool(
     const { changes } = mailChanges(args, labels);
     for (const change of changes) await client.apply(change);
     return tr('mail.done');
+  }
+  if (toolName === MAIL_CREATE_LABEL_TOOL) {
+    const label = await client.createLabel(
+      checkedLabelName(args.name, allLabels),
+    );
+    allLabels.push(label);
+    if (isSortableLabel(label)) labels.push(label);
+    return tr('mail.labelCreated', { name: label.name });
+  }
+  if (toolName === MAIL_RENAME_LABEL_TOOL) {
+    const label = labelToRename(args, labels);
+    const name = checkedLabelName(args.newName, allLabels, label.id);
+    if (name === label.name) throw new Error(tr('mail.labelSameName'));
+    const renamed = await client.renameLabel(label.id, name);
+    const old = label.name;
+    for (const known of [...labels, ...allLabels]) {
+      if (known.id === label.id) known.name = renamed.name;
+    }
+    return tr('mail.labelRenamed', { old, name: renamed.name });
   }
   throw new Error(tr('error.toolMissing', { tool: toolName }));
 }

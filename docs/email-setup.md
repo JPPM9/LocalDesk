@@ -5,7 +5,8 @@ For that you need your own “app” at Google. It sounds bigger than it is: you
 project and copy two values into the LocalDesk settings.
 
 **What LocalDesk does with your mail:** read it, summarize it and – only after your
-confirmation – add labels or set a star. LocalDesk has no sending and no deleting. Mail is
+confirmation – add labels, set a star, create new labels of your own or rename them.
+LocalDesk has no sending and no deleting. Mail is
 not stored on your PC; it only goes to your local model (Ollama).
 
 Outlook comes later: since 2024 Microsoft requires a directory of its own (an Azure account)
@@ -42,10 +43,10 @@ Time: about 10 minutes. You only need your Google account, no credit card.
    `https://www.googleapis.com/auth/gmail.modify` → **Add to table** →
    **Update** → **Save** at the bottom.
 
-> **Why `gmail.modify`?** It lets LocalDesk read and change labels/stars. Google has no
+> **Why `gmail.modify`?** It lets LocalDesk read, change labels/stars and create or rename your own labels. Google has no
 > permission for “labels only, but no deleting” – technically this permission allows more
 > than LocalDesk uses. That is why LocalDesk itself decides which calls exist at all:
-> sending and deleting are not built in.
+> sending, deleting and deleting labels are not built in.
 
 ### 5. Add yourself as a test user
 

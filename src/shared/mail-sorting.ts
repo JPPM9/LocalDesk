@@ -1,5 +1,6 @@
 import type { ChatMessage } from './api';
 import type { MailChange, MailLabel, MailSummary } from './mail';
+import { checkLabelName, NEW_LABELS_MAX } from './mail-labels';
 import { tr } from './messages';
 
 /** So viele Mails sortiert das Modell auf einmal. */
@@ -24,6 +25,8 @@ export interface MailSuggestion {
   /** Kurze Begründung des Modells. */
   reason: string;
   label?: { id: string; name: string };
+  /** Name eines Labels, das es noch nicht gibt – wird beim Übernehmen angelegt. */
+  newLabel?: string;
   /** true = Stern setzen, false = Stern entfernen. */
   star?: boolean;
 }
@@ -37,6 +40,15 @@ export function suggestionChanges(s: MailSuggestion): MailChange[] {
             kind: 'label' as const,
             messageId: s.messageId,
             labelId: s.label.id,
+          },
+        ]
+      : []),
+    ...(s.newLabel
+      ? [
+          {
+            kind: 'newLabel' as const,
+            messageId: s.messageId,
+            name: s.newLabel,
           },
         ]
       : []),
@@ -61,6 +73,7 @@ export function sortingSchema(labels: MailLabel[]): Record<string, unknown> {
           properties: {
             mail: { type: 'integer' },
             label: { type: 'string', enum: ['', ...labels.map((l) => l.name)] },
+            newLabel: { type: 'string' },
             star: { type: 'boolean' },
             reason: { type: 'string' },
           },
@@ -117,11 +130,15 @@ export function sortingMessages(
 /**
  * Liest die Antwort und behält nur Gültiges: bekannte Mail, eigenes Label, das
  * die Mail noch nicht hat, Stern nur wenn er sich ändert. Eine Mail höchstens einmal.
+ * Ein neues Label („newLabel“) gilt nur mit gültigem Namen, und höchstens
+ * `NEW_LABELS_MAX` verschiedene pro Antwort; gibt es den Namen schon als eigenes
+ * Label, wird dieses genommen.
  */
 export function parseSuggestions(
   answer: string,
   mails: MailSummary[],
   labels: MailLabel[],
+  allLabels: MailLabel[] = labels,
 ): MailSuggestion[] {
   let raw: unknown;
   try {
@@ -134,12 +151,26 @@ export function parseSuggestions(
     throw new Error(tr('prompt.sortUnreadable'));
   }
   const seen = new Set<string>();
+  const newNames = new Map<string, string>();
   const result: MailSuggestion[] = [];
   for (const item of items as Record<string, unknown>[]) {
     const index = typeof item?.mail === 'number' ? item.mail - 1 : -1;
     const mail = Number.isInteger(index) ? mails[index] : undefined;
     if (!mail || seen.has(mail.id)) continue;
-    const label = labels.find((l) => l.name === item.label);
+    let label = labels.find((l) => l.name === item.label);
+    let newLabel: string | undefined;
+    if (!label && typeof item.newLabel === 'string' && item.newLabel.trim()) {
+      const wanted = item.newLabel.trim().toLowerCase();
+      label = labels.find((l) => l.name.toLowerCase() === wanted);
+      const checked = label ? null : checkLabelName(item.newLabel, allLabels);
+      if (checked?.ok) {
+        const key = checked.value.toLowerCase();
+        if (newNames.has(key) || newNames.size < NEW_LABELS_MAX) {
+          newLabel = newNames.get(key) ?? checked.value;
+          newNames.set(key, newLabel);
+        }
+      }
+    }
     const suggestion: MailSuggestion = {
       messageId: mail.id,
       from: mail.from,
@@ -150,10 +181,15 @@ export function parseSuggestions(
         !mail.labelIds.includes(label.id) && {
           label: { id: label.id, name: label.name },
         }),
+      ...(newLabel && { newLabel }),
       ...(typeof item.star === 'boolean' &&
         item.star !== mail.starred && { star: item.star }),
     };
-    if (suggestion.label || suggestion.star !== undefined) {
+    if (
+      suggestion.label ||
+      suggestion.newLabel ||
+      suggestion.star !== undefined
+    ) {
       seen.add(mail.id);
       result.push(suggestion);
     }

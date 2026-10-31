@@ -679,11 +679,22 @@ export interface LocalDeskApi {
     model: string,
   ) => Promise<Result<MailSuggestion[]>>;
   cancelMailSorting: () => Promise<void>;
-  /** Führt die von dir bestätigten Änderungen aus (nur Label hinzufügen, Stern). */
+  /** Führt die von dir bestätigten Änderungen aus (Label hinzufügen, neues Label, Stern). */
   applyMailChanges: (
     accountId: string,
     changes: MailChange[],
   ) => Promise<Result<{ applied: number; failed: string[] }>>;
+  /** Legt ein eigenes Label an (dein Klick ist die Bestätigung). */
+  createMailLabel: (
+    accountId: string,
+    name: string,
+  ) => Promise<Result<MailLabel>>;
+  /** Benennt ein eigenes Label um – gilt für alle Mails mit diesem Label. */
+  renameMailLabel: (
+    accountId: string,
+    labelId: string,
+    name: string,
+  ) => Promise<Result<MailLabel>>;
 
   /** Eingerichteter Obsidian-Vault mit aktuellem Zustand; null = keiner eingerichtet. */
   getObsidian: () => Promise<ObsidianStatus | null>;
@@ -880,6 +891,8 @@ export const IpcChannels = {
   suggestMailSorting: 'mail:suggest-sorting',
   cancelMailSorting: 'mail:cancel-sorting',
   applyMailChanges: 'mail:apply-changes',
+  createMailLabel: 'mail:create-label',
+  renameMailLabel: 'mail:rename-label',
   getObsidian: 'obsidian:get',
   setObsidian: 'obsidian:set',
   clearObsidian: 'obsidian:clear',

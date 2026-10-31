@@ -46,14 +46,14 @@ remove everything, delete `%APPDATA%\LocalDesk` by hand.
 
 ## Where LocalDesk connects to
 
-| Destination                                                                     | When                                         | What                                                             |
-| ------------------------------------------------------------------------------- | -------------------------------------------- | ---------------------------------------------------------------- |
-| Your Ollama server (default: this computer)                                     | with every chat, when indexing knowledge     | your messages, document passages, emails you ask it to summarize |
-| Ollama model library                                                            | only when you download a model               | Ollama itself downloads the model                                |
-| Google (`accounts.google.com`, `oauth2.googleapis.com`, `gmail.googleapis.com`) | only with e-mail set up                      | sign-in, reading mail, labels/stars after your confirmation      |
-| GitHub (releases of JPPM9/LocalDesk)                                            | only when you click “Check for updates”      | version query, download of the update                            |
-| GitHub (`raw.githubusercontent.com`)                                            | only when you click “Load skill from GitHub” | the path of the link; only one text file (SKILL.md) is loaded    |
-| npm package registry                                                            | on first start of the file-system MCP server | `npx` downloads the server program                               |
+| Destination                                                                     | When                                         | What                                                                                                     |
+| ------------------------------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Your Ollama server (default: this computer)                                     | with every chat, when indexing knowledge     | your messages, document passages, emails you ask it to summarize                                         |
+| Ollama model library                                                            | only when you download a model               | Ollama itself downloads the model                                                                        |
+| Google (`accounts.google.com`, `oauth2.googleapis.com`, `gmail.googleapis.com`) | only with e-mail set up                      | sign-in, reading mail, labels/stars after your confirmation (also creating and renaming your own labels) |
+| GitHub (releases of JPPM9/LocalDesk)                                            | only when you click “Check for updates”      | version query, download of the update                                                                    |
+| GitHub (`raw.githubusercontent.com`)                                            | only when you click “Load skill from GitHub” | the path of the link; only one text file (SKILL.md) is loaded                                            |
+| npm package registry                                                            | on first start of the file-system MCP server | `npx` downloads the server program                                                                       |
 
 Also note: **commands you approve for the code agent** run with your permissions and may do
 anything you may do on your PC – including connecting to the internet. The same applies to
@@ -66,8 +66,9 @@ internet; camera, microphone, location and notifications are blocked.
 
 If you set up e-mail, you sign in through **your own Google app**. LocalDesk uses the access only
 to display and search emails, summarize them with your local model and – only after your
-confirmation – set your own labels or stars. LocalDesk does not send, delete or archive emails
-and does not mark anything as read.
+confirmation – set your own labels or stars, create new labels of your own and rename them.
+LocalDesk does not send, delete or archive emails, does not delete labels and does not mark
+anything as read.
 
 LocalDesk's use and transfer of information received from Google APIs adheres to the
 [Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy),
@@ -124,14 +125,14 @@ verliert). Wenn du alles entfernen willst, lösche `%APPDATA%\LocalDesk` von Han
 
 ## Wohin LocalDesk Verbindungen aufbaut
 
-| Ziel                                                                            | Wann                                          | Was                                                                        |
-| ------------------------------------------------------------------------------- | --------------------------------------------- | -------------------------------------------------------------------------- |
-| Dein Ollama-Server (Standard: dieser PC)                                        | bei jedem Chat, beim Einlesen von Wissen      | deine Nachrichten, Dokument-Abschnitte, Mails, die du zusammenfassen lässt |
-| Ollama-Modellbibliothek                                                         | nur wenn du ein Modell herunterlädst          | Ollama selbst lädt das Modell                                              |
-| Google (`accounts.google.com`, `oauth2.googleapis.com`, `gmail.googleapis.com`) | nur mit eingerichteter E-Mail                 | Anmeldung, Mails lesen, Labels/Sterne nach deiner Bestätigung              |
-| GitHub (Releases von JPPM9/LocalDesk)                                           | nur wenn du „Nach Updates suchen“ klickst     | Versionsabfrage, Download des Updates                                      |
-| GitHub (`raw.githubusercontent.com`)                                            | nur wenn du „Skill von GitHub laden“ klickst  | der Pfad des Links; geladen wird nur eine Textdatei (SKILL.md)             |
-| npm-Paketverzeichnis                                                            | beim ersten Start des Dateisystem-MCP-Servers | `npx` lädt das Server-Programm herunter                                    |
+| Ziel                                                                            | Wann                                          | Was                                                                                                       |
+| ------------------------------------------------------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Dein Ollama-Server (Standard: dieser PC)                                        | bei jedem Chat, beim Einlesen von Wissen      | deine Nachrichten, Dokument-Abschnitte, Mails, die du zusammenfassen lässt                                |
+| Ollama-Modellbibliothek                                                         | nur wenn du ein Modell herunterlädst          | Ollama selbst lädt das Modell                                                                             |
+| Google (`accounts.google.com`, `oauth2.googleapis.com`, `gmail.googleapis.com`) | nur mit eingerichteter E-Mail                 | Anmeldung, Mails lesen, Labels/Sterne nach deiner Bestätigung (auch eigene Labels anlegen und umbenennen) |
+| GitHub (Releases von JPPM9/LocalDesk)                                           | nur wenn du „Nach Updates suchen“ klickst     | Versionsabfrage, Download des Updates                                                                     |
+| GitHub (`raw.githubusercontent.com`)                                            | nur wenn du „Skill von GitHub laden“ klickst  | der Pfad des Links; geladen wird nur eine Textdatei (SKILL.md)                                            |
+| npm-Paketverzeichnis                                                            | beim ersten Start des Dateisystem-MCP-Servers | `npx` lädt das Server-Programm herunter                                                                   |
 
 Außerdem gilt: **Befehle, die du dem Code-Agenten freigibst**, laufen mit deinen Rechten und
 dürfen alles, was du am PC darfst – auch Verbindungen ins Internet. Das gilt ebenso für
@@ -144,8 +145,9 @@ Bilder aus dem Internet laden; Kamera, Mikrofon, Standort und Benachrichtigungen
 
 Wenn du E-Mail einrichtest, meldest du dich über **deine eigene Google-App** an. LocalDesk
 nutzt den Zugriff nur, um Mails anzuzeigen, zu suchen, mit deinem lokalen Modell
-zusammenzufassen und – erst nach deiner Bestätigung – eigene Labels oder Sterne zu setzen.
-LocalDesk sendet, löscht und archiviert keine Mails und markiert nichts als gelesen.
+zusammenzufassen und – erst nach deiner Bestätigung – eigene Labels oder Sterne zu setzen,
+neue eigene Labels anzulegen und sie umzubenennen. LocalDesk sendet, löscht und archiviert
+keine Mails, löscht keine Labels und markiert nichts als gelesen.
 
 Die Verwendung und Weitergabe von Informationen, die LocalDesk über Google-APIs erhält, hält
 sich an die [Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy),

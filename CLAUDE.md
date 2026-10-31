@@ -854,6 +854,24 @@
   Bekannt: Der Installer legt `%LOCALAPPDATA%\localdesk-updater` an (Kopie des Installers für
   Teil-Updates, ~120 MB); die Deinstallation lässt ihn liegen (Verhalten von electron-builder).
 
+- **Labels anlegen und umbenennen** (Wunschliste Schritt 1, Plan freigegeben): Das Modell darf in
+  Gmail neue EIGENE Labels anlegen (`mail_create_label`) und eigene Labels umbenennen
+  (`mail_rename_label`, nur mit eigenen Labels als Enum); beide fragen IMMER nach (`alwaysAsk`), die
+  Vorschau nennt Namen (und Grund). Löschen von Labels gibt es bewusst NICHT. Namensregeln zentral in
+  `shared/mail-labels.ts` (`checkLabelName`: nicht leer, ≤ 100 Zeichen, keine Steuerzeichen, kein
+  Gmail-Systemname/`CATEGORY_*`/`[Gmail]…`, nicht doppelt – auch nicht in anderer Schreibweise;
+  `ignoreId` fürs Umbenennen). `MailClient` hat `createLabel`/`renameLabel` (GmailClient prüft den Namen
+  noch einmal gegen die echten Labels, Rename nur bei `isSortableLabel`, danach `labelCheck` verworfen);
+  `mail-tools.ts`: `mailTools(labels, describe(toolName,args))`, `describeMailTool`, `callMailTool` passt
+  die Listen der laufenden Antwort an (Umbenennen nur angeboten, wenn es eigene Labels gibt).
+  Sortier-Vorschlag: neues Feld `newLabel` (Schema/Prompt), `parseSuggestions(…, allLabels)` prüft den
+  Namen, höchstens `NEW_LABELS_MAX` = 3 verschiedene neue Namen, vorhandener Name → vorhandenes Label;
+  `MailChange` kennt `newLabel`, `main/mail/apply-changes.ts` (`applyMailChangeList`) legt es einmal an
+  und setzt es dann (Fehler beim Anlegen nur einmal gemeldet). Mail-Seite: `LabelManager` (in
+  `SortPanel`, „Labels verwalten“) über neue IPC `createMailLabel`/`renameMailLabel` – dein Klick ist die
+  Bestätigung. Geprüft mit Test-Antworten (Gmail-Nachbau, Oberfläche per Vite-Harness mit Stub-API);
+  KEIN Test im echten Gmail (so verabredet). Datenschutzseite/Anleitungen/README/CHANGELOG nennen es.
+
 ## Befehle
 
 - `npm start` – Entwicklungsmodus · `npm test` – Vitest (Tests in `tests/`) · `npm run typecheck` · `npm run lint` · `npm run dist` – Installer · `npm run make` – portable ZIP

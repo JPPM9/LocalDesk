@@ -27,6 +27,7 @@ import {
 import type { AppSettingsRepository } from './db/app-settings-repository';
 import type { MailAccountRepository } from './db/mail-account-repository';
 import { GOOGLE_URLS, signInWithGoogle } from './mail/google-auth';
+import { applyMailChangeList } from './mail/apply-changes';
 import { GmailClient } from './mail/gmail-client';
 import type { MailClient } from './mail/mail-client';
 import { guardedFetch } from './mail/mail-fetch';
@@ -334,7 +335,10 @@ export function registerMailHandlers(
         for await (const chunk of provider.chat(request, controller.signal)) {
           if (chunk.type === 'content') answer += chunk.text;
         }
-        return { ok: true, value: parseSuggestions(answer, mails, labels) };
+        return {
+          ok: true,
+          value: parseSuggestions(answer, mails, labels, allLabels),
+        };
       } catch (error) {
         if (controller.signal.aborted)
           return { ok: false, error: tr('error.cancelled') };
@@ -347,7 +351,7 @@ export function registerMailHandlers(
 
   ipcMain.handle(IpcChannels.cancelMailSorting, () => sorting?.abort());
 
-  // Führt bestätigte Änderungen aus – jede wird erneut geprüft (nur Label/Stern).
+  // Führt bestätigte Änderungen aus – jede wird erneut geprüft (Label, neues Label, Stern).
   ipcMain.handle(
     IpcChannels.applyMailChanges,
     async (
@@ -361,22 +365,40 @@ export function registerMailHandlers(
       const checked = changes.map(checkMailChange);
       const invalid = checked.find((c) => !c.ok);
       if (invalid && !invalid.ok) return invalid;
-      return attempt(async () => {
-        const mailbox = client(accountId);
-        let applied = 0;
-        const failed: string[] = [];
-        for (const change of checked) {
-          if (!change.ok) continue;
-          try {
-            await mailbox.apply(change.value);
-            applied++;
-          } catch (error) {
-            failed.push(error instanceof Error ? error.message : String(error));
-          }
-        }
-        return { applied, failed };
-      });
+      return attempt(() =>
+        applyMailChangeList(
+          client(accountId),
+          checked.flatMap((c) => (c.ok ? [c.value] : [])),
+        ),
+      );
     },
+  );
+
+  // Labels anlegen und umbenennen (Mail-Seite „Labels verwalten“): dein Klick ist die
+  // Bestätigung. Den Namen prüft der Mail-Client noch einmal gegen die echten Labels.
+  ipcMain.handle(
+    IpcChannels.createMailLabel,
+    (_event, accountId: unknown, name: unknown): Promise<Result<MailLabel>> =>
+      attempt(() => {
+        if (typeof name !== 'string') throw new Error(tr('error.invalidInput'));
+        return client(accountId).createLabel(name);
+      }),
+  );
+
+  ipcMain.handle(
+    IpcChannels.renameMailLabel,
+    (
+      _event,
+      accountId: unknown,
+      labelId: unknown,
+      name: unknown,
+    ): Promise<Result<MailLabel>> =>
+      attempt(() => {
+        if (!isMailId(labelId) || typeof name !== 'string') {
+          throw new Error(tr('error.invalidInput'));
+        }
+        return client(accountId).renameLabel(labelId, name);
+      }),
   );
 
   return { sessions, client };

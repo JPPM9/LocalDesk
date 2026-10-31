@@ -270,7 +270,9 @@
     "mailTool": {
       "mail_search": "Searched mail",
       "mail_read": "Read mail",
-      "mail_change": "Mail change"
+      "mail_change": "Mail change",
+      "mail_create_label": "Create label",
+      "mail_rename_label": "Rename label"
     }
   },
   "downloads": {
@@ -682,9 +684,10 @@
     "open": "Suggest sorting",
     "title": "Suggest sorting",
     "start": "Get suggestions",
-    "intro_one": "The model sees sender, subject and preview of the first mail in the list and suggests your own labels and stars. In Gmail, only what you tick and apply changes.",
-    "intro_other": "The model sees sender, subject and preview of the first {{count}} mails in the list and suggests your own labels and stars. In Gmail, only what you tick and apply changes.",
-    "noLabels": "You have no labels of your own in Gmail yet – so the model can only suggest stars. You create labels in Gmail.",
+    "intro_one": "The model sees sender, subject and preview of the first mail in the list and suggests your own labels (also new ones) and stars. In Gmail, only what you tick and apply changes.",
+    "intro_other": "The model sees sender, subject and preview of the first {{count}} mails in the list and suggests your own labels (also new ones) and stars. In Gmail, only what you tick and apply changes.",
+    "noLabels": "You have no labels of your own in Gmail yet – the model can suggest new labels (you confirm them) or stars. Or create one yourself below.",
+    "addNewLabel": "Create new label “{{name}}” and add it",
     "running_one": "The model is looking at 1 mail …",
     "running_other": "The model is looking at {{count}} mails …",
     "none": "No suggestions – the model sees nothing that clearly fits a label or star.",
@@ -699,11 +702,23 @@
     "applied_one": "1 change applied.",
     "applied_other": "{{count}} changes applied."
   },
+  "mailLabels": {
+    "title": "Manage labels",
+    "intro": "Create your own Gmail labels here or rename them. Renaming changes the name on all mails with that label. Deleting labels is only possible in Gmail.",
+    "none": "You have no labels of your own yet.",
+    "newPlaceholder": "Name of the new label",
+    "create": "Create",
+    "created": "Label “{{name}}” created.",
+    "rename": "Rename",
+    "renamed": "Label is now “{{name}}”.",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
   "mailChat": {
     "button": "E-mail: use your mailbox in chat",
     "chip": "E-mail",
     "title": "E-mail in chat",
-    "intro": "In this chat the model may search and read mail. It only suggests labels and stars – you confirm every change. There is no sending or deleting.",
+    "intro": "In this chat the model may search and read mail. It only suggests labels (also creating or renaming your own) and stars – you confirm every change. There is no sending or deleting.",
     "none": "No mail account signed in yet.",
     "toSettings": "Go to Settings",
     "noTools": "The selected model can't use tools – choose one with “Tools” so it can read mail."

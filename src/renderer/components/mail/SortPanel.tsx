@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LoaderCircle, Star, Tag, WandSparkles, X } from 'lucide-react';
-import type { MailChange } from '../../../shared/mail';
+import type { MailChange, MailLabel } from '../../../shared/mail';
 import {
   isSortableLabel,
   SORT_MAILS_MAX,
@@ -12,6 +12,7 @@ import { senderName } from '../../mail/format';
 import { useMailModel } from '../../mail/useMailModel';
 import { PageHeader } from '../PageHeader';
 import { ModelSelect } from '../chat/ModelSelect';
+import { LabelManager } from './LabelManager';
 import { ReauthLink } from './ReauthLink';
 
 interface SortPanelProps {
@@ -33,8 +34,9 @@ type State =
 const keyOf = (change: MailChange) => `${change.messageId}:${change.kind}`;
 
 /**
- * „Sortieren vorschlagen“: Das Modell schlägt eigene Labels und Sterne vor,
- * du hakst an, was übernommen wird. Vorher ändert sich in Gmail nichts.
+ * „Sortieren vorschlagen“: Das Modell schlägt eigene Labels (auch neue) und Sterne
+ * vor, du hakst an, was übernommen wird. Vorher ändert sich in Gmail nichts.
+ * Darunter „Labels verwalten“ zum Anlegen und Umbenennen.
  */
 export function SortPanel({
   accountId,
@@ -51,14 +53,15 @@ export function SortPanel({
     applied: number;
     failed: string[];
   } | null>(null);
-  const [hasLabels, setHasLabels] = useState<boolean | null>(null);
+  const [labels, setLabels] = useState<MailLabel[] | null>(null);
+  const hasLabels = labels ? labels.some(isSortableLabel) : null;
   const count = Math.min(messageIds.length, SORT_MAILS_MAX);
 
-  useEffect(() => {
+  const loadLabels = () =>
     void window.api.listMailLabels(accountId).then((result) => {
-      if (result.ok) setHasLabels(result.value.some(isSortableLabel));
+      if (result.ok) setLabels(result.value);
     });
-  }, [accountId]);
+  useEffect(loadLabels, [accountId]);
 
   // Panel zu = Anfrage abbrechen.
   useEffect(() => () => void window.api.cancelMailSorting(), []);
@@ -111,13 +114,17 @@ export function SortPanel({
             ...s,
             ...(s.label &&
               done.has(`${s.messageId}:label`) && { label: undefined }),
+            ...(s.newLabel &&
+              done.has(`${s.messageId}:newLabel`) && { newLabel: undefined }),
             ...(s.star !== undefined &&
               done.has(`${s.messageId}:star`) && { star: undefined }),
           }))
-          .filter((s) => s.label || s.star !== undefined),
+          .filter((s) => s.label || s.newLabel || s.star !== undefined),
       });
     }
     setChecked(new Set());
+    // Neue Labels sind jetzt in Gmail angelegt.
+    loadLabels();
     onApplied();
   };
 
@@ -170,6 +177,13 @@ export function SortPanel({
           <p className="text-muted">{t('mailSort.intro', { count })}</p>
           {hasLabels === false && (
             <p className="text-xs text-warn">{t('mailSort.noLabels')}</p>
+          )}
+          {labels && (
+            <LabelManager
+              accountId={accountId}
+              labels={labels}
+              onChanged={loadLabels}
+            />
           )}
 
           {state.kind === 'running' && (
@@ -236,6 +250,11 @@ export function SortPanel({
                             <>
                               <Tag size={13} className="text-muted" />
                               {t('mailSort.addLabel', { name: s.label?.name })}
+                            </>
+                          ) : change.kind === 'newLabel' ? (
+                            <>
+                              <Tag size={13} className="text-accent-text" />
+                              {t('mailSort.addNewLabel', { name: change.name })}
                             </>
                           ) : (
                             <>

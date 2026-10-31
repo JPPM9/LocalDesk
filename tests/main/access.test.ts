@@ -238,7 +238,12 @@ describe('Zugriff im Lauf einer Antwort', () => {
 
     const names = (i: number) => requests[i].tools?.map((t) => t.name) ?? [];
     expect(names(0)).toEqual(['request_access']);
-    expect(names(1)).toEqual(['mail_search', 'mail_read', 'mail_change']);
+    expect(names(1)).toEqual([
+      'mail_search',
+      'mail_read',
+      'mail_change',
+      'mail_create_label',
+    ]);
     expect(runtime.ask).toHaveBeenCalledOnce();
     expect(requests[1].messages.at(-1)?.content).toContain('Zugriff erlaubt');
   });

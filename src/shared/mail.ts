@@ -1,4 +1,5 @@
 import type { Result } from './api';
+import { checkLabelName } from './mail-labels';
 import { tr, trIn } from './messages';
 
 /** Mail-Anbieter. Outlook folgt später (braucht ein Azure-Verzeichnis). */
@@ -75,10 +76,12 @@ export interface MailPage {
 
 /**
  * Die EINZIGEN Änderungen, die LocalDesk an Mails kennt – jeweils erst nach
- * deiner Bestätigung. Senden, Löschen, Archivieren gibt es nicht.
+ * deiner Bestätigung. Senden, Löschen, Archivieren gibt es nicht. „newLabel“
+ * legt das Label zuerst an (nur beim Sortieren) und setzt es dann.
  */
 export type MailChange =
   | { kind: 'label'; messageId: string; labelId: string }
+  | { kind: 'newLabel'; messageId: string; name: string }
   | { kind: 'star'; messageId: string; starred: boolean };
 
 /** Fehlertext bei abgelaufener Anmeldung – die Oberfläche bietet dann „neu anmelden“ an. */
@@ -119,6 +122,15 @@ export function checkMailChange(input: unknown): Result<MailChange> {
     return {
       ok: true,
       value: { kind: 'label', messageId: raw.messageId, labelId: raw.labelId },
+    };
+  }
+  if (raw.kind === 'newLabel') {
+    // Vorab nur die Form des Namens – ob es ihn schon gibt, prüft der Anbieter.
+    const name = checkLabelName(raw.name, []);
+    if (!name.ok) return name;
+    return {
+      ok: true,
+      value: { kind: 'newLabel', messageId: raw.messageId, name: name.value },
     };
   }
   if (raw.kind === 'star' && typeof raw.starred === 'boolean') {

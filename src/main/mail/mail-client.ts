@@ -9,7 +9,8 @@ import type {
 /**
  * Was LocalDesk mit einem Postfach tun kann – für jeden Anbieter gleich
  * (Gmail jetzt, Outlook später). Mehr Funktionen gibt es bewusst nicht:
- * kein Senden, kein Löschen, kein Archivieren.
+ * kein Senden, kein Löschen, kein Archivieren – bei Labels nur Anlegen und
+ * Umbenennen eigener Labels.
  */
 export interface MailClient {
   list(options: {
@@ -22,6 +23,10 @@ export interface MailClient {
   /** Kopfdaten bestimmter Mails (z. B. zum Sortieren). */
   summaries(messageIds: string[]): Promise<MailSummary[]>;
   labels(): Promise<MailLabel[]>;
+  /** Legt ein eigenes Label an – nur nach deiner Bestätigung aufrufen. */
+  createLabel(name: string): Promise<MailLabel>;
+  /** Benennt ein eigenes Label um (gilt für alle seine Mails) – nur nach deiner Bestätigung. */
+  renameLabel(labelId: string, name: string): Promise<MailLabel>;
   /** Nur nach deiner Bestätigung aufrufen. */
   apply(change: MailChange): Promise<void>;
 }

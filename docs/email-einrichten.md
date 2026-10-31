@@ -5,8 +5,8 @@ brauchst du eine eigene „App“ bei Google. Das klingt größer, als es ist: D
 einmal ein Projekt an und kopierst zwei Werte in die Einstellungen von LocalDesk.
 
 **Was LocalDesk mit deinen Mails tut:** lesen, zusammenfassen und – nur nach deiner
-Bestätigung – Labels setzen oder einen Stern vergeben. Senden und Löschen gibt es
-in LocalDesk nicht. Die Mails werden nicht auf deinem PC gespeichert; sie gehen nur
+Bestätigung – Labels setzen, einen Stern vergeben, neue eigene Labels anlegen oder sie
+umbenennen. Senden und Löschen gibt es in LocalDesk nicht. Die Mails werden nicht auf deinem PC gespeichert; sie gehen nur
 an dein lokales Modell (Ollama).
 
 Outlook folgt später: Microsoft verlangt seit 2024 für jede App-Registrierung ein
@@ -44,11 +44,11 @@ Dauer: etwa 10 Minuten. Du brauchst nur dein Google-Konto, keine Kreditkarte.
    `https://www.googleapis.com/auth/gmail.modify` → **Zur Tabelle hinzufügen** →
    **Aktualisieren** → unten **Speichern**.
 
-> **Warum `gmail.modify`?** Damit darf LocalDesk lesen und Labels/Sterne ändern.
+> **Warum `gmail.modify`?** Damit darf LocalDesk lesen, Labels/Sterne ändern und eigene Labels anlegen oder umbenennen.
 > Ein Google-Recht „nur Labels, aber nicht löschen“ gibt es nicht – das Recht
 > erlaubt technisch mehr, als LocalDesk benutzt. Deshalb ist in LocalDesk selbst
-> festgelegt, welche Aufrufe es überhaupt gibt: Senden und Löschen sind nicht
-> eingebaut.
+> festgelegt, welche Aufrufe es überhaupt gibt: Senden, Löschen und das Löschen von
+> Labels sind nicht eingebaut.
 
 ### 5. Dich als Testnutzer eintragen
 

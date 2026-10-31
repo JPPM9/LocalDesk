@@ -147,8 +147,9 @@ describe('Anweisungen ans Modell auf Englisch', () => {
     expect(user.content).toContain('Has labels: Bills');
     expect(user.content).toContain('Starred: yes');
     expect(sortingMessages(mails, [], [])[1].content).toContain(
-      '(none – only suggest stars)',
+      '(none – suggest new labels through “newLabel”, or only stars)',
     );
+    expect(system.content).toContain('“newLabel”');
   });
 
   it('Code-Agent, auch im Plan-Modus', () => {

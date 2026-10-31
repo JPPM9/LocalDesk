@@ -53,7 +53,7 @@ import { Workspace } from './code/workspace';
 import type { ChatRepository } from './db/chat-repository';
 import type { ChatKnowledge } from './knowledge-service';
 import type { MailClient } from './mail/mail-client';
-import { callMailTool, describeMailChange, mailTools } from './mail/mail-tools';
+import { callMailTool, describeMailTool, mailTools } from './mail/mail-tools';
 import type { McpTools } from './mcp-service';
 import { checkMemoryArguments, memoryTool } from './obsidian/memory-tool';
 import type { ChatMemory } from './obsidian-service';
@@ -307,8 +307,14 @@ export function registerChatHandlers(
     const mailOffers = (): OfferedTool[] => {
       const mailbox = grants.mailbox;
       return mailbox
-        ? mailTools(mailbox.labels, (args) =>
-            describeMailChange(mailbox.client, args, mailbox.labels),
+        ? mailTools(mailbox.labels, (toolName, args) =>
+            describeMailTool(
+              mailbox.client,
+              toolName,
+              args,
+              mailbox.labels,
+              mailbox.allLabels,
+            ),
           )
         : [];
     };
