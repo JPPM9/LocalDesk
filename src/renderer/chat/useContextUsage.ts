@@ -31,6 +31,8 @@ export function useContextUsage(
   modelSupportsTools = false,
   /** Verdichtung des Chats: Statt der älteren Nachrichten zählt ihre Zusammenfassung. */
   compaction?: ChatCompaction,
+  /** Kann das Modell Bilder? Dann gehen die letzten 4 mit (und zählen), sonst nur Text-Hinweise. */
+  modelSupportsVision = false,
 ): ContextUsage {
   const servers = useMcpServers();
   const [memories, setMemories] = useState<MemoryView[]>([]);
@@ -107,7 +109,11 @@ export function useContextUsage(
       instructions: [project?.instructions, settings.systemPrompt]
         .filter(Boolean)
         .join('\n\n'),
-      history: toRequestMessages(compacted.messages),
+      // Hier zählen nur die Bilder (nicht ihr Inhalt) – ein Platzhalter reicht.
+      history: toRequestMessages(compacted.messages, {
+        vision: modelSupportsVision,
+        data: () => '-',
+      }),
       knowledgeActive: Boolean(
         settings.collections?.length || project?.collectionId,
       ),
@@ -126,6 +132,7 @@ export function useContextUsage(
     memories,
     skills,
     modelSupportsTools,
+    modelSupportsVision,
     compaction,
   ]);
 }

@@ -1,4 +1,5 @@
 import type { ChatMessage, SourceRef, ToolDefinition } from './api';
+import { IMAGE_TOKENS_ESTIMATE } from './images';
 
 /**
  * Wie voll ist das Kontextfenster des Modells? Vor dem Senden kann LocalDesk nur
@@ -31,6 +32,7 @@ export type ContextPart =
   | 'summary'
   | 'instructions'
   | 'history'
+  | 'images'
   | 'knowledge'
   | 'tools';
 
@@ -68,6 +70,11 @@ export function estimateContextParts(
       4, // Rolle und Trennzeichen pro Nachricht
     0,
   );
+  // Bilder, die mitgehen (die Anfrage trägt sie nur bei Modellen mit Bild-Fähigkeit).
+  const images = input.history.reduce(
+    (sum, m) => sum + (m.images?.length ?? 0) * IMAGE_TOKENS_ESTIMATE,
+    0,
+  );
   const knowledge = !input.knowledgeActive
     ? 0
     : input.lastSources && input.lastSources.length > 0
@@ -87,6 +94,7 @@ export function estimateContextParts(
     summary: input.summaryText ? estimateTokens(input.summaryText) + 40 : 0,
     instructions: input.instructions ? estimateTokens(input.instructions) : 0,
     history,
+    images,
     knowledge,
     tools,
   };

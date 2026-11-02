@@ -29,6 +29,15 @@ export const de = {
     'Das Tool „{tool}“ gibt es nicht oder es ist ausgeschaltet.',
   'chat.emptyAnswer':
     'Das Modell hat keine Antwort geschrieben – vermutlich wollte es ein Werkzeug falsch aufrufen. Bitte noch einmal fragen oder ein anderes Modell wählen.',
+  'chat.imageTitle': 'Bild: {name}',
+  'prompt.imageMarker': '[Bild: {name}]',
+  'images.badInput': 'Die Bilder konnten nicht gelesen werden.',
+  'images.tooMany': 'Höchstens {max} Bilder pro Nachricht.',
+  'images.tooBig': 'Das Bild „{name}“ ist zu groß (höchstens {max} MB).',
+  'images.badFormat': 'Das Bild „{name}“ ist kein JPEG, PNG oder WebP.',
+  'images.totalTooBig':
+    'Die Bilder sind zusammen zu groß (höchstens {max} MB).',
+  'images.notFound': 'Dieses Bild gibt es nicht (mehr).',
   'code.invalidFolder': 'Kein gültiger Ordner.',
   'code.folderMissing': 'Den Ordner gibt es nicht (mehr): {folder}',
   'code.notAFolder': 'Das ist kein Ordner: {folder}',

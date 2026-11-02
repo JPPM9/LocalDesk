@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ChatDetail, ChatSettings, MessageRecord } from '../../shared/api';
 import { applyChatEvent } from '../../shared/chat';
+import {
+  rememberImageBytes,
+  rememberImageUrl,
+  type PreparedImage,
+} from './images';
 
 interface UseChatOptions {
   /** Ein neuer Chat wurde durch die erste Nachricht angelegt. */
@@ -84,49 +89,72 @@ export function useChat(
     });
   }, [reload]);
 
-  /** `folderId`: nur für einen neuen Chat – gleich in diesem Projekt anlegen. */
-  const send = useCallback((text: string, model: string, folderId?: string) => {
-    const content = text.trim();
-    if (!content) return;
-    if (messagesRef.current.some((m) => m.status === 'streaming')) return;
+  /**
+   * `folderId`: nur für einen neuen Chat – gleich in diesem Projekt anlegen.
+   * `images`: schon verkleinerte Bilder; mit Bild darf der Text leer sein.
+   */
+  const send = useCallback(
+    (
+      text: string,
+      model: string,
+      folderId?: string,
+      images: PreparedImage[] = [],
+    ) => {
+      const content = text.trim();
+      if (!content && images.length === 0) return;
+      if (messagesRef.current.some((m) => m.status === 'streaming')) return;
 
-    const isNew = chatIdRef.current === null;
-    const id = chatIdRef.current ?? crypto.randomUUID();
-    const userMessage: MessageRecord = {
-      id: crypto.randomUUID(),
-      role: 'user',
-      content,
-      thinking: '',
-      status: 'done',
-    };
-    const answer: MessageRecord = {
-      id: crypto.randomUUID(),
-      role: 'assistant',
-      content: '',
-      thinking: '',
-      status: 'streaming',
-      model,
-    };
-
-    setMessages((current) => [...current, userMessage, answer]);
-    void window.api
-      .chatSend({
-        chatId: id,
-        userMessageId: userMessage.id,
-        requestId: answer.id,
-        model,
+      const isNew = chatIdRef.current === null;
+      const id = chatIdRef.current ?? crypto.randomUUID();
+      // Die Nachricht zeigt dieselben Bilder gleich – ohne Umweg über die Datenbank.
+      for (const image of images) rememberImageUrl(image.id, image.url);
+      const userMessage: MessageRecord = {
+        id: crypto.randomUUID(),
+        role: 'user',
         content,
-        ...(isNew && { settings: settingsRef.current }),
-        ...(isNew && folderId && { folderId }),
-      })
-      .then(() => callbacks.current.onChanged());
+        ...(images.length > 0 && {
+          images: images.map((i) => ({
+            id: i.id,
+            name: i.name,
+            size: i.data.byteLength,
+          })),
+        }),
+        thinking: '',
+        status: 'done',
+      };
+      const answer: MessageRecord = {
+        id: crypto.randomUUID(),
+        role: 'assistant',
+        content: '',
+        thinking: '',
+        status: 'streaming',
+        model,
+      };
 
-    if (isNew) {
-      createdHereRef.current = id;
-      chatIdRef.current = id;
-      callbacks.current.onCreated(id);
-    }
-  }, []);
+      setMessages((current) => [...current, userMessage, answer]);
+      void window.api
+        .chatSend({
+          chatId: id,
+          userMessageId: userMessage.id,
+          requestId: answer.id,
+          model,
+          content,
+          ...(images.length > 0 && {
+            images: images.map(({ id, name, data }) => ({ id, name, data })),
+          }),
+          ...(isNew && { settings: settingsRef.current }),
+          ...(isNew && folderId && { folderId }),
+        })
+        .then(() => callbacks.current.onChanged());
+
+      if (isNew) {
+        createdHereRef.current = id;
+        chatIdRef.current = id;
+        callbacks.current.onCreated(id);
+      }
+    },
+    [],
+  );
 
   /**
    * Nachricht ersetzen oder Antwort wiederholen: Alles ab `messageId` wird
@@ -138,12 +166,28 @@ export function useChat(
       const id = chatIdRef.current;
       if (!id) return;
       if (messagesRef.current.some((m) => m.status === 'streaming')) return;
+      // Die Bilder der Nachricht bleiben: Ihre Bytes werden geholt, bevor das Löschen sie mitnimmt,
+      // und gehen als neue Bilder wieder mit.
+      const kept: PreparedImage[] = [];
+      const original = messagesRef.current.find((m) => m.id === messageId);
+      for (const image of original?.images ?? []) {
+        const result = await window.api.getChatImage(image.id);
+        if (!result.ok) return;
+        const newId = crypto.randomUUID();
+        kept.push({
+          id: newId,
+          name: image.name,
+          data: result.value.data,
+          mime: result.value.mime,
+          url: rememberImageBytes(newId, result.value.data, result.value.mime),
+        });
+      }
       if (!(await window.api.chatTruncate(id, messageId))) return;
       setMessages((current) => {
         const index = current.findIndex((m) => m.id === messageId);
         return index < 0 ? current : current.slice(0, index);
       });
-      send(text, model);
+      send(text, model, undefined, kept);
     },
     [send],
   );

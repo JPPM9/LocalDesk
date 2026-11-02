@@ -88,10 +88,13 @@ export function EditBox({
   initialText,
   onSend,
   onCancel,
+  allowEmpty = false,
 }: {
   initialText: string;
   onSend: (text: string) => void;
   onCancel: () => void;
+  /** Auch ohne Text senden (die Nachricht hat Bilder). */
+  allowEmpty?: boolean;
 }) {
   const { t } = useTranslation();
   const [text, setText] = useState(initialText);
@@ -103,7 +106,7 @@ export function EditBox({
     area.setSelectionRange(area.value.length, area.value.length);
   }, []);
   const send = () => {
-    if (text.trim()) onSend(text);
+    if (text.trim() || allowEmpty) onSend(text);
   };
 
   return (
@@ -140,7 +143,7 @@ export function EditBox({
         <button
           type="button"
           onClick={send}
-          disabled={!text.trim()}
+          disabled={!text.trim() && !allowEmpty}
           className="rounded-lg bg-accent px-3 py-1 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
         >
           {t('chat.editSend')}

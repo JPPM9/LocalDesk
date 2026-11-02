@@ -196,6 +196,113 @@ describe('ChatRepository', () => {
   });
 });
 
+describe('Bilder in Nachrichten', () => {
+  const picture = (id: string, name: string, fill: number, length = 5) => ({
+    id,
+    name,
+    mime: 'image/jpeg' as const,
+    data: new Uint8Array(length).fill(fill),
+  });
+  const imageCount = () =>
+    (
+      db.prepare('SELECT COUNT(*) AS n FROM message_images').get() as {
+        n: number;
+      }
+    ).n;
+
+  beforeEach(() => {
+    repo.createChat({ id: 'c1', title: 'x', model: 'm' });
+    repo.appendMessage('c1', userMessage('u1', 'Was ist das?'));
+    repo.addImages('u1', [
+      picture('img-b', 'zweites.jpg', 2),
+      picture('img-a', 'erstes.jpg', 1, 7),
+    ]);
+    repo.appendMessage('c1', {
+      ...answer('a1'),
+      content: 'Eine Katze.',
+      status: 'done',
+    });
+  });
+
+  it('getChat liefert Name und Größe in der gespeicherten Reihenfolge – ohne die Bytes', () => {
+    const [user, reply] = repo.getChat('c1')!.messages;
+    expect(user.images).toEqual([
+      { id: 'img-b', name: 'zweites.jpg', size: 5 },
+      { id: 'img-a', name: 'erstes.jpg', size: 7 },
+    ]);
+    expect(JSON.stringify(user)).not.toContain('data');
+    // Nachrichten ohne Bilder haben gar kein Feld.
+    expect(reply).not.toHaveProperty('images');
+  });
+
+  it('getImage holt die Bytes eines Bildes', () => {
+    const image = repo.getImage('img-a');
+    expect(image).toMatchObject({ name: 'erstes.jpg', mime: 'image/jpeg' });
+    expect([...image!.data]).toEqual(Array(7).fill(1));
+    expect(repo.getImage('gibt-es-nicht')).toBeNull();
+  });
+
+  it('Bilder anderer Chats erscheinen nicht in diesem Chat', () => {
+    repo.createChat({ id: 'c2', title: 'y', model: 'm' });
+    repo.appendMessage('c2', userMessage('u2', 'Anderes'));
+    repo.addImages('u2', [picture('img-x', 'fremd.jpg', 9)]);
+    expect(repo.getChat('c1')!.messages[0].images).toHaveLength(2);
+    expect(repo.getChat('c2')!.messages[0].images).toEqual([
+      { id: 'img-x', name: 'fremd.jpg', size: 5 },
+    ]);
+  });
+
+  it('„Bearbeiten“ (truncateFrom) löscht die Bilder der entfernten Nachrichten mit', () => {
+    expect(imageCount()).toBe(2);
+    repo.appendMessage('c1', { ...userMessage('u2', 'Noch eins') });
+    repo.addImages('u2', [picture('img-c', 'drittes.jpg', 3)]);
+    expect(imageCount()).toBe(3);
+    expect(repo.truncateFrom('c1', 'u2')).toBe(true);
+    expect(imageCount()).toBe(2);
+    expect(repo.getImage('img-c')).toBeNull();
+    // Bilder davor bleiben.
+    expect(repo.getImage('img-a')).not.toBeNull();
+    expect(repo.truncateFrom('c1', 'u1')).toBe(true);
+    expect(imageCount()).toBe(0);
+  });
+
+  it('beim Löschen des Chats verschwinden die Bilder', () => {
+    repo.deleteChat('c1');
+    expect(imageCount()).toBe(0);
+    expect(repo.getImage('img-a')).toBeNull();
+  });
+
+  it('dieselbe Bild-Kennung geht nicht zweimal', () => {
+    repo.appendMessage('c1', userMessage('u2', 'Noch eins'));
+    expect(() =>
+      repo.addImages('u2', [picture('img-a', 'doppelt.jpg', 1)]),
+    ).toThrow();
+  });
+
+  it('bringt eine Datenbank von vor den Bildern ohne Datenverlust auf den neuen Stand', () => {
+    const old = new DatabaseSync(':memory:');
+    migrate(old, 19);
+    old.exec('PRAGMA foreign_keys = ON');
+    old
+      .prepare(
+        "INSERT INTO chats (id, title, model, created_at, updated_at) VALUES ('alt', 'Alt', 'm', 1, 1)",
+      )
+      .run();
+    old
+      .prepare(
+        `INSERT INTO messages (id, chat_id, position, role, content, thinking, status, created_at)
+         VALUES ('m1', 'alt', 0, 'user', 'Hallo', '', 'done', 1)`,
+      )
+      .run();
+    migrate(old);
+    const alt = new ChatRepository(old);
+    expect(alt.getChat('alt')!.messages[0]).toMatchObject({ content: 'Hallo' });
+    expect(alt.getChat('alt')!.messages[0]).not.toHaveProperty('images');
+    alt.addImages('m1', [picture('img-1', 'a.jpg', 1)]);
+    expect(alt.getChat('alt')!.messages[0].images).toHaveLength(1);
+  });
+});
+
 describe('Tool-Aufrufe', () => {
   const toolCall = {
     id: 'c1',

@@ -145,6 +145,48 @@ describe('pickCut', () => {
     expect(cut).toBeGreaterThan(0);
     expect(messages[cut].role).toBe('user');
   });
+
+  it('eine Frage nur mit Bild zählt als Nachricht – und ein Bild als 400 Tokens', () => {
+    const picture = (id: string): MessageRecord => ({
+      ...msg(id, 'user', ''),
+      images: [{ id: `${id}-bild`, name: 'foto.jpg', size: 10 }],
+    });
+    // Ohne Bild-Beachtung wären diese leeren Nachrichten „nichts“ und es gäbe nichts zu verdichten.
+    const messages = [
+      picture('u0'),
+      msg('a0', 'assistant', 'Eine Katze.'),
+      picture('u1'),
+      msg('a1', 'assistant', 'Ein Hund.'),
+      picture('u2'),
+      msg('a2', 'assistant', 'Ein Vogel.'),
+    ];
+    // Je Bild ≈ 400 Tokens: 40 % von 1000 = 400 → hinten bleiben nur die letzten 2 (Pflicht).
+    const cut = pickCut(messages, 1000);
+    expect(cut).toBe(4);
+    expect(messages[cut].id).toBe('u2');
+  });
+});
+
+describe('Bilder beim Verdichten', () => {
+  it('das Modell sieht im Gespräch den Hinweis „[Bild: …]“ statt des Bildes', () => {
+    const chunks = compactionChunks(
+      [
+        {
+          ...msg('u0', 'user', 'Was ist das?'),
+          images: [{ id: 'x', name: 'urlaub.jpg', size: 10 }],
+        },
+        {
+          ...msg('u1', 'user', ''),
+          images: [{ id: 'y', name: 'nur-bild.png', size: 10 }],
+        },
+      ],
+      4096,
+    );
+    expect(chunks.join('\n')).toContain(
+      'Nutzer: [Bild: urlaub.jpg]\nWas ist das?',
+    );
+    expect(chunks.join('\n')).toContain('Nutzer: [Bild: nur-bild.png]');
+  });
 });
 
 describe('Verdichten in Abschnitten', () => {

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Sparkles, TriangleAlert } from 'lucide-react';
 import type { MessageRecord, ToolDecision } from '../../../shared/api';
 import { Markdown } from './Markdown';
+import { MessageImages } from './MessageImages';
 import { CopyButton, EditBox, EditButton, RetryButton } from './MessageActions';
 import { RememberButton } from './RememberButton';
 import { SaveNoteButton } from './SaveNoteButton';
@@ -48,11 +49,14 @@ export function MessageView({
   );
 
   if (message.role === 'user') {
+    const hasImages = (message.images?.length ?? 0) > 0;
     if (editing && onEdit) {
       return (
-        <div className="space-y-1">
+        <div className="space-y-2">
+          {hasImages && <MessageImages images={message.images ?? []} />}
           <EditBox
             initialText={message.content}
+            allowEmpty={hasImages}
             onSend={(text) => {
               setEditing(false);
               onEdit(text);
@@ -64,11 +68,14 @@ export function MessageView({
     }
     return (
       <div className="group space-y-1">
-        <div className="flex justify-end">
-          <div className="max-w-[80%] rounded-2xl rounded-br-md bg-bubble px-4 py-2.5 whitespace-pre-wrap">
-            {message.content}
+        {hasImages && <MessageImages images={message.images ?? []} />}
+        {message.content.trim() !== '' && (
+          <div className="flex justify-end">
+            <div className="max-w-[80%] rounded-2xl rounded-br-md bg-bubble px-4 py-2.5 whitespace-pre-wrap">
+              {message.content}
+            </div>
           </div>
-        </div>
+        )}
         <div className="flex flex-wrap items-start justify-end gap-1">
           <CopyButton text={message.content} />
           {onEdit && <EditButton onClick={() => setEditing(true)} />}

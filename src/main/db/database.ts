@@ -250,6 +250,21 @@ const migrations: string[] = [
   `
   ALTER TABLE chats ADD COLUMN compaction_json TEXT;
   `,
+  // 20: Bilder in Nachrichten (verkleinerte Kopien, keine Originale). Sie gehören zur Nachricht
+  // und verschwinden mit ihr (Chat löschen, „Bearbeiten“, „Antwort wiederholen“).
+  `
+  CREATE TABLE message_images (
+    id         TEXT PRIMARY KEY,
+    message_id TEXT NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
+    position   INTEGER NOT NULL,
+    name       TEXT NOT NULL,
+    mime       TEXT NOT NULL,
+    size       INTEGER NOT NULL,
+    data       BLOB NOT NULL
+  );
+
+  CREATE INDEX message_images_by_message ON message_images(message_id, position);
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */

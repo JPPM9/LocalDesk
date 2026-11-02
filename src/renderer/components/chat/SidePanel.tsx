@@ -191,6 +191,7 @@ const PART_COLORS: Record<ContextPart, string> = {
   summary: 'bg-[#14b8a6]',
   instructions: 'bg-muted',
   history: 'bg-accent',
+  images: 'bg-[#ec4899]',
   knowledge: 'bg-ok',
   tools: 'bg-warn',
 };

@@ -1,7 +1,8 @@
 import type { ChatMessage, ChatRequest, MessageRecord } from './api';
 import { estimateTokens } from './context';
 import { tr } from './messages';
-import { toRequestMessages } from './chat';
+import { isUsable, toRequestMessages } from './chat';
+import { IMAGE_TOKENS_ESTIMATE, textWithImageMarkers } from './images';
 
 /**
  * Kontext verdichten: Der ältere Teil eines langen Chats wird zu einer Zusammenfassung,
@@ -44,7 +45,9 @@ const messageTokens = (message: MessageRecord) =>
   toRequestMessages([message]).reduce(
     (sum, m) => sum + estimateTokens(m.content) + 4,
     0,
-  );
+  ) +
+  // Ein Bild geht nur mit, wenn das Modell Bilder kann – zählt hier vorsichtshalber mit.
+  (message.images?.length ?? 0) * IMAGE_TOKENS_ESTIMATE;
 
 /** Tokens, die diese Nachrichten (plus eine Zusammenfassung davor) in der Anfrage belegen. */
 export function historyTokens(
@@ -95,9 +98,7 @@ export function pickCut(
   messages: MessageRecord[],
   contextLength: number,
 ): number {
-  const usable = messages.filter(
-    (m) => m.status !== 'error' && m.content.trim() !== '',
-  );
+  const usable = messages.filter(isUsable);
   if (usable.length < 4) return 0;
   const budget = contextLength * COMPACTION_KEEP_SHARE;
   let kept = 0;
@@ -134,14 +135,12 @@ export function compactionChunks(
       previousSummary.length -
       1_500,
   );
-  const lines = messages
-    .filter((m) => m.status !== 'error' && m.content.trim() !== '')
-    .map((m) => {
-      const line = `${m.role === 'user' ? tr('prompt.summaryUser') : tr('prompt.summaryAssistant')}: ${m.content.trim()}`;
-      return line.length > maxChars
-        ? `${line.slice(0, maxChars - 40)} ${tr('prompt.compactCut')}`
-        : line;
-    });
+  const lines = messages.filter(isUsable).map((m) => {
+    const line = `${m.role === 'user' ? tr('prompt.summaryUser') : tr('prompt.summaryAssistant')}: ${textWithImageMarkers(m)}`;
+    return line.length > maxChars
+      ? `${line.slice(0, maxChars - 40)} ${tr('prompt.compactCut')}`
+      : line;
+  });
   const chunks: string[] = [];
   let current = '';
   for (const line of lines) {

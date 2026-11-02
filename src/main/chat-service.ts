@@ -8,10 +8,12 @@ import {
   type ChatSendRequest,
   type ChatStreamEvent,
   type MessageRecord,
+  type Result,
   type ToolAnswer,
   type ToolDecision,
 } from '../shared/api';
-import { applyChatEvent, titleFromMessage } from '../shared/chat';
+import { applyChatEvent, isUsable, titleFromMessage } from '../shared/chat';
+import { checkImageInputs, imagesToSend, sniffImage } from '../shared/images';
 import {
   CODE_CONTEXT_DEFAULT,
   CODE_MAX_ROUNDS,
@@ -50,7 +52,7 @@ import {
 } from './code/edit-tools';
 import { allowedInMode, filterForMode } from './code/code-mode';
 import { Workspace } from './code/workspace';
-import type { ChatRepository } from './db/chat-repository';
+import type { ChatRepository, StoredImage } from './db/chat-repository';
 import type { ChatKnowledge } from './knowledge-service';
 import type { MailClient } from './mail/mail-client';
 import { callMailTool, describeMailTool, mailTools } from './mail/mail-tools';
@@ -142,16 +144,31 @@ export function registerChatHandlers(
     },
   );
 
-  ipcMain.handle(IpcChannels.chatSend, (event, request: unknown) => {
+  ipcMain.handle(IpcChannels.chatSend, async (event, request: unknown) => {
     if (!isChatSendRequest(request)) {
       throw new Error(tr('error.invalidChatRequest'));
     }
     if (running.has(request.requestId)) return;
+    // Bilder aus der Oberfläche: Anzahl, Größe und Format werden hier geprüft.
+    const checked = checkImageInputs(request.images);
+    if (!checked.ok) throw new Error(checked.error);
+    const imageInputs = checked.value;
+    if (request.content.trim() === '' && imageInputs.length === 0) {
+      throw new Error(tr('error.invalidChatRequest'));
+    }
+    const storedImages: StoredImage[] = imageInputs.map((image) => ({
+      id: image.id,
+      name: image.name,
+      mime: sniffImage(image.data)!,
+      data: image.data,
+    }));
 
     if (!chats.chatExists(request.chatId)) {
       chats.createChat({
         id: request.chatId,
-        title: titleFromMessage(request.content),
+        title: request.content.trim()
+          ? titleFromMessage(request.content)
+          : tr('chat.imageTitle', { name: imageInputs[0].name }),
         model: request.model,
         settings: request.settings,
       });
@@ -176,6 +193,13 @@ export function registerChatHandlers(
       id: request.userMessageId,
       role: 'user',
       content: request.content,
+      ...(storedImages.length > 0 && {
+        images: storedImages.map((image) => ({
+          id: image.id,
+          name: image.name,
+          size: image.data.byteLength,
+        })),
+      }),
       thinking: '',
       status: 'done',
     };
@@ -188,19 +212,35 @@ export function registerChatHandlers(
       model: request.model,
     };
     chats.appendMessage(request.chatId, userMessage);
+    if (storedImages.length > 0) chats.addImages(userMessage.id, storedImages);
     chats.appendMessage(request.chatId, answer);
 
     const controller = new AbortController();
     running.set(request.requestId, controller);
+    // Der Server wird beim Absenden festgelegt – ein Umschalten während der
+    // Antwort lässt diese Antwort auf ihrem Server zu Ende laufen.
+    const provider = getProvider();
     // Ein verdichteter Chat schickt statt der älteren Nachrichten ihre Zusammenfassung.
     const compacted = compactedHistory(history, chat?.compaction);
+    const sendable = [...compacted.messages, userMessage];
+    // Bilder gehen nur an Modelle mit Bild-Fähigkeit mit (sonst lehnt Ollama die Anfrage ab);
+    // dann sind es die letzten 4 des Verlaufs, die übrigen stehen als Text-Hinweis.
+    const vision = sendable.some((m) => m.images?.length)
+      ? await supportsCapability(provider, request.model, 'vision')
+      : false;
+    const imageData = new Map<string, string>();
+    for (const id of imagesToSend(sendable.filter(isUsable), vision)) {
+      const image = chats.getImage(id);
+      if (image) imageData.set(id, Buffer.from(image.data).toString('base64'));
+    }
     const plainRequest = buildChatRequest(
       request.model,
-      [...compacted.messages, userMessage],
+      sendable,
       settings,
       workspace
         ? codeAgentPrompt(path.basename(workspace), new Date(), codeMode)
         : project?.instructions,
+      { vision, data: (id) => imageData.get(id) },
     );
     const chatRequest = compacted.compaction
       ? withCompaction(plainRequest, compacted.compaction.summary)
@@ -219,10 +259,8 @@ export function registerChatHandlers(
           }
         : null;
     // Bewusst nicht abwarten: Die Oberfläche bekommt die Antwort über Ereignisse.
-    // Der Server wird beim Absenden festgelegt – ein Umschalten während der
-    // Antwort lässt diese Antwort auf ihrem Server zu Ende laufen.
     void stream(
-      getProvider(),
+      provider,
       event.sender,
       chatRequest,
       // Der Code-Agent hat nur seine eigenen Werkzeuge.
@@ -246,6 +284,20 @@ export function registerChatHandlers(
       controller,
     ).finally(() => running.delete(request.requestId));
   });
+
+  // Die Bytes eines Bildes aus einer Nachricht (nur zum Anzeigen).
+  ipcMain.handle(
+    IpcChannels.getChatImage,
+    (_event, imageId: unknown): Result<{ mime: string; data: Uint8Array }> => {
+      const image =
+        typeof imageId === 'string' && imageId.length <= 100
+          ? chats.getImage(imageId)
+          : null;
+      return image
+        ? { ok: true, value: { mime: image.mime, data: image.data } }
+        : { ok: false, error: tr('images.notFound') };
+    },
+  );
 
   // „Bearbeiten“ und „Antwort wiederholen“: alles ab dieser Nachricht wegnehmen.
   ipcMain.handle(
@@ -638,15 +690,21 @@ export function registerChatHandlers(
 }
 
 /** Kann das Modell Tools aufrufen? Im Zweifel (Liste nicht ladbar) nein. */
-async function supportsTools(
+function supportsTools(provider: Provider, model: string): Promise<boolean> {
+  return supportsCapability(provider, model, 'tools');
+}
+
+/** Hat das Modell diese Fähigkeit („tools“, „vision“ …)? Im Zweifel (Liste nicht ladbar) nein. */
+async function supportsCapability(
   provider: Provider,
   model: string,
+  capability: string,
 ): Promise<boolean> {
   const models = await provider.listModels();
   return (
     models.ok &&
     models.value.some(
-      (m) => m.name === model && m.capabilities.includes('tools'),
+      (m) => m.name === model && m.capabilities.includes(capability),
     )
   );
 }
@@ -662,8 +720,9 @@ function isChatSendRequest(value: unknown): value is ChatSendRequest {
     typeof r.requestId === 'string' &&
     typeof r.model === 'string' &&
     r.model !== '' &&
+    // Leer ist erlaubt, wenn Bilder dabei sind – das prüft der Aufrufer nach den Bildern.
     typeof r.content === 'string' &&
-    r.content.trim() !== '' &&
+    (r.images === undefined || Array.isArray(r.images)) &&
     (r.folderId === undefined || typeof r.folderId === 'string')
   );
 }

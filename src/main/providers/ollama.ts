@@ -339,6 +339,7 @@ function toOllamaMessage(message: ChatMessage) {
   return {
     role: message.role,
     content: message.content,
+    ...(message.images?.length && { images: message.images }),
     ...(message.toolCalls?.length && {
       tool_calls: message.toolCalls.map((call) => ({
         function: { name: call.name, arguments: call.arguments },

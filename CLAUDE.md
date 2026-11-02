@@ -985,6 +985,37 @@
   ohne Treffer; englische Ansicht („From GitHub“, „Go“, Plural). Das GitHub-Limit selbst ist nur per Nachbau-Fetch getestet.
   Test-Hinweis: Die Sprache der Oberfläche stellt nur der Knopf in den Einstellungen um (nicht `window.api.setLanguage` allein).
 
+- **Fotos im Chat** (Wunschliste Schritt 3a, Plan freigegeben 2026-11-02; Dateien als Text folgen als 3b): Büroklammer im
+  Eingabefeld, Ziehen auf das Fenster, Strg+V (`ChatInput`, nur mit Prop `images` – der Code-Bereich hat sie nicht). Bis zu 4
+  Bilder je Nachricht, nur für Modelle mit Fähigkeit „vision“ (`ChatPage.visionModel`); sonst ist die Büroklammer gesperrt
+  (Tooltip nennt ein installiertes Bild-Modell) und Ziehen/Einfügen zeigt den Hinweis. Gemessen (gemma4:12b): ~392 Tokens je
+  Bild, unabhängig von der Größe; ein Modell ohne Bild-Fähigkeit lehnt Bilder mit HTTP 400 ab. `renderer/chat/images.ts`
+  `prepareImage`: `createImageBitmap` (JPG/PNG/WebP/GIF 1. Bild/BMP; HEIC nicht → Meldung „als JPG speichern“) → längste Kante
+  ≤ 1280 px (`fitWithin`, nie vergrößern), Canvas auf Weiß, JPEG 0,88 (zu groß → 0,6); Quelle ≤ 25 MB. Gespeichert wird NUR
+  diese Kopie, nie das Original. `shared/images.ts`: Grenzen, `sniffImage` (Magic Bytes JPEG/PNG/WebP – der Name zählt nicht),
+  `checkImageInputs` (Hauptprozess prüft: ≤ 4, je ≤ 4 MB, zusammen ≤ 12 MB, Kennung `[A-Za-z0-9_-]{8,64}` einmalig),
+  `cleanImageName`, `imageMarker` („[Bild: name]“), `textWithImageMarkers`, `imagesToSend` (die letzten
+  `IMAGES_SENT_MAX` = 4 Bilder des Verlaufs, nur mit Bild-Fähigkeit). Migration 20: Tabelle `message_images` (BLOB, `ON DELETE
+  CASCADE` an `messages` → Chat löschen, „Bearbeiten“ und „Antwort wiederholen“ nehmen die Bilder mit). `MessageRecord.images`
+  trägt nur Name/Größe/Kennung; die Bytes holt die Oberfläche einzeln (`getChatImage`, Blob-URL-Cache `loadImageUrl`; die CSP
+  erlaubt `blob:` schon). `toRequestMessages(messages, imageSource?)` hängt Base64-Bilder an (`ChatMessage.images` → Ollama
+  `images`), ältere und alle bei Modellen ohne Bild-Fähigkeit werden zum Text-Hinweis; eine Nachricht nur mit Bild zählt
+  (`isUsable`). `chat-service` wird dafür `async`: Die Fähigkeit wird nur nachgefragt, wenn Bilder im Spiel sind (`supportsCapability`).
+  Ohne Text darf gesendet werden (Titel „Bild: name“, `EditBox allowEmpty`). „Bearbeiten“/„Wiederholen“ (`useChat.resend`) holen die
+  Bytes vor dem Löschen und senden sie unter neuer Kennung wieder mit. Kontext-Anzeige: neuer Anteil `images` (400 Tokens je
+  Bild, nur mit Bild-Fähigkeit; ohne zählt der Hinweis-Text); Verdichten/Zusammenfassen/Obsidian-Notiz sehen „[Bild: …]“. Hinweis
+  über dem Eingabefeld, wenn der Chat Bilder hat, das Modell sie aber nicht lesen kann. Anzeige: Vorschau in der Sprechblase,
+  Klick vergrößert (`MessageImages`, Esc/Klick schließt). Datenschutz: `docs/privacy.md` (de/en) nennt die verkleinerten Kopien in
+  `localdesk.db` und dass Bilder nur an den Ollama-Server gehen.
+  Echt geprüft (gebaute App, Testprofil, gemma4:12b/qwen3:14b, alles über die Oberfläche): Datei per Dialog (1264×735 bleibt),
+  Einfügen und Ziehen (synthetische Ereignisse), 5. Bild → „Höchstens 4“, 6000×4000 → 1280×853, HEIC und .txt verständlich
+  abgelehnt; „ZEBRA 4711“-Bild + Frage → richtige Antwort (565 Eingabe-Tokens), Rückfrage („rückwärts“) sieht das Bild
+  noch; Kontext zeigt „Bilder 400“; qwen3:14b: Hinweis, Büroklammer gesperrt, Antwort ohne Fehler; Bearbeiten behält das Bild
+  (neue Kennung, altes weg, Antwort kennt „4711“); nur Bild ohne Text → Titel „Bild: nur-bild.png“; Chat löschen entfernt das
+  Bild; Datenbank direkt gelesen: Version 20, keine Waisen, JPEG (FFD8FF); Neustart: Bild noch da; Vergrößern + Esc.
+  Test-Hinweis: Einfügen/Ziehen lassen sich per `ClipboardEvent`/`DragEvent` mit `DataTransfer` nachstellen; der Dateidialog per
+  CDP `DOM.setFileInputFiles` auf dem versteckten `input[type=file]`.
+
 ## Befehle
 
 - `npm start` – Entwicklungsmodus · `npm test` – Vitest (Tests in `tests/`) · `npm run typecheck` · `npm run lint` · `npm run dist` – Installer · `npm run make` – portable ZIP

@@ -13,6 +13,7 @@ import type {
   ToolCallRecord,
 } from '../../shared/api';
 import { parseCompaction, type ChatCompaction } from '../../shared/compaction';
+import type { ImageMime, MessageImage } from '../../shared/images';
 import {
   buildFtsQuery,
   HIGHLIGHT_END,
@@ -53,6 +54,14 @@ interface MessageRow {
   stats_json: string | null;
   tool_calls_json: string | null;
   sources_json: string | null;
+}
+
+/** Ein Bild, so wie es zu einer Nachricht gespeichert wird. */
+export interface StoredImage {
+  id: string;
+  name: string;
+  mime: ImageMime;
+  data: Uint8Array;
 }
 
 /** Felder einer Antwort, die sich nach dem Anlegen noch ändern. */
@@ -114,10 +123,30 @@ export class ChatRepository {
            FROM messages WHERE chat_id = ? ORDER BY position`,
       )
       .all(chatId) as unknown as MessageRow[];
+    // Bilder ohne ihre Bytes – die holt die Oberfläche beim Anzeigen einzeln.
+    const imageRows = this.db
+      .prepare(
+        `SELECT i.id, i.message_id, i.name, i.size
+           FROM message_images i JOIN messages m ON m.id = i.message_id
+          WHERE m.chat_id = ? ORDER BY i.position`,
+      )
+      .all(chatId) as unknown as {
+      id: string;
+      message_id: string;
+      name: string;
+      size: number;
+    }[];
+    const images = new Map<string, MessageImage[]>();
+    for (const row of imageRows) {
+      images.set(row.message_id, [
+        ...(images.get(row.message_id) ?? []),
+        { id: row.id, name: row.name, size: row.size },
+      ]);
+    }
     return {
       ...toSummary(chat),
       settings: parseSettings(chat.settings_json),
-      messages: rows.map(toMessage),
+      messages: rows.map((row) => toMessage(row, images.get(row.id))),
       ...(chat.summary_at_count !== null && {
         summaryAtCount: chat.summary_at_count,
       }),
@@ -249,6 +278,37 @@ export class ChatRepository {
         'UPDATE chats SET updated_at = ?, model = COALESCE(?, model) WHERE id = ?',
       )
       .run(now, model, chatId);
+  }
+
+  /** Speichert die Bilder einer Nachricht in dieser Reihenfolge. */
+  addImages(messageId: string, images: StoredImage[]) {
+    const insert = this.db.prepare(
+      `INSERT INTO message_images (id, message_id, position, name, mime, size, data)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    );
+    images.forEach((image, position) =>
+      insert.run(
+        image.id,
+        messageId,
+        position,
+        image.name,
+        image.mime,
+        image.data.byteLength,
+        image.data,
+      ),
+    );
+  }
+
+  /** Ein gespeichertes Bild mit seinen Bytes (null = gibt es nicht). */
+  getImage(
+    imageId: string,
+  ): { name: string; mime: string; data: Uint8Array } | null {
+    const row = this.db
+      .prepare('SELECT name, mime, data FROM message_images WHERE id = ?')
+      .get(imageId) as
+      | { name: string; mime: string; data: Uint8Array }
+      | undefined;
+    return row ?? null;
   }
 
   /**
@@ -422,13 +482,14 @@ function sourcesJson(
   });
 }
 
-function toMessage(row: MessageRow): MessageRecord {
+function toMessage(row: MessageRow, images?: MessageImage[]): MessageRecord {
   const toolCalls = parseToolCalls(row.tool_calls_json);
   const knowledge = parseSources(row.sources_json);
   return {
     id: row.id,
     role: row.role,
     content: row.content,
+    ...(images && images.length > 0 && { images }),
     thinking: row.thinking,
     status: row.status,
     model: row.model ?? undefined,

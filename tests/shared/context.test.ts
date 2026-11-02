@@ -6,6 +6,7 @@ import {
   kvBytesPerToken,
   suggestContextLength,
 } from '../../src/shared/context';
+import { IMAGE_TOKENS_ESTIMATE } from '../../src/shared/images';
 
 describe('estimateTokens', () => {
   it('rechnet mit ~4 Zeichen pro Token (JSON: 5,5)', () => {
@@ -22,6 +23,7 @@ describe('contextUsage', () => {
     summary: 0,
     instructions: 100,
     history: 1500,
+    images: 0,
     knowledge: 1800,
     tools: 0,
   };
@@ -145,6 +147,20 @@ describe('estimateContextParts', () => {
     expect(
       estimateContextParts({ ...base, knowledgeActive: true }).knowledge,
     ).toBe(2325);
+  });
+
+  it('zählt Bilder mit 400 Tokens je Bild als eigenen Anteil, nicht im Verlauf', () => {
+    const parts = estimateContextParts({
+      ...base,
+      history: [
+        { role: 'user', content: 'x'.repeat(40), images: ['a', 'b'] },
+        { role: 'user', content: 'Hi', images: ['c'] },
+      ],
+    });
+    expect(parts.images).toBe(3 * IMAGE_TOKENS_ESTIMATE);
+    // nur der Text: (10 + 4) + (1 + 4)
+    expect(parts.history).toBe(19);
+    expect(estimateContextParts(base).images).toBe(0);
   });
 
   it('schätzt Tools nach ihrer Beschreibung', () => {

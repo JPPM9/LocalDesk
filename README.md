@@ -21,6 +21,7 @@ Status: the first release (0.1.0) is not published yet. The installer and the up
 
 - Streaming answers with Markdown, code highlighting, the thinking of reasoning models and tokens per second.
 - Saved history with full-text search, projects (instructions and documents that apply to every chat in the project), templates, and per-chat settings (system prompt, context length, temperature, seed, thinking). When a long chat no longer fits into the context, “Condense older part” lets the model summarize the older messages: you check and edit the summary, and only then it replaces them in what the model sees. All messages stay visible and the condensing can be undone. In the Knowledge menu of a chat you can let the model re-sort the search results (a bit slower, often more accurate).
+- Photos in the chat: attach up to 4 images per message with the paperclip, by dragging them onto the window or by pasting (Ctrl+V, e.g. a screenshot). Needs a model with image support (for example `gemma4:12b`); LocalDesk stores only a reduced copy (at most 1280 px, your original stays untouched), and follow-up questions keep seeing the last 4 images of the chat. With a model that cannot read images the paperclip is disabled.
 - Several Ollama servers: this PC or another machine in your network. For a server on another machine, every tool call asks first, even reading.
 
 **Models and status**

@@ -19,6 +19,7 @@ import type { CodeMode } from './code-agent';
 import type { ChatCompaction, CompactionDraft } from './compaction';
 import type { ServerProbe } from './failover';
 import type { GithubOpenResult } from './github';
+import type { ChatImageInput, MessageImage } from './images';
 import type { MailSuggestion } from './mail-sorting';
 import type {
   SkillImportFile,
@@ -310,6 +311,8 @@ export type Result<T> = { ok: true; value: T } | { ok: false; error: string };
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant' | 'tool';
   content: string;
+  /** Nur bei `user`: Bilder als Base64, die mit dieser Nachricht gehen (Modell mit Bild-Fähigkeit). */
+  images?: string[];
   /** Nur bei `assistant`: Tools, die das Modell aufrufen wollte. */
   toolCalls?: ModelToolCall[];
   /** Nur bei `tool`: zu welchem Tool dieses Ergebnis gehört. */
@@ -486,6 +489,8 @@ export interface MessageRecord {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  /** Bilder, die du mit dieser Nachricht geschickt hast (ohne die Bytes – `getChatImage` holt sie). */
+  images?: MessageImage[];
   /** „Gedanken“ von Denkmodellen (qwen3, gpt-oss …), getrennt von der Antwort. */
   thinking: string;
   status: MessageStatus;
@@ -577,7 +582,10 @@ export interface ChatSendRequest {
   /** Wird zur ID der Antwort und kennzeichnet die Stream-Ereignisse. */
   requestId: string;
   model: string;
+  /** Der Text; darf leer sein, wenn Bilder dabei sind. */
   content: string;
+  /** Bilder (verkleinert, höchstens 4) – nur für Modelle mit Bild-Fähigkeit sinnvoll. */
+  images?: ChatImageInput[];
   /** Nur für neue Chats: Einstellungen, die vor der ersten Nachricht gewählt wurden. */
   settings?: ChatSettings;
   /** Nur für neue Chats: gleich in diesem Projekt anlegen. */
@@ -879,6 +887,10 @@ export interface LocalDeskApi {
    * `onChatEvent` mit derselben requestId.
    */
   chatSend: (request: ChatSendRequest) => Promise<void>;
+  /** Die Bytes eines Bildes aus einer Nachricht (für die Anzeige). */
+  getChatImage: (
+    imageId: string,
+  ) => Promise<Result<{ mime: string; data: Uint8Array }>>;
   chatCancel: (requestId: string) => Promise<void>;
   /** Löscht die Nachricht und alle danach (Bearbeiten/Wiederholen); false = ging nicht (läuft gerade / gibt es nicht). */
   chatTruncate: (chatId: string, messageId: string) => Promise<boolean>;
@@ -1011,6 +1023,7 @@ export const IpcChannels = {
   saveTemplate: 'templates:save',
   deleteTemplate: 'templates:delete',
   chatSend: 'chat:send',
+  getChatImage: 'chat:get-image',
   chatCancel: 'chat:cancel',
   chatTruncate: 'chat:truncate',
   copyText: 'clipboard:copy-text',

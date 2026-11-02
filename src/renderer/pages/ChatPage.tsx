@@ -9,6 +9,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import {
   FolderOpen,
+  ImageOff,
   PanelLeftOpen,
   PanelRight,
   ScrollText,
@@ -204,12 +205,21 @@ export function ChatPage() {
       ? searchParams.get('project')
       : chatList.chats.find((c) => c.id === chatId)?.folderId;
   const project = chatList.folders.find((f) => f.id === projectId);
+  // Bilder gehen nur an Modelle mit Bild-Fähigkeit; sonst steht dort nur ein Text-Hinweis.
+  const visionModel = Boolean(
+    models.find((m) => m.name === model)?.capabilities.includes('vision'),
+  );
+  const visionSuggestion = models.find((m) =>
+    m.capabilities.includes('vision'),
+  )?.name;
+  const chatHasImages = messages.some((m) => (m.images?.length ?? 0) > 0);
   const contextUsage = useContextUsage(
     messages,
     settings,
     project,
     models.find((m) => m.name === model)?.capabilities.includes('tools'),
     chat?.compaction,
+    visionModel,
   );
   const contextLevel = contextUsage.level;
   // „Älteren Teil verdichten“: Dialog mit Vorschlag des Modells.
@@ -561,7 +571,14 @@ export function ChatPage() {
             </div>
           )}
           <ServerFailoverBanner chatModel={model} />
+          {chatHasImages && model && !visionModel && (
+            <p className="mb-2 flex items-start gap-2 rounded-xl border border-warn/40 bg-warn/10 px-3.5 py-2 text-xs">
+              <ImageOff size={14} className="mt-0.5 shrink-0 text-warn" />
+              {t('chat.images.hintNoVision', { model })}
+            </p>
+          )}
           <ChatInput
+            images={{ allowed: visionModel, suggestion: visionSuggestion }}
             tools={
               <>
                 <KnowledgeButton
@@ -601,7 +618,7 @@ export function ChatPage() {
             }
             disabled={!model}
             isRunning={isRunning}
-            onSend={(text) => send(text, model, project?.id)}
+            onSend={(text, images) => send(text, model, project?.id, images)}
             onStop={stop}
           />
           <p className="mt-2 text-center text-[11.5px] text-subtle">

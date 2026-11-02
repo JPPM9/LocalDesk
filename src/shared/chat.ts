@@ -5,6 +5,7 @@ import type {
   MessageRecord,
   ToolCallRecord,
 } from './api';
+import { imageMarker, imagesToSend } from './images';
 import { settleToolCalls, toolRoundMessages } from './tools';
 
 /**
@@ -71,14 +72,49 @@ function settled(message: MessageRecord): Pick<MessageRecord, 'toolCalls'> {
  * den Kontext füllen. Tool-Aufrufe einer Antwort kommen Runde für Runde vor
  * deren Text, damit das Modell später noch weiß, was es nachgeschlagen hat.
  */
-export function toRequestMessages(messages: MessageRecord[]): ChatMessage[] {
-  return messages
-    .filter((m) => m.status !== 'error' && m.content.trim() !== '')
-    .flatMap((m): ChatMessage[] => [
+export function toRequestMessages(
+  messages: MessageRecord[],
+  images?: ImageSource,
+): ChatMessage[] {
+  const usable = messages.filter(isUsable);
+  // Ohne Bild-Quelle (z. B. beim Zählen) geht kein Bild mit – es bleibt der Text-Hinweis.
+  const sent = images ? imagesToSend(usable, images.vision) : new Set<string>();
+  return usable.flatMap((m): ChatMessage[] => {
+    const attached: string[] = [];
+    const markers: string[] = [];
+    for (const image of m.images ?? []) {
+      const data = sent.has(image.id) ? images?.data(image.id) : undefined;
+      if (data) attached.push(data);
+      else markers.push(imageMarker(image.name));
+    }
+    const content =
+      markers.length > 0
+        ? [...markers, m.content]
+            .filter((part) => part.trim() !== '')
+            .join('\n')
+        : m.content;
+    return [
       ...toolRounds(m.toolCalls ?? []).flatMap(toolRoundMessages),
-      { role: m.role, content: m.content },
-    ]);
+      {
+        role: m.role,
+        content,
+        ...(attached.length > 0 && { images: attached }),
+      },
+    ];
+  });
 }
+
+/** Wohin die Bilder einer Anfrage kommen: nur mit Bild-Fähigkeit, die Bytes aus dem Speicher. */
+export interface ImageSource {
+  vision: boolean;
+  /** Base64 eines Bildes (leer/undefined = nicht verfügbar → Text-Hinweis). */
+  data: (imageId: string) => string | undefined;
+}
+
+/** Geht diese Nachricht an das Modell? Fehlgeschlagene und leere (ohne Bild) nicht. */
+export const isUsable = (m: MessageRecord): boolean =>
+  m.status !== 'error' &&
+  (m.content.trim() !== '' || (m.images?.length ?? 0) > 0);
 
 function toolRounds(calls: ToolCallRecord[]): ToolCallRecord[][] {
   const rounds = new Map<number, ToolCallRecord[]>();

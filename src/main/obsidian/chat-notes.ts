@@ -1,4 +1,5 @@
 import type { ChatDetail, MessageRecord, SourceRef } from '../../shared/api';
+import { textWithImageMarkers } from '../../shared/images';
 import { localDate, yamlString } from './note-format';
 
 export const CHATS_DIR = 'Chats';
@@ -44,7 +45,7 @@ export function formatChatNote(
   ];
   const body = messages.flatMap((m) =>
     m.role === 'user'
-      ? ['## Frage', '', m.content.trim(), '']
+      ? ['## Frage', '', textWithImageMarkers(m), '']
       : [
           `## Antwort (${m.model ?? 'Modell'})`,
           '',
@@ -68,7 +69,9 @@ function pickMessages(
   all: MessageRecord[],
   answerId: string | undefined,
 ): MessageRecord[] {
-  const usable = (m: MessageRecord) => m.content.trim() !== '';
+  // Eine Frage nur mit Bild zählt auch (im Text steht dann „[Bild: …]“).
+  const usable = (m: MessageRecord) =>
+    m.content.trim() !== '' || (m.images?.length ?? 0) > 0;
   if (answerId === undefined) return all.filter(usable);
   const index = all.findIndex(
     (m) => m.id === answerId && m.role === 'assistant',

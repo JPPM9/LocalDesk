@@ -221,6 +221,8 @@ const api: LocalDeskApi = {
     ipcRenderer.invoke(IpcChannels.deleteTemplate, templateId),
 
   chatSend: (request) => ipcRenderer.invoke(IpcChannels.chatSend, request),
+  getChatImage: (imageId) =>
+    ipcRenderer.invoke(IpcChannels.getChatImage, imageId),
   chatCancel: (requestId) =>
     ipcRenderer.invoke(IpcChannels.chatCancel, requestId),
   chatTruncate: (chatId, messageId) =>

@@ -30,6 +30,22 @@ describe('toOllamaChatBody', () => {
       stream: true,
     });
   });
+
+  it('schickt Bilder als images (Base64) an der Nachricht – nur wenn es welche gibt', () => {
+    const body = toOllamaChatBody({
+      model: 'gemma4:12b',
+      messages: [
+        { role: 'user', content: 'Was ist das?', images: ['QUJD', 'REVG'] },
+        { role: 'assistant', content: 'Eine Katze.' },
+        { role: 'user', content: 'Ohne Bild', images: [] },
+      ],
+    });
+    expect(body.messages).toEqual([
+      { role: 'user', content: 'Was ist das?', images: ['QUJD', 'REVG'] },
+      { role: 'assistant', content: 'Eine Katze.' },
+      { role: 'user', content: 'Ohne Bild' },
+    ]);
+  });
 });
 
 const request = {
