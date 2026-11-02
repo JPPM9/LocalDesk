@@ -937,6 +937,27 @@
   Quellen ohne 1/6, mit 6/6; Quellen stehen ~2,5–3 s später da; Antworten vorher teils „keine Informationen“, nachher richtig.
   Bekannt: Die Testsammlung ist klein und eigen (Projekt-Dokumente), 1 Frage ≈ 3 Punkte – Richtwert, kein Beweis.
 
+- **Failover (Ausweich-Server)** (aus dem LocalAI-Vergleich, Plan freigegeben 2026-11-02): Antwortet der aktive Ollama-Server nicht, zeigt
+  `ServerFailoverBanner` über dem Eingabefeld (ChatPage) die anderen gespeicherten Server, die erreichbar sind. **Nie automatisch
+  wechseln** – Antworten, Chats und Wissen würden sonst unbemerkt an einen anderen Rechner gehen. `useFailover`: nach
+  `OFFLINE_POLLS_NEEDED` = 2 fehlgeschlagenen Statusprüfungen hintereinander (`useOllamaStatus`, alle 5 s) und nur wenn es weitere Profile
+  gibt, fragt `window.api.probeServers()` (`main/server-probe.ts`, parallel; nur NICHT aktive Profile; je Server Status + Modellliste)
+  alle 10 s ab, solange der Hinweis gebraucht wird. `failoverOptions` (`shared/failover.ts`): nur erreichbare Server, zuerst die mit dem
+  Modell des Chats; Hinweise „Modell fehlt“, „Embedding-Modell fehlt (Wissen)“ und – bei Adresse nicht auf diesem PC (`isLocalServer`) –
+  „Werkzeuge fragen jedes Mal nach“. „Zurückwechseln“: Beim Wechsel merkt sich `localStorage` `localdesk.failoverFrom` das ursprüngliche
+  Profil (nur das erste, auch bei weiterem Wechsel); ist es wieder erreichbar, bietet der Hinweis „Zurück zu …“ / „Hier bleiben“ an. Wer in
+  den Einstellungen selbst einen Server aktiviert (`ServerSettings.activate`), löscht die Merkung. Datenschutz: `docs/privacy.md` nennt die
+  Abfrage der anderen gespeicherten Server (nur wenn der aktive nicht erreichbar ist).
+  Nötige Folge-Änderung: Der Wechsel passiert bei offenem Chat – `useChatModels` lud die Modelle nur einmal beim Öffnen. Jetzt lädt es bei
+  `onServerChanged` neu (`epoch` zählt die Neuladungen nach einem Wechsel); `ChatPage` wählt danach per `modelAfterSwitch` (shared/failover.ts)
+  das bisherige Modell, wenn der neue Server es hat, sonst das zuletzt gewählte, sonst das erste.
+  Echt geprüft (gebaute App, Testprofil, zwei Weiterleitungen 127.0.0.3:21435 „A“ und 127.0.0.2:21434 „B“ auf das echte Ollama): A aktiv und aus →
+  Hinweis ~5 s nach dem Laden mit „Dieser PC“ (lokal) und B (mit Fremdrechner-Hinweis); Wechsel zu B → Status grün, Modellfeld sofort gefüllt,
+  Chat antwortet über B; A wieder an → „Zurück zu A“ binnen einer Abfrage, Klick → A aktiv, Merkung weg; Merkung überlebt App-Neustart;
+  „Hier bleiben“ löscht Hinweis und Merkung dauerhaft; alle anderen aus → „Kein anderer eingetragener Server ist erreichbar“ + Link
+  „Server verwalten“ (→ /settings). Test-Hinweis: Im gebauten Programm blockiert `will-navigate` (main.ts) auch `location.reload()` – frisches
+  Mounten nur per Routenwechsel (`location.hash`) oder App-Neustart.
+
 ## Befehle
 
 - `npm start` – Entwicklungsmodus · `npm test` – Vitest (Tests in `tests/`) · `npm run typecheck` · `npm run lint` · `npm run dist` – Installer · `npm run make` – portable ZIP

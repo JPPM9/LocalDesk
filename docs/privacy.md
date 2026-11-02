@@ -4,7 +4,7 @@ title: Privacy policy / Datenschutz
 
 # LocalDesk privacy policy
 
-Last updated: 31 October 2026 · Deutsche Fassung weiter unten
+Last updated: 2 November 2026 · Deutsche Fassung weiter unten
 
 LocalDesk is a Windows desktop app that lets you use AI models **on your own computer** (via
 [Ollama](https://ollama.com)). There is no LocalDesk server and no account with us. LocalDesk is
@@ -46,14 +46,14 @@ remove everything, delete `%APPDATA%\LocalDesk` by hand.
 
 ## Where LocalDesk connects to
 
-| Destination                                                                     | When                                         | What                                                                                                     |
-| ------------------------------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Your Ollama server (default: this computer)                                     | with every chat, when indexing knowledge     | your messages, document passages, emails you ask it to summarize                                         |
-| Ollama model library                                                            | only when you download a model               | Ollama itself downloads the model                                                                        |
-| Google (`accounts.google.com`, `oauth2.googleapis.com`, `gmail.googleapis.com`) | only with e-mail set up                      | sign-in, reading mail, labels/stars after your confirmation (also creating and renaming your own labels) |
-| GitHub (releases of JPPM9/LocalDesk)                                            | only when you click “Check for updates”      | version query, download of the update                                                                    |
-| GitHub (`raw.githubusercontent.com`)                                            | only when you click “Load skill from GitHub” | the path of the link; only one text file (SKILL.md) is loaded                                            |
-| npm package registry                                                            | on first start of the file-system MCP server | `npx` downloads the server program                                                                       |
+| Destination                                                                                                                              | When                                         | What                                                                                                     |
+| ---------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Your Ollama server (default: this computer; if it is unreachable, also the other servers you saved, to check whether they are reachable) | with every chat, when indexing knowledge     | your messages, document passages, emails you ask it to summarize                                         |
+| Ollama model library                                                                                                                     | only when you download a model               | Ollama itself downloads the model                                                                        |
+| Google (`accounts.google.com`, `oauth2.googleapis.com`, `gmail.googleapis.com`)                                                          | only with e-mail set up                      | sign-in, reading mail, labels/stars after your confirmation (also creating and renaming your own labels) |
+| GitHub (releases of JPPM9/LocalDesk)                                                                                                     | only when you click “Check for updates”      | version query, download of the update                                                                    |
+| GitHub (`raw.githubusercontent.com`)                                                                                                     | only when you click “Load skill from GitHub” | the path of the link; only one text file (SKILL.md) is loaded                                            |
+| npm package registry                                                                                                                     | on first start of the file-system MCP server | `npx` downloads the server program                                                                       |
 
 Also note: **commands you approve for the code agent** run with your permissions and may do
 anything you may do on your PC – including connecting to the internet. The same applies to
@@ -83,7 +83,7 @@ PC. You can also remove the access at
 
 # Datenschutzerklärung von LocalDesk
 
-Stand: 31. Oktober 2026
+Stand: 2. November 2026
 
 LocalDesk ist eine Desktop-App für Windows, mit der du KI-Modelle **auf deinem eigenen
 Rechner** (über [Ollama](https://ollama.com)) nutzt. Es gibt keinen LocalDesk-Server und kein
@@ -125,14 +125,14 @@ verliert). Wenn du alles entfernen willst, lösche `%APPDATA%\LocalDesk` von Han
 
 ## Wohin LocalDesk Verbindungen aufbaut
 
-| Ziel                                                                            | Wann                                          | Was                                                                                                       |
-| ------------------------------------------------------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| Dein Ollama-Server (Standard: dieser PC)                                        | bei jedem Chat, beim Einlesen von Wissen      | deine Nachrichten, Dokument-Abschnitte, Mails, die du zusammenfassen lässt                                |
-| Ollama-Modellbibliothek                                                         | nur wenn du ein Modell herunterlädst          | Ollama selbst lädt das Modell                                                                             |
-| Google (`accounts.google.com`, `oauth2.googleapis.com`, `gmail.googleapis.com`) | nur mit eingerichteter E-Mail                 | Anmeldung, Mails lesen, Labels/Sterne nach deiner Bestätigung (auch eigene Labels anlegen und umbenennen) |
-| GitHub (Releases von JPPM9/LocalDesk)                                           | nur wenn du „Nach Updates suchen“ klickst     | Versionsabfrage, Download des Updates                                                                     |
-| GitHub (`raw.githubusercontent.com`)                                            | nur wenn du „Skill von GitHub laden“ klickst  | der Pfad des Links; geladen wird nur eine Textdatei (SKILL.md)                                            |
-| npm-Paketverzeichnis                                                            | beim ersten Start des Dateisystem-MCP-Servers | `npx` lädt das Server-Programm herunter                                                                   |
+| Ziel                                                                                                                                                   | Wann                                          | Was                                                                                                       |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Dein Ollama-Server (Standard: dieser PC; ist er nicht erreichbar, auch die anderen von dir gespeicherten Server, um zu prüfen, ob sie erreichbar sind) | bei jedem Chat, beim Einlesen von Wissen      | deine Nachrichten, Dokument-Abschnitte, Mails, die du zusammenfassen lässt                                |
+| Ollama-Modellbibliothek                                                                                                                                | nur wenn du ein Modell herunterlädst          | Ollama selbst lädt das Modell                                                                             |
+| Google (`accounts.google.com`, `oauth2.googleapis.com`, `gmail.googleapis.com`)                                                                        | nur mit eingerichteter E-Mail                 | Anmeldung, Mails lesen, Labels/Sterne nach deiner Bestätigung (auch eigene Labels anlegen und umbenennen) |
+| GitHub (Releases von JPPM9/LocalDesk)                                                                                                                  | nur wenn du „Nach Updates suchen“ klickst     | Versionsabfrage, Download des Updates                                                                     |
+| GitHub (`raw.githubusercontent.com`)                                                                                                                   | nur wenn du „Skill von GitHub laden“ klickst  | der Pfad des Links; geladen wird nur eine Textdatei (SKILL.md)                                            |
+| npm-Paketverzeichnis                                                                                                                                   | beim ersten Start des Dateisystem-MCP-Servers | `npx` lädt das Server-Programm herunter                                                                   |
 
 Außerdem gilt: **Befehle, die du dem Code-Agenten freigibst**, laufen mit deinen Rechten und
 dürfen alles, was du am PC darfst – auch Verbindungen ins Internet. Das gilt ebenso für

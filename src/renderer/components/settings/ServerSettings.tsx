@@ -7,6 +7,7 @@ import type {
   ServerProfileInput,
 } from '../../../shared/api';
 import { DEFAULT_SERVER_NAME } from '../../../shared/server';
+import { clearFailoverFrom } from '../../failover';
 import { notifyServerChanged } from '../../serverEvents';
 import { Field } from './SettingsFields';
 import { useConfirm } from '../ConfirmDialog';
@@ -31,6 +32,8 @@ export function ServerSettings() {
   }, [refresh]);
 
   const activate = async (profile: ServerProfile) => {
+    // Du wählst selbst: Ein früherer Failover-Wechsel gilt nicht mehr („Zurückwechseln“ entfällt).
+    clearFailoverFrom();
     const result = await window.api.setActiveServer(profile.id);
     if (!result.ok) setError(result.error);
     await refresh();

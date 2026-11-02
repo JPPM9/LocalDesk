@@ -211,6 +211,21 @@
     "show": "Show summary",
     "limits": "A summary loses details. Undo the condensing if the model forgets something important."
   },
+  "failover": {
+    "offline": "The server “{{name}}” is not reachable.",
+    "probing": "Checking the other saved servers …",
+    "noneOnline": "No other saved server is reachable.",
+    "manage": "Manage servers",
+    "online": "reachable",
+    "hasModel": "Has the model {{model}}.",
+    "noModel": "The model {{model}} is missing there – the chat will then pick another one.",
+    "noEmbedding": "“Knowledge” does not work there (embedding model missing).",
+    "remote": "Then your chats, documents and mail go to {{address}}. Tools ask every time there.",
+    "switch": "Switch to “{{name}}”",
+    "backOnline": "The server “{{name}}” is reachable again.",
+    "back": "Back to “{{name}}”",
+    "stay": "Stay here"
+  },
   "sidePanel": {
     "button": "Side panel (sources, project, context)",
     "close": "Close side panel",

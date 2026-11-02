@@ -17,6 +17,7 @@ import type {
 import type { CodeChangeState, CodeEntry, CodeFile } from './code';
 import type { CodeMode } from './code-agent';
 import type { ChatCompaction, CompactionDraft } from './compaction';
+import type { ServerProbe } from './failover';
 import type { GithubSkill } from './github';
 import type { MailSuggestion } from './mail-sorting';
 import type {
@@ -857,6 +858,8 @@ export interface LocalDeskApi {
   setActiveServer: (profileId: string) => Promise<Result<ServerProfile>>;
   /** Prüft eine Adresse, ohne sie zu speichern. */
   testServer: (address: string) => Promise<ProviderStatus>;
+  /** Fragt die anderen eingetragenen Server ab (erreichbar, Modelle) – für den Failover-Hinweis. */
+  probeServers: () => Promise<ServerProbe[]>;
 
   listTemplates: () => Promise<ChatTemplate[]>;
   /** Legt an oder überschreibt (gleiche id). Gibt die gespeicherte Fassung zurück. */
@@ -994,6 +997,7 @@ export const IpcChannels = {
   deleteServer: 'servers:delete',
   setActiveServer: 'servers:set-active',
   testServer: 'servers:test',
+  probeServers: 'servers:probe',
   listTemplates: 'templates:list',
   saveTemplate: 'templates:save',
   deleteTemplate: 'templates:delete',

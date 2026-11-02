@@ -16,6 +16,7 @@ import {
   X,
 } from 'lucide-react';
 import type { ChatFolder, ChatSummary, ChatTemplate } from '../../shared/api';
+import { modelAfterSwitch } from '../../shared/failover';
 import { thinkFitsModel } from '../../shared/settings';
 import { useChat } from '../chat/useChat';
 import { useContextUsage } from '../chat/useContextUsage';
@@ -39,6 +40,7 @@ import { ChatSettingsPanel } from '../components/chat/ChatSettingsPanel';
 import { MessageView } from '../components/chat/MessageView';
 import { SaveNoteButton } from '../components/chat/SaveNoteButton';
 import { SummaryPanel } from '../components/chat/SummaryPanel';
+import { ServerFailoverBanner } from '../components/ServerFailoverBanner';
 import { CompactionDialog } from '../components/chat/CompactionDialog';
 import { CompactionDivider } from '../components/chat/CompactionDivider';
 import { shouldSuggestSummary } from '../../shared/summary';
@@ -129,7 +131,12 @@ export function ChatPage() {
     updateSettings(ids.length > 0 ? { ...rest, [key]: ids } : rest);
   };
 
-  const { models, loaded: modelsLoaded, error: loadError } = useChatModels();
+  const {
+    models,
+    loaded: modelsLoaded,
+    error: loadError,
+    epoch: modelsEpoch,
+  } = useChatModels();
   const [model, setModel] = useState('');
 
   const {
@@ -153,6 +160,19 @@ export function ChatPage() {
         (models.find((m) => m.name === last)?.name ?? models[0]?.name ?? ''),
     );
   }, [models, modelsLoaded]);
+
+  // Nach einem Serverwechsel (z. B. über den Ausweich-Hinweis) gilt, was der neue Server hat.
+  useEffect(() => {
+    if (modelsEpoch === 0 || models.length === 0) return;
+    const last = readLastModel();
+    setModel((current) =>
+      modelAfterSwitch(
+        models.map((m) => m.name),
+        current,
+        last,
+      ),
+    );
+  }, [models, modelsEpoch]);
 
   useEffect(() => {
     setActiveTemplate(null);
@@ -540,6 +560,7 @@ export function ChatPage() {
               </span>
             </div>
           )}
+          <ServerFailoverBanner chatModel={model} />
           <ChatInput
             tools={
               <>

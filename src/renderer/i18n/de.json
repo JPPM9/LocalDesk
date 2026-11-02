@@ -211,6 +211,21 @@
     "show": "Zusammenfassung ansehen",
     "limits": "Eine Zusammenfassung verliert Details. Hebe die Verdichtung auf, wenn das Modell etwas Wichtiges vergisst."
   },
+  "failover": {
+    "offline": "Der Server „{{name}}“ ist nicht erreichbar.",
+    "probing": "Prüfe die anderen eingetragenen Server …",
+    "noneOnline": "Kein anderer eingetragener Server ist erreichbar.",
+    "manage": "Server verwalten",
+    "online": "erreichbar",
+    "hasModel": "Hat das Modell {{model}}.",
+    "noModel": "Das Modell {{model}} fehlt dort – im Chat wird dann ein anderes gewählt.",
+    "noEmbedding": "„Wissen“ geht dort nicht (Embedding-Modell fehlt).",
+    "remote": "Dann gehen deine Chats, Dokumente und Mails an {{address}}. Werkzeuge fragen dort jedes Mal nach.",
+    "switch": "Zu „{{name}}“ wechseln",
+    "backOnline": "Der Server „{{name}}“ ist wieder erreichbar.",
+    "back": "Zurück zu „{{name}}“",
+    "stay": "Hier bleiben"
+  },
   "sidePanel": {
     "button": "Seitenbereich (Quellen, Projekt, Kontext)",
     "close": "Seitenbereich schließen",

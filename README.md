@@ -27,6 +27,7 @@ Status: the first release (0.1.0) is not published yet. The installer and the up
 
 - Download and delete models with progress, speed and remaining time.
 - Status page with GPU load, VRAM, temperature and power (NVIDIA cards, Ollama on this PC) and the models currently loaded.
+- Several Ollama servers (this PC and others on your network). If the active one stops answering, a notice above the input offers the other servers you saved that are reachable. LocalDesk never switches by itself: you click, and when the earlier server is back, "Switch back" is offered.
 
 **Knowledge (RAG)**
 

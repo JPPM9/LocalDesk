@@ -4,6 +4,7 @@ import { normalizeServerUrl } from '../shared/server';
 import type { ServerRepository } from './db/server-repository';
 import { OllamaProvider } from './providers/ollama';
 import type { Provider } from './providers/provider';
+import { probeServers } from './server-probe';
 import { tr } from '../shared/messages';
 
 /**
@@ -56,6 +57,14 @@ export function registerServerHandlers(servers: ServerRepository) {
         return { online: false, baseUrl: String(address), error: url.error };
       return new OllamaProvider({ baseUrl: url.value }).checkStatus();
     },
+  );
+
+  // Failover-Hinweis im Chat: nur die gespeicherten, nicht aktiven Server abfragen.
+  ipcMain.handle(IpcChannels.probeServers, () =>
+    probeServers(
+      servers.listProfiles(),
+      (baseUrl) => new OllamaProvider({ baseUrl }),
+    ),
   );
 
   return { getProvider: (): Provider => provider };
