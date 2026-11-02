@@ -922,6 +922,21 @@
   vergessen („Ich habe keinen Zugriff …“); nach dem Verdichten (Verlauf 1 790 → 464 Tokens) antwortet das Modell richtig; Aufheben geht.
   Bekannt: Eine Zusammenfassung verliert Details – darum Vorschau, Bearbeiten, Aufheben.
 
+- **Treffer neu sortieren („Reranker“)** (aus dem LocalAI-Vergleich, Plan freigegeben 2026-11-02; erst gemessen, dann gebaut): Schalter
+  pro Chat im Wissen-Menü (`ChatSettings.rerank`, Standard aus). Ollama hat keinen Reranker-Endpunkt → `main/rag/rerank.ts`
+  (`rerankSources`): Das Chat-Modell ordnet die ersten 12 Kandidaten der Suche (`RERANK_CANDIDATES`, `KnowledgeSearch.search(…, 12)`)
+  in EINEM Aufruf (Denken aus, Format erzwingt `{"ranking":[…]}`, Temperatur 0, derselbe Kontext wie die Antwort – sonst lädt Ollama das
+  Modell neu). Von jeder Stelle sieht es 400–1500 Zeichen (`passageCharsFor`, wächst mit dem Kontext). NUR umsortieren, nichts
+  aussortieren: `parseRanking` verwirft Ungültiges/Doppeltes, fehlende Nummern kommen hinten dran; bei Fehler, unlesbarer Antwort oder
+  15 s Zeitlimit (`RERANK_TIMEOUT_MS`) gilt die alte Reihenfolge; Stopp bricht ab. `topSources` nummeriert neu und setzt `SourceRef.reranked`
+  (Hinweis „Reihenfolge vom Modell geprüft“ in `SourceList`). Nur wenn es mehr als 6 Kandidaten gibt.
+  **Messung** (Scratchpad, echte Bausteine, 7 Projekt-Dokumente/130 Abschnitte, 35 Fragen, davon 9 umschrieben; 34 gewertet): Grundlinie
+  Top 6 = 28/34 (82 %), 33/34 unter den 12 Kandidaten. Mit Reranker (Top 6): gemma4:12b 31/33 (A: 600 Zeichen/4 096 Kontext) bzw. 33/34 (B:
+  1 500/8 192), qwen3:14b 32/34 bzw. 33/34 → +12 bis +15 Punkte; Median-Mehrzeit 2,4–5,4 s (Regel: ≥ +10 Punkte und ≤ ~5 s). Schlechter
+  wurde nur 1 Frage (qwen3, A). Gebaute App (gemma4:12b, 4 096 Kontext, 6 Fragen, 5 davon Fehlgriffe der Grundlinie): Stelle in den
+  Quellen ohne 1/6, mit 6/6; Quellen stehen ~2,5–3 s später da; Antworten vorher teils „keine Informationen“, nachher richtig.
+  Bekannt: Die Testsammlung ist klein und eigen (Projekt-Dokumente), 1 Frage ≈ 3 Punkte – Richtwert, kein Beweis.
+
 ## Befehle
 
 - `npm start` – Entwicklungsmodus · `npm test` – Vitest (Tests in `tests/`) · `npm run typecheck` · `npm run lint` · `npm run dist` – Installer · `npm run make` – portable ZIP

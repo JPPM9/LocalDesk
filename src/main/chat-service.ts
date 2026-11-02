@@ -212,7 +212,11 @@ export function registerChatHandlers(
     ];
     const knowledgeSearch =
       collectionIds.length > 0 && !workspace
-        ? { collectionIds, query: knowledgeQuery(history, request.content) }
+        ? {
+            collectionIds,
+            query: knowledgeQuery(history, request.content),
+            rerank: settings.rerank === true,
+          }
         : null;
     // Bewusst nicht abwarten: Die Oberfläche bekommt die Antwort über Ereignisse.
     // Der Server wird beim Absenden festgelegt – ein Umschalten während der
@@ -463,7 +467,11 @@ export function registerChatHandlers(
     mailAccountId: string | null,
     workspacePath: string | null,
     codeMode: CodeMode,
-    knowledgeSearch: { collectionIds: string[]; query: string } | null,
+    knowledgeSearch: {
+      collectionIds: string[];
+      query: string;
+      rerank: boolean;
+    } | null,
     memoryContext: { projectId: string | undefined; question: string },
     chatId: string,
     initial: MessageRecord,
@@ -514,6 +522,16 @@ export function registerChatHandlers(
         const found = await knowledge.search(
           knowledgeSearch.collectionIds,
           knowledgeSearch.query,
+          knowledgeSearch.rerank
+            ? {
+                rerank: {
+                  model: request.model,
+                  contextLength:
+                    request.options?.contextLength ?? OLLAMA_DEFAULT_CONTEXT,
+                  signal: controller.signal,
+                },
+              }
+            : undefined,
         );
         controller.signal.throwIfAborted();
         if (found.ok) {

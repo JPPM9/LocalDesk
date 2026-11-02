@@ -115,7 +115,11 @@ export function ChatPage() {
   // Der Punkt am Einstellungs-Knopf gilt nur für das Panel – MCP-Server und Wissen
   // zeigen ihre eigenen Knöpfe.
   const hasCustomSettings = Object.keys(settings).some(
-    (key) => key !== 'mcpServers' && key !== 'collections' && key !== 'skills',
+    (key) =>
+      key !== 'mcpServers' &&
+      key !== 'collections' &&
+      key !== 'skills' &&
+      key !== 'rerank',
   );
   const setList = (
     key: 'mcpServers' | 'collections' | 'skills' | 'mailAccounts',
@@ -542,6 +546,11 @@ export function ChatPage() {
                 <KnowledgeButton
                   selected={settings.collections ?? []}
                   onChange={(ids) => setList('collections', ids)}
+                  rerank={settings.rerank === true}
+                  onRerank={(on) => {
+                    const { rerank: _old, ...rest } = settings;
+                    updateSettings(on ? { ...rest, rerank: true } : rest);
+                  }}
                 />
                 <McpButton
                   selected={settings.mcpServers ?? []}

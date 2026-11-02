@@ -74,8 +74,18 @@ export function CollectionPicker({
   );
 }
 
+interface KnowledgeButtonProps extends CollectionPickerProps {
+  /** Treffer vom Modell neu sortieren lassen. */
+  rerank: boolean;
+  onRerank: (on: boolean) => void;
+}
+
 /** Wissen-Knopf im Chat-Kopf: welche Sammlungen vor jeder Antwort durchsucht werden. */
-export function KnowledgeButton(props: CollectionPickerProps) {
+export function KnowledgeButton({
+  rerank,
+  onRerank,
+  ...props
+}: KnowledgeButtonProps) {
   const { t } = useTranslation();
   return (
     <PickerButton
@@ -87,6 +97,20 @@ export function KnowledgeButton(props: CollectionPickerProps) {
       intro={t('knowledgePicker.intro')}
     >
       <CollectionPicker {...props} />
+      <label className="flex cursor-pointer items-start gap-2 rounded px-1.5 py-1 hover:bg-surface-hover">
+        <input
+          type="checkbox"
+          checked={rerank}
+          onChange={(e) => onRerank(e.target.checked)}
+          className="mt-1 accent-[var(--ld-accent)]"
+        />
+        <span className="min-w-0 flex-1">
+          <span className="block">{t('knowledgePicker.rerank')}</span>
+          <span className="block text-[11px] text-muted">
+            {t('knowledgePicker.rerankHint')}
+          </span>
+        </span>
+      </label>
     </PickerButton>
   );
 }

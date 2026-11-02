@@ -410,6 +410,8 @@ export interface ChatSettings {
   collections?: string[];
   /** Kennungen der Skills, die in diesem Chat gelten (Schalter „Skills“). */
   skills?: string[];
+  /** Wissens-Treffer vom Modell neu sortieren lassen (langsamer, oft genauer). */
+  rerank?: boolean;
   /** Mail-Konto, das das Modell in diesem Chat lesen darf (Schalter „E-Mail“; höchstens eins). */
   mailAccounts?: string[];
   /** Nur Code-Sitzungen: „plan“ = nur lesen und planen; fehlt = „manual“ (alles einzeln bestätigen). */
@@ -430,6 +432,8 @@ export interface SourceRef {
   text: string;
   /** Ähnlichkeit 0–1 (Fingerabdruck-Suche). */
   score: number;
+  /** Die Reihenfolge wurde vom Modell geprüft (Schalter „Treffer neu sortieren“). */
+  reranked?: boolean;
 }
 
 export interface ChatRequest {

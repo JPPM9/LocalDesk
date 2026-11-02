@@ -252,6 +252,7 @@
     "probablyCut": "That hit the limit – something was probably cut off."
   },
   "sources": {
+    "reranked": "Order checked by the model.",
     "title_one": "{{count}} source",
     "title_other": "{{count}} sources",
     "searching": "Searching knowledge …",
@@ -508,6 +509,8 @@
     "none": "No collections created yet.",
     "toKnowledge": "Go to “Knowledge”",
     "empty": "not indexed yet",
+    "rerank": "Let the model re-sort the results",
+    "rerankHint": "Slower (about 2–5 seconds more) but often more accurate: the model checks the best passages and puts the most fitting ones first.",
     "chip": "Knowledge"
   },
   "settingsPanel": {

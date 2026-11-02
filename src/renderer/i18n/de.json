@@ -252,6 +252,7 @@
     "probablyCut": "Das war am Limit – vermutlich wurde etwas abgeschnitten."
   },
   "sources": {
+    "reranked": "Reihenfolge vom Modell geprüft.",
     "title_one": "{{count}} Quelle",
     "title_other": "{{count}} Quellen",
     "searching": "Durchsuche Wissen …",
@@ -508,6 +509,8 @@
     "none": "Noch keine Sammlungen angelegt.",
     "toKnowledge": "Zur Seite „Wissen“",
     "empty": "noch nicht eingelesen",
+    "rerank": "Treffer vom Modell neu sortieren",
+    "rerankHint": "Langsamer (etwa 2–5 Sekunden mehr), aber oft genauer: Das Modell prüft die besten Textstellen und stellt die passendsten nach vorn.",
     "chip": "Wissen"
   },
   "settingsPanel": {

@@ -54,6 +54,8 @@ export function normalizeSettings(raw: unknown): ChatSettings {
   if (collections.length > 0) result.collections = collections;
   const skills = idList(input.skills);
   if (skills.length > 0) result.skills = skills;
+  // Nur „an“ wird gespeichert; aus ist der Standard.
+  if (input.rerank === true) result.rerank = true;
   // Ein Konto pro Chat – die Werkzeuge arbeiten mit genau einem Postfach.
   const mailAccounts = idList(input.mailAccounts).slice(0, 1);
   if (mailAccounts.length > 0) result.mailAccounts = mailAccounts;

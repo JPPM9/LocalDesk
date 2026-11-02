@@ -14,7 +14,9 @@ import type { ProjectKnowledge } from './folder-service';
 import type { Provider } from './providers/provider';
 import { WorkerExtractor } from './rag/extractor';
 import { indexCollection } from './rag/indexer';
-import { KnowledgeSearch } from './rag/search';
+import { rerankSources, type RerankOptions } from './rag/rerank';
+import { KNOWLEDGE_TOP_K, KnowledgeSearch } from './rag/search';
+import { RERANK_CANDIDATES, topSources } from '../shared/rerank';
 import { tr } from '../shared/messages';
 
 /** Standard-Embedding-Modell für neue Sammlungen (vereinbart in Phase 5). */
@@ -37,7 +39,12 @@ const OPEN_DIRECTLY = new Set([
 
 /** Was der Chat vom Wissen braucht. */
 export interface ChatKnowledge {
-  search(collectionIds: string[], query: string): Promise<Result<SourceRef[]>>;
+  search(
+    collectionIds: string[],
+    query: string,
+    /** Mit `rerank` ordnet das Modell die Treffer neu (langsamer, oft genauer). */
+    options?: { rerank?: RerankOptions },
+  ): Promise<Result<SourceRef[]>>;
 }
 
 /**
@@ -250,11 +257,28 @@ export function registerKnowledgeHandlers(
 
   /** Für den Chat: Sammlungen durchsuchen (unbekannte IDs werden übergangen). */
   const knowledge: ChatKnowledge = {
-    search: (collectionIds, query) => {
+    search: async (collectionIds, query, options) => {
       const collections = collectionIds
         .map((id) => repo.getCollection(id))
         .filter((c): c is CollectionConfig => c !== null);
-      return search.search(collections, query);
+      if (!options?.rerank) return search.search(collections, query);
+      // Mehr Kandidaten holen, das Modell ordnen lassen, die besten wie gewohnt weitergeben.
+      // Mit höchstens so vielen Treffern wie sonst gibt es nichts zu sortieren.
+      const found = await search.search(collections, query, RERANK_CANDIDATES);
+      if (!found.ok) return found;
+      const reranked =
+        found.value.length > KNOWLEDGE_TOP_K
+          ? await rerankSources(
+              getProvider(),
+              query,
+              found.value,
+              options.rerank,
+            )
+          : null;
+      return {
+        ok: true,
+        value: topSources(found.value, reranked, KNOWLEDGE_TOP_K),
+      };
     },
   };
 

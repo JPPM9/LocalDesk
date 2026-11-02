@@ -48,6 +48,9 @@ export function SourceList({ sources, focus, expanded }: SourceListProps) {
         <BookOpen size={12} />
         {t('sources.title', { count: sources.length })}
       </div>
+      {sources.some((s) => s.reranked) && (
+        <p className="text-[11px] text-muted">{t('sources.reranked')}</p>
+      )}
       <ul className="space-y-1">
         {sources.map((source) => (
           <li
