@@ -349,16 +349,31 @@ export const en: Record<MessageKey, string> = {
   'access.filesGranted':
     'Access allowed: files through {names} ({scope}). The file tools of these servers are now available – read the file with them, do not invent contents.',
   'github.invalidLink':
-    'That is not a suitable GitHub link. Allowed: a link to a repository, a folder or a .md file on github.com.',
+    'That is not a suitable GitHub link. Allowed: a link to a repository, a folder or a .md file on github.com – or “owner/repository”.',
+  'github.emptyInput': 'Enter a search term or a GitHub link.',
+  'github.badQuery': 'The search term must be {min} to {max} characters long.',
   'github.notFound':
-    'There is no SKILL.md there (or the repository is private). The link must point to a SKILL.md or a folder containing one.',
+    'Nothing was found there – the repository or file does not exist, is empty or is private.',
+  'github.noSkills': 'There is no SKILL.md in {label}.',
   'github.failed': 'GitHub answered with error {status}.',
-  'github.tooLarge': 'The file is too large for a skill (over 200 KB).',
-  'github.notText': 'That is not a text file.',
+  'github.badResponse': 'GitHub sent an unreadable answer.',
+  'github.tooLarge': 'The answer from GitHub or the file is too large.',
   'github.timeout': 'GitHub is not responding (time limit).',
   'github.redirect':
     'The link redirects (the repository was probably renamed) – please use the current link.',
   'github.offline': 'No connection to GitHub – are you online?',
+  'github.rateLimit':
+    'Without signing in, GitHub allows only a few requests (60 per hour, search 10 per minute). Try again in about {minutes} min.',
+  'github.fileFailed': 'could not be loaded',
+  'github.mainFailed': 'The SKILL.md could not be loaded ({reason}).',
+  'github.truncated':
+    'For very large repositories GitHub does not return all files. Some skills may be missing here – use the link to a subfolder then.',
+  'github.moreSkills':
+    'The repository contains {total} skills; the first {shown} are shown. Use the link to a subfolder to search more precisely.',
+  'github.moreSkipped': '{count} more files not listed',
+  'github.expired':
+    'The list has expired or no longer exists – please open the repository again.',
+  'github.badPicks': 'The selection is not valid.',
   'prompt.mailRestOmitted': '[… rest of the mail omitted]',
   'prompt.mailFrom': 'From: {value}',
   'prompt.mailTo': 'To: {value}',

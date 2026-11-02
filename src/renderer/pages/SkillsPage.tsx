@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink, useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
@@ -22,12 +22,9 @@ import {
   type SkillInput,
   type SkillView,
 } from '../../shared/skills';
-import type { SkillFinding } from '../../shared/skill-import';
 import { formatBytes } from '../utils/format';
-import type { GithubSkill } from '../../shared/github';
 import { PageHeader } from '../components/PageHeader';
 import { GithubSkillDialog } from '../components/skills/GithubSkillDialog';
-import { SkillFindings } from '../components/skills/SkillFindings';
 import { SkillImportDialog } from '../components/skills/SkillImportDialog';
 import { EmptyState } from '../components/EmptyState';
 import { Field } from '../components/settings/SettingsFields';
@@ -64,11 +61,8 @@ export function SkillsPage() {
   const [dirty, setDirty] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const selected = skills.find((s) => s.id === skillId);
-  // „Von GitHub laden“: Der geladene Text kommt als Entwurf in den Editor (nichts ist gespeichert).
+  // „Von GitHub“: suchen, auswählen, prüfen – gespeichert wird erst in der Vorschau mit „Hinzufügen“.
   const [githubOpen, setGithubOpen] = useState(false);
-  const [importedFrom, setImportedFrom] = useState<string | null>(null);
-  const pendingImport = useRef<GithubSkill | null>(null);
-  const [importedFindings, setImportedFindings] = useState<SkillFinding[]>([]);
   // „Skill hinzufügen“: Dateien aus dem Dialog oder auf die Seite gezogen (null = Dialog zu).
   const [importFiles, setImportFiles] = useState<File[] | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -84,19 +78,7 @@ export function SkillsPage() {
   const fill = () => {
     setError(null);
     setDirty(false);
-    setImportedFrom(null);
-    setImportedFindings([]);
     if (skillId === NEW) {
-      const imported = pendingImport.current;
-      pendingImport.current = null;
-      if (imported) {
-        const { source, findings, ...skill } = imported;
-        setDraft(skill);
-        setImportedFrom(source);
-        setImportedFindings(findings);
-        setDirty(true); // Erst „Speichern“ legt die Datei an.
-        return;
-      }
       setDraft({ name: '', description: '', body: t('skills.bodyTemplate') });
       return;
     }
@@ -117,15 +99,9 @@ export function SkillsPage() {
   // Nicht nach jedem Speichern neu befüllen (sonst springt der Cursor).
   useEffect(fill, [skillId, loaded]);
 
-  const onImported = (skill: GithubSkill) => {
-    setGithubOpen(false);
-    pendingImport.current = skill;
-    if (skillId === NEW) fill();
-    else navigate(`/skills/${NEW}`);
-  };
-
   const onInstalled = async (installed: SkillView[]) => {
     setImportFiles(null);
+    setGithubOpen(false);
     await reload();
     setNotice(t('skills.import.done', { count: installed.length }));
     if (installed[0]) navigate(`/skills/${installed[0].id}`);
@@ -380,16 +356,6 @@ export function SkillsPage() {
                   {error ?? t('skills.broken', { error: selected?.error })}
                 </p>
               )}
-              {importedFrom && !draft.id && (
-                <p className="rounded-xl border border-warn/40 bg-warn/10 px-3.5 py-2.5 text-sm">
-                  {t('skills.github.imported', { source: importedFrom })}
-                </p>
-              )}
-              {importedFrom && !draft.id && (
-                <div className="rounded-xl border border-border bg-surface px-3.5 py-2.5">
-                  <SkillFindings findings={importedFindings} />
-                </div>
-              )}
               <Field label={t('skills.name')}>
                 <input
                   autoFocus={skillId === NEW}
@@ -492,7 +458,7 @@ export function SkillsPage() {
       )}
       {githubOpen && (
         <GithubSkillDialog
-          onLoaded={onImported}
+          onInstalled={(installed) => void onInstalled(installed)}
           onClose={() => setGithubOpen(false)}
         />
       )}

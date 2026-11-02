@@ -80,24 +80,25 @@ export interface PreparedSkill {
   error?: string;
 }
 
-interface RawFile {
+export interface RawFile {
   path: string;
   data: Uint8Array;
 }
 
-const baseName = (p: string) => p.split('/').pop() ?? p;
-const dirOf = (p: string) =>
+export const baseName = (p: string) => p.split('/').pop() ?? p;
+export const dirOf = (p: string) =>
   p.includes('/') ? p.slice(0, p.lastIndexOf('/')) : '';
 const extOf = (p: string) => {
   const dot = p.lastIndexOf('.');
   return dot > 0 ? p.slice(dot).toLowerCase() : '';
 };
-const isSkillMd = (p: string) => baseName(p).toLowerCase() === 'skill.md';
+export const isSkillMd = (p: string) =>
+  baseName(p).toLowerCase() === 'skill.md';
 const bytes = (n: number) =>
   `${(n / 1_000_000).toLocaleString(messageLocale())} MB`;
 
 /** Warum eine Datei neben der SKILL.md nicht übernommen wird – oder null, wenn sie ein Textformat ist. */
-function formatProblem(rel: string): string | null {
+export function formatProblem(rel: string): string | null {
   if (isSkillTextFile(rel)) return null;
   return PROGRAM_EXTENSIONS.has(extOf(rel))
     ? tr('skills.import.skipScript')
@@ -190,7 +191,7 @@ function readZip(
 }
 
 /** Macht aus der SKILL.md und den Zusatzdateien einen geprüften Skill (oder einen mit Fehler). */
-function prepareSkill(
+export function prepareSkill(
   source: string,
   fallbackName: string,
   main: Uint8Array,
@@ -458,6 +459,24 @@ export class SkillImports {
   async inspect(input: unknown): Promise<Result<SkillImportPreview>> {
     try {
       const { skills, notices } = inspectUpload(checkUpload(input));
+      return await this.register(skills, notices);
+    } catch (error) {
+      return {
+        ok: false,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
+
+  /**
+   * Hält bereits gelesene und geprüfte Skills für die Vorschau bereit – egal woher sie
+   * kommen (abgelegte Dateien oder GitHub).
+   */
+  async register(
+    skills: PreparedSkill[],
+    notices: string[],
+  ): Promise<Result<SkillImportPreview>> {
+    try {
       const existing = new Set(
         (await this.store.list()).flatMap((s) => [s.name.toLowerCase(), s.id]),
       );

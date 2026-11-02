@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { MAIL_HOSTS } from '../../src/main/mail/mail-fetch';
-import { GITHUB_RAW_HOST } from '../../src/shared/github';
+import { GITHUB_API_HOST, GITHUB_RAW_HOST } from '../../src/shared/github';
 
 const privacy = readFileSync('docs/privacy.md', 'utf8');
 
@@ -12,8 +12,9 @@ describe('Datenschutzerklärung', () => {
     }
   });
 
-  it('nennt den Host, von dem Skills geladen werden', () => {
+  it('nennt die Hosts, über die Skills gesucht und geladen werden', () => {
     expect(privacy).toContain(GITHUB_RAW_HOST);
+    expect(privacy).toContain(GITHUB_API_HOST);
   });
 
   it('enthält die Zusage zur eingeschränkten Nutzung von Google-Daten', () => {

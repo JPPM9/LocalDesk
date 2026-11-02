@@ -357,16 +357,31 @@ export const de = {
   'access.filesGranted':
     'Zugriff erlaubt: Dateien über {names} ({scope}). Die Dateiwerkzeuge dieser Server stehen jetzt bereit – lies die Datei damit, erfinde keine Inhalte.',
   'github.invalidLink':
-    'Das ist kein passender GitHub-Link. Erlaubt: ein Link auf ein Projekt, einen Ordner oder eine .md-Datei bei github.com.',
+    'Das ist kein passender GitHub-Link. Erlaubt: ein Link auf ein Projekt, einen Ordner oder eine .md-Datei bei github.com – oder „besitzer/projekt“.',
+  'github.emptyInput': 'Gib einen Suchbegriff oder einen GitHub-Link ein.',
+  'github.badQuery': 'Der Suchbegriff muss {min} bis {max} Zeichen lang sein.',
   'github.notFound':
-    'Dort gibt es keine SKILL.md (oder das Projekt ist privat). Der Link muss auf eine SKILL.md oder einen Ordner mit SKILL.md zeigen.',
+    'Dort wurde nichts gefunden – das Projekt oder die Datei gibt es nicht, ist leer oder privat.',
+  'github.noSkills': 'In {label} gibt es keine SKILL.md.',
   'github.failed': 'GitHub antwortet mit Fehler {status}.',
-  'github.tooLarge': 'Die Datei ist zu groß für eine Anleitung (über 200 KB).',
-  'github.notText': 'Das ist keine Textdatei.',
+  'github.badResponse': 'GitHub hat unlesbar geantwortet.',
+  'github.tooLarge': 'Die Antwort von GitHub oder die Datei ist zu groß.',
   'github.timeout': 'GitHub antwortet nicht (Zeitlimit).',
   'github.redirect':
     'Der Link wird weitergeleitet (das Projekt wurde wohl umbenannt) – bitte den aktuellen Link nehmen.',
   'github.offline': 'Keine Verbindung zu GitHub – bist du online?',
+  'github.rateLimit':
+    'GitHub lässt ohne Anmeldung nur wenige Anfragen zu (60 pro Stunde, Suche 10 pro Minute). Versuch es in etwa {minutes} Min. erneut.',
+  'github.fileFailed': 'konnte nicht geladen werden',
+  'github.mainFailed': 'Die SKILL.md konnte nicht geladen werden ({reason}).',
+  'github.truncated':
+    'GitHub liefert bei sehr großen Projekten nicht alle Dateien. Es kann Skills geben, die hier fehlen – nimm dann den Link auf einen Unterordner.',
+  'github.moreSkills':
+    'Das Projekt enthält {total} Skills, gezeigt werden die ersten {shown}. Nimm den Link auf einen Unterordner, um gezielter zu suchen.',
+  'github.moreSkipped': '{count} weitere Dateien nicht aufgeführt',
+  'github.expired':
+    'Die Liste ist abgelaufen oder gibt es nicht mehr – bitte das Projekt neu öffnen.',
+  'github.badPicks': 'Die Auswahl ist ungültig.',
   'prompt.mailRestOmitted': '[… Rest der Mail ausgelassen]',
   'prompt.mailFrom': 'Von: {value}',
   'prompt.mailTo': 'An: {value}',

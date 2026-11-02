@@ -771,16 +771,9 @@
   `read_text_file`, richtiges Geheimwort, `mcpServers` gespeichert. gemma4:12b bat auch richtig, erfand danach aber
   den Dateiinhalt (nur Ordner gelistet) – Modellschwäche; das Ergebnis mahnt jetzt „lies die Datei, erfinde nichts“.
   Noch deutsch (Schritt 3): die Beschreibung von `request_access`.
-  D ✓: Skills von GitHub laden (nur Skills, KEINE Plugins mit Programmen – so gewählt). `shared/github.ts`
-  `parseGithubSkillUrl` (Links: Projekt, `/tree/…`, `/blob/….md`, raw; Besitzer/Projekt/Zweig/Pfad Zeichen für Zeichen
-  geprüft, `.`/`..` und Fremd-Hosts abgelehnt; Zweig mit „/“ geht nicht) → `main/skills/github-skill.ts`
-  `fetchGithubSkill`: NUR `raw.githubusercontent.com` über https, `redirect: 'error'`, 200 KB und 15 s Limit, Text-
-  Prüfung, Kopf kürzen statt ablehnen; IPC `fetchGithubSkill`. Es wird nichts gespeichert: Der Text landet als Entwurf im
-  Skill-Editor (`GithubSkillDialog`, Banner „noch nicht gespeichert“, Warnhinweis zu fremden Anleitungen), gespeichert wird
-  mit dem normalen „Speichern“. **Netzwerk-Regel erweitert:** raw.githubusercontent.com nur auf Klick bei „Skill von GitHub
-  laden“ (steht in `docs/privacy.md`, Test prüft den Host). Echt geprüft gegen ein öffentliches Projekt (README.md als
-  Datei: Name aus Dateiname, Banner, erst nach „Speichern“ in der Liste); 404 und Fremd-Host werden verständlich gemeldet.
-  Fremde Skills können das Modell beeinflussen (Prompt-Injection) – darum Prüfung vor dem Speichern, nie automatisch.
+  D ✓ (ERSETZT durch 2d, siehe unten „Skills bei GitHub finden“): Skills von GitHub laden (nur Skills, KEINE Plugins mit
+  Programmen – so gewählt). Fremde Skills können das Modell beeinflussen (Prompt-Injection) – darum Prüfung vor dem
+  Speichern, nie automatisch.
 - Geplant bis zum ersten Release (Reihenfolge vom Nutzer freigegeben, 2026-10-28; vorher jeweils klären,
   Plan, Freigabe): Phase 9 Skills (Anleitungen als Markdown, kein fremder Code) · ~~Phase 10 Planer /
   Aufgabenliste~~ (vom Nutzer gestrichen, 2026-10-28; Nummern bleiben) · Phase 11 ✓ E-Mail (Gmail fertig, Outlook später) direkt per OAuth (Gmail-API, Microsoft Graph; lesen,
@@ -957,6 +950,40 @@
   „Hier bleiben“ löscht Hinweis und Merkung dauerhaft; alle anderen aus → „Kein anderer eingetragener Server ist erreichbar“ + Link
   „Server verwalten“ (→ /settings). Test-Hinweis: Im gebauten Programm blockiert `will-navigate` (main.ts) auch `location.reload()` – frisches
   Mounten nur per Routenwechsel (`location.hash`) oder App-Neustart.
+
+- **Skills bei GitHub finden** (Wunschliste Schritt 2d, Plan freigegeben 2026-11-02; ersetzt den alten Einzel-Dialog
+  „Skill von GitHub laden“ samt `fetchGithubSkill`/`github-skill.ts`/Editor-Entwurf): Ein Dialog „Von GitHub“
+  (`GithubSkillDialog`, Knopf links in der Skills-Liste). Eingabe → `shared/github.ts` `parseGithubInput`: Link
+  (github.com Projekt/`tree`/`blob`, raw; auch ohne „https://“), Kurzform `besitzer/projekt` oder Suchbegriff (2–80
+  Zeichen); Besitzer/Projekt/Zweig/Pfad Zeichen für Zeichen geprüft, `.`/`..` und Fremd-Hosts abgelehnt, Zweig mit „/“
+  geht nicht; eine `SKILL.md` im Link steht für ihren Ordner, jede andere `.md` ist ein Skill für sich. IPC
+  `openGithub(input)` → `GithubOpenResult` (`search` | `skills` | `preview`) und `inspectGithub(listId, picks)` →
+  `SkillImportPreview`; Hauptprozess `main/skills/github-find.ts` (`GithubFinder`). **Netzwerk-Regel erweitert:** NUR
+  `api.github.com` (Projekt-Suche `search/repositories` mit „<Begriff> skill in:name,description,topics“, 15 Treffer, nach
+  Sternen; Dateibaum `git/trees/<zweig>?recursive=1` = EINE Anfrage für das ganze Projekt) und `raw.githubusercontent.com`
+  (Dateien), https, `redirect: 'error'`, 15 s und Größenlimit je Anfrage (Baum 12 MB, Skill-Dateien wie sonst), Host in
+  `get` doppelt geprüft, nur GET, ohne Anmeldung/Token, nur auf Klick; steht in `docs/privacy.md` (de/en, Test prüft beide
+  Hosts). Ohne Anmeldung gilt: 60 Anfragen/Stunde, Suche 10/Minute → 403/429 mit `x-ratelimit-*`/`retry-after` wird zu
+  „in etwa N Min.“ (`github.rateLimit`). Die Code-Suche (Inhalt von SKILL.md) braucht eine Anmeldung → es werden Projekte
+  gesucht, die Skills darin zeigt der Dateibaum. `findSkillFolders` (rein, getestet): jeder Ordner mit SKILL.md (auch
+  `.claude/skills/…`; `node_modules`, `__MACOSX`, `.git` nicht), Dateien gehören zum nächsten Skill-Ordner darüber; schon
+  anhand des Baums (Größen!) wird aussortiert, was nie übernommen würde (Skripte, kein Textformat, zu groß, zu tief, zu viele,
+  über 2 MB) – das wird nicht heruntergeladen. Die Liste bleibt als `ListSession` im Hauptprozess (15 Min., höchstens 5, wie
+  die Vorschauen); die Oberfläche schickt nur `listId` + Nummern (höchstens 20), nie Pfade. `inspect` lädt SKILL.md + Zusatzdateien
+  (4 gleichzeitig; bei „kein Netz/Zeitlimit/Sperre“ sofort Abbruch; eine nicht ladbare Zusatzdatei wird übersprungen, eine
+  fehlende SKILL.md macht den Skill fehlerhaft) und gibt alles an `prepareSkill` + `SkillImports.register` – also dieselbe
+  Vorschau mit Sicherheitsprüfung wie beim Ablegen von Dateien (`SkillImportDialog` mit `initialPreview`/`onBack`);
+  gespeichert wird erst mit „Hinzufügen“. Bis zu 200 Skills pro Projekt werden gelistet (Hinweis darüber), ein abgeschnittener
+  Dateibaum wird gemeldet. Sterne und Treffer sind kein Qualitäts- oder Sicherheitsnachweis (Hinweis im Dialog).
+  Echt geprüft (gebaute App, Testprofil, echtes GitHub, rund 12 von 60 Anfragen, alles über die Oberfläche): Suche „humanizer“ →
+  956 Projekte, `blader/humanizer` zuerst (★, Datum, Lizenz); „Skills ansehen“ → 1 Skill (SKILL.md 32 KB, 4 Zusatzdateien, 2 nicht
+  übernommen), Vorschau mit Webadressen-Hinweis und `scripts/validate-package.py` als übersprungen; Hinzufügen → SKILL.md + 4
+  Textdateien auf der Platte, kein Skript. Link `github.com/anthropics/skills` → 20 Skills mit einer einzigen Anfrage gelistet
+  (z. B. canvas-design „28 Zusatzdateien · 54 nicht übernommen“), 2 gewählt (pdf, brand-guidelines) → Vorschau (pdf: 8 Skripte
+  übersprungen) → hinzugefügt; im ganzen Skill-Ordner 0 Skripte. Einzelne `.md` (anthropics/skills README) → gleich Vorschau.
+  Fehler verständlich: unbekanntes Projekt, Projekt ohne SKILL.md (octocat/Hello-World), Fremd-Host (ohne Netzzugriff), Suche
+  ohne Treffer; englische Ansicht („From GitHub“, „Go“, Plural). Das GitHub-Limit selbst ist nur per Nachbau-Fetch getestet.
+  Test-Hinweis: Die Sprache der Oberfläche stellt nur der Knopf in den Einstellungen um (nicht `window.api.setLanguage` allein).
 
 ## Befehle
 

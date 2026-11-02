@@ -10,7 +10,7 @@ LocalDesk is a Windows desktop app that sits on top of a local [Ollama](https://
 
 Two rules shape the whole app:
 
-- **Nothing leaves your PC unless you ask for it.** The only outside connections are the ones you set up yourself (a second Ollama server in your LAN, your own Google app for Gmail, the update check on GitHub). The full list is in the [privacy policy](docs/privacy.md).
+- **Nothing leaves your PC unless you ask for it.** The only outside connections are the ones you set up yourself (a second Ollama server in your LAN, your own Google app for Gmail, the update check and the skill search on GitHub). The full list is in the [privacy policy](docs/privacy.md).
 - **The model never changes anything on its own.** Writing files, running commands, committing and changing mail all show a card first and wait for your click.
 
 Status: the first release (0.1.0) is not published yet. The installer and the update button work.
@@ -41,7 +41,7 @@ Status: the first release (0.1.0) is not published yet. The installer and the up
 
 **Skills**
 
-- Instructions as `SKILL.md` files (same format as Claude skills). Turn them on by hand, preset them in projects and templates, or let the model load a fitting one itself. Add skills by dragging `.md`, `.zip` or `.skill` files onto the Skills page (several at once): LocalDesk reads and checks them first, shows a preview with a safety check, and saves only what you confirm. You can also load a skill from a GitHub link: LocalDesk fetches only the text and shows it to you first. Skills up to 60,000 characters work (LocalDesk shows the size in tokens and tells you which context length a chat needs), and text files next to the `SKILL.md` (for example `references/…`) can be read by the model when needed. A skill is plain text. It runs nothing, and scripts are never executed.
+- Instructions as `SKILL.md` files (same format as Claude skills). Turn them on by hand, preset them in projects and templates, or let the model load a fitting one itself. Add skills by dragging `.md`, `.zip` or `.skill` files onto the Skills page (several at once): LocalDesk reads and checks them first, shows a preview with a safety check, and saves only what you confirm. "From GitHub" finds skills: search for repositories (or paste a link to a repository, a folder or a `.md` file), pick the skills inside, and LocalDesk loads only their text files into the same preview with safety check. Nothing is contacted until you click, and nothing is saved before "Add". Stars show popularity, not safety. Skills up to 60,000 characters work (LocalDesk shows the size in tokens and tells you which context length a chat needs), and text files next to the `SKILL.md` (for example `references/…`) can be read by the model when needed. A skill is plain text. It runs nothing, and scripts are never executed.
 
 **Obsidian**
 
@@ -82,6 +82,7 @@ Status: the first release (0.1.0) is not published yet. The installer and the up
 - [Ollama HTTP API](https://github.com/ollama/ollama/blob/main/docs/api.md) (default `http://localhost:11434`)
 - Gmail API and Google OAuth (loopback redirect with PKCE), only if you set up e-mail
 - GitHub Releases, for the update check
+- GitHub REST API (repository search and file listing, read-only, no sign-in) and `raw.githubusercontent.com`, only when you use "From GitHub" on the Skills page
 - npm, to fetch the official MCP file-system server (`@modelcontextprotocol/server-filesystem`) with `npx`
 
 **Inspiration**

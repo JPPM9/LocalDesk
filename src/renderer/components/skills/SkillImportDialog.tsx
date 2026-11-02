@@ -16,10 +16,21 @@ interface SkillImportDialogProps {
   onClose: () => void;
   /** Nach dem Hinzufügen: die neuen Skills. */
   onInstalled: (skills: SkillView[]) => void;
+  /** Eine fertige Vorschau (z. B. von GitHub) – dann gibt es keine Ablage, sondern „Zurück“. */
+  initialPreview?: SkillImportPreview;
+  onBack?: () => void;
 }
 
 const hasWarning = (c: SkillCandidateView) =>
   c.findings.some((f) => f.severity === 'warn');
+
+/** Vorausgewählt: alles ohne Fehler und ohne Warnung – Auffälliges wählst du selbst. */
+const preselected = (preview: SkillImportPreview) =>
+  new Set(
+    preview.candidates
+      .filter((c) => !c.error && !hasWarning(c))
+      .map((c) => c.index),
+  );
 
 /**
  * „Skill hinzufügen“: Dateien ablegen (.md, .zip, .skill) → Vorschau mit
@@ -29,11 +40,17 @@ export function SkillImportDialog({
   initialFiles,
   onClose,
   onInstalled,
+  initialPreview,
+  onBack,
 }: SkillImportDialogProps) {
   const { t } = useTranslation();
   const [busy, setBusy] = useState<'checking' | 'adding' | null>(null);
-  const [preview, setPreview] = useState<SkillImportPreview | null>(null);
-  const [picked, setPicked] = useState<Set<number>>(new Set());
+  const [preview, setPreview] = useState<SkillImportPreview | null>(
+    initialPreview ?? null,
+  );
+  const [picked, setPicked] = useState<Set<number>>(() =>
+    initialPreview ? preselected(initialPreview) : new Set(),
+  );
   const [read, setRead] = useState<Set<number>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const [failed, setFailed] = useState<string[]>([]);
@@ -69,14 +86,7 @@ export function SkillImportDialog({
         return;
       }
       setPreview(result.value);
-      // Vorausgewählt: alles ohne Fehler und ohne Warnung – Auffälliges wählst du selbst.
-      setPicked(
-        new Set(
-          result.value.candidates
-            .filter((c) => !c.error && !hasWarning(c))
-            .map((c) => c.index),
-        ),
-      );
+      setPicked(preselected(result.value));
       setRead(new Set());
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : String(reason));
@@ -360,12 +370,16 @@ export function SkillImportDialog({
             <button
               type="button"
               onClick={() => {
+                if (onBack) {
+                  onBack();
+                  return;
+                }
                 setPreview(null);
                 setFailed([]);
               }}
               className="rounded-lg border border-border bg-surface-2 px-3.5 py-1.5 text-sm hover:bg-surface-hover"
             >
-              {t('skills.import.other')}
+              {onBack ? t('skills.github.back') : t('skills.import.other')}
             </button>
           )}
           <button

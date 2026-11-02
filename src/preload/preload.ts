@@ -125,8 +125,9 @@ const api: LocalDeskApi = {
   listSkills: () => ipcRenderer.invoke(IpcChannels.listSkills),
   saveSkill: (input) => ipcRenderer.invoke(IpcChannels.saveSkill, input),
   deleteSkill: (id) => ipcRenderer.invoke(IpcChannels.deleteSkill, id),
-  fetchGithubSkill: (link) =>
-    ipcRenderer.invoke(IpcChannels.fetchGithubSkill, link),
+  openGithub: (input) => ipcRenderer.invoke(IpcChannels.openGithub, input),
+  inspectGithub: (listId, picks) =>
+    ipcRenderer.invoke(IpcChannels.inspectGithub, listId, picks),
   inspectSkillFiles: (files) =>
     ipcRenderer.invoke(IpcChannels.inspectSkillFiles, files),
   installSkills: (importId, picks) =>

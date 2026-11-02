@@ -1,9 +1,9 @@
 import path from 'node:path';
 import { ipcMain, shell } from 'electron';
 import { IpcChannels, type Result } from '../shared/api';
-import type { GithubSkill } from '../shared/github';
+import type { GithubOpenResult } from '../shared/github';
 import { checkSkillInput, isSkillId, type SkillView } from '../shared/skills';
-import { fetchGithubSkill, type SkillFetch } from './skills/github-skill';
+import { GithubFinder, type SkillFetch } from './skills/github-find';
 import { SkillImports } from './skills/skill-import';
 import type { SkillStore } from './skills/skill-store';
 import { tr } from '../shared/messages';
@@ -44,13 +44,19 @@ export function registerSkillHandlers(
     },
   );
 
-  // „Von GitHub laden“: holt nur den Text zum Prüfen – gespeichert wird später mit „Speichern“.
+  // „Von GitHub“: suchen, Skills eines Projekts auflisten, ausgewählte prüfen. Nur lesend und
+  // nur auf Klick; gespeichert wird erst mit installSkills (nach der Vorschau).
+  const github = new GithubFinder(imports, skillFetch);
   ipcMain.handle(
-    IpcChannels.fetchGithubSkill,
-    (_event, link: unknown): Promise<Result<GithubSkill>> =>
-      typeof link === 'string' && link.length <= 500
-        ? fetchGithubSkill(link, skillFetch)
+    IpcChannels.openGithub,
+    (_event, input: unknown): Promise<Result<GithubOpenResult>> =>
+      typeof input === 'string' && input.length <= 500
+        ? github.open(input)
         : Promise.resolve({ ok: false, error: tr('github.invalidLink') }),
+  );
+  ipcMain.handle(
+    IpcChannels.inspectGithub,
+    (_event, listId: unknown, picks: unknown) => github.inspect(listId, picks),
   );
 
   // „Skill hinzufügen“: Die Dateien kommen als Bytes aus der Oberfläche (kein Pfad, nichts
