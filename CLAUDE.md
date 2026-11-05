@@ -1133,9 +1133,15 @@
   (80 Zeichen Base64, kein Klartext); „Testen“ → echte Anfrage an ollama.com → „Ollama lehnt den Schlüssel ab“; Haken wählbar, Knopf leuchtet;
   Modell ruft `web_search` mit „Elektron Masse“ auf, Zeile „Websuche Elektron Masse · Fehler“ im Chat, Fehlertext beim Modell (kein Lesen-Werkzeug
   da, der Schlüssel nirgends im Chat); Neustart: Schlüssel und Haken bleiben; Entfernen mit Rückfrage; Haken an ohne Schlüssel → Hinweis „kann
-  nicht suchen“, und das Modell bekommt GAR kein Suchwerkzeug. NICHT geprüft (braucht echten Schlüssel): echte Treffer, „Treffer ohne Karte
-  lesen“ und Limit-Verhalten gegen ollama.com – das decken die Tests mit gefälschtem Dienst ab; Live-Test nur, wenn der Nutzer in einer
-  Testinstanz selbst den Schlüssel einträgt.
+  nicht suchen“, und das Modell bekommt GAR kein Suchwerkzeug. LIVE-TEST mit echtem Schlüssel (2026-11-05, Testinstanz mit
+  frischem Profil, der Nutzer trug den Schlüssel SELBST ein; Skript las ihn nie): „Testen“ → ok; qwen3:14b sucht „CODATA electron mass 2023“ →
+  5 echte Treffer im festen Format (3 290 Zeichen), richtige Antwort 9,1093837139 × 10⁻³¹ kg mit Quelle; keine Karte; Schlüssel nirgends im Chat.
+  NEUE Nachricht „Lies die erste Fundstelle“ → `read_webpage` auf die Treffer-Adresse ohne Karte (Adresse kam aus dem Verlauf, `chatWebLinks`),
+  Ergebnis gelesen; fremde Adresse (`de.wikipedia.org/wiki/Positron` ohne „https://“) → Karte, Ablehnen → „abgelehnt“; das Modell versucht es
+  danach noch einmal → wieder eine Karte (jede Anfrage fragt einzeln), nach zweitem Ablehnen antwortet es aus den Treffern. Nicht geprüft:
+  Limit (429) gegen ollama.com (nur per Test mit gefälschtem Dienst). Das Modell las im ersten Zug von selbst keine Seite (Auszüge reichten) –
+  die Beschreibung der Suche sagt „lies danach die passenden Seiten“, mehr nicht. Test-Falle: Skripte mit Bash-Heredoc zerstören Backslashes
+  (`\\s` in JS-Regex wurde zu „Buchstabe s weg“) – Skripte immer mit dem Write-Werkzeug schreiben.
 
 ## Befehle
 
