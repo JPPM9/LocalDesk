@@ -37,6 +37,15 @@ describe('Datenschutzerklärung', () => {
     expect(privacy).toContain('dein Ollama-Schlüssel');
   });
 
+  it('beschreibt die Recherche (mehrere Suchen, Seiten aus den Treffern, nur nach „Starten“) in beiden Sprachen', () => {
+    expect(privacy).toContain('A **research**');
+    expect(privacy).toContain('after you click “Start”');
+    expect(privacy).toContain('The notes are not stored');
+    expect(privacy).toContain('Eine **Recherche**');
+    expect(privacy).toContain('nach deinem Klick auf „Starten“');
+    expect(privacy).toContain('Die Notizen werden nicht gespeichert');
+  });
+
   it('enthält die Zusage zur eingeschränkten Nutzung von Google-Daten', () => {
     expect(privacy).toContain('Google API Services User Data Policy');
     expect(privacy).toContain('Limited Use');

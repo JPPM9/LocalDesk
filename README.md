@@ -49,6 +49,7 @@ Status: the first release (0.1.0) is not published yet. The installer and the up
 
 - A switch "Internet" in a chat lets the model read web pages (needs a model with tool support). Addresses you write in a message yourself are read at once; for every other address a card shows the complete address and waits for your click, every time. LocalDesk reads only the text of a page (main text as Markdown, no scripts, no cookies, no sign-in), never addresses in your own network (this PC, home network, cloud metadata), and long pages come in pieces.
 - A second checkbox "Search the web" (off by default) lets the model search. LocalDesk uses the Ollama web search: you need a free account at ollama.com and an API key, which you enter yourself under **Settings → Internet search** (stored encrypted with Windows, never shown again, with a "Test" button). The model searches without asking, but every query is shown in the chat; it goes to ollama.com together with your key and can contain words from your chat. Addresses from the hits of a search in this chat the model may read without a card, exactly as found; every other address still needs your click.
+- A button "Research" next to the checkboxes (works with any model, needs the Ollama key from Settings): your next message becomes a research task. A card lets you choose the level (Quick: 2 searches, up to 5 pages · Normal: 4 and 10 · Thorough: 6 and 16) and tells you that queries go to ollama.com; "Start" is your consent. Then LocalDesk runs a fixed sequence: the model plans a few search queries, LocalDesk searches and reads pages from the hits (never other addresses), the model takes short notes per page, and the report is streamed with citations like [1]. The list of sources with real titles and links is appended by LocalDesk itself, and three progress rows show what happened. It needs at least 8,192 tokens of context (16,384 for Thorough). The report can contain mistakes, so check the sources.
 
 **Obsidian**
 
@@ -92,7 +93,7 @@ Status: the first release (0.1.0) is not published yet. The installer and the up
 - GitHub Releases, for the update check
 - GitHub REST API (repository search and file listing, read-only, no sign-in) and `raw.githubusercontent.com`, only when you use "From GitHub" on the Skills page
 - Any web page, only when "Internet" is on in a chat and the model reads it (a page you did not write the address of needs your click)
-- Ollama web search (`https://ollama.com/api/web_search`, with your own key), only when "Search the web" is on in a chat and the model searches
+- Ollama web search (`https://ollama.com/api/web_search`, with your own key), only when "Search the web" is on in a chat and the model searches, or when you start a research (several searches in a row)
 - npm, to fetch the official MCP file-system server (`@modelcontextprotocol/server-filesystem`) with `npx`
 
 **Inspiration**

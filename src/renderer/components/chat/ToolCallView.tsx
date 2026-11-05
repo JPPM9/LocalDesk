@@ -13,6 +13,7 @@ import { ACCESS_TOOL_SERVER } from '../../../shared/access';
 import { MEMORY_TOOL_SERVER } from '../../../shared/memory';
 import { CODE_CHANGE_TOOLS, CODE_TOOL_SERVER } from '../../../shared/code';
 import { MAIL_TOOL_SERVER } from '../../../shared/mail';
+import { RESEARCH_TOOL_SERVER } from '../../../shared/research';
 import { WEB_SEARCH_TOOL, WEB_TOOL_SERVER } from '../../../shared/web';
 import { CodeChangeRow } from '../code/CodeChangeRow';
 import { DiffView } from '../code/DiffView';
@@ -60,6 +61,8 @@ export function ToolCallView({
     (call.toolName === 'run_command' || call.toolName === 'git_commit');
   const isWeb = call.serverId === WEB_TOOL_SERVER;
   const isWebSearch = isWeb && call.toolName === WEB_SEARCH_TOOL;
+  // Fortschrittszeilen einer Recherche (Plan, Suche, Seiten): nur anzeigen, nie nachfragen.
+  const isResearch = call.serverId === RESEARCH_TOOL_SERVER;
   // Mail, Internet und Code fragen in Alltagssprache, nicht mit dem Werkzeugnamen.
   const friendly = isMail || isWeb || isCodeChange || isCommand;
 
@@ -172,7 +175,13 @@ export function ToolCallView({
     <details className="group rounded-xl border border-border text-[13px]">
       <summary className="flex cursor-pointer items-center gap-2 px-3 py-2 text-muted select-none hover:text-text">
         <StatusIcon status={call.status} />
-        {isMemory || isSkill || isMail || isWeb || isCommand || isAccess ? (
+        {isMemory ||
+        isSkill ||
+        isMail ||
+        isWeb ||
+        isResearch ||
+        isCommand ||
+        isAccess ? (
           <span>
             {t(
               isAccess
@@ -185,9 +194,12 @@ export function ToolCallView({
                       ? isWebSearch
                         ? 'toolCall.webSearchTool'
                         : 'toolCall.webTool'
-                      : isCommand
-                        ? `code.label.${call.toolName}`
-                        : 'toolCall.memoryTool',
+                      : isResearch
+                        ? // research_plan → toolCall.researchPlan
+                          `toolCall.research${call.toolName.slice(9, 10).toUpperCase()}${call.toolName.slice(10)}`
+                        : isCommand
+                          ? `code.label.${call.toolName}`
+                          : 'toolCall.memoryTool',
               { defaultValue: call.toolName },
             )}
           </span>
@@ -215,9 +227,11 @@ export function ToolCallView({
         <p className="text-[11px] text-muted">
           {t('toolCall.server', { name: call.serverName || '–' })}
         </p>
-        <Section label={t('toolCall.arguments')}>
-          <Code text={formatArguments(call.arguments)} />
-        </Section>
+        {!isResearch && (
+          <Section label={t('toolCall.arguments')}>
+            <Code text={formatArguments(call.arguments)} />
+          </Section>
+        )}
         {call.result !== undefined && (
           <Section label={t('toolCall.result')}>
             <Code text={call.result} />

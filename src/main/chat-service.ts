@@ -37,7 +37,7 @@ import {
 } from '../shared/skills';
 import type { OfferedTool } from '../shared/tools';
 import { isLocalServer } from '../shared/server';
-import { buildChatRequest } from '../shared/settings';
+import { buildChatRequest, normalizeSettings } from '../shared/settings';
 import { describeChatError } from './chat-errors';
 import { CODE_CHANGE_TOOLS } from '../shared/code';
 import type { CodeBackups } from './code/backups';
@@ -77,6 +77,14 @@ import {
   type WebAccess,
 } from './web/web-tool';
 import { WEB_SEARCH_TOOL, WEB_TOOL_SERVER } from '../shared/web';
+import {
+  checkQuestion,
+  contextFits,
+  isResearchDepth,
+  RESEARCH_DEPTHS,
+  type ResearchDepth,
+} from '../shared/research';
+import { runResearch, type ResearchRun } from './research/pipeline';
 import { compactedHistory, withCompaction } from '../shared/compaction';
 import { OLLAMA_DEFAULT_CONTEXT } from '../shared/context';
 import type { McpTools } from './mcp-service';
@@ -171,6 +179,10 @@ export function registerChatHandlers(
       throw new Error(tr('error.invalidChatRequest'));
     }
     if (running.has(request.requestId)) return;
+    // Knopf „Recherche“: fester Ablauf statt Werkzeug-Schleife (siehe main/research/).
+    if (request.research !== undefined) {
+      return startResearch(event.sender, request, request.research);
+    }
     // Bilder aus der Oberfläche: Anzahl, Größe und Format werden hier geprüft.
     const checked = checkImageInputs(request.images);
     if (!checked.ok) throw new Error(checked.error);
@@ -628,6 +640,120 @@ export function registerChatHandlers(
     };
   }
 
+  /** Läuft gerade eine Recherche? Es läuft höchstens eine gleichzeitig (Kontingent des Suchdienstes). */
+  let researching = false;
+
+  /**
+   * Eine Recherche starten: prüft den Auftrag, den Schlüssel und den Kontext, legt Chat und
+   * Nachrichten an und lässt den Ablauf im Hintergrund laufen – die Oberfläche bekommt die
+   * Ereignisse wie bei jeder Antwort, „Stopp“ nutzt denselben Weg.
+   */
+  async function startResearch(
+    sender: WebContents,
+    request: ChatSendRequest,
+    depth: ResearchDepth,
+  ) {
+    const question = checkQuestion(request.content);
+    if (!question || request.images?.length || request.files?.length) {
+      throw new Error(tr('research.invalid'));
+    }
+    if (researching) throw new Error(tr('research.busy'));
+    const apiKey = await webSearchKey();
+    if (!apiKey) throw new Error(tr('research.noKey'));
+    const existing = chats.getChat(request.chatId);
+    const settings = existing?.settings ?? normalizeSettings(request.settings);
+    const contextLength = settings.contextLength ?? OLLAMA_DEFAULT_CONTEXT;
+    if (!contextFits(depth, contextLength)) {
+      throw new Error(
+        tr('research.contextSmall', { min: RESEARCH_DEPTHS[depth].minContext }),
+      );
+    }
+
+    if (!existing) {
+      chats.createChat({
+        id: request.chatId,
+        title: titleFromMessage(question),
+        model: request.model,
+        settings: request.settings,
+      });
+      if (request.folderId) chats.moveChat(request.chatId, request.folderId);
+    }
+    const answer: MessageRecord = {
+      id: request.requestId,
+      role: 'assistant',
+      content: '',
+      thinking: '',
+      status: 'streaming',
+      model: request.model,
+    };
+    chats.appendMessage(request.chatId, {
+      id: request.userMessageId,
+      role: 'user',
+      content: request.content,
+      thinking: '',
+      status: 'done',
+    });
+    chats.appendMessage(request.chatId, answer);
+
+    const controller = new AbortController();
+    running.set(request.requestId, controller);
+    researching = true;
+    // Bewusst nicht abwarten: Die Oberfläche bekommt die Antwort über Ereignisse.
+    void streamResearch(sender, answer, controller, {
+      provider: getProvider(),
+      model: request.model,
+      contextLength,
+      think: settings.think,
+      temperature: settings.temperature,
+      seed: settings.seed,
+      apiKey,
+      depth,
+      question,
+    }).finally(() => {
+      running.delete(request.requestId);
+      researching = false;
+    });
+  }
+
+  async function streamResearch(
+    sender: WebContents,
+    initial: MessageRecord,
+    controller: AbortController,
+    run: Omit<ResearchRun, 'requestId' | 'signal' | 'emit'>,
+  ) {
+    const requestId = initial.id;
+    let answer = initial;
+    let lastSave = Date.now();
+    const save = () => {
+      chats.updateMessage(answer.id, answer);
+      lastSave = Date.now();
+    };
+    const emit = (event: ChatStreamEvent) => {
+      answer = applyChatEvent([answer], event)[0];
+      if (!sender.isDestroyed()) sender.send(IpcChannels.chatEvent, event);
+      if (
+        event.type === 'tool-call' ||
+        Date.now() - lastSave > SAVE_INTERVAL_MS
+      ) {
+        save();
+      }
+    };
+    try {
+      await runResearch({
+        ...run,
+        requestId,
+        signal: controller.signal,
+        emit,
+      });
+    } catch (error) {
+      if (controller.signal.aborted) emit({ requestId, type: 'aborted' });
+      else emit({ requestId, type: 'error', error: describeChatError(error) });
+    }
+    // Endet der Ablauf ohne „done“ (Verbindung weg …), gilt die Antwort als abgebrochen.
+    if (answer.status === 'streaming') emit({ requestId, type: 'aborted' });
+    save();
+  }
+
   async function stream(
     provider: Provider,
     sender: WebContents,
@@ -852,6 +978,7 @@ function isChatSendRequest(value: unknown): value is ChatSendRequest {
     typeof r.content === 'string' &&
     (r.images === undefined || Array.isArray(r.images)) &&
     (r.files === undefined || Array.isArray(r.files)) &&
-    (r.folderId === undefined || typeof r.folderId === 'string')
+    (r.folderId === undefined || typeof r.folderId === 'string') &&
+    (r.research === undefined || isResearchDepth(r.research))
   );
 }

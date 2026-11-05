@@ -39,6 +39,8 @@ import {
 } from '../../chat/images';
 import { useShortcut } from '../../shortcuts/useShortcut';
 import { formatContext } from '../../utils/format';
+import type { ResearchDepth } from '../../../shared/research';
+import { ResearchStartCard } from '../research/ResearchStartCard';
 
 interface ChatInputProps {
   disabled: boolean;
@@ -66,6 +68,19 @@ interface ChatInputProps {
       onRaise: (length: number) => void;
     };
   };
+  /**
+   * Knopf „Recherche“: Ist er an (`armed`), öffnet Senden die Startkarte statt zu senden;
+   * erst „Starten“ ruft `onStart` auf. Fehlt = es gibt hier keine Recherche.
+   */
+  research?: {
+    armed: boolean;
+    onStart: (text: string, depth: ResearchDepth) => void;
+    context: {
+      length: number;
+      modelMax?: number;
+      onRaise: (length: number) => void;
+    };
+  };
 }
 
 const isImage = (file: File) =>
@@ -89,9 +104,17 @@ export function ChatInput({
   onStop,
   tools,
   attach,
+  research,
 }: ChatInputProps) {
   const { t } = useTranslation();
   const [text, setText] = useState('');
+  // Die Startkarte einer Recherche ist offen.
+  const [startCard, setStartCard] = useState(false);
+  const researchArmed = research?.armed === true;
+  useEffect(() => {
+    // Knopf „Recherche“ wieder aus (oder gesendet): Die Karte verschwindet.
+    if (!researchArmed || isRunning) setStartCard(false);
+  }, [researchArmed, isRunning]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   // Fokus-Wunsch, solange das Feld noch gesperrt ist (Modelle laden noch) –
@@ -282,6 +305,12 @@ export function ChatInput({
 
   const submit = () => {
     if (!canSend) return;
+    // Knopf „Recherche“ an: erst die Startkarte (Stufe, Zustimmung), gesendet wird dort.
+    if (researchArmed) {
+      if (hasAttachment) setProblem(t('research.attachProblem'));
+      else setStartCard(true);
+      return;
+    }
     // Die Vorschau-Adressen der Bilder gehen mit: Die Nachricht zeigt dieselben Bilder.
     onSend(text, { images, files });
     setText('');
@@ -414,6 +443,18 @@ export function ChatInput({
             </button>
           )}
         </div>
+      )}
+      {startCard && researchArmed && research && (
+        <ResearchStartCard
+          question={text.trim()}
+          context={research.context}
+          onStart={(depth) => {
+            research.onStart(text.trim(), depth);
+            setText('');
+            setStartCard(false);
+          }}
+          onCancel={() => setStartCard(false)}
+        />
       )}
       <textarea
         ref={textareaRef}

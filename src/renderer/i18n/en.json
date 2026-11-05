@@ -349,7 +349,10 @@
     "webTool": "Read web page",
     "webSearchAsk": "Search the web?",
     "webSearchHint": "The search query goes to ollama.com together with your key. Ollama sees the query and your IP address.",
-    "webSearchTool": "Web search"
+    "webSearchTool": "Web search",
+    "researchPlan": "Research: plan",
+    "researchSearch": "Research: search",
+    "researchRead": "Research: reading pages"
   },
   "downloads": {
     "placeholder": "Model name, e.g. qwen3:8b",
@@ -878,6 +881,32 @@
     "none": "No mail account signed in yet.",
     "toSettings": "Go to Settings",
     "noTools": "The selected model can't use tools – choose one with “Tools” so it can read mail."
+  },
+  "research": {
+    "button": "Research",
+    "buttonTitle": "Research: your next message is run as a research task (several searches, reading pages, report with sources).",
+    "cardTitle": "Start research?",
+    "depthLabel": "How thorough?",
+    "depth": {
+      "quick": "Quick",
+      "normal": "Normal",
+      "deep": "Thorough"
+    },
+    "depthHint": "{{searches}} searches, up to {{pages}} pages · {{time}}",
+    "time": {
+      "quick": "about 1–2 minutes",
+      "normal": "about 2–4 minutes",
+      "deep": "about 3–6 minutes"
+    },
+    "privacy": "The model writes the search queries from your question. They go to ollama.com together with your Ollama key, and the pages read see your IP address. By clicking “Start” you agree. Duration and quality depend on the model, and the report can contain mistakes.",
+    "noKey": "The Ollama key is missing for the research.",
+    "toSettings": "Go to Settings",
+    "contextTight": "This level needs at least {{min}} tokens of context, this chat has {{length}}.",
+    "noRaise": "The model can only do {{length}} – choose a smaller level or another model.",
+    "raise": "Raise context length to {{length}}",
+    "start": "Start",
+    "cancel": "Cancel",
+    "attachProblem": "No files or images go along with a research – remove them or switch “Research” off."
   },
   "webChat": {
     "button": "Internet: read web pages and search the web",

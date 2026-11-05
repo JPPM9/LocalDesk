@@ -349,7 +349,10 @@
     "webTool": "Webseite lesen",
     "webSearchAsk": "Im Web suchen?",
     "webSearchHint": "Die Suchanfrage geht mit deinem Schlüssel an ollama.com. Ollama sieht Anfrage und IP-Adresse.",
-    "webSearchTool": "Websuche"
+    "webSearchTool": "Websuche",
+    "researchPlan": "Recherche: Plan",
+    "researchSearch": "Recherche: Suche",
+    "researchRead": "Recherche: Seiten lesen"
   },
   "downloads": {
     "placeholder": "Modellname, z. B. qwen3:8b",
@@ -878,6 +881,32 @@
     "none": "Noch kein Mail-Konto angemeldet.",
     "toSettings": "Zu den Einstellungen",
     "noTools": "Das gewählte Modell kann keine Werkzeuge benutzen – wähle eines mit „Tools“, damit es Mails lesen kann."
+  },
+  "research": {
+    "button": "Recherche",
+    "buttonTitle": "Recherche: Deine nächste Nachricht wird als Rechercheauftrag ausgeführt (mehrere Suchen, Seiten lesen, Bericht mit Quellen).",
+    "cardTitle": "Recherche starten?",
+    "depthLabel": "Wie gründlich?",
+    "depth": {
+      "quick": "Schnell",
+      "normal": "Normal",
+      "deep": "Gründlich"
+    },
+    "depthHint": "{{searches}} Suchen, bis zu {{pages}} Seiten · {{time}}",
+    "time": {
+      "quick": "etwa 1–2 Minuten",
+      "normal": "etwa 2–4 Minuten",
+      "deep": "etwa 3–6 Minuten"
+    },
+    "privacy": "Das Modell schreibt die Suchanfragen aus deiner Frage. Sie gehen mit deinem Ollama-Schlüssel an ollama.com, und die gelesenen Seiten sehen deine IP-Adresse. Mit „Starten“ stimmst du dem zu. Dauer und Qualität hängen vom Modell ab, der Bericht kann Fehler enthalten.",
+    "noKey": "Für die Recherche fehlt der Ollama-Schlüssel.",
+    "toSettings": "Zu den Einstellungen",
+    "contextTight": "Diese Stufe braucht mindestens {{min}} Tokens Kontext, dieser Chat hat {{length}}.",
+    "noRaise": "Das Modell kann nur {{length}} – wähle eine kleinere Stufe oder ein anderes Modell.",
+    "raise": "Kontextlänge auf {{length}} erhöhen",
+    "start": "Starten",
+    "cancel": "Abbrechen",
+    "attachProblem": "Bei einer Recherche gehen keine Dateien oder Bilder mit – entferne sie oder schalte „Recherche“ aus."
   },
   "webChat": {
     "button": "Internet: Webseiten lesen und im Web suchen",

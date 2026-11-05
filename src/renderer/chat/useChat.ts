@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ChatDetail, ChatSettings, MessageRecord } from '../../shared/api';
 import { applyChatEvent } from '../../shared/chat';
+import type { ResearchDepth } from '../../shared/research';
 import type { Attachments, PreparedFile } from './files';
 import {
   rememberImageBytes,
@@ -100,6 +101,8 @@ export function useChat(
       model: string,
       folderId?: string,
       attachments: Partial<Attachments> = {},
+      /** Der Text ist ein Rechercheauftrag in dieser Stufe (Knopf „Recherche“). */
+      research?: ResearchDepth,
     ) => {
       const images = attachments.images ?? [];
       const files = attachments.files ?? [];
@@ -165,8 +168,23 @@ export function useChat(
           }),
           ...(isNew && { settings: settingsRef.current }),
           ...(isNew && folderId && { folderId }),
+          ...(research && { research }),
         })
-        .then(() => callbacks.current.onChanged());
+        .then(() => callbacks.current.onChanged())
+        .catch((error: unknown) => {
+          // Eine abgelehnte Recherche (Schlüssel fehlt, Kontext zu klein …): als Fehler an der Antwort zeigen.
+          const text = error instanceof Error ? error.message : String(error);
+          setMessages((current) =>
+            applyChatEvent(current, {
+              requestId: answer.id,
+              type: 'error',
+              error: text.replace(
+                /^Error invoking remote method '[^']*': (Error: )?/,
+                '',
+              ),
+            }),
+          );
+        });
 
       if (isNew) {
         createdHereRef.current = id;

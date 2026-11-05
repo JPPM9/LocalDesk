@@ -29,6 +29,7 @@ import type {
 } from './skill-import';
 import type { SkillInput, SkillView } from './skills';
 import type { UpdateState } from './update';
+import type { ResearchDepth } from './research';
 import type { WebSearchState } from './web';
 
 export interface AppInfo {
@@ -600,6 +601,8 @@ export interface ChatSendRequest {
   settings?: ChatSettings;
   /** Nur für neue Chats: gleich in diesem Projekt anlegen. */
   folderId?: string;
+  /** Knopf „Recherche“: Der Text ist ein Rechercheauftrag, ausgeführt in dieser Stufe (ohne Bilder und Dateien). */
+  research?: ResearchDepth;
 }
 
 /**

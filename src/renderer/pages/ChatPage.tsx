@@ -52,6 +52,7 @@ import { OLLAMA_DEFAULT_CONTEXT } from '../../shared/context';
 import { SkillsButton } from '../components/skills/SkillPicker';
 import { MailButton } from '../components/mail/MailButton';
 import { WebButton } from '../components/web/WebButton';
+import { ResearchButton } from '../components/research/ResearchButton';
 import { useConfirm } from '../components/ConfirmDialog';
 
 // Nur eine Bequemlichkeit pro Rechner: das zuletzt gewählte Modell für neue Chats.
@@ -132,6 +133,8 @@ export function ChatPage() {
     const { [key]: _old, ...rest } = settings;
     updateSettings(ids.length > 0 ? { ...rest, [key]: ids } : rest);
   };
+  // Knopf „Recherche“: gilt nur für die nächste Nachricht (nicht gespeichert).
+  const [researchArmed, setResearchArmed] = useState(false);
   // Die Haken „Webseiten lesen“ und „Im Web suchen“: nur „an“ wird gespeichert.
   const setFlag = (key: 'web' | 'webSearch', on: boolean) => {
     const { [key]: _old, ...rest } = settings;
@@ -630,6 +633,11 @@ export function ChatPage() {
                     .find((m) => m.name === model)
                     ?.capabilities.includes('tools')}
                 />
+                <ResearchButton
+                  armed={researchArmed}
+                  onToggle={() => setResearchArmed((on) => !on)}
+                  disabled={isRunning}
+                />
                 <WebButton
                   read={settings.web === true}
                   onRead={(on) => setFlag('web', on)}
@@ -641,6 +649,20 @@ export function ChatPage() {
                 />
               </>
             }
+            research={{
+              armed: researchArmed,
+              onStart: (text, depth) => {
+                send(text, model, project?.id, {}, depth);
+                // Der Knopf gilt nur für diese eine Nachricht.
+                setResearchArmed(false);
+              },
+              context: {
+                length: settings.contextLength ?? OLLAMA_DEFAULT_CONTEXT,
+                modelMax: models.find((m) => m.name === model)?.contextLength,
+                onRaise: (length) =>
+                  updateSettings({ ...settings, contextLength: length }),
+              },
+            }}
             disabled={!model}
             isRunning={isRunning}
             onSend={(text, attachments) =>

@@ -303,7 +303,9 @@
   Dazu (Wunschliste Schritt 4a, vom Nutzer freigegeben): beliebige Webseiten, aber NUR über das Werkzeug `read_webpage`
   bei eingeschaltetem Schalter „Internet“ (`main/web/`, Regeln siehe Abschnitt „Internet lesen“). Und (Schritt 4b, freigegeben):
   NUR `https://ollama.com/api/web_search` (POST, mit dem Ollama-Schlüssel des Nutzers) und NUR bei eingeschaltetem Haken „Im Web
-  suchen“ (`main/web/search.ts`, Host fest eingebaut, keine Weiterleitung; Regeln siehe Abschnitt „Websuche“).
+  suchen“ (`main/web/search.ts`, Host fest eingebaut, keine Weiterleitung; Regeln siehe Abschnitt „Websuche“). Dieselben zwei Wege
+  (Suche bei ollama.com, Seiten aus den Treffern) nutzt auch eine Recherche (Schritt 5, Abschnitt „Deep Research“) – nach dem „Starten“
+  des Nutzers und mit den gleichen Sperren; sonst kommt nichts dazu.
 - **Tools/MCP**: Lesen frei, Schreiben/Ausführen bestätigen; pro Tool „immer / fragen / aus“.
 - **Obsidian-Memory**: App schreibt nur in eigenen Unterordner des Vaults; Pfad in Einstellungen.
 - **UI**: Dunkel + Hell (folgt Windows), nüchtern-technisch, Seitenleiste wie LocalAI, Texte über i18n (Deutsch).
@@ -1142,6 +1144,52 @@
   Limit (429) gegen ollama.com (nur per Test mit gefälschtem Dienst). Das Modell las im ersten Zug von selbst keine Seite (Auszüge reichten) –
   die Beschreibung der Suche sagt „lies danach die passenden Seiten“, mehr nicht. Test-Falle: Skripte mit Bash-Heredoc zerstören Backslashes
   (`\\s` in JS-Regex wurde zu „Buchstabe s weg“) – Skripte immer mit dem Write-Werkzeug schreiben.
+
+- **Deep Research** (Wunschliste Schritt 5, Plan freigegeben 2026-11-05; Entscheidungen des Nutzers: fester Ablauf statt Modell-Steuerung,
+  Knopf „Recherche“ nur für die nächste Nachricht, Startkarte mit 3 Stufen): Knopf „Recherche“ (`ResearchButton`, Telescope, `aria-pressed`,
+  nicht gespeichert) im Eingabefeld; ist er an, öffnet Senden die `ResearchStartCard` (in `ChatInput` gerendert, Text bleibt im Feld) statt
+  zu senden. Karte: Stufen `RESEARCH_DEPTHS` (`shared/research.ts`): Schnell 2 Suchen/5 Seiten, Normal 4/10 (Vorgabe), Gründlich 6/16; Mindest-
+  Kontext 8 192 (Gründlich 16 384) – zu klein → Hinweis + Knopf „Kontextlänge auf … erhöhen“ (`suggestContextLength`), „Starten“ gesperrt; ohne
+  Ollama-Schlüssel Hinweis + Link, „Starten“ gesperrt; Text zu ollama.com/IP; „Starten“ = Zustimmung (der Haken „Im Web suchen“ ist NICHT
+  nötig); Anhänge → Hinweis, keine Karte. Danach `chatSend` mit `research: Stufe` (`useChat.send(…, research)`; Fehler des Hauptprozesses
+  werden an der Antwort gezeigt), Knopf springt aus. **Hauptprozess:** `chat-service.ts` `startResearch` (prüft `checkQuestion` ≤ 2 000 Zeichen,
+  keine Bilder/Dateien, höchstens EINE Recherche gleichzeitig, Schlüssel, `contextFits`; legt Chat/Nachrichten an wie `chatSend`) →
+  `streamResearch` (gleiche Ereignisse und Speicherung wie `stream`, Stopp über denselben `running`-Weg) → `main/research/pipeline.ts`
+  `runResearch`. **Ablauf (fest, kein Tool-Calling – funktioniert mit jedem Modell, das das JSON-Format `format` kann):** (1) Plan: ein Aufruf
+  mit `planSchema` (Suchanfragen, ≤ Stufe, eine Zeile ≤ 150 Zeichen, ohne Doppelte; unbrauchbar/Zeitlimit 90 s → die Frage selbst);
+  (2) Suchen nacheinander über `searchWeb` (je 5 Treffer; beim ERSTEN Fehler – Limit, Schlüssel – wird nicht weitergesucht, mit den
+  vorhandenen Treffern geht es weiter, ohne Treffer → Fehlermeldung); (3) `selectPages`: reihum über die Anfragen (erst der beste Treffer
+  jeder Anfrage), ohne Doppelte und ohne PDF/Bilder/Archive/Office-Dateien, höchstens Stufe-Seiten – das Modell wählt NIE Adressen;
+  (4) lesen mit dem gesicherten Abruf (`liveResearchDeps.readPage` = `checkWebUrl` + `fetchWebPage` + `extractWebText`), nur der Anfang
+  (`pageChars` = `webPageChars` ≤ 12 000), < 200 Zeichen Text → übersprungen, zwei Treffer auf dieselbe Endadresse zählen einmal;
+  (5) je Seite ein Notiz-Aufruf (`notesSchema`: `relevant` + ≤ 5 Fakten ≤ 300 Zeichen, Zeitlimit 180 s; nur Felder des Formats werden
+  übernommen – eine Seite kann dem Modell kaum Anweisungen unterschieben); Plan und Notizen laufen ohne Denken (`think:false`, bei gpt-oss
+  „low“), Temperatur 0, im SELBEN Kontext wie der Chat (kein Neuladen); (6) Bericht: `fitNotes` kürzt zuerst Fakten je Quelle, dann die hinteren
+  Quellen (`notesBudgetChars`), numeriert ohne Lücken; der Bericht wird gestreamt (Denken/Temperatur/Seed des Chats), danach hängt
+  LocalDesk selbst `reportFooter` an: „## Quellen“ mit echten Titeln und Links (nicht vom Modell), Hinweis „Quellen prüfen“ und – falls der
+  Bericht Nummern zitiert, die es nicht gibt – eine Notiz (`badCitations`, nur gemeldet, nicht still entfernt). Fortschritt als drei
+  `tool-call`-Zeilen (`research_plan/search/read`, `serverId: research`, `arguments.progress` „2/4“, `result` = Liste der Anfragen bzw. Seiten
+  mit ✔/–/✘), in `ToolCallView` ohne „Eingabe“. Erwartbare Misserfolge (nichts gefunden, nichts Brauchbares, leerer Bericht) → `error`-Ereignis, Abbruch
+  und Serverfehler werfen. Die Notizen werden NICHT gespeichert – spätere Chat-Fragen sehen nur den Bericht. Prompts de/en über `tr()`
+  (`research.*`). Keine neuen Pakete, keine Migration. `docs/privacy.md` (de/en, Test prüft beide) beschreibt die Recherche.
+  ECHT GEPRÜFT (gebaute App, Testprofil, qwen3:14b/gemma4:12b, echtes Internet; der Nutzer trug den Ollama-Schlüssel SELBST ein): Oberfläche
+  ohne Schlüssel – Knopf anfangs aus (`aria-pressed`), an + Senden → Karte, NICHT gesendet, kein Chat angelegt, Text bleibt; 3 Stufen, „Normal“
+  vorgewählt, Hinweis auf ollama.com; Kontext 4K → „braucht mindestens 8K“ + Knopf, „Starten“ gesperrt, Gründlich → 16K; ohne Schlüssel
+  Hinweis + Link, „Starten“ gesperrt; Abbrechen: Karte weg, Text und Knopf bleiben; Knopf aus + Senden = normale Nachricht; mit Anhang →
+  Hinweis, keine Karte (Kontext wird in der UI als „8K“/„4K“ gezeigt, wie überall). LIVE (Frage zur Elektronenmasse): Schnell qwen3 84 s / 70 s
+  (Plan 2 s, Suchen 2 s, 5 Seiten ~26 s, Bericht ~54 s davon ~30 s Denken), Normal qwen3 153 s (10 Seiten, 8 Quellen) und gemma4:12b 96 s
+  (7 Quellen, englische Suchanfragen, deutscher Bericht), Gründlich qwen3 175 s (14 Seiten, 10 Quellen); die drei Zeilen laufen live mit, die
+  Quellenliste kommt von LocalDesk; Seiten, die nicht gehen (doi.org 403, PDF ohne „.pdf“ in der Adresse → „keine Textseite“), fallen einzeln
+  weg; Stopp mitten in den Seiten → Status aborted, laufende Zeile cancelled, 20 s danach tut sich nichts. Das Limit (429) der Ollama-Suche
+  trat ECHT auf (nach ~30 Testsuchen an einem Tag): bei „Gründlich“ in der 6. Suche → Rest ohne Weitersuchen, Zeile „Suche“ zeigt den Fehler,
+  Bericht kommt trotzdem; später schon bei der 1. Suche → Fehlermeldung „Limit erreicht“, Status error, nichts gelesen. Funde und Fixes: (a) qwen3
+  schrieb Formeln als LaTeX (`$…$`, die App rendert das nicht) → Hinweis „Kein LaTeX“ im System-Prompt UND am Ende der Nutzer-Anfrage (ohne
+  Suche am Modell geprüft: 0 von 3 Läufen mit LaTeX; Live nicht mehr prüfbar, Kontingent leer); (b) Endadressen nach Weiterleitungen trugen
+  Müll („?error=cookies_not_supported&code=…“ bei nature.com) → die Quellenliste nimmt die Adresse aus der Suche (`pick.url`); (c) Zeitangaben auf
+  der Karte waren zu hoch geschätzt (3–6/6–12/12–25) → jetzt 1–2 / 2–4 / 3–6 Minuten. Die Berichte können sachliche Modell-Fehler enthalten
+  (z. B. falsche Unsicherheits-Größenordnungen, als „Widerspruch“ gekennzeichnet) – deshalb der Hinweis „Quellen prüfen“ im Bericht. Eine
+  teilweise gescheiterte Suche zeigt die Zeile „Suche“ rot (Fehler), obwohl die Recherche gelingt – bewusst ehrlich. Nicht live geprüft:
+  mehrere gleichzeitige Chats mit Recherche (nur Test: zweite Recherche → „Es läuft schon eine Recherche“ ist NICHT getestet, nur im Code).
 
 ## Befehle
 
