@@ -5,7 +5,7 @@ import type {
   ModelInfo,
   ThinkSetting,
 } from './api';
-import { toRequestMessages, type ImageSource } from './chat';
+import { toRequestMessages, type AttachmentSource } from './chat';
 
 export const TEMPERATURE_MAX = 2;
 export const CONTEXT_MIN = 512;
@@ -88,9 +88,9 @@ export function buildChatRequest(
   history: MessageRecord[],
   settings: ChatSettings,
   projectInstructions?: string,
-  images?: ImageSource,
+  attachments?: AttachmentSource,
 ): ChatRequest {
-  const messages = toRequestMessages(history, images);
+  const messages = toRequestMessages(history, attachments);
   const system = [projectInstructions?.trim(), settings.systemPrompt?.trim()]
     .filter(Boolean)
     .join('\n\n');

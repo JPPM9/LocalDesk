@@ -24,6 +24,7 @@ describe('contextUsage', () => {
     instructions: 100,
     history: 1500,
     images: 0,
+    files: 0,
     knowledge: 1800,
     tools: 0,
   };
@@ -161,6 +162,13 @@ describe('estimateContextParts', () => {
     // nur der Text: (10 + 4) + (1 + 4)
     expect(parts.history).toBe(19);
     expect(estimateContextParts(base).images).toBe(0);
+  });
+
+  it('Dateien zählen als eigener Anteil aus der übergebenen Schätzung', () => {
+    expect(estimateContextParts({ ...base, filesTokens: 2500 }).files).toBe(
+      2500,
+    );
+    expect(estimateContextParts(base).files).toBe(0);
   });
 
   it('schätzt Tools nach ihrer Beschreibung', () => {

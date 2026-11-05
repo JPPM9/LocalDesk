@@ -578,7 +578,17 @@ export function ChatPage() {
             </p>
           )}
           <ChatInput
-            images={{ allowed: visionModel, suggestion: visionSuggestion }}
+            attach={{
+              imagesAllowed: visionModel,
+              suggestion: visionSuggestion,
+              context: {
+                length: settings.contextLength ?? OLLAMA_DEFAULT_CONTEXT,
+                used: contextUsage.used,
+                modelMax: models.find((m) => m.name === model)?.contextLength,
+                onRaise: (length) =>
+                  updateSettings({ ...settings, contextLength: length }),
+              },
+            }}
             tools={
               <>
                 <KnowledgeButton
@@ -618,7 +628,9 @@ export function ChatPage() {
             }
             disabled={!model}
             isRunning={isRunning}
-            onSend={(text, images) => send(text, model, project?.id, images)}
+            onSend={(text, attachments) =>
+              send(text, model, project?.id, attachments)
+            }
             onStop={stop}
           />
           <p className="mt-2 text-center text-[11.5px] text-subtle">

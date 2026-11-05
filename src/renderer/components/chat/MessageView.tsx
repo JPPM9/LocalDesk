@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Sparkles, TriangleAlert } from 'lucide-react';
 import type { MessageRecord, ToolDecision } from '../../../shared/api';
 import { Markdown } from './Markdown';
+import { MessageFiles } from './MessageFiles';
 import { MessageImages } from './MessageImages';
 import { CopyButton, EditBox, EditButton, RetryButton } from './MessageActions';
 import { RememberButton } from './RememberButton';
@@ -50,13 +51,15 @@ export function MessageView({
 
   if (message.role === 'user') {
     const hasImages = (message.images?.length ?? 0) > 0;
+    const hasFiles = (message.files?.length ?? 0) > 0;
     if (editing && onEdit) {
       return (
         <div className="space-y-2">
+          {hasFiles && <MessageFiles files={message.files ?? []} />}
           {hasImages && <MessageImages images={message.images ?? []} />}
           <EditBox
             initialText={message.content}
-            allowEmpty={hasImages}
+            allowEmpty={hasImages || hasFiles}
             onSend={(text) => {
               setEditing(false);
               onEdit(text);
@@ -68,6 +71,7 @@ export function MessageView({
     }
     return (
       <div className="group space-y-1">
+        {hasFiles && <MessageFiles files={message.files ?? []} />}
         {hasImages && <MessageImages images={message.images ?? []} />}
         {message.content.trim() !== '' && (
           <div className="flex justify-end">

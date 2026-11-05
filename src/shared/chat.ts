@@ -5,6 +5,7 @@ import type {
   MessageRecord,
   ToolCallRecord,
 } from './api';
+import { fileBlock, fileMarker, fileOutOfContext, filesToSend } from './files';
 import { imageMarker, imagesToSend } from './images';
 import { settleToolCalls, toolRoundMessages } from './tools';
 
@@ -74,25 +75,46 @@ function settled(message: MessageRecord): Pick<MessageRecord, 'toolCalls'> {
  */
 export function toRequestMessages(
   messages: MessageRecord[],
-  images?: ImageSource,
+  attach?: AttachmentSource,
 ): ChatMessage[] {
   const usable = messages.filter(isUsable);
-  // Ohne Bild-Quelle (z. B. beim Zählen) geht kein Bild mit – es bleibt der Text-Hinweis.
-  const sent = images ? imagesToSend(usable, images.vision) : new Set<string>();
+  // Ohne Quelle (z. B. beim Zählen) geht kein Bild und keine Datei mit – es bleibt der Text-Hinweis.
+  const sentImages = attach
+    ? imagesToSend(usable, attach.vision)
+    : new Set<string>();
+  const sentFiles = attach ? filesToSend(usable) : new Set<string>();
   return usable.flatMap((m): ChatMessage[] => {
     const attached: string[] = [];
     const markers: string[] = [];
     for (const image of m.images ?? []) {
-      const data = sent.has(image.id) ? images?.data(image.id) : undefined;
+      const data = sentImages.has(image.id)
+        ? attach?.data(image.id)
+        : undefined;
       if (data) attached.push(data);
       else markers.push(imageMarker(image.name));
     }
-    const content =
+    // Dateien: der Text vor deiner Frage; ältere nur noch als Hinweis.
+    const blocks = (m.files ?? []).map((file) => {
+      if (!attach) return fileMarker(file.name);
+      const text = sentFiles.has(file.id)
+        ? attach.fileText?.(file.id)
+        : undefined;
+      return text !== undefined
+        ? fileBlock(file.name, text)
+        : fileOutOfContext(file.name);
+    });
+    const withMarkers =
       markers.length > 0
         ? [...markers, m.content]
             .filter((part) => part.trim() !== '')
             .join('\n')
         : m.content;
+    const content =
+      blocks.length > 0
+        ? [blocks.join('\n\n'), withMarkers]
+            .filter((part) => part.trim() !== '')
+            .join('\n\n')
+        : withMarkers;
     return [
       ...toolRounds(m.toolCalls ?? []).flatMap(toolRoundMessages),
       {
@@ -104,17 +126,21 @@ export function toRequestMessages(
   });
 }
 
-/** Wohin die Bilder einer Anfrage kommen: nur mit Bild-Fähigkeit, die Bytes aus dem Speicher. */
-export interface ImageSource {
+/** Woher die Anhänge einer Anfrage kommen: Bilder nur mit Bild-Fähigkeit, Bytes und Texte aus dem Speicher. */
+export interface AttachmentSource {
   vision: boolean;
   /** Base64 eines Bildes (leer/undefined = nicht verfügbar → Text-Hinweis). */
   data: (imageId: string) => string | undefined;
+  /** Gelesener Text einer Datei (undefined = nicht verfügbar → Hinweis „nicht mehr im Kontext“). */
+  fileText?: (fileId: string) => string | undefined;
 }
 
-/** Geht diese Nachricht an das Modell? Fehlgeschlagene und leere (ohne Bild) nicht. */
+/** Geht diese Nachricht an das Modell? Fehlgeschlagene und leere (ohne Bild oder Datei) nicht. */
 export const isUsable = (m: MessageRecord): boolean =>
   m.status !== 'error' &&
-  (m.content.trim() !== '' || (m.images?.length ?? 0) > 0);
+  (m.content.trim() !== '' ||
+    (m.images?.length ?? 0) > 0 ||
+    (m.files?.length ?? 0) > 0);
 
 function toolRounds(calls: ToolCallRecord[]): ToolCallRecord[][] {
   const rounds = new Map<number, ToolCallRecord[]>();

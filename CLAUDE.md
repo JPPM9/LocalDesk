@@ -1016,6 +1016,38 @@
   Test-Hinweis: Einfügen/Ziehen lassen sich per `ClipboardEvent`/`DragEvent` mit `DataTransfer` nachstellen; der Dateidialog per
   CDP `DOM.setFileInputFiles` auf dem versteckten `input[type=file]`.
 
+- **Dateien im Chat** (Wunschliste Schritt 3b, Plan freigegeben 2026-11-05): Dieselbe Büroklammer wie bei Bildern
+  („Datei oder Bild anhängen“, Ziehen, Strg+V auch mit in Explorer kopierten Dateien); bis zu 3 Dateien je Nachricht, an JEDES
+  Modell (nur Bilder brauchen Bild-Fähigkeit). Lesen im Hauptprozess: `main/chat-files.ts` `readChatFile(name, bytes, makeExtractor)`
+  über die vorhandene Wissen-Logik (`WorkerExtractor`, `decodeText`; die Dateiarten liegen jetzt in `shared/file-kinds.ts`, auch
+  `rag/files.ts` nutzt sie): PDF seitenweise mit „[Seite N]“ (leere Seiten fallen weg, `pages` zählt alle), Word als Markdown,
+  Text/Markdown/CSV/Code (UTF-8, BOM, Rückfall Windows-1252; Binärdaten abgelehnt). Grenzen (`shared/files.ts`): PDF/Word ≤ 20 MB,
+  Text ≤ 2 MB, gelesener Text ≤ 100 000 Zeichen je Datei und 200 000 je Nachricht (mehr → Meldung mit Verweis auf „Wissen“), PDF ohne
+  Text (Scan) → „kein Text gefunden“, 60 s Zeitgrenze; der Leser wird je Datei neu gestartet und beendet. Der Dateiname entscheidet
+  nur über die Art. IPC `readChatFile` (liest, speichert nichts), `getChatFile` (Text für „Bearbeiten“/„Wiederholen“); `chatSend`
+  trägt `files` (Text schon gelesen; `checkFileInputs` prüft im Hauptprozess: ≤ 3, Art, ≤ 100 000, ohne NUL, Kennung). Migration 21:
+  Tabelle `message_files` (gelesener TEXT, nicht die Originaldatei; `ON DELETE CASCADE`). `MessageRecord.files` trägt nur
+  Name/Art/Zeichen/Seiten. Anfrage ans Modell (`toRequestMessages(messages, AttachmentSource)`, vorher `ImageSource`): Text der
+  letzten `FILES_SENT_MAX` = 3 Dateien des Verlaufs als Block „[Datei: name] … [Ende der Datei: name]“ VOR der Frage; ältere →
+  „[Datei: name – nicht mehr im Kontext]“; ohne Quelle (Zählen) nur „[Datei: name]“. `tr()` ersetzt in einem Durchgang – ein
+  „{name}“ im Dateitext bleibt unberührt (getestet). Kontext-Anzeige: Anteil `files` (`ContextInput.filesTokens`, 4 Zeichen je
+  Token; gemessen 5003 geschätzt vs. 5213 echt); Passt es nicht (< `ANSWER_RESERVE` frei), zeigt `ChatInput` einen Hinweis mit Knopf
+  „Kontextlänge auf … erhöhen“ (`suggestContextLength`, Klick ändert `settings.contextLength`; nichts von selbst; ohne Stufe: Hinweis
+  auf kürzere Datei/„Wissen“). Verdichten/Zusammenfassen/Obsidian-Notiz sehen „[Datei: …]“ (`textWithAttachmentMarkers`);
+  Nachricht nur mit Datei erlaubt (Titel „Datei: name“). „Bearbeiten“/„Wiederholen“ (`useChat.resend`) holen Text und Bytes vor dem
+  Löschen und senden unter neuer Kennung. UI: Felder mit Name, Seiten, ≈ Tokens im Eingabefeld und in der Sprechblase
+  (`MessageFiles`); `useChat.send(…, attachments)` nimmt `{ images, files }`. Datenschutz: `docs/privacy.md` nennt den gelesenen Text
+  in `localdesk.db`.
+  Echt geprüft (gebaute App, Testprofil, gemma4:12b/qwen3:14b, selbst erzeugte Dateien, alles über die Oberfläche): PDF per Dialog
+  („4 Seiten · ≈ 79 Tokens“), Word, CSV per Einfügen, 4. Datei → „Höchstens 3“, .exe/Scan-PDF/150 000 Zeichen verständlich
+  abgelehnt; Frage nach dem Kennwort auf Seite 3 → richtig (536 Eingabe-Tokens), Rückfrage zu Seite 4 → richtig; Kontext zeigt „Dateien
+  79“; Datei mit ≈ 5 000 Tokens bei Kontext 4096 → Hinweis, Knopf → 8192, Passwort aus der Mitte gefunden (5213 Tokens); qwen3:14b nimmt
+  die Datei an, ein Bild wird abgelehnt; vier Nachrichten mit je einer Datei → die älteste ist „nicht mehr im Kontext“, die
+  zweitälteste noch da; nur Datei ohne Text → Titel „Datei: daten.csv“; Bearbeiten behält die Datei (neue Kennung, alte weg);
+  Chat löschen entfernt sie; Datenbank direkt gelesen: Version 21, keine Waisen, Zeichenzahl = Textlänge; Neustart: Feld noch da.
+  Test-Hinweis: Dateien per CDP `DOM.setFileInputFiles` mit mehreren Pfaden; Testdateien (PDF/DOCX) mit `tests/main/fixtures/documents.ts`
+  (gebündelt mit rolldown).
+
 ## Befehle
 
 - `npm start` – Entwicklungsmodus · `npm test` – Vitest (Tests in `tests/`) · `npm run typecheck` · `npm run lint` · `npm run dist` – Installer · `npm run make` – portable ZIP

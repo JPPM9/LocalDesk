@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ChatDetail, ChatSettings, MessageRecord } from '../../shared/api';
 import { applyChatEvent } from '../../shared/chat';
+import type { Attachments, PreparedFile } from './files';
 import {
   rememberImageBytes,
   rememberImageUrl,
@@ -91,17 +92,19 @@ export function useChat(
 
   /**
    * `folderId`: nur für einen neuen Chat – gleich in diesem Projekt anlegen.
-   * `images`: schon verkleinerte Bilder; mit Bild darf der Text leer sein.
+   * `attachments`: schon verkleinerte Bilder und gelesene Dateien; mit einem Anhang darf der Text leer sein.
    */
   const send = useCallback(
     (
       text: string,
       model: string,
       folderId?: string,
-      images: PreparedImage[] = [],
+      attachments: Partial<Attachments> = {},
     ) => {
+      const images = attachments.images ?? [];
+      const files = attachments.files ?? [];
       const content = text.trim();
-      if (!content && images.length === 0) return;
+      if (!content && images.length === 0 && files.length === 0) return;
       if (messagesRef.current.some((m) => m.status === 'streaming')) return;
 
       const isNew = chatIdRef.current === null;
@@ -117,6 +120,15 @@ export function useChat(
             id: i.id,
             name: i.name,
             size: i.data.byteLength,
+          })),
+        }),
+        ...(files.length > 0 && {
+          files: files.map((f) => ({
+            id: f.id,
+            name: f.name,
+            kind: f.kind,
+            chars: f.chars,
+            ...(f.pages !== undefined && { pages: f.pages }),
           })),
         }),
         thinking: '',
@@ -142,6 +154,15 @@ export function useChat(
           ...(images.length > 0 && {
             images: images.map(({ id, name, data }) => ({ id, name, data })),
           }),
+          ...(files.length > 0 && {
+            files: files.map(({ id, name, kind, text, pages }) => ({
+              id,
+              name,
+              kind,
+              text,
+              ...(pages !== undefined && { pages }),
+            })),
+          }),
           ...(isNew && { settings: settingsRef.current }),
           ...(isNew && folderId && { folderId }),
         })
@@ -166,15 +187,16 @@ export function useChat(
       const id = chatIdRef.current;
       if (!id) return;
       if (messagesRef.current.some((m) => m.status === 'streaming')) return;
-      // Die Bilder der Nachricht bleiben: Ihre Bytes werden geholt, bevor das Löschen sie mitnimmt,
-      // und gehen als neue Bilder wieder mit.
-      const kept: PreparedImage[] = [];
+      // Bilder und Dateien der Nachricht bleiben: Ihre Bytes bzw. Texte werden geholt, bevor das
+      // Löschen sie mitnimmt, und gehen unter neuer Kennung wieder mit.
+      const keptImages: PreparedImage[] = [];
+      const keptFiles: PreparedFile[] = [];
       const original = messagesRef.current.find((m) => m.id === messageId);
       for (const image of original?.images ?? []) {
         const result = await window.api.getChatImage(image.id);
         if (!result.ok) return;
         const newId = crypto.randomUUID();
-        kept.push({
+        keptImages.push({
           id: newId,
           name: image.name,
           data: result.value.data,
@@ -182,12 +204,17 @@ export function useChat(
           url: rememberImageBytes(newId, result.value.data, result.value.mime),
         });
       }
+      for (const file of original?.files ?? []) {
+        const result = await window.api.getChatFile(file.id);
+        if (!result.ok) return;
+        keptFiles.push({ ...result.value, id: crypto.randomUUID() });
+      }
       if (!(await window.api.chatTruncate(id, messageId))) return;
       setMessages((current) => {
         const index = current.findIndex((m) => m.id === messageId);
         return index < 0 ? current : current.slice(0, index);
       });
-      send(text, model, undefined, kept);
+      send(text, model, undefined, { images: keptImages, files: keptFiles });
     },
     [send],
   );

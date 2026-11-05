@@ -133,6 +133,111 @@ describe('toRequestMessages mit Bildern', () => {
   });
 });
 
+describe('toRequestMessages mit Dateien', () => {
+  const doc = (id: string, name = `${id}.pdf`, chars = 100) => ({
+    id,
+    name,
+    kind: 'pdf' as const,
+    chars,
+    pages: 2,
+  });
+  const withFiles = (
+    id: string,
+    content: string,
+    ...files: ReturnType<typeof doc>[]
+  ): MessageRecord => ({ ...user, id, content, files });
+  const source = (texts: Record<string, string>) => ({
+    vision: true,
+    data: () => undefined,
+    fileText: (id: string) => texts[id],
+  });
+
+  it('der Text der Datei steht als Block vor der Frage', () => {
+    expect(
+      toRequestMessages(
+        [withFiles('u1', 'Fasse zusammen.', doc('a', 'bericht.pdf'))],
+        source({ a: '[Seite 1]\nHallo' }),
+      ),
+    ).toEqual([
+      {
+        role: 'user',
+        content:
+          '[Datei: bericht.pdf]\n[Seite 1]\nHallo\n[Ende der Datei: bericht.pdf]\n\nFasse zusammen.',
+      },
+    ]);
+  });
+
+  it('mehrere Dateien einer Nachricht, getrennt durch eine Leerzeile', () => {
+    const [message] = toRequestMessages(
+      [withFiles('u1', 'Vergleiche.', doc('a', 'a.txt'), doc('b', 'b.txt'))],
+      source({ a: 'AAA', b: 'BBB' }),
+    );
+    expect(message.content).toBe(
+      '[Datei: a.txt]\nAAA\n[Ende der Datei: a.txt]\n\n[Datei: b.txt]\nBBB\n[Ende der Datei: b.txt]\n\nVergleiche.',
+    );
+  });
+
+  it('eine Nachricht nur mit Datei geht mit (ohne Frage)', () => {
+    expect(
+      toRequestMessages(
+        [withFiles('u1', '', doc('a', 'a.txt'))],
+        source({ a: 'AAA' }),
+      ),
+    ).toEqual([
+      { role: 'user', content: '[Datei: a.txt]\nAAA\n[Ende der Datei: a.txt]' },
+    ]);
+  });
+
+  it('nur die letzten 3 Dateien des Verlaufs gehen mit, ältere werden zum Hinweis', () => {
+    const history: MessageRecord[] = [
+      withFiles('u1', 'Erst', doc('a', 'a.txt'), doc('b', 'b.txt')),
+      { ...answer, id: 'r1', content: 'Ok', status: 'done' },
+      withFiles('u2', 'Dann', doc('c', 'c.txt'), doc('d', 'd.txt')),
+    ];
+    const result = toRequestMessages(
+      history,
+      source({ a: 'AAA', b: 'BBB', c: 'CCC', d: 'DDD' }),
+    );
+    expect(result[0].content).toBe(
+      '[Datei: a.txt – nicht mehr im Kontext]\n\n[Datei: b.txt]\nBBB\n[Ende der Datei: b.txt]\n\nErst',
+    );
+    expect(result[2].content).toContain('[Datei: c.txt]\nCCC');
+    expect(result[2].content).toContain('[Datei: d.txt]\nDDD');
+  });
+
+  it('fehlt der Text einer Datei, bleibt der Hinweis', () => {
+    expect(
+      toRequestMessages([withFiles('u1', 'Hi', doc('a', 'a.txt'))], source({})),
+    ).toEqual([
+      { role: 'user', content: '[Datei: a.txt – nicht mehr im Kontext]\n\nHi' },
+    ]);
+  });
+
+  it('ohne Quelle (z. B. beim Zählen) geht kein Text mit – nur der Hinweis', () => {
+    expect(
+      toRequestMessages([withFiles('u1', 'Hi', doc('a', 'a.txt'))]),
+    ).toEqual([{ role: 'user', content: '[Datei: a.txt]\n\nHi' }]);
+  });
+
+  it('Dateien und Bilder zusammen: Dateien zuerst, dann Bild-Hinweis, dann die Frage', () => {
+    const message: MessageRecord = {
+      ...user,
+      id: 'u1',
+      content: 'Was ist das?',
+      files: [doc('a', 'a.txt')],
+      images: [{ id: 'i', name: 'foto.jpg', size: 1 }],
+    };
+    const [result] = toRequestMessages([message], {
+      vision: false,
+      data: () => undefined,
+      fileText: () => 'AAA',
+    });
+    expect(result.content).toBe(
+      '[Datei: a.txt]\nAAA\n[Ende der Datei: a.txt]\n\n[Bild: foto.jpg]\nWas ist das?',
+    );
+  });
+});
+
 describe('titleFromMessage', () => {
   it('nimmt die erste Zeile', () => {
     expect(titleFromMessage('  Primzahlen in Python\nmit Erklärung')).toBe(

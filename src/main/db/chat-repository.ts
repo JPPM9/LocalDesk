@@ -13,6 +13,8 @@ import type {
   ToolCallRecord,
 } from '../../shared/api';
 import { parseCompaction, type ChatCompaction } from '../../shared/compaction';
+import type { FileKind } from '../../shared/file-kinds';
+import type { MessageFile } from '../../shared/files';
 import type { ImageMime, MessageImage } from '../../shared/images';
 import {
   buildFtsQuery,
@@ -62,6 +64,15 @@ export interface StoredImage {
   name: string;
   mime: ImageMime;
   data: Uint8Array;
+}
+
+/** Eine Datei, so wie sie zu einer Nachricht gespeichert wird (der gelesene Text). */
+export interface StoredFile {
+  id: string;
+  name: string;
+  kind: FileKind;
+  text: string;
+  pages?: number;
 }
 
 /** Felder einer Antwort, die sich nach dem Anlegen noch ändern. */
@@ -143,10 +154,40 @@ export class ChatRepository {
         { id: row.id, name: row.name, size: row.size },
       ]);
     }
+    // Dateien ohne ihren Text – den braucht nur die Anfrage ans Modell (`getFile`).
+    const fileRows = this.db
+      .prepare(
+        `SELECT f.id, f.message_id, f.name, f.kind, f.chars, f.pages
+           FROM message_files f JOIN messages m ON m.id = f.message_id
+          WHERE m.chat_id = ? ORDER BY f.position`,
+      )
+      .all(chatId) as unknown as {
+      id: string;
+      message_id: string;
+      name: string;
+      kind: FileKind;
+      chars: number;
+      pages: number | null;
+    }[];
+    const files = new Map<string, MessageFile[]>();
+    for (const row of fileRows) {
+      files.set(row.message_id, [
+        ...(files.get(row.message_id) ?? []),
+        {
+          id: row.id,
+          name: row.name,
+          kind: row.kind,
+          chars: row.chars,
+          ...(row.pages !== null && { pages: row.pages }),
+        },
+      ]);
+    }
     return {
       ...toSummary(chat),
       settings: parseSettings(chat.settings_json),
-      messages: rows.map((row) => toMessage(row, images.get(row.id))),
+      messages: rows.map((row) =>
+        toMessage(row, images.get(row.id), files.get(row.id)),
+      ),
       ...(chat.summary_at_count !== null && {
         summaryAtCount: chat.summary_at_count,
       }),
@@ -297,6 +338,52 @@ export class ChatRepository {
         image.data,
       ),
     );
+  }
+
+  /** Speichert die Dateien (gelesener Text) einer Nachricht in dieser Reihenfolge. */
+  addFiles(messageId: string, files: StoredFile[]) {
+    const insert = this.db.prepare(
+      `INSERT INTO message_files (id, message_id, position, name, kind, chars, pages, text)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    );
+    files.forEach((file, position) =>
+      insert.run(
+        file.id,
+        messageId,
+        position,
+        file.name,
+        file.kind,
+        file.text.length,
+        file.pages ?? null,
+        file.text,
+      ),
+    );
+  }
+
+  /** Eine gespeicherte Datei mit ihrem Text (null = gibt es nicht). */
+  getFile(fileId: string): {
+    name: string;
+    kind: FileKind;
+    text: string;
+    chars: number;
+    pages?: number;
+  } | null {
+    const row = this.db
+      .prepare(
+        'SELECT name, kind, text, chars, pages FROM message_files WHERE id = ?',
+      )
+      .get(fileId) as
+      | {
+          name: string;
+          kind: FileKind;
+          text: string;
+          chars: number;
+          pages: number | null;
+        }
+      | undefined;
+    if (!row) return null;
+    const { pages, ...rest } = row;
+    return { ...rest, ...(pages !== null && { pages }) };
   }
 
   /** Ein gespeichertes Bild mit seinen Bytes (null = gibt es nicht). */
@@ -482,7 +569,11 @@ function sourcesJson(
   });
 }
 
-function toMessage(row: MessageRow, images?: MessageImage[]): MessageRecord {
+function toMessage(
+  row: MessageRow,
+  images?: MessageImage[],
+  files?: MessageFile[],
+): MessageRecord {
   const toolCalls = parseToolCalls(row.tool_calls_json);
   const knowledge = parseSources(row.sources_json);
   return {
@@ -490,6 +581,7 @@ function toMessage(row: MessageRow, images?: MessageImage[]): MessageRecord {
     role: row.role,
     content: row.content,
     ...(images && images.length > 0 && { images }),
+    ...(files && files.length > 0 && { files }),
     thinking: row.thinking,
     status: row.status,
     model: row.model ?? undefined,

@@ -33,6 +33,7 @@ export type ContextPart =
   | 'instructions'
   | 'history'
   | 'images'
+  | 'files'
   | 'knowledge'
   | 'tools';
 
@@ -50,6 +51,11 @@ export interface ContextInput {
   instructions: string;
   /** Verlauf, wie er ans Modell geht (inkl. Tool-Runden). */
   history: ChatMessage[];
+  /**
+   * Tokens der Dateien, die mitgehen (geschätzt aus ihrer Länge). Der Verlauf zählt sie nicht
+   * mit – dort steht nur der Rahmen um den Text.
+   */
+  filesTokens?: number;
   /** Durchsucht dieser Chat Wissen? Dann kommen Auszüge zur nächsten Frage dazu. */
   knowledgeActive: boolean;
   /** Auszüge der letzten Antwort – Anhaltspunkt für die nächste. */
@@ -95,6 +101,7 @@ export function estimateContextParts(
     instructions: input.instructions ? estimateTokens(input.instructions) : 0,
     history,
     images,
+    files: input.filesTokens ?? 0,
     knowledge,
     tools,
   };

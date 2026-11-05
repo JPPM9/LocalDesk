@@ -38,6 +38,27 @@ export const de = {
   'images.totalTooBig':
     'Die Bilder sind zusammen zu groß (höchstens {max} MB).',
   'images.notFound': 'Dieses Bild gibt es nicht (mehr).',
+  'chat.fileTitle': 'Datei: {name}',
+  'prompt.fileBlock': '[Datei: {name}]\n{text}\n[Ende der Datei: {name}]',
+  'prompt.fileMarker': '[Datei: {name}]',
+  'prompt.fileOld': '[Datei: {name} – nicht mehr im Kontext]',
+  'files.badInput': 'Die Dateien konnten nicht gelesen werden.',
+  'files.tooMany': 'Höchstens {max} Dateien pro Nachricht.',
+  'files.tooBig': 'Die Datei „{name}“ ist zu groß (höchstens {max} MB).',
+  'files.tooLong':
+    'Die Datei „{name}“ ist zu lang für den Chat (über {max} Zeichen). Für lange Dokumente gibt es „Wissen“.',
+  'files.totalTooLong':
+    'Die Dateien sind zusammen zu lang (höchstens {max} Zeichen).',
+  'files.unsupported':
+    'Die Datei „{name}“ kann nicht gelesen werden. Möglich sind PDF, Word (.docx), Text, Markdown, CSV und Quellcode.',
+  'files.noText':
+    'In „{name}“ wurde kein Text gefunden – vermutlich ein Scan (es gibt keine Texterkennung).',
+  'prompt.filePage': '[Seite {n}]',
+  'files.empty': 'Die Datei „{name}“ ist leer.',
+  'files.binary': 'Die Datei „{name}“ ist keine Textdatei.',
+  'files.broken':
+    'Die Datei „{name}“ ist beschädigt oder kann nicht gelesen werden.',
+  'files.notFound': 'Diese Datei gibt es nicht (mehr).',
   'code.invalidFolder': 'Kein gültiger Ordner.',
   'code.folderMissing': 'Den Ordner gibt es nicht (mehr): {folder}',
   'code.notAFolder': 'Das ist kein Ordner: {folder}',

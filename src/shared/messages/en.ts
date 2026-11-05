@@ -34,6 +34,26 @@ export const en: Record<MessageKey, string> = {
   'images.badFormat': 'The image “{name}” is not a JPEG, PNG or WebP.',
   'images.totalTooBig': 'The images are too large together (at most {max} MB).',
   'images.notFound': 'This image no longer exists.',
+  'chat.fileTitle': 'File: {name}',
+  'prompt.fileBlock': '[File: {name}]\n{text}\n[End of file: {name}]',
+  'prompt.fileMarker': '[File: {name}]',
+  'prompt.fileOld': '[File: {name} – no longer in the context]',
+  'files.badInput': 'The files could not be read.',
+  'files.tooMany': 'At most {max} files per message.',
+  'files.tooBig': 'The file “{name}” is too large (at most {max} MB).',
+  'files.tooLong':
+    'The file “{name}” is too long for the chat (over {max} characters). “Knowledge” is made for long documents.',
+  'files.totalTooLong':
+    'The files are too long together (at most {max} characters).',
+  'files.unsupported':
+    'The file “{name}” cannot be read. Supported are PDF, Word (.docx), text, Markdown, CSV and source code.',
+  'files.noText':
+    'No text was found in “{name}” – probably a scan (there is no text recognition).',
+  'prompt.filePage': '[Page {n}]',
+  'files.empty': 'The file “{name}” is empty.',
+  'files.binary': 'The file “{name}” is not a text file.',
+  'files.broken': 'The file “{name}” is damaged or cannot be read.',
+  'files.notFound': 'This file no longer exists.',
   'code.invalidFolder': 'Not a valid folder.',
   'code.folderMissing': "The folder doesn't exist (any more): {folder}",
   'code.notAFolder': 'That is not a folder: {folder}',

@@ -19,6 +19,7 @@ import type { CodeMode } from './code-agent';
 import type { ChatCompaction, CompactionDraft } from './compaction';
 import type { ServerProbe } from './failover';
 import type { GithubOpenResult } from './github';
+import type { ChatFileInput, MessageFile, ReadChatFile } from './files';
 import type { ChatImageInput, MessageImage } from './images';
 import type { MailSuggestion } from './mail-sorting';
 import type {
@@ -491,6 +492,8 @@ export interface MessageRecord {
   content: string;
   /** Bilder, die du mit dieser Nachricht geschickt hast (ohne die Bytes – `getChatImage` holt sie). */
   images?: MessageImage[];
+  /** Dateien, die du mit dieser Nachricht geschickt hast (ohne Text – `getChatFile` holt ihn). */
+  files?: MessageFile[];
   /** „Gedanken“ von Denkmodellen (qwen3, gpt-oss …), getrennt von der Antwort. */
   thinking: string;
   status: MessageStatus;
@@ -582,10 +585,12 @@ export interface ChatSendRequest {
   /** Wird zur ID der Antwort und kennzeichnet die Stream-Ereignisse. */
   requestId: string;
   model: string;
-  /** Der Text; darf leer sein, wenn Bilder dabei sind. */
+  /** Der Text; darf leer sein, wenn Bilder oder Dateien dabei sind. */
   content: string;
   /** Bilder (verkleinert, höchstens 4) – nur für Modelle mit Bild-Fähigkeit sinnvoll. */
   images?: ChatImageInput[];
+  /** Dateien (Text schon gelesen, höchstens 3). */
+  files?: ChatFileInput[];
   /** Nur für neue Chats: Einstellungen, die vor der ersten Nachricht gewählt wurden. */
   settings?: ChatSettings;
   /** Nur für neue Chats: gleich in diesem Projekt anlegen. */
@@ -891,6 +896,13 @@ export interface LocalDeskApi {
   getChatImage: (
     imageId: string,
   ) => Promise<Result<{ mime: string; data: Uint8Array }>>;
+  /** Liest den Text einer Datei (PDF, Word, Text, Code) für eine Nachricht – speichert nichts. */
+  readChatFile: (
+    name: string,
+    data: Uint8Array,
+  ) => Promise<Result<ReadChatFile>>;
+  /** Der gelesene Text einer Datei aus einer Nachricht (z. B. zum Neu-Senden nach „Bearbeiten“). */
+  getChatFile: (fileId: string) => Promise<Result<ReadChatFile>>;
   chatCancel: (requestId: string) => Promise<void>;
   /** Löscht die Nachricht und alle danach (Bearbeiten/Wiederholen); false = ging nicht (läuft gerade / gibt es nicht). */
   chatTruncate: (chatId: string, messageId: string) => Promise<boolean>;
@@ -1024,6 +1036,8 @@ export const IpcChannels = {
   deleteTemplate: 'templates:delete',
   chatSend: 'chat:send',
   getChatImage: 'chat:get-image',
+  readChatFile: 'chat:read-file',
+  getChatFile: 'chat:get-file',
   chatCancel: 'chat:cancel',
   chatTruncate: 'chat:truncate',
   copyText: 'clipboard:copy-text',

@@ -1,5 +1,5 @@
 import type { ChatMessage, MessageRecord } from './api';
-import { textWithImageMarkers } from './images';
+import { textWithAttachmentMarkers } from './files';
 import { tr } from './messages';
 
 /** Vereinbart: Vorschlag ab 6 Nachrichten … */
@@ -30,10 +30,15 @@ export function shouldSuggestSummary(
  */
 export function summaryMessages(messages: MessageRecord[]): ChatMessage[] {
   let transcript = messages
-    .filter((m) => m.content.trim() !== '' || (m.images?.length ?? 0) > 0)
+    .filter(
+      (m) =>
+        m.content.trim() !== '' ||
+        (m.images?.length ?? 0) > 0 ||
+        (m.files?.length ?? 0) > 0,
+    )
     .map(
       (m) =>
-        `${m.role === 'user' ? tr('prompt.summaryUser') : tr('prompt.summaryAssistant')}: ${textWithImageMarkers(m)}`,
+        `${m.role === 'user' ? tr('prompt.summaryUser') : tr('prompt.summaryAssistant')}: ${textWithAttachmentMarkers(m)}`,
     )
     .join('\n\n');
   if (transcript.length > SUMMARY_TRANSCRIPT_MAX) {

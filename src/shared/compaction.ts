@@ -2,7 +2,8 @@ import type { ChatMessage, ChatRequest, MessageRecord } from './api';
 import { estimateTokens } from './context';
 import { tr } from './messages';
 import { isUsable, toRequestMessages } from './chat';
-import { IMAGE_TOKENS_ESTIMATE, textWithImageMarkers } from './images';
+import { fileTokens, textWithAttachmentMarkers } from './files';
+import { IMAGE_TOKENS_ESTIMATE } from './images';
 
 /**
  * Kontext verdichten: Der ältere Teil eines langen Chats wird zu einer Zusammenfassung,
@@ -46,8 +47,10 @@ const messageTokens = (message: MessageRecord) =>
     (sum, m) => sum + estimateTokens(m.content) + 4,
     0,
   ) +
-  // Ein Bild geht nur mit, wenn das Modell Bilder kann – zählt hier vorsichtshalber mit.
-  (message.images?.length ?? 0) * IMAGE_TOKENS_ESTIMATE;
+  // Ein Bild geht nur mit, wenn das Modell Bilder kann, eine Datei nur unter den letzten 3 –
+  // beides zählt hier vorsichtshalber mit.
+  (message.images?.length ?? 0) * IMAGE_TOKENS_ESTIMATE +
+  (message.files ?? []).reduce((sum, file) => sum + fileTokens(file.chars), 0);
 
 /** Tokens, die diese Nachrichten (plus eine Zusammenfassung davor) in der Anfrage belegen. */
 export function historyTokens(
@@ -136,7 +139,7 @@ export function compactionChunks(
       1_500,
   );
   const lines = messages.filter(isUsable).map((m) => {
-    const line = `${m.role === 'user' ? tr('prompt.summaryUser') : tr('prompt.summaryAssistant')}: ${textWithImageMarkers(m)}`;
+    const line = `${m.role === 'user' ? tr('prompt.summaryUser') : tr('prompt.summaryAssistant')}: ${textWithAttachmentMarkers(m)}`;
     return line.length > maxChars
       ? `${line.slice(0, maxChars - 40)} ${tr('prompt.compactCut')}`
       : line;

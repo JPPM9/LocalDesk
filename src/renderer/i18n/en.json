@@ -177,14 +177,28 @@
     "confirmDelete": "Delete chat “{{title}}” permanently?",
     "send": "Send",
     "stop": "Stop",
+    "attach": {
+      "button": "Attach a file or image",
+      "drop": "Drop a file or image here",
+      "preparing": "Reading …"
+    },
+    "files": {
+      "remove": "Remove file “{{name}}”",
+      "pages_one": "{{count}} page",
+      "pages_other": "{{count}} pages",
+      "tokens": "≈ {{tokens}} tokens",
+      "tooMany": "At most {{max}} files per message.",
+      "tooBig": "“{{name}}” is too large (at most {{max}} MB).",
+      "unreadable": "“{{name}}” cannot be read.",
+      "tight": "The files need about {{tokens}} tokens. The context ({{length}} tokens) is too tight for that – Ollama would silently cut off the beginning of the chat.",
+      "raise": "Raise the context length to {{length}}",
+      "noRaise": "Even this model's largest context ({{length}}) is not enough – use a shorter file or “Knowledge”."
+    },
     "images": {
-      "attach": "Attach an image",
       "remove": "Remove image “{{name}}”",
       "enlarge": "Enlarge image “{{name}}”",
       "close": "Close",
       "gone": "The image “{{name}}” no longer exists.",
-      "drop": "Drop an image here",
-      "preparing": "Preparing the image …",
       "noVision": "This model cannot read images. Pick a model with image support.",
       "noVisionTry": "This model cannot read images. Pick a model with image support, for example {{model}}.",
       "tooMany": "At most {{max}} images per message.",
@@ -265,6 +279,7 @@
       "instructions": "Instructions",
       "history": "History",
       "images": "Images",
+      "files": "Files",
       "knowledge": "Knowledge",
       "tools": "Tools",
       "skills": "Skills"

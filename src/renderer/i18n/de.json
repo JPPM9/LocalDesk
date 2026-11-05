@@ -177,14 +177,28 @@
     "confirmDelete": "Chat „{{title}}“ endgültig löschen?",
     "send": "Senden",
     "stop": "Stopp",
+    "attach": {
+      "button": "Datei oder Bild anhängen",
+      "drop": "Datei oder Bild hier ablegen",
+      "preparing": "Wird gelesen …"
+    },
+    "files": {
+      "remove": "Datei „{{name}}“ entfernen",
+      "pages_one": "{{count}} Seite",
+      "pages_other": "{{count}} Seiten",
+      "tokens": "≈ {{tokens}} Tokens",
+      "tooMany": "Höchstens {{max}} Dateien pro Nachricht.",
+      "tooBig": "„{{name}}“ ist zu groß (höchstens {{max}} MB).",
+      "unreadable": "„{{name}}“ kann nicht gelesen werden.",
+      "tight": "Die Dateien brauchen etwa {{tokens}} Tokens. Der Kontext ({{length}} Tokens) ist damit zu knapp – Ollama würde den Anfang des Chats still abschneiden.",
+      "raise": "Kontextlänge auf {{length}} erhöhen",
+      "noRaise": "Auch der größte Kontext dieses Modells ({{length}}) reicht nicht – nimm eine kürzere Datei oder „Wissen“."
+    },
     "images": {
-      "attach": "Bild anhängen",
       "remove": "Bild „{{name}}“ entfernen",
       "enlarge": "Bild „{{name}}“ vergrößern",
       "close": "Schließen",
       "gone": "Das Bild „{{name}}“ gibt es nicht mehr.",
-      "drop": "Bild hier ablegen",
-      "preparing": "Bild wird vorbereitet …",
       "noVision": "Dieses Modell kann keine Bilder. Wähle ein Modell mit Bild-Fähigkeit.",
       "noVisionTry": "Dieses Modell kann keine Bilder. Wähle ein Modell mit Bild-Fähigkeit, zum Beispiel {{model}}.",
       "tooMany": "Höchstens {{max}} Bilder pro Nachricht.",
@@ -265,6 +279,7 @@
       "instructions": "Anweisungen",
       "history": "Verlauf",
       "images": "Bilder",
+      "files": "Dateien",
       "knowledge": "Wissen",
       "tools": "Tools",
       "skills": "Skills"

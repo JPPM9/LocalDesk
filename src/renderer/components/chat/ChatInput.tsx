@@ -7,31 +7,80 @@ import {
   type ReactNode,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowUp, Paperclip, Square, X } from 'lucide-react';
+import {
+  ArrowUp,
+  FileText,
+  Paperclip,
+  Square,
+  TriangleAlert,
+  X,
+} from 'lucide-react';
+import { ANSWER_RESERVE, suggestContextLength } from '../../../shared/context';
+import { READABLE_EXTENSIONS } from '../../../shared/file-kinds';
+import {
+  FILE_DOCUMENT_MAX_BYTES,
+  FILES_MAX_PER_MESSAGE,
+  fileTokens,
+} from '../../../shared/files';
 import {
   IMAGE_MAX_PER_MESSAGE,
   IMAGE_SOURCE_MAX_BYTES,
 } from '../../../shared/images';
+import {
+  FileProblem,
+  prepareFile,
+  type Attachments,
+  type PreparedFile,
+} from '../../chat/files';
 import {
   ImageProblem,
   prepareImage,
   type PreparedImage,
 } from '../../chat/images';
 import { useShortcut } from '../../shortcuts/useShortcut';
+import { formatContext } from '../../utils/format';
 
 interface ChatInputProps {
   disabled: boolean;
   isRunning: boolean;
-  onSend: (text: string, images: PreparedImage[]) => void;
+  onSend: (text: string, attachments: Attachments) => void;
   onStop: () => void;
   /** Schalter in der Leiste unter dem Text (Wissen, Werkzeuge). */
   tools?: ReactNode;
   /**
-   * Bilder anhängen: fehlt = gibt es hier nicht (z. B. im Code-Bereich). `allowed` = das
-   * gewählte Modell kann Bilder; `suggestion` = ein installiertes Modell, das es kann.
+   * Dateien und Bilder anhängen: fehlt = gibt es hier nicht (z. B. im Code-Bereich).
+   * Dateien gehen an jedes Modell; Bilder nur, wenn das Modell sie lesen kann.
    */
-  images?: { allowed: boolean; suggestion?: string };
+  attach?: {
+    /** Das gewählte Modell kann Bilder. */
+    imagesAllowed: boolean;
+    /** Ein installiertes Modell, das Bilder kann (für den Hinweis). */
+    suggestion?: string;
+    /** Für den Hinweis, wenn Dateien nicht in den Kontext passen. */
+    context: {
+      length: number;
+      /** Schon belegt (ohne die neue Nachricht), geschätzt. */
+      used: number;
+      /** Größte Kontextlänge, die das Modell kann. */
+      modelMax?: number;
+      onRaise: (length: number) => void;
+    };
+  };
 }
+
+const isImage = (file: File) =>
+  file.type.startsWith('image/') || /\.(heic|heif)$/i.test(file.name);
+
+const ACCEPT = [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+  'image/bmp',
+  '.heic',
+  '.heif',
+  ...READABLE_EXTENSIONS,
+].join(',');
 
 export function ChatInput({
   disabled,
@@ -39,7 +88,7 @@ export function ChatInput({
   onSend,
   onStop,
   tools,
-  images,
+  attach,
 }: ChatInputProps) {
   const { t } = useTranslation();
   const [text, setText] = useState('');
@@ -48,10 +97,14 @@ export function ChatInput({
   // Fokus-Wunsch, solange das Feld noch gesperrt ist (Modelle laden noch) –
   // ein gesperrtes Feld kann keinen Cursor bekommen.
   const [focusWanted, setFocusWanted] = useState(false);
-  // Angehängte Bilder (schon verkleinert), was gerade vorbereitet wird, Hinweis, Ziehen über dem Fenster.
-  const [attached, setAttached] = useState<PreparedImage[]>([]);
-  const attachedRef = useRef(attached);
-  attachedRef.current = attached;
+  // Angehängte Bilder (schon verkleinert) und Dateien (Text schon gelesen), was gerade
+  // vorbereitet wird, Hinweis, Ziehen über dem Fenster.
+  const [images, setImages] = useState<PreparedImage[]>([]);
+  const [files, setFiles] = useState<PreparedFile[]>([]);
+  const imagesRef = useRef(images);
+  imagesRef.current = images;
+  const filesRef = useRef(files);
+  filesRef.current = files;
   const [preparing, setPreparing] = useState(0);
   const [problem, setProblem] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -76,16 +129,16 @@ export function ChatInput({
   // Nicht gesendete Bilder geben ihre Vorschau-Adresse frei, wenn das Feld verschwindet.
   useEffect(
     () => () => {
-      for (const image of attachedRef.current) URL.revokeObjectURL(image.url);
+      for (const image of imagesRef.current) URL.revokeObjectURL(image.url);
     },
     [],
   );
 
-  const noVision = images?.suggestion
-    ? t('chat.images.noVisionTry', { model: images.suggestion })
+  const noVision = attach?.suggestion
+    ? t('chat.images.noVisionTry', { model: attach.suggestion })
     : t('chat.images.noVision');
 
-  const describe = (error: unknown): string => {
+  const describeImage = (error: unknown): string => {
     if (!(error instanceof ImageProblem)) {
       return t('chat.images.unreadable', { name: '' });
     }
@@ -106,41 +159,77 @@ export function ChatInput({
   };
 
   /** Verkleinert die Bilder und hängt sie an (höchstens 4; Fehler als Hinweis, der Rest geht weiter). */
-  const addFiles = async (files: File[]) => {
-    if (!images || files.length === 0) return;
-    if (!images.allowed) {
-      setProblem(noVision);
+  const addImages = async (list: File[], problems: string[]) => {
+    if (list.length === 0) return;
+    if (!attach?.imagesAllowed) {
+      problems.push(noVision);
       return;
     }
-    setProblem(null);
-    const room = Math.max(
-      0,
-      IMAGE_MAX_PER_MESSAGE - attachedRef.current.length,
-    );
-    if (files.length > room) {
-      setProblem(t('chat.images.tooMany', { max: IMAGE_MAX_PER_MESSAGE }));
+    const room = Math.max(0, IMAGE_MAX_PER_MESSAGE - imagesRef.current.length);
+    if (list.length > room) {
+      problems.push(t('chat.images.tooMany', { max: IMAGE_MAX_PER_MESSAGE }));
     }
+    for (const file of list.slice(0, room)) {
+      try {
+        const image = await prepareImage(file);
+        setImages((current) => [...current, image]);
+      } catch (error) {
+        problems.push(describeImage(error));
+      }
+    }
+  };
+
+  /** Lässt die Dateien lesen und hängt sie an (höchstens 3; Fehler als Hinweis, der Rest geht weiter). */
+  const addDocuments = async (list: File[], problems: string[]) => {
+    if (list.length === 0) return;
+    const room = Math.max(0, FILES_MAX_PER_MESSAGE - filesRef.current.length);
+    if (list.length > room) {
+      problems.push(t('chat.files.tooMany', { max: FILES_MAX_PER_MESSAGE }));
+    }
+    for (const file of list.slice(0, room)) {
+      try {
+        const prepared = await prepareFile(file);
+        setFiles((current) => [...current, prepared]);
+      } catch (error) {
+        problems.push(
+          error instanceof FileProblem && error.tooBig
+            ? t('chat.files.tooBig', {
+                name: error.fileName,
+                max: FILE_DOCUMENT_MAX_BYTES / 1024 / 1024,
+              })
+            : error instanceof Error && error.message
+              ? error.message
+              : t('chat.files.unreadable', { name: file.name }),
+        );
+      }
+    }
+  };
+
+  const addAttachments = async (all: File[]) => {
+    if (!attach || all.length === 0) return;
+    setProblem(null);
+    const problems: string[] = [];
     setPreparing((n) => n + 1);
     try {
-      for (const file of files.slice(0, room)) {
-        try {
-          const image = await prepareImage(file);
-          setAttached((current) => [...current, image]);
-        } catch (error) {
-          setProblem(describe(error));
-        }
-      }
+      await Promise.all([
+        addImages(all.filter(isImage), problems),
+        addDocuments(
+          all.filter((file) => !isImage(file)),
+          problems,
+        ),
+      ]);
     } finally {
       setPreparing((n) => n - 1);
     }
+    if (problems.length > 0) setProblem(problems.join(' '));
   };
-  const addFilesRef = useRef(addFiles);
-  addFilesRef.current = addFiles;
+  const addRef = useRef(addAttachments);
+  addRef.current = addAttachments;
 
-  // Bilder auf das Fenster ziehen (nur, wo es Bilder gibt).
-  const hasImages = images !== undefined;
+  // Dateien und Bilder auf das Fenster ziehen (nur, wo es das Anhängen gibt).
+  const canAttach = attach !== undefined;
   useEffect(() => {
-    if (!hasImages) return;
+    if (!canAttach) return;
     const hasFiles = (event: DragEvent) =>
       event.dataTransfer?.types.includes('Files') ?? false;
     let depth = 0;
@@ -162,7 +251,7 @@ export function ChatInput({
       event.preventDefault();
       depth = 0;
       setDragging(false);
-      void addFilesRef.current([...(event.dataTransfer?.files ?? [])]);
+      void addRef.current([...(event.dataTransfer?.files ?? [])]);
     };
     window.addEventListener('dragenter', enter);
     window.addEventListener('dragleave', leave);
@@ -174,26 +263,30 @@ export function ChatInput({
       window.removeEventListener('dragover', over);
       window.removeEventListener('drop', drop);
     };
-  }, [hasImages]);
+  }, [canAttach]);
 
-  const remove = (id: string) => {
-    const image = attached.find((i) => i.id === id);
+  const removeImage = (id: string) => {
+    const image = images.find((i) => i.id === id);
     if (image) URL.revokeObjectURL(image.url);
-    setAttached((current) => current.filter((i) => i.id !== id));
+    setImages((current) => current.filter((i) => i.id !== id));
   };
+  const removeFile = (id: string) =>
+    setFiles((current) => current.filter((f) => f.id !== id));
 
+  const hasAttachment = images.length > 0 || files.length > 0;
   const canSend =
     !disabled &&
     !isRunning &&
     preparing === 0 &&
-    (text.trim() !== '' || attached.length > 0);
+    (text.trim() !== '' || hasAttachment);
 
   const submit = () => {
     if (!canSend) return;
-    // Die Vorschau-Adressen gehen mit: Die Nachricht zeigt dieselben Bilder.
-    onSend(text, attached);
+    // Die Vorschau-Adressen der Bilder gehen mit: Die Nachricht zeigt dieselben Bilder.
+    onSend(text, { images, files });
     setText('');
-    setAttached([]);
+    setImages([]);
+    setFiles([]);
     setProblem(null);
   };
 
@@ -209,16 +302,27 @@ export function ChatInput({
     }
   };
 
-  // Strg+V mit einem Bild in der Zwischenablage (z. B. ein Screenshot).
+  // Strg+V mit einer Datei oder einem Bild in der Zwischenablage (Screenshot, in Explorer kopierte Datei).
   const onPaste = (event: ClipboardEvent<HTMLTextAreaElement>) => {
-    if (!images) return;
-    const files = [...event.clipboardData.files].filter((file) =>
-      file.type.startsWith('image/'),
-    );
-    if (files.length === 0) return;
+    if (!attach) return;
+    const pasted = [...event.clipboardData.files];
+    if (pasted.length === 0) return;
     event.preventDefault();
-    void addFiles(files);
+    void addAttachments(pasted);
   };
+
+  // Passen die Dateien noch in den Kontext? Sonst Hinweis (Ollama würde den Anfang still abschneiden).
+  const fileTokenSum = files.reduce((sum, f) => sum + fileTokens(f.chars), 0);
+  const context = attach?.context;
+  const needed = (context?.used ?? 0) + fileTokenSum;
+  const tooTight =
+    context !== undefined &&
+    files.length > 0 &&
+    context.length - needed < ANSWER_RESERVE;
+  const raiseTo =
+    tooTight && context
+      ? suggestContextLength(needed, context.length, context.modelMax)
+      : null;
 
   return (
     <div
@@ -228,12 +332,38 @@ export function ChatInput({
     >
       {dragging && (
         <p className="mb-2 text-center text-sm font-medium text-accent-text">
-          {t('chat.images.drop')}
+          {t('chat.attach.drop')}
         </p>
       )}
-      {(attached.length > 0 || preparing > 0) && (
+      {(hasAttachment || preparing > 0) && (
         <ul className="mb-2 flex flex-wrap items-center gap-2 px-1">
-          {attached.map((image) => (
+          {files.map((file) => (
+            <li
+              key={file.id}
+              title={file.name}
+              className="relative flex max-w-[260px] items-center gap-2 rounded-lg border border-border bg-surface py-1.5 pr-3 pl-2.5 text-xs"
+            >
+              <FileText size={16} className="shrink-0 text-muted" />
+              <span className="min-w-0">
+                <span className="block truncate font-medium">{file.name}</span>
+                <span className="block text-subtle">
+                  {file.pages !== undefined &&
+                    `${t('chat.files.pages', { count: file.pages })} · `}
+                  {t('chat.files.tokens', { tokens: fileTokens(file.chars) })}
+                </span>
+              </span>
+              <button
+                type="button"
+                onClick={() => removeFile(file.id)}
+                title={t('chat.files.remove', { name: file.name })}
+                aria-label={t('chat.files.remove', { name: file.name })}
+                className="absolute -top-1.5 -right-1.5 grid h-5 w-5 place-items-center rounded-full border border-border bg-surface text-muted hover:text-text"
+              >
+                <X size={12} />
+              </button>
+            </li>
+          ))}
+          {images.map((image) => (
             <li key={image.id} className="relative">
               <img
                 src={image.url}
@@ -243,7 +373,7 @@ export function ChatInput({
               />
               <button
                 type="button"
-                onClick={() => remove(image.id)}
+                onClick={() => removeImage(image.id)}
                 title={t('chat.images.remove', { name: image.name })}
                 aria-label={t('chat.images.remove', { name: image.name })}
                 className="absolute -top-1.5 -right-1.5 grid h-5 w-5 place-items-center rounded-full border border-border bg-surface text-muted hover:text-text"
@@ -253,9 +383,37 @@ export function ChatInput({
             </li>
           ))}
           {preparing > 0 && (
-            <li className="text-xs text-muted">{t('chat.images.preparing')}</li>
+            <li className="text-xs text-muted">{t('chat.attach.preparing')}</li>
           )}
         </ul>
+      )}
+      {tooTight && context && (
+        <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-warn/40 bg-warn/10 px-3 py-2 text-xs">
+          <TriangleAlert size={14} className="shrink-0 text-warn" />
+          <span className="min-w-0 flex-1">
+            {t('chat.files.tight', {
+              tokens: fileTokenSum,
+              length: formatContext(context.length),
+            })}
+            {raiseTo === null && (
+              <>
+                {' '}
+                {t('chat.files.noRaise', {
+                  length: formatContext(context.modelMax ?? context.length),
+                })}
+              </>
+            )}
+          </span>
+          {raiseTo !== null && (
+            <button
+              type="button"
+              onClick={() => context.onRaise(raiseTo)}
+              className="rounded-lg bg-accent px-2.5 py-1 text-xs font-medium text-white hover:opacity-90"
+            >
+              {t('chat.files.raise', { length: formatContext(raiseTo) })}
+            </button>
+          )}
+        </div>
       )}
       <textarea
         ref={textareaRef}
@@ -276,25 +434,25 @@ export function ChatInput({
         </p>
       )}
       <div className="mt-1.5 flex items-center gap-1.5 border-t border-border pt-2">
-        {images && (
+        {attach && (
           <>
             <input
               ref={fileRef}
               type="file"
               multiple
               hidden
-              accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,.heic,.heif"
+              accept={ACCEPT}
               onChange={(event) => {
-                void addFiles([...(event.target.files ?? [])]);
+                void addAttachments([...(event.target.files ?? [])]);
                 event.target.value = '';
               }}
             />
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
-              disabled={disabled || !images.allowed}
-              title={images.allowed ? t('chat.images.attach') : noVision}
-              aria-label={t('chat.images.attach')}
+              disabled={disabled}
+              title={t('chat.attach.button')}
+              aria-label={t('chat.attach.button')}
               className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-border text-muted hover:bg-surface-hover hover:text-text disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-muted"
             >
               <Paperclip size={15} />

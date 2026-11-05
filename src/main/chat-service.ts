@@ -13,6 +13,11 @@ import {
   type ToolDecision,
 } from '../shared/api';
 import { applyChatEvent, isUsable, titleFromMessage } from '../shared/chat';
+import {
+  checkFileInputs,
+  filesToSend,
+  type ReadChatFile,
+} from '../shared/files';
 import { checkImageInputs, imagesToSend, sniffImage } from '../shared/images';
 import {
   CODE_CONTEXT_DEFAULT,
@@ -52,7 +57,13 @@ import {
 } from './code/edit-tools';
 import { allowedInMode, filterForMode } from './code/code-mode';
 import { Workspace } from './code/workspace';
-import type { ChatRepository, StoredImage } from './db/chat-repository';
+import { readChatFile } from './chat-files';
+import type {
+  ChatRepository,
+  StoredFile,
+  StoredImage,
+} from './db/chat-repository';
+import { WorkerExtractor } from './rag/extractor';
 import type { ChatKnowledge } from './knowledge-service';
 import type { MailClient } from './mail/mail-client';
 import { callMailTool, describeMailTool, mailTools } from './mail/mail-tools';
@@ -153,7 +164,15 @@ export function registerChatHandlers(
     const checked = checkImageInputs(request.images);
     if (!checked.ok) throw new Error(checked.error);
     const imageInputs = checked.value;
-    if (request.content.trim() === '' && imageInputs.length === 0) {
+    // Dateien: Anzahl, Art und Länge des (schon gelesenen) Textes werden hier geprüft.
+    const checkedFiles = checkFileInputs(request.files);
+    if (!checkedFiles.ok) throw new Error(checkedFiles.error);
+    const fileInputs = checkedFiles.value;
+    if (
+      request.content.trim() === '' &&
+      imageInputs.length === 0 &&
+      fileInputs.length === 0
+    ) {
       throw new Error(tr('error.invalidChatRequest'));
     }
     const storedImages: StoredImage[] = imageInputs.map((image) => ({
@@ -162,13 +181,16 @@ export function registerChatHandlers(
       mime: sniffImage(image.data)!,
       data: image.data,
     }));
+    const storedFiles: StoredFile[] = fileInputs;
 
     if (!chats.chatExists(request.chatId)) {
       chats.createChat({
         id: request.chatId,
         title: request.content.trim()
           ? titleFromMessage(request.content)
-          : tr('chat.imageTitle', { name: imageInputs[0].name }),
+          : imageInputs.length > 0
+            ? tr('chat.imageTitle', { name: imageInputs[0].name })
+            : tr('chat.fileTitle', { name: fileInputs[0].name }),
         model: request.model,
         settings: request.settings,
       });
@@ -200,6 +222,15 @@ export function registerChatHandlers(
           size: image.data.byteLength,
         })),
       }),
+      ...(storedFiles.length > 0 && {
+        files: storedFiles.map((file) => ({
+          id: file.id,
+          name: file.name,
+          kind: file.kind,
+          chars: file.text.length,
+          ...(file.pages !== undefined && { pages: file.pages }),
+        })),
+      }),
       thinking: '',
       status: 'done',
     };
@@ -213,6 +244,7 @@ export function registerChatHandlers(
     };
     chats.appendMessage(request.chatId, userMessage);
     if (storedImages.length > 0) chats.addImages(userMessage.id, storedImages);
+    if (storedFiles.length > 0) chats.addFiles(userMessage.id, storedFiles);
     chats.appendMessage(request.chatId, answer);
 
     const controller = new AbortController();
@@ -233,6 +265,12 @@ export function registerChatHandlers(
       const image = chats.getImage(id);
       if (image) imageData.set(id, Buffer.from(image.data).toString('base64'));
     }
+    // Der Text der letzten 3 Dateien des Verlaufs geht mit; ältere stehen nur als Hinweis.
+    const fileText = new Map<string, string>();
+    for (const id of filesToSend(sendable.filter(isUsable))) {
+      const file = chats.getFile(id);
+      if (file) fileText.set(id, file.text);
+    }
     const plainRequest = buildChatRequest(
       request.model,
       sendable,
@@ -240,7 +278,11 @@ export function registerChatHandlers(
       workspace
         ? codeAgentPrompt(path.basename(workspace), new Date(), codeMode)
         : project?.instructions,
-      { vision, data: (id) => imageData.get(id) },
+      {
+        vision,
+        data: (id) => imageData.get(id),
+        fileText: (id) => fileText.get(id),
+      },
     );
     const chatRequest = compacted.compaction
       ? withCompaction(plainRequest, compacted.compaction.summary)
@@ -296,6 +338,33 @@ export function registerChatHandlers(
       return image
         ? { ok: true, value: { mime: image.mime, data: image.data } }
         : { ok: false, error: tr('images.notFound') };
+    },
+  );
+
+  // Eine Datei für die Nachricht lesen (PDF, Word, Text, Code) – speichert nichts; erst das
+  // Senden legt den Text bei der Nachricht ab.
+  ipcMain.handle(
+    IpcChannels.readChatFile,
+    (_event, name: unknown, data: unknown) =>
+      readChatFile(
+        name,
+        data,
+        // Der Worker liegt nach dem Bauen als eigene Datei neben main.js.
+        () => new WorkerExtractor(path.join(__dirname, 'extract-worker.cjs')),
+      ),
+  );
+
+  // Der gelesene Text einer Datei aus einer Nachricht (für „Bearbeiten“ und „Antwort wiederholen“).
+  ipcMain.handle(
+    IpcChannels.getChatFile,
+    (_event, fileId: unknown): Result<ReadChatFile> => {
+      const file =
+        typeof fileId === 'string' && fileId.length <= 100
+          ? chats.getFile(fileId)
+          : null;
+      return file
+        ? { ok: true, value: file }
+        : { ok: false, error: tr('files.notFound') };
     },
   );
 
@@ -723,6 +792,7 @@ function isChatSendRequest(value: unknown): value is ChatSendRequest {
     // Leer ist erlaubt, wenn Bilder dabei sind – das prüft der Aufrufer nach den Bildern.
     typeof r.content === 'string' &&
     (r.images === undefined || Array.isArray(r.images)) &&
+    (r.files === undefined || Array.isArray(r.files)) &&
     (r.folderId === undefined || typeof r.folderId === 'string')
   );
 }

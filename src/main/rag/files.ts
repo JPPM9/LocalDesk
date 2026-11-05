@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { readdir, readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import type { KnowledgeSource } from '../../shared/api';
+import { kindOfExtension, type FileKind } from '../../shared/file-kinds';
 import type { Extractor } from './extractor';
 import { tr } from '../../shared/messages';
 
@@ -12,18 +13,7 @@ export const MAX_DOCUMENT_BYTES = 50 * 1024 * 1024;
 /** Schutz gegen versehentlich riesige Ordner. */
 export const MAX_FILES = 10_000;
 
-export type FileKind = 'markdown' | 'text' | 'code' | 'pdf' | 'docx';
-
-const MARKDOWN = new Set(['.md', '.markdown', '.mdx']);
-const TEXT = new Set(['.txt', '.text', '.log', '.csv', '.tsv']);
-const CODE = new Set([
-  ...['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.vue', '.svelte'],
-  ...['.py', '.java', '.kt', '.kts', '.cs', '.go', '.rs', '.swift', '.dart'],
-  ...['.c', '.h', '.cpp', '.hpp', '.cc', '.rb', '.php', '.lua', '.r', '.m'],
-  ...['.sh', '.bash', '.ps1', '.bat', '.cmd', '.sql', '.gradle'],
-  ...['.html', '.htm', '.css', '.scss', '.sass', '.less', '.xml', '.svg'],
-  ...['.json', '.jsonc', '.yaml', '.yml', '.toml', '.ini', '.cfg', '.conf'],
-]);
+export type { FileKind };
 
 /** Ordner, die nie eingelesen werden: Abhängigkeiten, Build-Ergebnisse, Caches. */
 const IGNORED_DIRS = new Set([
@@ -44,14 +34,7 @@ const IGNORED_FILES =
   /(^|[\\/])(package-lock\.json|yarn\.lock|pnpm-lock\.yaml|Cargo\.lock|poetry\.lock)$|\.min\.(js|css)$|\.map$/i;
 
 export function fileKind(filePath: string): FileKind | null {
-  const ext = path.extname(filePath).toLowerCase();
-  if (MARKDOWN.has(ext)) return 'markdown';
-  if (TEXT.has(ext)) return 'text';
-  if (CODE.has(ext)) return 'code';
-  if (ext === '.pdf') return 'pdf';
-  // Nur das heutige Word-Format; alte .doc-Dateien sind ein anderes, binäres Format.
-  if (ext === '.docx') return 'docx';
-  return null;
+  return kindOfExtension(path.extname(filePath).toLowerCase());
 }
 
 export interface FoundFile {

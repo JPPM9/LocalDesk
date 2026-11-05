@@ -6,7 +6,8 @@ import type {
   MessageRecord,
   ToolDefinition,
 } from '../../shared/api';
-import { toRequestMessages } from '../../shared/chat';
+import { isUsable, toRequestMessages } from '../../shared/chat';
+import { fileTokens, filesToSend } from '../../shared/files';
 import { compactedHistory, type ChatCompaction } from '../../shared/compaction';
 import {
   contextUsage,
@@ -100,7 +101,15 @@ export function useContextUsage(
       messages.filter((m) => m.status !== 'streaming'),
       compaction,
     );
+    // Dateien: Die letzten 3 gehen mit ihrem ganzen Text mit – geschätzt aus der Länge.
+    const sendable = compacted.messages.filter(isUsable);
+    const sentFiles = filesToSend(sendable);
+    const filesTokens = sendable
+      .flatMap((m) => m.files ?? [])
+      .filter((f) => sentFiles.has(f.id))
+      .reduce((sum, f) => sum + fileTokens(f.chars), 0);
     const parts = estimateContextParts({
+      filesTokens,
       summaryText: compacted.compaction?.summary,
       memoryText: memoryPrompt(chatMemories.map((m) => m.text)),
       skillsText: skillsPrompt(
@@ -109,10 +118,11 @@ export function useContextUsage(
       instructions: [project?.instructions, settings.systemPrompt]
         .filter(Boolean)
         .join('\n\n'),
-      // Hier zählen nur die Bilder (nicht ihr Inhalt) – ein Platzhalter reicht.
+      // Hier zählen nur die Bilder (nicht ihr Inhalt) und die Dateien extra – Platzhalter reichen.
       history: toRequestMessages(compacted.messages, {
         vision: modelSupportsVision,
         data: () => '-',
+        fileText: () => '',
       }),
       knowledgeActive: Boolean(
         settings.collections?.length || project?.collectionId,

@@ -265,6 +265,22 @@ const migrations: string[] = [
 
   CREATE INDEX message_images_by_message ON message_images(message_id, position);
   `,
+  // 21: Dateien in Nachrichten (PDF, Word, Text, Code): gespeichert wird der gelesene Text,
+  // nicht die Originaldatei. Wie die Bilder gehören sie zur Nachricht und verschwinden mit ihr.
+  `
+  CREATE TABLE message_files (
+    id         TEXT PRIMARY KEY,
+    message_id TEXT NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
+    position   INTEGER NOT NULL,
+    name       TEXT NOT NULL,
+    kind       TEXT NOT NULL,
+    chars      INTEGER NOT NULL,
+    pages      INTEGER,
+    text       TEXT NOT NULL
+  );
+
+  CREATE INDEX message_files_by_message ON message_files(message_id, position);
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */

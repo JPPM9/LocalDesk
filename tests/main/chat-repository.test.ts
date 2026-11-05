@@ -5,7 +5,10 @@ import {
   openDatabase,
   SCHEMA_VERSION,
 } from '../../src/main/db/database';
-import { ChatRepository } from '../../src/main/db/chat-repository';
+import {
+  ChatRepository,
+  type StoredFile,
+} from '../../src/main/db/chat-repository';
 import type { MessageRecord } from '../../src/shared/api';
 
 // Jeder Test bekommt eine frische Datenbank im Arbeitsspeicher und eine
@@ -300,6 +303,129 @@ describe('Bilder in Nachrichten', () => {
     expect(alt.getChat('alt')!.messages[0]).not.toHaveProperty('images');
     alt.addImages('m1', [picture('img-1', 'a.jpg', 1)]);
     expect(alt.getChat('alt')!.messages[0].images).toHaveLength(1);
+  });
+});
+
+describe('Dateien in Nachrichten', () => {
+  const file = (
+    id: string,
+    name: string,
+    text: string,
+    pages?: number,
+  ): StoredFile => ({
+    id,
+    name,
+    kind: pages ? 'pdf' : 'text',
+    text,
+    ...(pages !== undefined && { pages }),
+  });
+  const fileCount = () =>
+    (
+      db.prepare('SELECT COUNT(*) AS n FROM message_files').get() as {
+        n: number;
+      }
+    ).n;
+
+  beforeEach(() => {
+    repo.createChat({ id: 'c1', title: 'x', model: 'm' });
+    repo.appendMessage('c1', userMessage('u1', 'Fasse zusammen.'));
+    repo.addFiles('u1', [
+      file('f-zwei', 'zweite.txt', 'Zweiter Text'),
+      file('f-eins', 'erste.pdf', '[Seite 1]\nErster Text', 3),
+    ]);
+    repo.appendMessage('c1', {
+      ...answer('a1'),
+      content: 'Zusammenfassung.',
+      status: 'done',
+    });
+  });
+
+  it('getChat liefert Name, Art, Länge und Seiten in der gespeicherten Reihenfolge – ohne den Text', () => {
+    const [user, reply] = repo.getChat('c1')!.messages;
+    expect(user.files).toEqual([
+      { id: 'f-zwei', name: 'zweite.txt', kind: 'text', chars: 12 },
+      { id: 'f-eins', name: 'erste.pdf', kind: 'pdf', chars: 21, pages: 3 },
+    ]);
+    expect(JSON.stringify(user)).not.toContain('Zweiter Text');
+    expect(reply).not.toHaveProperty('files');
+  });
+
+  it('getFile holt den gelesenen Text einer Datei', () => {
+    expect(repo.getFile('f-eins')).toEqual({
+      name: 'erste.pdf',
+      kind: 'pdf',
+      text: '[Seite 1]\nErster Text',
+      chars: 21,
+      pages: 3,
+    });
+    expect(repo.getFile('f-zwei')).not.toHaveProperty('pages');
+    expect(repo.getFile('gibt-es-nicht')).toBeNull();
+  });
+
+  it('Dateien anderer Chats erscheinen nicht in diesem Chat', () => {
+    repo.createChat({ id: 'c2', title: 'y', model: 'm' });
+    repo.appendMessage('c2', userMessage('u2', 'Anderes'));
+    repo.addFiles('u2', [file('f-fremd', 'fremd.txt', 'Fremd')]);
+    expect(repo.getChat('c1')!.messages[0].files).toHaveLength(2);
+    expect(repo.getChat('c2')!.messages[0].files).toEqual([
+      { id: 'f-fremd', name: 'fremd.txt', kind: 'text', chars: 5 },
+    ]);
+  });
+
+  it('„Bearbeiten“ (truncateFrom) und Chat löschen nehmen die Dateien mit', () => {
+    repo.appendMessage('c1', userMessage('u2', 'Noch eine'));
+    repo.addFiles('u2', [file('f-drei', 'dritte.txt', 'Dritter Text')]);
+    expect(fileCount()).toBe(3);
+    expect(repo.truncateFrom('c1', 'u2')).toBe(true);
+    expect(fileCount()).toBe(2);
+    expect(repo.getFile('f-drei')).toBeNull();
+    expect(repo.getFile('f-eins')).not.toBeNull();
+    repo.deleteChat('c1');
+    expect(fileCount()).toBe(0);
+  });
+
+  it('dieselbe Datei-Kennung geht nicht zweimal', () => {
+    repo.appendMessage('c1', userMessage('u2', 'Noch eine'));
+    expect(() =>
+      repo.addFiles('u2', [file('f-eins', 'doppelt.txt', 'x')]),
+    ).toThrow();
+  });
+
+  it('Bilder und Dateien einer Nachricht stören sich nicht', () => {
+    repo.addImages('u1', [
+      {
+        id: 'img-a',
+        name: 'a.jpg',
+        mime: 'image/jpeg',
+        data: new Uint8Array(4),
+      },
+    ]);
+    const [user] = repo.getChat('c1')!.messages;
+    expect(user.images).toHaveLength(1);
+    expect(user.files).toHaveLength(2);
+  });
+
+  it('bringt eine Datenbank von vor den Dateien ohne Datenverlust auf den neuen Stand', () => {
+    const old = new DatabaseSync(':memory:');
+    migrate(old, 20);
+    old.exec('PRAGMA foreign_keys = ON');
+    old
+      .prepare(
+        "INSERT INTO chats (id, title, model, created_at, updated_at) VALUES ('alt', 'Alt', 'm', 1, 1)",
+      )
+      .run();
+    old
+      .prepare(
+        `INSERT INTO messages (id, chat_id, position, role, content, thinking, status, created_at)
+         VALUES ('m1', 'alt', 0, 'user', 'Hallo', '', 'done', 1)`,
+      )
+      .run();
+    migrate(old);
+    const alt = new ChatRepository(old);
+    expect(alt.getChat('alt')!.messages[0]).toMatchObject({ content: 'Hallo' });
+    expect(alt.getChat('alt')!.messages[0]).not.toHaveProperty('files');
+    alt.addFiles('m1', [file('f-1', 'a.txt', 'Text')]);
+    expect(alt.getChat('alt')!.messages[0].files).toHaveLength(1);
   });
 });
 

@@ -167,6 +167,51 @@ describe('pickCut', () => {
   });
 });
 
+describe('Dateien beim Verdichten', () => {
+  const doc = (id: string, name: string, chars: number) => ({
+    id,
+    name,
+    kind: 'pdf' as const,
+    chars,
+  });
+
+  it('das Modell sieht im Gespräch nur den Hinweis „[Datei: …]“, nicht den Inhalt', () => {
+    const chunks = compactionChunks(
+      [
+        {
+          ...msg('u0', 'user', 'Fasse zusammen.'),
+          files: [doc('f', 'bericht.pdf', 5000)],
+        },
+        { ...msg('u1', 'user', ''), files: [doc('g', 'nur-datei.pdf', 10)] },
+      ],
+      4096,
+    );
+    expect(chunks.join('\n')).toContain(
+      'Nutzer: [Datei: bericht.pdf]\nFasse zusammen.',
+    );
+    expect(chunks.join('\n')).toContain('Nutzer: [Datei: nur-datei.pdf]');
+  });
+
+  it('eine Datei zählt mit ihrer Länge als Tokens und eine Nachricht nur mit Datei zählt', () => {
+    // Jede Datei ≈ 2000 Zeichen = 500 Tokens: 40 % von 1000 = 400 → hinten bleiben nur die letzten 2.
+    const file = (id: string): MessageRecord => ({
+      ...msg(id, 'user', ''),
+      files: [doc(`${id}-datei`, 'x.pdf', 2000)],
+    });
+    const messages = [
+      file('u0'),
+      msg('a0', 'assistant', 'Zusammenfassung 1.'),
+      file('u1'),
+      msg('a1', 'assistant', 'Zusammenfassung 2.'),
+      file('u2'),
+      msg('a2', 'assistant', 'Zusammenfassung 3.'),
+    ];
+    const cut = pickCut(messages, 1000);
+    expect(cut).toBe(4);
+    expect(messages[cut].id).toBe('u2');
+  });
+});
+
 describe('Bilder beim Verdichten', () => {
   it('das Modell sieht im Gespräch den Hinweis „[Bild: …]“ statt des Bildes', () => {
     const chunks = compactionChunks(
