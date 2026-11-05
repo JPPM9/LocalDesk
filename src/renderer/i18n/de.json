@@ -342,7 +342,11 @@
       "mail_change": "Mail-Änderung",
       "mail_create_label": "Label anlegen",
       "mail_rename_label": "Label umbenennen"
-    }
+    },
+    "webAsk": "Webseite lesen?",
+    "webAllow": "Erlauben",
+    "webHint": "Die Seite sieht dabei deine IP-Adresse und die Adresse, die gelesen wird. Adressen, die du selbst in eine Nachricht schreibst, liest das Modell ohne Rückfrage.",
+    "webTool": "Webseite lesen"
   },
   "downloads": {
     "placeholder": "Modellname, z. B. qwen3:8b",
@@ -853,6 +857,15 @@
     "none": "Noch kein Mail-Konto angemeldet.",
     "toSettings": "Zu den Einstellungen",
     "noTools": "Das gewählte Modell kann keine Werkzeuge benutzen – wähle eines mit „Tools“, damit es Mails lesen kann."
+  },
+  "webChat": {
+    "button": "Internet: Webseiten im Chat lesen",
+    "chip": "Internet",
+    "title": "Internet im Chat",
+    "intro": "Das Modell darf in diesem Chat Webseiten lesen – nur den Text, ohne Anmeldung und ohne Skripte.",
+    "switch": "Webseiten lesen erlauben",
+    "hint": "Adressen, die du selbst in eine Nachricht schreibst, liest das Modell ohne Rückfrage. Bei allen anderen fragt LocalDesk vorher – mit der ganzen Adresse. Seiten im eigenen Netz bleiben gesperrt.",
+    "noTools": "Das gewählte Modell kann keine Werkzeuge benutzen – wähle eines mit „Tools“, damit es Seiten lesen kann."
   },
   "code": {
     "title": "Code",

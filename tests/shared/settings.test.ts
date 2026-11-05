@@ -49,6 +49,13 @@ describe('normalizeSettings', () => {
     expect(normalizeSettings('text')).toEqual({});
   });
 
+  it('„Internet“ wird nur gespeichert, wenn es an ist', () => {
+    expect(normalizeSettings({ web: true })).toEqual({ web: true });
+    expect(normalizeSettings({ web: false })).toEqual({});
+    expect(normalizeSettings({ web: 'ja' })).toEqual({});
+    expect(normalizeSettings({ web: 1 })).toEqual({});
+  });
+
   it('kennt die Denk-Stufen von gpt-oss', () => {
     expect(normalizeSettings({ think: 'low' })).toEqual({ think: 'low' });
   });

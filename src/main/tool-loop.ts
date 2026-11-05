@@ -178,7 +178,10 @@ async function runToolCall(
   }
 
   let args = call.arguments;
-  if (tool.permission === 'ask' || context.confirmAll) {
+  const needsAnswer =
+    (tool.permission === 'ask' && !tool.autoAllow?.(args)) ||
+    !!context.confirmAll;
+  if (needsAnswer) {
     // Erst prüfen und verständlich beschreiben – Unsinn erreicht dich gar nicht.
     let preview: string | undefined;
     if (tool.describe) {

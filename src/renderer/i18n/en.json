@@ -342,7 +342,11 @@
       "mail_change": "Mail change",
       "mail_create_label": "Create label",
       "mail_rename_label": "Rename label"
-    }
+    },
+    "webAsk": "Read web page?",
+    "webAllow": "Allow",
+    "webHint": "The site sees your IP address and the address being read. The model reads addresses you write yourself in a message without asking.",
+    "webTool": "Read web page"
   },
   "downloads": {
     "placeholder": "Model name, e.g. qwen3:8b",
@@ -853,6 +857,15 @@
     "none": "No mail account signed in yet.",
     "toSettings": "Go to Settings",
     "noTools": "The selected model can't use tools – choose one with “Tools” so it can read mail."
+  },
+  "webChat": {
+    "button": "Internet: read web pages in chat",
+    "chip": "Internet",
+    "title": "Internet in chat",
+    "intro": "In this chat the model may read web pages – text only, without signing in and without scripts.",
+    "switch": "Allow reading web pages",
+    "hint": "The model reads addresses you write yourself in a message without asking. For all others LocalDesk asks first, showing the full address. Pages on your own network stay blocked.",
+    "noTools": "The selected model can't use tools – choose one with “Tools” so it can read pages."
   },
   "code": {
     "title": "Code",

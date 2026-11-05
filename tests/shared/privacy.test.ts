@@ -17,6 +17,15 @@ describe('Datenschutzerklärung', () => {
     expect(privacy).toContain(GITHUB_API_HOST);
   });
 
+  it('beschreibt in beiden Sprachen, wann das Modell Webseiten liest und was die Seite sieht', () => {
+    expect(privacy).toContain('Any web page');
+    expect(privacy).toContain('“Internet” switch');
+    expect(privacy).toContain('the site sees your IP address');
+    expect(privacy).toContain('Beliebige Webseite');
+    expect(privacy).toContain('Schalter „Internet“');
+    expect(privacy).toContain('die Seite sieht deine IP-Adresse');
+  });
+
   it('enthält die Zusage zur eingeschränkten Nutzung von Google-Daten', () => {
     expect(privacy).toContain('Google API Services User Data Policy');
     expect(privacy).toContain('Limited Use');

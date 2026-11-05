@@ -51,6 +51,7 @@ import { McpButton } from '../components/mcp/McpButton';
 import { OLLAMA_DEFAULT_CONTEXT } from '../../shared/context';
 import { SkillsButton } from '../components/skills/SkillPicker';
 import { MailButton } from '../components/mail/MailButton';
+import { WebButton } from '../components/web/WebButton';
 import { useConfirm } from '../components/ConfirmDialog';
 
 // Nur eine Bequemlichkeit pro Rechner: das zuletzt gewählte Modell für neue Chats.
@@ -620,6 +621,16 @@ export function ChatPage() {
                 <MailButton
                   selected={settings.mailAccounts ?? []}
                   onChange={(ids) => setList('mailAccounts', ids)}
+                  modelSupportsTools={models
+                    .find((m) => m.name === model)
+                    ?.capabilities.includes('tools')}
+                />
+                <WebButton
+                  on={settings.web === true}
+                  onChange={(on) => {
+                    const { web: _old, ...rest } = settings;
+                    updateSettings(on ? { ...rest, web: true } : rest);
+                  }}
                   modelSupportsTools={models
                     .find((m) => m.name === model)
                     ?.capabilities.includes('tools')}

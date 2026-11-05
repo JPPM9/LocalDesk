@@ -42,6 +42,12 @@ export interface OfferedTool {
    * Wirft sie, läuft das Werkzeug nicht – das Modell bekommt den Fehler.
    */
   describe?: (args: Record<string, unknown>) => Promise<string>;
+  /**
+   * Läuft dieser Aufruf ohne Rückfrage, obwohl das Werkzeug sonst fragt? (z. B. eine Adresse,
+   * die du selbst geschrieben hast.) Bei einem Server auf einem anderen Rechner fragt trotzdem
+   * jeder Aufruf.
+   */
+  autoAllow?: (args: Record<string, unknown>) => boolean;
 }
 
 /** Ein angebotenes Tool mit dem Namen, unter dem das Modell es kennt. */

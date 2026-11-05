@@ -419,6 +419,8 @@ export interface ChatSettings {
   rerank?: boolean;
   /** Mail-Konto, das das Modell in diesem Chat lesen darf (Schalter „E-Mail“; höchstens eins). */
   mailAccounts?: string[];
+  /** Das Modell darf Webseiten lesen (Schalter „Internet“; nur Modelle mit Tools, nicht in Code-Sitzungen). */
+  web?: boolean;
   /** Nur Code-Sitzungen: „plan“ = nur lesen und planen; fehlt = „manual“ (alles einzeln bestätigen). */
   codeMode?: CodeMode;
 }

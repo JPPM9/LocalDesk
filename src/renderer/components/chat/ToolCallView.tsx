@@ -13,6 +13,7 @@ import { ACCESS_TOOL_SERVER } from '../../../shared/access';
 import { MEMORY_TOOL_SERVER } from '../../../shared/memory';
 import { CODE_CHANGE_TOOLS, CODE_TOOL_SERVER } from '../../../shared/code';
 import { MAIL_TOOL_SERVER } from '../../../shared/mail';
+import { WEB_TOOL_SERVER } from '../../../shared/web';
 import { CodeChangeRow } from '../code/CodeChangeRow';
 import { DiffView } from '../code/DiffView';
 import { SKILL_TOOL_SERVER } from '../../../shared/skills';
@@ -57,8 +58,9 @@ export function ToolCallView({
   const isCommand =
     call.serverId === CODE_TOOL_SERVER &&
     (call.toolName === 'run_command' || call.toolName === 'git_commit');
-  // Mail und Code fragen in Alltagssprache, nicht mit dem Werkzeugnamen.
-  const friendly = isMail || isCodeChange || isCommand;
+  const isWeb = call.serverId === WEB_TOOL_SERVER;
+  // Mail, Internet und Code fragen in Alltagssprache, nicht mit dem Werkzeugnamen.
+  const friendly = isMail || isWeb || isCodeChange || isCommand;
 
   // „Erinnerung speichern“: Vorschlag bearbeiten, dann speichern oder ablehnen.
   if (isMemory && call.status === 'asking') {
@@ -94,9 +96,11 @@ export function ToolCallView({
           <ShieldQuestion size={16} className="shrink-0 text-accent-text" />
           {isMail
             ? t('toolCall.mailAsk')
-            : isCodeChange || isCommand
-              ? t(`code.ask.${call.toolName}`)
-              : t('toolCall.askTitle', { tool: call.toolName })}
+            : isWeb
+              ? t('toolCall.webAsk')
+              : isCodeChange || isCommand
+                ? t(`code.ask.${call.toolName}`)
+                : t('toolCall.askTitle', { tool: call.toolName })}
         </div>
         {!friendly && (
           <p className="text-xs text-muted">
@@ -114,10 +118,13 @@ export function ToolCallView({
         ) : call.preview && isCommand ? (
           <Code text={call.preview} />
         ) : call.preview ? (
-          <p className="text-[13px] whitespace-pre-wrap">{call.preview}</p>
+          <p className="text-[13px] break-words whitespace-pre-wrap">
+            {call.preview}
+          </p>
         ) : (
           <Code text={formatArguments(call.arguments)} />
         )}
+        {isWeb && <p className="text-xs text-muted">{t('toolCall.webHint')}</p>}
         <div className="flex flex-wrap gap-2 pt-1">
           <button
             type="button"
@@ -126,9 +133,11 @@ export function ToolCallView({
           >
             {isCommand
               ? t(`code.confirm.${call.toolName}`)
-              : friendly
-                ? t('toolCall.mailApply')
-                : t('toolCall.allowOnce')}
+              : isWeb
+                ? t('toolCall.webAllow')
+                : friendly
+                  ? t('toolCall.mailApply')
+                  : t('toolCall.allowOnce')}
           </button>
           {!call.alwaysAsk && (
             <button
@@ -158,7 +167,7 @@ export function ToolCallView({
     <details className="group rounded-xl border border-border text-[13px]">
       <summary className="flex cursor-pointer items-center gap-2 px-3 py-2 text-muted select-none hover:text-text">
         <StatusIcon status={call.status} />
-        {isMemory || isSkill || isMail || isCommand || isAccess ? (
+        {isMemory || isSkill || isMail || isWeb || isCommand || isAccess ? (
           <span>
             {t(
               isAccess
@@ -167,9 +176,11 @@ export function ToolCallView({
                   ? 'toolCall.skillTool'
                   : isMail
                     ? `toolCall.mailTool.${call.toolName}`
-                    : isCommand
-                      ? `code.label.${call.toolName}`
-                      : 'toolCall.memoryTool',
+                    : isWeb
+                      ? 'toolCall.webTool'
+                      : isCommand
+                        ? `code.label.${call.toolName}`
+                        : 'toolCall.memoryTool',
               { defaultValue: call.toolName },
             )}
           </span>

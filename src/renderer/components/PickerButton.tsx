@@ -9,6 +9,8 @@ interface PickerButtonProps {
   chipText: string;
   /** Wie viele Einträge gewählt sind – 0 = Knopf neutral, sonst hervorgehoben mit Zahl. */
   count: number;
+  /** Die Zahl neben dem Namen zeigen – bei einem reinen An/Aus-Schalter („Internet“) nicht. */
+  showCount?: boolean;
   title: string;
   intro: string;
   children: ReactNode;
@@ -23,6 +25,7 @@ export function PickerButton({
   label,
   chipText,
   count,
+  showCount = true,
   title,
   intro,
   children,
@@ -67,7 +70,7 @@ export function PickerButton({
       >
         <Icon size={14} />
         {chipText}
-        {active && <span className="tabular-nums">· {count}</span>}
+        {active && showCount && <span className="tabular-nums">· {count}</span>}
       </button>
       {open && (
         <div

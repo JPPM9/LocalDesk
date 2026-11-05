@@ -209,6 +209,81 @@ describe('runAnswer', () => {
     expect(runtime.calls).toEqual([]);
   });
 
+  describe('autoAllow', () => {
+    const webLike = (allow: boolean): OfferedTool => ({
+      ...writeTool,
+      toolName: 'read_webpage',
+      destructive: false,
+      alwaysAsk: true,
+      autoAllow: (args) => allow && args.url === 'https://beispiel.de/',
+    });
+    const wanted = (url: string): ChatChunk[][] => [
+      [
+        {
+          type: 'tool-calls',
+          calls: [{ name: 'read_webpage', arguments: { url } }],
+        },
+      ],
+      [{ type: 'content', text: 'Fertig' }],
+    ];
+
+    it('läuft ohne Rückfrage, wenn autoAllow „ja“ sagt', async () => {
+      const runtime = fakeRuntime([webLike(true)]);
+      const { events } = await run(wanted('https://beispiel.de/'), runtime);
+      expect(runtime.ask).not.toHaveBeenCalled();
+      expect(runtime.calls).toEqual([
+        'read_webpage({"url":"https://beispiel.de/"})',
+      ]);
+      // Direkt „läuft“ und „fertig“ – kein „fragt“ dazwischen.
+      expect(toolCallStatuses(events)).toEqual([
+        'read_webpage:running',
+        'read_webpage:done',
+      ]);
+    });
+
+    it('fragt, wenn autoAllow „nein“ sagt (andere Adresse)', async () => {
+      const runtime = fakeRuntime([webLike(true)], 'deny');
+      await run(wanted('https://anders.example/'), runtime);
+      expect(runtime.ask).toHaveBeenCalledOnce();
+      expect(runtime.calls).toEqual([]);
+    });
+
+    it('fragt auch ohne autoAllow-Treffer nach – und „Immer erlauben“ gibt es nicht', async () => {
+      const runtime = fakeRuntime([webLike(false)], 'always');
+      const { events } = await run(wanted('https://beispiel.de/'), runtime);
+      expect(runtime.ask).toHaveBeenCalledOnce();
+      expect(runtime.allowed).toEqual([]);
+      expect(events.find((e) => e.type === 'tool-call')).toMatchObject({
+        call: { alwaysAsk: true },
+      });
+    });
+
+    it('Server auf anderem Rechner: fragt trotz autoAllow', async () => {
+      const runtime = fakeRuntime([webLike(true)], 'deny');
+      await run(wanted('https://beispiel.de/'), runtime, { confirmAll: true });
+      expect(runtime.ask).toHaveBeenCalledOnce();
+      expect(runtime.calls).toEqual([]);
+    });
+
+    it('ein Werkzeug mit „immer“ ignoriert autoAllow', async () => {
+      const runtime = fakeRuntime([{ ...readTool, autoAllow: () => false }]);
+      await run(
+        [
+          [
+            {
+              type: 'tool-calls',
+              calls: [{ name: 'read_text_file', arguments: { path: 'a.md' } }],
+            },
+          ],
+          [],
+        ],
+        runtime,
+      );
+      expect(runtime.ask).not.toHaveBeenCalled();
+      expect(runtime.calls).toHaveLength(1);
+    });
+  });
+
   it('fragt bei „ask“ und führt nach Ablehnung nichts aus', async () => {
     const runtime = fakeRuntime([writeTool], 'deny');
     const { events, requests } = await run(

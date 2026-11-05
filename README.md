@@ -10,7 +10,7 @@ LocalDesk is a Windows desktop app that sits on top of a local [Ollama](https://
 
 Two rules shape the whole app:
 
-- **Nothing leaves your PC unless you ask for it.** The only outside connections are the ones you set up yourself (a second Ollama server in your LAN, your own Google app for Gmail, the update check and the skill search on GitHub). The full list is in the [privacy policy](docs/privacy.md).
+- **Nothing leaves your PC unless you ask for it.** The only outside connections are the ones you set up yourself (a second Ollama server in your LAN, your own Google app for Gmail, the update check and the skill search on GitHub, and web pages the model reads when you switch on "Internet" in a chat). The full list is in the [privacy policy](docs/privacy.md).
 - **The model never changes anything on its own.** Writing files, running commands, committing and changing mail all show a card first and wait for your click.
 
 Status: the first release (0.1.0) is not published yet. The installer and the update button work.
@@ -45,6 +45,10 @@ Status: the first release (0.1.0) is not published yet. The installer and the up
 
 - Instructions as `SKILL.md` files (same format as Claude skills). Turn them on by hand, preset them in projects and templates, or let the model load a fitting one itself. Add skills by dragging `.md`, `.zip` or `.skill` files onto the Skills page (several at once): LocalDesk reads and checks them first, shows a preview with a safety check, and saves only what you confirm. "From GitHub" finds skills: search for repositories (or paste a link to a repository, a folder or a `.md` file), pick the skills inside, and LocalDesk loads only their text files into the same preview with safety check. Nothing is contacted until you click, and nothing is saved before "Add". Stars show popularity, not safety. Skills up to 60,000 characters work (LocalDesk shows the size in tokens and tells you which context length a chat needs), and text files next to the `SKILL.md` (for example `references/…`) can be read by the model when needed. A skill is plain text. It runs nothing, and scripts are never executed.
 
+**Internet**
+
+- A switch "Internet" in a chat lets the model read web pages (needs a model with tool support). Addresses you write in a message yourself are read at once; for every other address a card shows the complete address and waits for your click, every time. LocalDesk reads only the text of a page (main text as Markdown, no scripts, no cookies, no sign-in), never addresses in your own network (this PC, home network, cloud metadata), and long pages come in pieces. Web search is not built in yet.
+
 **Obsidian**
 
 - LocalDesk writes only to its own subfolder of your vault. It keeps memories about you (the model proposes, you confirm), saves chats and summaries as notes, and can index the vault as a knowledge collection.
@@ -75,6 +79,7 @@ Status: the first release (0.1.0) is not published yet. The installer and the up
 
 - `react-markdown`, `remark-gfm`, `rehype-highlight` for rendering answers
 - `pdfjs-dist` and `mammoth` to read PDF and Word files (in a worker thread)
+- `linkedom` and `@mozilla/readability` to find the main text of a web page (nothing on the page is run)
 - `diff` for the before/after view
 - `@modelcontextprotocol/sdk` for the MCP client
 - `electron-updater` for updates; the Inter font is bundled, nothing loads from the internet
@@ -85,6 +90,7 @@ Status: the first release (0.1.0) is not published yet. The installer and the up
 - Gmail API and Google OAuth (loopback redirect with PKCE), only if you set up e-mail
 - GitHub Releases, for the update check
 - GitHub REST API (repository search and file listing, read-only, no sign-in) and `raw.githubusercontent.com`, only when you use "From GitHub" on the Skills page
+- Any web page, only when "Internet" is on in a chat and the model reads it (a page you did not write the address of needs your click)
 - npm, to fetch the official MCP file-system server (`@modelcontextprotocol/server-filesystem`) with `npx`
 
 **Inspiration**
