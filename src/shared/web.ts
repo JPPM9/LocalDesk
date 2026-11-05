@@ -78,3 +78,32 @@ export function extractLinks(text: string): string[] {
   }
   return [...found];
 }
+
+/** Websuche (Schalter „Im Web suchen“): Werkzeug und Suchdienst. */
+export const WEB_SEARCH_TOOL = 'web_search';
+/** Der einzige Host, an den die Suche geht (Ollama-Websuche). */
+export const WEB_SEARCH_HOST = 'ollama.com';
+export const WEB_SEARCH_URL = `https://${WEB_SEARCH_HOST}/api/web_search`;
+/** So viele Treffer bekommt das Modell (Ollama erlaubt bis 10; mehr kostet Kontext). */
+export const WEB_SEARCH_RESULTS = 5;
+export const WEB_SEARCH_QUERY_MAX = 400;
+export const WEB_SEARCH_TIMEOUT_MS = 15_000;
+export const WEB_SEARCH_MAX_BYTES = 1_000_000;
+export const WEB_SEARCH_TITLE_MAX = 200;
+export const WEB_SEARCH_SNIPPET_MAX = 500;
+/** Länge des Ollama-Schlüssels, die wir zulassen (das Format ist nicht festgelegt). */
+export const WEB_SEARCH_KEY_MIN = 10;
+export const WEB_SEARCH_KEY_MAX = 300;
+
+/** Ein Treffer der Websuche. `url` ist normalisiert (siehe `normalizeLink`). */
+export interface WebSearchHit {
+  title: string;
+  url: string;
+  snippet: string;
+}
+
+/** Was die Oberfläche über die Suche weiß – den Schlüssel selbst nie. */
+export interface WebSearchState {
+  /** Ein Ollama-Schlüssel ist gespeichert. */
+  configured: boolean;
+}

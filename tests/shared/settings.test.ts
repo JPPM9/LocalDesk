@@ -56,6 +56,16 @@ describe('normalizeSettings', () => {
     expect(normalizeSettings({ web: 1 })).toEqual({});
   });
 
+  it('„Im Web suchen“ wird nur gespeichert, wenn es an ist – unabhängig vom Lesen', () => {
+    expect(normalizeSettings({ webSearch: true })).toEqual({ webSearch: true });
+    expect(normalizeSettings({ web: true, webSearch: true })).toEqual({
+      web: true,
+      webSearch: true,
+    });
+    expect(normalizeSettings({ webSearch: false })).toEqual({});
+    expect(normalizeSettings({ webSearch: 'ja' })).toEqual({});
+  });
+
   it('kennt die Denk-Stufen von gpt-oss', () => {
     expect(normalizeSettings({ think: 'low' })).toEqual({ think: 'low' });
   });

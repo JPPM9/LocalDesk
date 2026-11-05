@@ -10,6 +10,7 @@ import { ObsidianSettings } from '../components/settings/ObsidianSettings';
 import { ServerSettings } from '../components/settings/ServerSettings';
 import { LicenseSection } from '../components/settings/LicenseSection';
 import { UpdateSection } from '../components/settings/UpdateSection';
+import { WebSearchSettings } from '../components/settings/WebSearchSettings';
 
 /** Abschnitte in Reihenfolge – für die Sprungliste links. */
 const SECTIONS = [
@@ -18,6 +19,7 @@ const SECTIONS = [
   { id: 'mcp', titleKey: 'mcp.title' },
   { id: 'obsidian', titleKey: 'obsidian.title' },
   { id: 'email', titleKey: 'mailSettings.title' },
+  { id: 'suche', titleKey: 'webSearchSettings.title' },
   { id: 'datenschutz', titleKey: 'privacy.title' },
   { id: 'ueber', titleKey: 'settings.about' },
 ] as const;
@@ -110,6 +112,7 @@ export function SettingsPage() {
           {section('mcp', <McpSettings />)}
           {section('obsidian', <ObsidianSettings />)}
           {section('email', <MailSettings />)}
+          {section('suche', <WebSearchSettings />)}
           {section('datenschutz', <PrivacySection />)}
           {section(
             'ueber',

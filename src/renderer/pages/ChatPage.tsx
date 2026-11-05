@@ -132,6 +132,11 @@ export function ChatPage() {
     const { [key]: _old, ...rest } = settings;
     updateSettings(ids.length > 0 ? { ...rest, [key]: ids } : rest);
   };
+  // Die Haken „Webseiten lesen“ und „Im Web suchen“: nur „an“ wird gespeichert.
+  const setFlag = (key: 'web' | 'webSearch', on: boolean) => {
+    const { [key]: _old, ...rest } = settings;
+    updateSettings(on ? { ...rest, [key]: true } : rest);
+  };
 
   const {
     models,
@@ -626,11 +631,10 @@ export function ChatPage() {
                     ?.capabilities.includes('tools')}
                 />
                 <WebButton
-                  on={settings.web === true}
-                  onChange={(on) => {
-                    const { web: _old, ...rest } = settings;
-                    updateSettings(on ? { ...rest, web: true } : rest);
-                  }}
+                  read={settings.web === true}
+                  onRead={(on) => setFlag('web', on)}
+                  search={settings.webSearch === true}
+                  onSearch={(on) => setFlag('webSearch', on)}
                   modelSupportsTools={models
                     .find((m) => m.name === model)
                     ?.capabilities.includes('tools')}

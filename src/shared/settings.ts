@@ -61,6 +61,7 @@ export function normalizeSettings(raw: unknown): ChatSettings {
   if (mailAccounts.length > 0) result.mailAccounts = mailAccounts;
   // „Internet“: nur „an“ wird gespeichert.
   if (input.web === true) result.web = true;
+  if (input.webSearch === true) result.webSearch = true;
   // „manual“ ist der Standard und wird nicht gespeichert.
   if (input.codeMode === 'plan') result.codeMode = 'plan';
   return result;

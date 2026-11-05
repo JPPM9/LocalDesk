@@ -1,4 +1,5 @@
-import { ipcMain, safeStorage, shell } from 'electron';
+import { ipcMain, shell } from 'electron';
+import { safeStorageCipher } from './secret-cipher';
 import { IpcChannels, type ChatRequest, type Result } from '../shared/api';
 import { mailSummaryContext, mailSummaryMessages } from '../shared/mail-prompt';
 import {
@@ -31,23 +32,11 @@ import { applyMailChangeList } from './mail/apply-changes';
 import { GmailClient } from './mail/gmail-client';
 import type { MailClient } from './mail/mail-client';
 import { guardedFetch } from './mail/mail-fetch';
-import { MailSessions, type TokenCipher } from './mail/mail-sessions';
+import { MailSessions } from './mail/mail-sessions';
 import { tr } from '../shared/messages';
 
 const GOOGLE_ID_KEY = 'mail.google.clientId';
 const GOOGLE_SECRET_KEY = 'mail.google.clientSecret';
-
-/** Windows-Verschlüsselung (DPAPI) – nur dein Windows-Konto kann es entschlüsseln. */
-const safeStorageCipher: TokenCipher = {
-  available: () => safeStorage.isAsyncEncryptionAvailable(),
-  encrypt: async (text) =>
-    (await safeStorage.encryptStringAsync(text)).toString('base64'),
-  // `shouldReEncrypt` (neuer Schlüssel bei Windows) ignorieren wir: Der alte
-  // Text bleibt lesbar, und beim nächsten Anmelden wird ohnehin neu verschlüsselt.
-  decrypt: async (encrypted) =>
-    (await safeStorage.decryptStringAsync(Buffer.from(encrypted, 'base64')))
-      .result,
-};
 
 /**
  * Eigene Mail-Apps und angemeldete Konten. Der Clientschlüssel einer Desktop-App

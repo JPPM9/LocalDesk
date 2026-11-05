@@ -10,7 +10,7 @@ LocalDesk is a Windows desktop app that sits on top of a local [Ollama](https://
 
 Two rules shape the whole app:
 
-- **Nothing leaves your PC unless you ask for it.** The only outside connections are the ones you set up yourself (a second Ollama server in your LAN, your own Google app for Gmail, the update check and the skill search on GitHub, and web pages the model reads when you switch on "Internet" in a chat). The full list is in the [privacy policy](docs/privacy.md).
+- **Nothing leaves your PC unless you ask for it.** The only outside connections are the ones you set up yourself (a second Ollama server in your LAN, your own Google app for Gmail, the update check and the skill search on GitHub, and web pages and Ollama web searches when you switch on "Internet" and "Search the web" in a chat). The full list is in the [privacy policy](docs/privacy.md).
 - **The model never changes anything on its own.** Writing files, running commands, committing and changing mail all show a card first and wait for your click.
 
 Status: the first release (0.1.0) is not published yet. The installer and the update button work.
@@ -47,7 +47,8 @@ Status: the first release (0.1.0) is not published yet. The installer and the up
 
 **Internet**
 
-- A switch "Internet" in a chat lets the model read web pages (needs a model with tool support). Addresses you write in a message yourself are read at once; for every other address a card shows the complete address and waits for your click, every time. LocalDesk reads only the text of a page (main text as Markdown, no scripts, no cookies, no sign-in), never addresses in your own network (this PC, home network, cloud metadata), and long pages come in pieces. Web search is not built in yet.
+- A switch "Internet" in a chat lets the model read web pages (needs a model with tool support). Addresses you write in a message yourself are read at once; for every other address a card shows the complete address and waits for your click, every time. LocalDesk reads only the text of a page (main text as Markdown, no scripts, no cookies, no sign-in), never addresses in your own network (this PC, home network, cloud metadata), and long pages come in pieces.
+- A second checkbox "Search the web" (off by default) lets the model search. LocalDesk uses the Ollama web search: you need a free account at ollama.com and an API key, which you enter yourself under **Settings → Internet search** (stored encrypted with Windows, never shown again, with a "Test" button). The model searches without asking, but every query is shown in the chat; it goes to ollama.com together with your key and can contain words from your chat. Addresses from the hits of a search in this chat the model may read without a card, exactly as found; every other address still needs your click.
 
 **Obsidian**
 
@@ -91,6 +92,7 @@ Status: the first release (0.1.0) is not published yet. The installer and the up
 - GitHub Releases, for the update check
 - GitHub REST API (repository search and file listing, read-only, no sign-in) and `raw.githubusercontent.com`, only when you use "From GitHub" on the Skills page
 - Any web page, only when "Internet" is on in a chat and the model reads it (a page you did not write the address of needs your click)
+- Ollama web search (`https://ollama.com/api/web_search`, with your own key), only when "Search the web" is on in a chat and the model searches
 - npm, to fetch the official MCP file-system server (`@modelcontextprotocol/server-filesystem`) with `npx`
 
 **Inspiration**

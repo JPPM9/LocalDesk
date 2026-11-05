@@ -65,6 +65,11 @@ const api: LocalDeskApi = {
     ipcRenderer.invoke(IpcChannels.codeChangeState, callId),
   undoCodeChange: (callId, force) =>
     ipcRenderer.invoke(IpcChannels.undoCodeChange, callId, force),
+  getWebSearch: () => ipcRenderer.invoke(IpcChannels.getWebSearch),
+  setWebSearchKey: (key) =>
+    ipcRenderer.invoke(IpcChannels.setWebSearchKey, key),
+  clearWebSearchKey: () => ipcRenderer.invoke(IpcChannels.clearWebSearchKey),
+  testWebSearch: () => ipcRenderer.invoke(IpcChannels.testWebSearch),
   getMailApps: () => ipcRenderer.invoke(IpcChannels.getMailApps),
   setGoogleApp: (app) => ipcRenderer.invoke(IpcChannels.setGoogleApp, app),
   clearGoogleApp: () => ipcRenderer.invoke(IpcChannels.clearGoogleApp),

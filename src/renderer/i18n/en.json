@@ -346,7 +346,10 @@
     "webAsk": "Read web page?",
     "webAllow": "Allow",
     "webHint": "The site sees your IP address and the address being read. The model reads addresses you write yourself in a message without asking.",
-    "webTool": "Read web page"
+    "webTool": "Read web page",
+    "webSearchAsk": "Search the web?",
+    "webSearchHint": "The search query goes to ollama.com together with your key. Ollama sees the query and your IP address.",
+    "webSearchTool": "Web search"
   },
   "downloads": {
     "placeholder": "Model name, e.g. qwen3:8b",
@@ -754,6 +757,24 @@
     "noTools": "This model cannot use tools, so it does not load skills on its own. Only the skills you switch on here apply.",
     "hidden": "With {{context}} tokens of context the model only sees {{shown}} of {{total}} skills to choose from. Raise the context length or switch important skills on here yourself."
   },
+  "webSearchSettings": {
+    "title": "Internet search",
+    "intro": "With the “Search the web” checkbox in the Internet popup of a chat, the model may search the web. LocalDesk uses the web search of Ollama for that. You need a free account at ollama.com and an API key (ollama.com/settings/keys), which you enter here.",
+    "privacy": "Every search goes to ollama.com together with your key. Ollama sees the search query, the key and your IP address. The model writes the query – it may contain words from your chat.",
+    "provider": "Ollama web search",
+    "keyLabel": "Ollama key",
+    "keyHint": "Stored encrypted with Windows and never shown again.",
+    "keyPlaceholder": "Paste the key here",
+    "saved": "Key saved",
+    "encrypted": "encrypted with Windows",
+    "test": "Test",
+    "testing": "Testing …",
+    "testHint": "Sends a test search (“Ollama”) to ollama.com.",
+    "testOk": "The key works, the search answers.",
+    "replace": "Replace",
+    "remove": "Remove",
+    "confirmRemove": "Remove the saved Ollama key? Web search then stops working in every chat until you enter a new one."
+  },
   "mailSettings": {
     "title": "E-mail",
     "intro": "LocalDesk reads your mail directly from Google – through your own app that you create there. There is no sending or deleting; LocalDesk changes labels and stars only after you confirm.",
@@ -859,13 +880,18 @@
     "noTools": "The selected model can't use tools – choose one with “Tools” so it can read mail."
   },
   "webChat": {
-    "button": "Internet: read web pages in chat",
+    "button": "Internet: read web pages and search the web",
     "chip": "Internet",
     "title": "Internet in chat",
-    "intro": "In this chat the model may read web pages – text only, without signing in and without scripts.",
+    "intro": "In this chat the model may read web pages (text only, without signing in and without scripts) and, if you allow it, search the web.",
     "switch": "Allow reading web pages",
     "hint": "The model reads addresses you write yourself in a message without asking. For all others LocalDesk asks first, showing the full address. Pages on your own network stay blocked.",
-    "noTools": "The selected model can't use tools – choose one with “Tools” so it can read pages."
+    "searchSwitch": "Search the web",
+    "searchHint": "The model searches without asking; the query is shown in the chat. It goes to ollama.com and may contain words from your chat. The model reads addresses from the hits without asking.",
+    "searchNoKey": "The Ollama key for searching is missing.",
+    "searchKeyGone": "The Ollama key is missing – the model cannot search.",
+    "toSettings": "Go to Settings",
+    "noTools": "The selected model can't use tools – choose one with “Tools” so it can read pages and search."
   },
   "code": {
     "title": "Code",
@@ -945,7 +971,7 @@
   },
   "privacy": {
     "title": "Privacy",
-    "intro": "No telemetry, no account, no ads. Your data stays on this PC and only goes to the Ollama server you set.",
+    "intro": "No telemetry, no account, no ads. Your data stays on this PC and only goes to the Ollama server you set – unless you switch something on yourself (e-mail, reading web pages, web search). All connections are listed in the privacy policy.",
     "show": "Show privacy policy",
     "hide": "Hide privacy policy",
     "missing": "The privacy policy was not found."

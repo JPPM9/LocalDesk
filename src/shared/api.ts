@@ -29,6 +29,7 @@ import type {
 } from './skill-import';
 import type { SkillInput, SkillView } from './skills';
 import type { UpdateState } from './update';
+import type { WebSearchState } from './web';
 
 export interface AppInfo {
   name: string;
@@ -421,6 +422,8 @@ export interface ChatSettings {
   mailAccounts?: string[];
   /** Das Modell darf Webseiten lesen (Schalter „Internet“; nur Modelle mit Tools, nicht in Code-Sitzungen). */
   web?: boolean;
+  /** Das Modell darf im Web suchen (zweiter Haken im „Internet“-Popup; braucht den Ollama-Schlüssel aus den Einstellungen). */
+  webSearch?: boolean;
   /** Nur Code-Sitzungen: „plan“ = nur lesen und planen; fehlt = „manual“ (alles einzeln bestätigen). */
   codeMode?: CodeMode;
 }
@@ -670,6 +673,14 @@ export interface LocalDeskApi {
     relative: string,
   ) => Promise<Result<CodeFile>>;
 
+  /** Ist ein Ollama-Schlüssel für die Websuche gespeichert? (Den Schlüssel selbst bekommt die Oberfläche nie.) */
+  getWebSearch: () => Promise<WebSearchState>;
+  /** Prüft und speichert den Ollama-Schlüssel (verschlüsselt mit Windows). */
+  setWebSearchKey: (key: string) => Promise<Result<WebSearchState>>;
+  /** Löscht den gespeicherten Schlüssel. */
+  clearWebSearchKey: () => Promise<WebSearchState>;
+  /** Macht eine Probe-Suche mit dem gespeicherten Schlüssel (eine Anfrage an ollama.com). */
+  testWebSearch: () => Promise<Result<null>>;
   /** Eingetragene eigene Mail-Apps (ohne Schlüssel). */
   getMailApps: () => Promise<MailAppView[]>;
   /** Prüft und speichert die eigene Google-App (Client-ID + Clientschlüssel). */
@@ -947,6 +958,10 @@ export const IpcChannels = {
   readCodeFile: 'code:read-file',
   codeChangeState: 'code:change-state',
   undoCodeChange: 'code:undo',
+  getWebSearch: 'web:get-search',
+  setWebSearchKey: 'web:set-search-key',
+  clearWebSearchKey: 'web:clear-search-key',
+  testWebSearch: 'web:test-search',
   getMailApps: 'mail:get-apps',
   setGoogleApp: 'mail:set-google-app',
   clearGoogleApp: 'mail:clear-google-app',

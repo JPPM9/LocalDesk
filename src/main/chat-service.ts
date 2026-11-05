@@ -68,8 +68,15 @@ import type { ChatKnowledge } from './knowledge-service';
 import type { MailClient } from './mail/mail-client';
 import { callMailTool, describeMailTool, mailTools } from './mail/mail-tools';
 import { callSkill } from './skills/skill-call';
-import { callWebTool, webTool } from './web/web-tool';
-import { extractLinks, WEB_TOOL_SERVER } from '../shared/web';
+import {
+  callWebSearchTool,
+  callWebTool,
+  chatWebLinks,
+  webSearchTool,
+  webTool,
+  type WebAccess,
+} from './web/web-tool';
+import { WEB_SEARCH_TOOL, WEB_TOOL_SERVER } from '../shared/web';
 import { compactedHistory, withCompaction } from '../shared/compaction';
 import { OLLAMA_DEFAULT_CONTEXT } from '../shared/context';
 import type { McpTools } from './mcp-service';
@@ -117,6 +124,8 @@ export function registerChatHandlers(
   },
   /** Sicherungen für „Rückgängig“ im Code-Bereich. */
   codeBackups: CodeBackups,
+  /** Der Ollama-Schlüssel für die Websuche (null = keiner gespeichert). */
+  webSearchKey: () => Promise<string | null>,
 ) {
   const running = new Map<string, AbortController>();
   /** Rückfragen, auf deren Antwort ein Tool-Aufruf wartet (Aufruf-ID → Antwort). */
@@ -304,14 +313,17 @@ export function registerChatHandlers(
         : null;
     // Schalter „Internet“: Adressen, die du selbst in diesem Chat geschrieben hast, liest das
     // Modell ohne Rückfrage – nur dein eigener Text zählt, nie Datei- oder Webseiten-Inhalt.
-    const webLinks =
-      settings.web === true && !workspace
-        ? extractLinks(
-            [
-              ...history.filter((m) => m.role === 'user').map((m) => m.content),
+    const web =
+      !workspace && (settings.web === true || settings.webSearch === true)
+        ? {
+            read: settings.web === true,
+            search: settings.webSearch === true,
+            links: chatWebLinks(
+              history,
               request.content,
-            ].join('\n'),
-          )
+              settings.webSearch === true,
+            ),
+          }
         : null;
     // Bewusst nicht abwarten: Die Oberfläche bekommt die Antwort über Ereignisse.
     void stream(
@@ -333,7 +345,7 @@ export function registerChatHandlers(
       workspace,
       codeMode,
       knowledgeSearch,
-      webLinks,
+      web,
       { projectId: project?.id, question: request.content },
       request.chatId,
       answer,
@@ -440,8 +452,8 @@ export function registerChatHandlers(
     offerAccess = false,
     /** Kontextlänge dieses Chats – ein Skill, der nicht hineinpasst, wird nicht geladen. */
     contextLength: number = OLLAMA_DEFAULT_CONTEXT,
-    /** Schalter „Internet“ an: Adressen aus deinen Nachrichten, die ohne Rückfrage gelesen werden (null = Werkzeug nicht anbieten). */
-    webLinks: string[] | null = null,
+    /** Schalter „Internet“: was das Modell lesen und suchen darf (null = nichts davon anbieten). */
+    web: WebAccess | null = null,
   ): ToolRuntime {
     const codeOffers = code
       ? filterForMode(
@@ -483,9 +495,10 @@ export function registerChatHandlers(
       destructive: false,
       permission: 'always',
     }));
-    const webOffers: OfferedTool[] = webLinks
-      ? [webTool(new Set(webLinks))]
-      : [];
+    const webOffers: OfferedTool[] = [
+      ...(web?.read ? [webTool(web.links)] : []),
+      ...(web?.searchKey ? [webSearchTool()] : []),
+    ];
     return {
       tools: () => [
         ...(memoryTarget
@@ -553,12 +566,19 @@ export function registerChatHandlers(
             isError: false,
           };
         }
-        if (tool.serverId === WEB_TOOL_SERVER && webLinks) {
+        if (tool.serverId === WEB_TOOL_SERVER && web) {
           return {
-            text: await callWebTool(args, {
-              contextLength,
-              signal: callSignal,
-            }),
+            text:
+              tool.toolName === WEB_SEARCH_TOOL
+                ? await callWebSearchTool(args, {
+                    apiKey: web.searchKey,
+                    signal: callSignal,
+                    links: web.links,
+                  })
+                : await callWebTool(args, {
+                    contextLength,
+                    signal: callSignal,
+                  }),
             isError: false,
           };
         }
@@ -622,8 +642,8 @@ export function registerChatHandlers(
       query: string;
       rerank: boolean;
     } | null,
-    /** Schalter „Internet“ an: Adressen aus deinen Nachrichten (ohne Rückfrage lesbar); sonst null. */
-    webLinks: string[] | null,
+    /** Schalter „Internet“: lesen und/oder suchen, dazu die Adressen, die ohne Rückfrage gelesen werden; sonst null. */
+    web: { read: boolean; search: boolean; links: string[] } | null,
     memoryContext: { projectId: string | undefined; question: string },
     chatId: string,
     initial: MessageRecord,
@@ -761,7 +781,14 @@ export function registerChatHandlers(
         codeMode,
         canUseTools && !workspacePath,
         request.options?.contextLength ?? OLLAMA_DEFAULT_CONTEXT,
-        canUseTools ? webLinks : null,
+        web && canUseTools
+          ? {
+              read: web.read,
+              // Ohne gespeicherten Schlüssel wird die Suche gar nicht erst angeboten.
+              searchKey: web.search ? await webSearchKey() : null,
+              links: new Set(web.links),
+            }
+          : null,
       );
       await runAnswer({
         provider,

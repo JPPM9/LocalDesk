@@ -13,7 +13,7 @@ import { ACCESS_TOOL_SERVER } from '../../../shared/access';
 import { MEMORY_TOOL_SERVER } from '../../../shared/memory';
 import { CODE_CHANGE_TOOLS, CODE_TOOL_SERVER } from '../../../shared/code';
 import { MAIL_TOOL_SERVER } from '../../../shared/mail';
-import { WEB_TOOL_SERVER } from '../../../shared/web';
+import { WEB_SEARCH_TOOL, WEB_TOOL_SERVER } from '../../../shared/web';
 import { CodeChangeRow } from '../code/CodeChangeRow';
 import { DiffView } from '../code/DiffView';
 import { SKILL_TOOL_SERVER } from '../../../shared/skills';
@@ -59,6 +59,7 @@ export function ToolCallView({
     call.serverId === CODE_TOOL_SERVER &&
     (call.toolName === 'run_command' || call.toolName === 'git_commit');
   const isWeb = call.serverId === WEB_TOOL_SERVER;
+  const isWebSearch = isWeb && call.toolName === WEB_SEARCH_TOOL;
   // Mail, Internet und Code fragen in Alltagssprache, nicht mit dem Werkzeugnamen.
   const friendly = isMail || isWeb || isCodeChange || isCommand;
 
@@ -97,7 +98,7 @@ export function ToolCallView({
           {isMail
             ? t('toolCall.mailAsk')
             : isWeb
-              ? t('toolCall.webAsk')
+              ? t(isWebSearch ? 'toolCall.webSearchAsk' : 'toolCall.webAsk')
               : isCodeChange || isCommand
                 ? t(`code.ask.${call.toolName}`)
                 : t('toolCall.askTitle', { tool: call.toolName })}
@@ -124,7 +125,11 @@ export function ToolCallView({
         ) : (
           <Code text={formatArguments(call.arguments)} />
         )}
-        {isWeb && <p className="text-xs text-muted">{t('toolCall.webHint')}</p>}
+        {isWeb && (
+          <p className="text-xs text-muted">
+            {t(isWebSearch ? 'toolCall.webSearchHint' : 'toolCall.webHint')}
+          </p>
+        )}
         <div className="flex flex-wrap gap-2 pt-1">
           <button
             type="button"
@@ -177,7 +182,9 @@ export function ToolCallView({
                   : isMail
                     ? `toolCall.mailTool.${call.toolName}`
                     : isWeb
-                      ? 'toolCall.webTool'
+                      ? isWebSearch
+                        ? 'toolCall.webSearchTool'
+                        : 'toolCall.webTool'
                       : isCommand
                         ? `code.label.${call.toolName}`
                         : 'toolCall.memoryTool',

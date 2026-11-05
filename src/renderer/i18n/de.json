@@ -346,7 +346,10 @@
     "webAsk": "Webseite lesen?",
     "webAllow": "Erlauben",
     "webHint": "Die Seite sieht dabei deine IP-Adresse und die Adresse, die gelesen wird. Adressen, die du selbst in eine Nachricht schreibst, liest das Modell ohne Rückfrage.",
-    "webTool": "Webseite lesen"
+    "webTool": "Webseite lesen",
+    "webSearchAsk": "Im Web suchen?",
+    "webSearchHint": "Die Suchanfrage geht mit deinem Schlüssel an ollama.com. Ollama sieht Anfrage und IP-Adresse.",
+    "webSearchTool": "Websuche"
   },
   "downloads": {
     "placeholder": "Modellname, z. B. qwen3:8b",
@@ -754,6 +757,24 @@
     "noTools": "Dieses Modell kann keine Werkzeuge und lädt Skills deshalb nicht selbst. Es gelten nur die Skills, die du hier einschaltest.",
     "hidden": "Bei {{context}} Tokens Kontext sieht das Modell nur {{shown}} von {{total}} Skills als Auswahl. Erhöhe die Kontextlänge oder schalte wichtige Skills hier selbst ein."
   },
+  "webSearchSettings": {
+    "title": "Internet-Suche",
+    "intro": "Mit dem Haken „Im Web suchen“ im Internet-Popup eines Chats darf das Modell im Web suchen. Dafür nutzt LocalDesk die Websuche von Ollama. Du brauchst ein kostenloses Konto bei ollama.com und einen API-Schlüssel (ollama.com/settings/keys), den du hier einträgst.",
+    "privacy": "Jede Suche geht mit deinem Schlüssel an ollama.com. Ollama sieht die Suchanfrage, den Schlüssel und deine IP-Adresse. Die Anfrage schreibt das Modell – sie kann Wörter aus deinem Chat enthalten.",
+    "provider": "Ollama-Websuche",
+    "keyLabel": "Ollama-Schlüssel",
+    "keyHint": "Wird mit Windows verschlüsselt gespeichert und nie wieder angezeigt.",
+    "keyPlaceholder": "Schlüssel hier einfügen",
+    "saved": "Schlüssel gespeichert",
+    "encrypted": "mit Windows verschlüsselt",
+    "test": "Testen",
+    "testing": "Teste …",
+    "testHint": "Schickt eine Probe-Suche („Ollama“) an ollama.com.",
+    "testOk": "Der Schlüssel funktioniert, die Suche antwortet.",
+    "replace": "Ersetzen",
+    "remove": "Entfernen",
+    "confirmRemove": "Den gespeicherten Ollama-Schlüssel entfernen? Die Websuche funktioniert dann in keinem Chat mehr, bis du einen neuen einträgst."
+  },
   "mailSettings": {
     "title": "E-Mail",
     "intro": "LocalDesk liest deine Mails direkt bei Google – über eine eigene App, die du dort anlegst. Senden und Löschen gibt es nicht; Labels und Sterne ändert LocalDesk nur nach deiner Bestätigung.",
@@ -859,13 +880,18 @@
     "noTools": "Das gewählte Modell kann keine Werkzeuge benutzen – wähle eines mit „Tools“, damit es Mails lesen kann."
   },
   "webChat": {
-    "button": "Internet: Webseiten im Chat lesen",
+    "button": "Internet: Webseiten lesen und im Web suchen",
     "chip": "Internet",
     "title": "Internet im Chat",
-    "intro": "Das Modell darf in diesem Chat Webseiten lesen – nur den Text, ohne Anmeldung und ohne Skripte.",
+    "intro": "Das Modell darf in diesem Chat Webseiten lesen (nur den Text, ohne Anmeldung und ohne Skripte) und, wenn du es erlaubst, im Web suchen.",
     "switch": "Webseiten lesen erlauben",
     "hint": "Adressen, die du selbst in eine Nachricht schreibst, liest das Modell ohne Rückfrage. Bei allen anderen fragt LocalDesk vorher – mit der ganzen Adresse. Seiten im eigenen Netz bleiben gesperrt.",
-    "noTools": "Das gewählte Modell kann keine Werkzeuge benutzen – wähle eines mit „Tools“, damit es Seiten lesen kann."
+    "searchSwitch": "Im Web suchen",
+    "searchHint": "Das Modell sucht ohne Rückfrage; die Suchanfrage steht im Chat. Sie geht an ollama.com und kann Wörter aus deinem Chat enthalten. Adressen aus den Treffern liest das Modell ohne Rückfrage.",
+    "searchNoKey": "Für die Suche fehlt der Ollama-Schlüssel.",
+    "searchKeyGone": "Der Ollama-Schlüssel fehlt – das Modell kann nicht suchen.",
+    "toSettings": "Zu den Einstellungen",
+    "noTools": "Das gewählte Modell kann keine Werkzeuge benutzen – wähle eines mit „Tools“, damit es Seiten lesen und suchen kann."
   },
   "code": {
     "title": "Code",
@@ -945,7 +971,7 @@
   },
   "privacy": {
     "title": "Datenschutz",
-    "intro": "Keine Telemetrie, kein Konto, keine Werbung. Deine Daten bleiben auf diesem PC und gehen nur an den Ollama-Server, den du einstellst.",
+    "intro": "Keine Telemetrie, kein Konto, keine Werbung. Deine Daten bleiben auf diesem PC und gehen nur an den Ollama-Server, den du einstellst – außer du schaltest selbst etwas ein (E-Mail, Webseiten lesen, Websuche). Alle Verbindungen stehen in der Datenschutzerklärung.",
     "show": "Datenschutzerklärung anzeigen",
     "hide": "Datenschutzerklärung ausblenden",
     "missing": "Die Datenschutzerklärung wurde nicht gefunden."

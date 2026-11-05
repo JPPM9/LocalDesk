@@ -39,6 +39,7 @@ import { createExampleSkills } from './skills/skill-examples';
 import { SkillStore } from './skills/skill-store';
 import { registerSkillHandlers } from './skill-service';
 import { registerMailHandlers } from './mail-service';
+import { registerWebHandlers } from './web-service';
 import { registerCodeHandlers } from './code-service';
 import { CodeBackups } from './code/backups';
 import { MailAccountRepository } from './db/mail-account-repository';
@@ -185,6 +186,7 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
     mailAccounts,
     getProvider,
   );
+  const webSearchKey = registerWebHandlers(new AppSettingsRepository(db));
 
   registerChatHandlers(
     getProvider,
@@ -200,6 +202,7 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
       accounts: () => mailAccounts.list(),
     },
     codeBackups,
+    () => webSearchKey.load(),
   );
 
   registerUpdateHandlers();
