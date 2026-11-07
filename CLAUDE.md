@@ -800,7 +800,16 @@
   frisches Repo JPPM9/LocalDesk gepusht; das alte Repo wurde umbenannt. Lokale Git-Identität dieses
   Ordners = JPPM9/noreply (`git config` ohne `--global`).
   Schritte: 1 Symbol ✅ · 2 Installer ✅ · 3 Versionen & Releases ✅ · 4 Update-Knopf ✅ · 5 Test ohne
-  Veröffentlichung ✅ · 6 Repo öffentlich + erstes Release · 7 Abschlusstest & Doku
+  Veröffentlichung ✅ · 6 Repo öffentlich + erstes Release ✅ · 7 Abschlusstest & Doku ✅
+  **Release 0.1.0 veröffentlicht am 2026-11-07** (nach ausdrücklichem „Veröffentlichen“ des Nutzers):
+  https://github.com/JPPM9/LocalDesk/releases/tag/v0.1.0, Ziel-Commit 891c93c, Dateien Setup.exe (≈117 MB), .blockmap,
+  latest.yml (SHA-512 = Setup.exe geprüft). Vorher: Probelauf grün; Installer-Test still (`/S /D=<Testordner>`) mit leerem
+  `--user-data-dir` (der echte `%APPDATA%\LocalDesk` des Nutzers existiert und wurde nicht angefasst) – Version 0.1.0,
+  Einstellungen ok, Deinstallation (`"Uninstall LocalDesk.exe" /currentuser /S`) entfernt Eintrag, Verknüpfungen und
+  Ordner. Danach meldet „Nach Updates suchen“ in der gebauten App `latest 0.1.0`. Hinweis: `npm run package` beendet
+  per `taskkill /IM LocalDesk.exe` ALLE LocalDesk-Fenster – vorher sicherstellen, dass der Nutzer keins offen hat.
+  Nächste Version: `package.json` erhöhen, neuer Changelog-Abschnitt, committen, pushen, `npm run release`, Freigabe,
+  `npm run release -- --publish`.
 - **App-Symbol**: `assets/icon.svg` (Sprechblase mit „>_“ auf Akzent-Blau) ist die Quelle;
   `node scripts/build-icons.mjs` erzeugt `assets/icon.png` (512 px) und `assets/icon.ico`
   (16–256 px, PNG-Einträge) – ohne Pakete, gezeichnet mit Edge headless (transparenter Hintergrund).
