@@ -13,7 +13,7 @@ Two rules shape the whole app:
 - **Nothing leaves your PC unless you ask for it.** The only outside connections are the ones you set up yourself (a second Ollama server in your LAN, your own Google app for Gmail, the update check and the skill search on GitHub, and web pages and Ollama web searches when you switch on "Internet" and "Search the web" in a chat). The full list is in the [privacy policy](docs/privacy.md).
 - **The model never changes anything on its own.** Writing files, running commands, committing and changing mail all show a card first and wait for your click.
 
-Status: the first release (0.1.0) is not published yet. The installer and the update button work.
+Status: version 0.1.0 is the first release. Download `LocalDesk-Setup-0.1.0.exe` from the [Releases page](https://github.com/JPPM9/LocalDesk/releases). The installer is not code-signed, so Windows SmartScreen warns on the first start ("More info → Run anyway"). Later versions arrive through **Settings → About LocalDesk → Check for updates**.
 
 ## 2. Project Overview and Features
 

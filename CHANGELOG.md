@@ -3,41 +3,83 @@
 Jede Version hat hier einen Abschnitt `## <Version> – <Datum>`. Sein Text wird beim Release zu
 den Release-Notizen auf GitHub – und erscheint in LocalDesk unter „Nach Updates suchen“.
 
-## 0.1.0 – 2026-10-27
+## 0.1.0 – 2026-11-07
 
-Erste installierbare Version.
+Erste veröffentlichte Version: lokale KI über Ollama für Windows – ohne Konto, ohne Telemetrie.
 
-- **Chat** mit lokalen Modellen über Ollama: Streaming, Markdown und Code-Hervorhebung, Gedanken
-  von Denkmodellen, Tokens/s. Verlauf mit Suche, Projekten und Vorlagen; Einstellungen pro Chat.
-- **Modelle** verwalten: installierte Modelle, Download mit Fortschritt, Löschen, GPU- und
-  Grafikspeicher-Anzeige; mehrere Ollama-Server (lokal und im Netzwerk).
-- **Werkzeuge (MCP):** Dateien lesen frei, Schreiben nur nach Rückfrage im Chat.
-- **Wissen:** Sammlungen aus Text, Markdown, Quellcode, PDF und Word; Antworten mit
-  Quellenangaben. Projekte mit eigenen Anweisungen und Dokumenten; Kontext-Füllstand.
-- **Obsidian:** Erinnerungen über dich (das Modell schlägt vor, du bestätigst), Antworten und
-  Chats als Notiz speichern, Zusammenfassungen, dein Vault als Wissen. Geschrieben wird nur in
-  einen eigenen Unterordner.
-- **E-Mail (Gmail):** Anmeldung über deine eigene Google-App, Posteingang und Suche, Mails als
-  reiner Text, Zusammenfassen mit einem lokalen Modell, Sortieren vorschlagen (Labels, Sterne, auch
-  neue Labels), „Labels verwalten“ (anlegen, umbenennen) und ein Schalter „E-Mail“ im Chat. Geändert
-  wird nur nach deiner Bestätigung; senden und löschen (auch von Labels) gibt es nicht. Die Anmeldung wird mit Windows verschlüsselt gespeichert, Mails gar nicht.
-- **Code-Bereich:** ein Agent arbeitet in einem gewählten Projektordner – lesen und suchen frei,
-  Dateien ändern mit Vorher/Nachher-Ansicht und „Rückgängig“, Befehle und Commits nur nach
-  Freigabe (jeder einzeln, kein Push).
-- **Skills:** Anleitungen als SKILL.md (vier Beispiele dabei) – von Hand einschalten, in Projekten
-  und Vorlagen voreinstellen oder vom Modell passend laden lassen. Auch mehrzeilige Beschreibungen (YAML „|“/„>“), große Skills bis 60.000 Zeichen mit Größenanzeige in Tokens und Zusatzdateien (Textdateien im Skill-Ordner, vom Modell bei Bedarf lesbar; Skripte werden nie ausgeführt). Hinzufügen per Ziehen und Ablegen (.md, .zip, .skill, auch mehrere): Vorschau mit Sicherheitsprüfung (Heuristik), gespeichert wird erst nach „Hinzufügen“; Skripte und Programme aus ZIPs werden nicht übernommen.
-- **Oberfläche** im Stil „Arbeitsplatz“: Symbolleiste links, Chatliste mit Tagesgruppen, Wissen und
-  Werkzeuge als Schalter im Eingabefeld, Seitenbereich für Quellen und Kontext. Hell, dunkel oder wie
-  Windows; Schrift Inter; Kontraste nach WCAG geprüft.
-- **Installer** mit Ordnerwahl; deine Daten bleiben beim Deinstallieren erhalten.
-- **Update-Knopf** unter Einstellungen → Über LocalDesk: sucht nur auf Klick, lädt und installiert
-  nach Bestätigung.
-- **Datenschutz und Sicherheit:** Datenschutzerklärung und Lizenzen in der App (Einstellungen), MIT-Lizenz.
-  Strenge Inhaltsrichtlinie (CSP) und keine Berechtigungen für Kamera, Mikrofon oder Standort. Nach einem
-  Sicherheits-Audit: Programme wie Git starten nur mit vollem Pfad, Git-Aufrufe ignorieren Programme aus
-  fremden Projekt-Einstellungen (Git-Hooks laufen bei Commits aus LocalDesk nicht), der Ordner .git bleibt
-  gesperrt, Bilder aus Modellantworten werden nie geladen, und bei einem Ollama-Server auf einem anderen
-  Rechner fragt jedes Werkzeug nach.
-- **Chat und Code:** Chat scrollt ruhig (nur mit, wenn du unten bist), eigene Rückfrage-Dialoge, Nachrichten kopieren/bearbeiten/Antwort wiederholen, Grafikkarten-Status als Popup und Reiter, Plan-Modus im Code-Bereich, Zugriff auf Postfach/Dateien per Karte im Chat, Skills bei GitHub finden („Von GitHub“: Projekte suchen oder Link/Projekt öffnen, Skills darin auswählen, dieselbe Vorschau mit Sicherheitsprüfung), „Älteren Teil verdichten“ für lange Chats (Zusammenfassung zum Prüfen und Bearbeiten, Nachrichten bleiben erhalten, aufhebbar), im Wissen-Menü „Treffer vom Modell neu sortieren“ (langsamer, oft genauer), Ausweich-Hinweis, wenn der Ollama-Server nicht antwortet (andere gespeicherte Server zur Wahl, gewechselt wird nur nach deinem Klick, später „Zurückwechseln“), Fotos im Chat (bis 4 Bilder pro Nachricht per Büroklammer, Ziehen oder Strg+V, für Modelle mit Bild-Fähigkeit; verkleinerte Kopie, Rückfragen sehen die letzten 4 Bilder, Klick vergrößert), Dateien im Chat (bis 3 Dateien pro Nachricht – PDF, Word, Text, Markdown, CSV, Quellcode –, gelesen wird der Text; die letzten 3 Dateien gehen bei Rückfragen mit, bei zu knappem Kontext ein Hinweis mit Knopf „Kontextlänge erhöhen“).
-- **Internet lesen:** Der Schalter „Internet“ im Eingabefeld erlaubt dem Modell (mit Tool-Unterstützung), Webseiten zu lesen. Adressen, die du selbst in eine Nachricht schreibst, liest es sofort; bei jeder anderen Adresse zeigt eine Karte die ganze Adresse und wartet auf dein „Erlauben“ (kein „Immer“). Gelesen wird nur der Haupttext als Markdown – ohne Skripte, Cookies und Anmeldung; Adressen im eigenen Netz (dieser PC, Heimnetz, Cloud-Metadaten) bleiben gesperrt; lange Seiten kommen in Stücken. Dazu ein zweiter Haken „Im Web suchen“ (anfangs aus): Das Modell sucht über die Ollama-Websuche (kostenloses Ollama-Konto und eigener API-Schlüssel unter Einstellungen → Internet-Suche, mit Windows verschlüsselt gespeichert, mit „Testen“-Knopf). Die Suche läuft ohne Karte, aber jede Anfrage steht im Chat; sie geht mit dem Schlüssel an ollama.com. Adressen aus den Treffern liest das Modell ohne Karte – genau so, wie sie gefunden wurden. Dazu der Knopf „Recherche“ (Deep Research): Deine nächste Nachricht wird zum Rechercheauftrag. Eine Karte lässt dich die Stufe wählen (Schnell, Normal, Gründlich) und sagt, dass Suchanfragen an ollama.com gehen; „Starten“ ist deine Zustimmung. LocalDesk führt dann einen festen Ablauf aus – Plan, Suchen, Seiten aus den Treffern lesen, je Seite Notizen, Bericht mit Zitaten [1], [2] – und hängt die Quellenliste mit echten Titeln und Links selbst an. Drei Fortschrittszeilen zeigen, was geschah; Stopp geht jederzeit. Funktioniert mit jedem Modell (mindestens 8 192 Tokens Kontext); der Bericht kann Fehler enthalten.
-- **Sprache:** Oberfläche auf Deutsch oder Englisch umschaltbar (Einstellungen → Darstellung), Standard wie Windows.
+**Hinweis zur Installation:** Der Installer ist nicht signiert. Windows zeigt beim ersten Start
+eine SmartScreen-Warnung – „Weitere Informationen“ → „Trotzdem ausführen“. Deine Daten bleiben
+beim Deinstallieren erhalten.
+
+**Chat**
+
+- Streaming, Markdown und Code-Hervorhebung, Gedanken von Denkmodellen, Tokens/s.
+- Verlauf mit Suche, Projekte (eigene Anweisungen und Dokumente), Vorlagen, Einstellungen pro Chat.
+- Nachrichten kopieren, bearbeiten, Antwort wiederholen; „Älteren Teil verdichten“ für lange Chats
+  (Zusammenfassung zum Prüfen, aufhebbar).
+- Fotos (bis 4 je Nachricht, für Modelle mit Bild-Fähigkeit) und Dateien (bis 3: PDF, Word, Text,
+  Markdown, CSV, Quellcode) per Büroklammer, Ziehen oder Strg+V; Hinweis mit Knopf, wenn der
+  Kontext zu knapp wird.
+
+**Modelle und Server**
+
+- Modelle laden und löschen, Grafikkarten- und Speicheranzeige.
+- Mehrere Ollama-Server (dieser PC und im Netzwerk); antwortet einer nicht, schlägt LocalDesk die
+  anderen vor – gewechselt wird nur nach deinem Klick.
+
+**Wissen**
+
+- Sammlungen aus Text, Markdown, Quellcode, PDF und Word; Antworten mit Quellenangaben.
+- Treffer auf Wunsch vom Modell neu sortieren (langsamer, oft genauer).
+
+**Internet und Recherche**
+
+- Schalter „Internet“: Das Modell liest Webseiten (nur Haupttext, ohne Skripte, Cookies und
+  Anmeldung). Adressen, die du selbst schreibst, ohne Rückfrage; jede andere nur nach deinem
+  „Erlauben“. Adressen im eigenen Netz bleiben gesperrt.
+- Haken „Im Web suchen“ (anfangs aus) über die Ollama-Websuche – mit kostenlosem Ollama-Konto und
+  eigenem Schlüssel unter Einstellungen → Internet-Suche (mit Windows verschlüsselt). Jede Anfrage
+  steht im Chat.
+- Knopf „Recherche“ (Deep Research): Stufe wählen (Schnell, Normal, Gründlich), „Starten“ – dann
+  plant LocalDesk Suchen, liest Seiten aus den Treffern und schreibt einen Bericht mit Zitaten und
+  echter Quellenliste. Dauer etwa 1–6 Minuten; der Bericht kann Fehler enthalten.
+
+**Werkzeuge, Skills und Obsidian**
+
+- MCP-Werkzeuge: Dateien lesen frei, Schreiben nur nach Rückfrage im Chat.
+- Skills als SKILL.md (vier Beispiele dabei): von Hand, in Projekten/Vorlagen oder vom Modell
+  geladen. Hinzufügen per Ziehen (.md, .zip, .skill) oder „Von GitHub“ – immer mit Vorschau und
+  Sicherheitsprüfung; Skripte werden nie ausgeführt.
+- Obsidian: Erinnerungen über dich (das Modell schlägt vor, du bestätigst), Chats und
+  Zusammenfassungen als Notiz, dein Vault als Wissen. Geschrieben wird nur in einen eigenen Unterordner.
+
+**E-Mail (Gmail)**
+
+- Anmeldung über deine eigene Google-App; Posteingang, Suche, Mails als reiner Text, Zusammenfassen
+  mit einem lokalen Modell, Sortieren vorschlagen (Labels, Sterne), eigene Labels anlegen und
+  umbenennen, Schalter „E-Mail“ im Chat.
+- Geändert wird nur nach deiner Bestätigung; senden und löschen gibt es nicht.
+
+**Code-Bereich**
+
+- Ein Agent arbeitet in einem gewählten Projektordner: lesen und suchen frei, Dateien ändern mit
+  Vorher/Nachher-Ansicht und „Rückgängig“, Befehle und Commits nur nach Freigabe (kein Push),
+  Plan-Modus zum reinen Lesen.
+
+**Oberfläche**
+
+- Stil „Arbeitsplatz“ mit Symbolleiste, Chatliste und Seitenbereich; hell, dunkel oder wie Windows.
+- Deutsch oder Englisch (Einstellungen → Darstellung), Standard wie Windows.
+
+**Datenschutz und Sicherheit**
+
+- Keine Telemetrie, kein Konto. Nach außen geht nur, was du einschaltest – die Liste steht in der
+  Datenschutzerklärung (in der App unter Einstellungen), dazu die Lizenzen (MIT).
+- Strenge Inhaltsrichtlinie, keine Kamera-, Mikrofon- oder Standortrechte; Programme wie Git nur mit
+  vollem Pfad, Git-Hooks laufen nicht, `.git` bleibt gesperrt; bei einem Ollama-Server auf einem
+  anderen Rechner fragt jedes Werkzeug nach.
+
+**Installer und Updates**
+
+- Installer mit Ordnerwahl; „Nach Updates suchen“ unter Einstellungen → Über LocalDesk sucht nur
+  auf Klick und installiert nach Bestätigung.
