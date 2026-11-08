@@ -82,7 +82,7 @@ describe('Werkzeug-Beschreibungen auf Englisch', () => {
       { id: 'review', name: 'Code review', description: 'Checks code' },
     ]);
     expect(tool.description).toBe(
-      'Loads the skill “Code review” (an instruction from the user). Checks code Call it FIRST when the task fits, and then follow the instruction in your answer.',
+      'Loads the skill “Code review” (an instruction from the user). Checks code ALWAYS call it first when the question fits – even if you could answer it yourself – and then follow the instruction in your answer.',
     );
     expect(
       skillTools([{ id: 'x', name: 'X', description: '' }])[0].description,

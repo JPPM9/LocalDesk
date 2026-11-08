@@ -1200,6 +1200,24 @@
   teilweise gescheiterte Suche zeigt die Zeile „Suche“ rot (Fehler), obwohl die Recherche gelingt – bewusst ehrlich. Nicht live geprüft:
   mehrere gleichzeitige Chats mit Recherche (nur Test: zweite Recherche → „Es läuft schon eine Recherche“ ist NICHT getestet, nur im Code).
 
+- **Skills: Auswahl gemessen** (Wunschliste 2c, Plan freigegeben 2026-11-08; Messung 2026-11-08 gegen Ollama direkt, mit den echten
+  Bausteinen `skillTools`/`fitSkillCatalog`; Skript im Scratchpad, nicht im Repo): Katalog aus 13 erfundenen Skills (lange, kurze und
+  fehlende Beschreibung), 40 deutsche Fragen ohne Skill-Namen (28 mit passendem Skill, davon 3 mit zwei zulässigen; 12 ohne), Temperatur 0,
+  feste Startzahl, Denken aus (Stichprobe mit Standard-Denken bei 8K: gemma4 20 statt 19, qwen3 26 statt 27 von 28 – kein Unterschied, nur 10×
+  langsamer). Ergebnis VOR der Wortänderung (Treffer von 28): qwen3:14b 27 bei ≥ 8K, nur 19 bei 4K (dort sichtbar 9 von 13 Skills, Beschreibung
+  ≤ 150 Zeichen → 4 falsche, 3 verborgene); gemma4:12b 19 bei ≥ 8K (14 bei 4K); gpt-oss:20b 17 bei ≥ 8K (10 bei 4K). 8K und 16K sind gleich
+  (der Katalog passt). Fehlalarme (Skill bei Nicht-Skill-Frage): 0–1 von 12 (qwen3 „Was bedeutet Nachhaltigkeit?“ → Erklär-Skill).
+  „Verpasst“ heißt meist: das Modell antwortet direkt – kein Fehlgriff. Budget bei 4K (Eingabe-Tokens gemessen): 20 % Anteil = real ~1 100
+  Tokens (die Schätzung `SKILL_TOOL_OVERHEAD_CHARS`/5,5 liegt ~ ein Viertel zu niedrig, also real ~27 %) mit 9 von 13 Skills; 30 % = alle 13
+  mit vollen Beschreibungen, qwen3 27/28 auch bei 4K, kostet aber real ~1 700 Tokens (~41 % von 4096, bleiben ~2 300 für Verlauf und
+  Antwort). Mindestlänge 250 statt 150 Zeichen allein ändert nichts. ENTSCHEIDUNG des Nutzers: Anteil bleibt 20 % (bei 4K ist der Hinweis
+  „Modell sieht nur N von M Skills – Kontext erhöhen“ im Skill-Schalter die Lösung). ÄNDERUNG (vom Nutzer freigegeben): Schlusssatz von
+  `prompt.skillToolDescription` ersetzt durch „Rufe ihn IMMER zuerst auf, wenn die Frage dazu passt – auch wenn du sie selbst beantworten
+  könntest – und befolge die Anleitung dann in deiner Antwort.“ (en: „ALWAYS call it first when the question fits – even if you could
+  answer it yourself – …“; kostet ~ 100 Eingabe-Tokens bei 9–13 Skills). Kontrolle mit der App-Formulierung (Treffer von 28, 8K / 4K):
+  gpt-oss 24 / 14 (vorher 17 / 10), gemma4 21 / 16 (19 / 14), qwen3 27 / 19 (unverändert); Fehlalarm weiter 0–1 von 12.
+  Nicht gemessen: echte Chats mit mehreren Runden, Skills mit sehr langen Anleitungen, andere Sprachen.
+
 ## Befehle
 
 - `npm start` – Entwicklungsmodus · `npm test` – Vitest (Tests in `tests/`) · `npm run typecheck` · `npm run lint` · `npm run dist` – Installer · `npm run make` – portable ZIP

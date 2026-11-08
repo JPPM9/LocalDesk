@@ -520,7 +520,7 @@ export const en: Record<MessageKey, string> = {
   'prompt.skillsIntro':
     'Skills that are turned on – instructions from the user. Follow them when the task fits:',
   'prompt.skillToolDescription':
-    'Loads the skill “{name}” (an instruction from the user). {description}Call it FIRST when the task fits, and then follow the instruction in your answer.',
+    'Loads the skill “{name}” (an instruction from the user). {description}ALWAYS call it first when the question fits – even if you could answer it yourself – and then follow the instruction in your answer.',
   'prompt.skillLoaded': 'Skill “{name}” – follow these instructions:',
   'prompt.skillToolFiles':
     'The skill has extra files; their list is at the end of the instructions.',

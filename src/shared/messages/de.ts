@@ -532,7 +532,7 @@ export const de = {
   'prompt.skillsIntro':
     'Eingeschaltete Skills – Anleitungen des Nutzers. Befolge sie, wenn die Aufgabe dazu passt:',
   'prompt.skillToolDescription':
-    'Lädt den Skill „{name}“ (eine Anleitung des Nutzers). {description}Rufe ihn ZUERST auf, wenn die Aufgabe passt, und befolge die Anleitung dann in deiner Antwort.',
+    'Lädt den Skill „{name}“ (eine Anleitung des Nutzers). {description}Rufe ihn IMMER zuerst auf, wenn die Frage dazu passt – auch wenn du sie selbst beantworten könntest – und befolge die Anleitung dann in deiner Antwort.',
   'prompt.skillLoaded': 'Skill „{name}“ – befolge diese Anleitung:',
   'prompt.skillToolFiles':
     'Der Skill hat Zusatzdateien; ihre Liste steht am Ende der Anleitung.',
