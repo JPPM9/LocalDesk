@@ -90,6 +90,13 @@ describe('readChatFile: Grenzen und Fehler', () => {
     }
   });
 
+  it('alte Excel-Dateien (.xls) bekommen einen eigenen Hinweis', async () => {
+    expect(await readChatFile('Alt.XLS', text('x'), never)).toEqual({
+      ok: false,
+      error: expect.stringContaining('.xlsx oder CSV'),
+    });
+  });
+
   it('zu große Dateien: Text ab 2 MB, PDF und Word ab 20 MB', async () => {
     expect(
       await read('gross.txt', new Uint8Array(FILE_TEXT_MAX_BYTES + 1).fill(97)),

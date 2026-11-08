@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ChatDetail, ChatSettings, MessageRecord } from '../../shared/api';
 import { applyChatEvent } from '../../shared/chat';
 import type { ResearchDepth } from '../../shared/research';
-import type { Attachments, PreparedFile } from './files';
+import type { Attachments, PreparedFile, PreparedTable } from './files';
 import {
   rememberImageBytes,
   rememberImageUrl,
@@ -106,8 +106,16 @@ export function useChat(
     ) => {
       const images = attachments.images ?? [];
       const files = attachments.files ?? [];
+      const tables = attachments.tables ?? [];
       const content = text.trim();
-      if (!content && images.length === 0 && files.length === 0) return;
+      if (
+        !content &&
+        images.length === 0 &&
+        files.length === 0 &&
+        tables.length === 0
+      ) {
+        return;
+      }
       if (messagesRef.current.some((m) => m.status === 'streaming')) return;
 
       const isNew = chatIdRef.current === null;
@@ -133,6 +141,10 @@ export function useChat(
             chars: f.chars,
             ...(f.pages !== undefined && { pages: f.pages }),
           })),
+        }),
+        ...(tables.length > 0 && {
+          // Der SQL-Name steht erst nach dem Speichern fest – angezeigt wird er nicht.
+          tables: tables.map((x) => ({ ...x, sqlName: '' })),
         }),
         thinking: '',
         status: 'done',
@@ -165,6 +177,9 @@ export function useChat(
               text,
               ...(pages !== undefined && { pages }),
             })),
+          }),
+          ...(tables.length > 0 && {
+            tables: tables.map(({ id }) => ({ id })),
           }),
           ...(isNew && { settings: settingsRef.current }),
           ...(isNew && folderId && { folderId }),
@@ -209,6 +224,7 @@ export function useChat(
       // Löschen sie mitnimmt, und gehen unter neuer Kennung wieder mit.
       const keptImages: PreparedImage[] = [];
       const keptFiles: PreparedFile[] = [];
+      const keptTables: PreparedTable[] = [];
       const original = messagesRef.current.find((m) => m.id === messageId);
       for (const image of original?.images ?? []) {
         const result = await window.api.getChatImage(image.id);
@@ -227,12 +243,30 @@ export function useChat(
         if (!result.ok) return;
         keptFiles.push({ ...result.value, id: crypto.randomUUID() });
       }
-      if (!(await window.api.chatTruncate(id, messageId))) return;
+      // Tabellen: Die gespeicherten werden neu zum Senden bereitgelegt, bevor das Löschen sie mitnimmt.
+      for (const table of original?.tables ?? []) {
+        const result = await window.api.reuseChatTable(table.id);
+        if (!result.ok) {
+          for (const kept of keptTables)
+            void window.api.discardChatTable(kept.id);
+          return;
+        }
+        keptTables.push(result.value);
+      }
+      if (!(await window.api.chatTruncate(id, messageId))) {
+        for (const kept of keptTables)
+          void window.api.discardChatTable(kept.id);
+        return;
+      }
       setMessages((current) => {
         const index = current.findIndex((m) => m.id === messageId);
         return index < 0 ? current : current.slice(0, index);
       });
-      send(text, model, undefined, { images: keptImages, files: keptFiles });
+      send(text, model, undefined, {
+        images: keptImages,
+        files: keptFiles,
+        tables: keptTables,
+      });
     },
     [send],
   );

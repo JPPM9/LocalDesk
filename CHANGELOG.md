@@ -3,6 +3,16 @@
 Jede Version hat hier einen Abschnitt `## <Version> – <Datum>`. Sein Text wird beim Release zu
 den Release-Notizen auf GitHub – und erscheint in LocalDesk unter „Nach Updates suchen“.
 
+## Unveröffentlicht
+
+**Chat**
+
+- Datenanalyse: Tabellen (CSV, TSV, Excel .xlsx; bis 20 MB und 200 000 Zeilen) per Büroklammer anhängen
+  und Fragen dazu stellen. Das Modell fragt die Tabelle mit lesenden SQL-Abfragen ab (genaue Summen und
+  Mittelwerte auch bei großen Tabellen) und kann Balken-, Linien- und Kreisdiagramme im Chat zeigen.
+  Es sieht nur Spaltennamen, ein paar Beispielzeilen und die Ergebnisse seiner Abfragen. Braucht ein
+  Modell mit Werkzeugen; ohne Werkzeuge bekommt es kleine Tabellen als Text.
+
 ## 0.1.0 – 2026-11-07
 
 Erste veröffentlichte Version: lokale KI über Ollama für Windows – ohne Konto, ohne Telemetrie.

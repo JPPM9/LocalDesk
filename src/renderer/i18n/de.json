@@ -178,8 +178,8 @@
     "send": "Senden",
     "stop": "Stopp",
     "attach": {
-      "button": "Datei oder Bild anhängen",
-      "drop": "Datei oder Bild hier ablegen",
+      "button": "Datei, Tabelle oder Bild anhängen",
+      "drop": "Datei, Tabelle oder Bild hier ablegen",
       "preparing": "Wird gelesen …"
     },
     "files": {
@@ -193,6 +193,14 @@
       "tight": "Die Dateien brauchen etwa {{tokens}} Tokens. Der Kontext ({{length}} Tokens) ist damit zu knapp – Ollama würde den Anfang des Chats still abschneiden.",
       "raise": "Kontextlänge auf {{length}} erhöhen",
       "noRaise": "Auch der größte Kontext dieses Modells ({{length}}) reicht nicht – nimm eine kürzere Datei oder „Wissen“."
+    },
+    "tables": {
+      "size": "{{rows}} Zeilen · {{columns}} Spalten"
+    },
+    "chart": {
+      "label": "Diagramm: {{title}}",
+      "untitled": "Diagramm",
+      "empty": "Dieses Diagramm kann nicht gezeigt werden."
     },
     "images": {
       "remove": "Bild „{{name}}“ entfernen",

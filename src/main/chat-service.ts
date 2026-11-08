@@ -15,9 +15,20 @@ import {
 import { applyChatEvent, isUsable, titleFromMessage } from '../shared/chat';
 import {
   checkFileInputs,
+  FILES_MAX_PER_MESSAGE,
   filesToSend,
   type ReadChatFile,
 } from '../shared/files';
+import {
+  checkTableInputs,
+  sqlTableName,
+  tableAsText,
+  tableSchemaBlock,
+  tablesToSend,
+  tableTooBigForModel,
+  TABLES_SERVER,
+  type ReadChatTable,
+} from '../shared/tables';
 import { checkImageInputs, imagesToSend, sniffImage } from '../shared/images';
 import {
   CODE_CONTEXT_DEFAULT,
@@ -58,10 +69,16 @@ import {
 import { allowedInMode, filterForMode } from './code/code-mode';
 import { Workspace } from './code/workspace';
 import { readChatFile } from './chat-files';
+import { readChatTable } from './chat-tables';
+import { DataWorker } from './data/data-client';
+import { processSpawn } from './data/spawn';
+import { PendingTables } from './data/pending-tables';
+import { TableRunner, tableTools } from './data/table-tools';
 import type {
   ChatRepository,
   StoredFile,
   StoredImage,
+  StoredTable,
 } from './db/chat-repository';
 import { WorkerExtractor } from './rag/extractor';
 import type { ChatKnowledge } from './knowledge-service';
@@ -136,6 +153,8 @@ export function registerChatHandlers(
   webSearchKey: () => Promise<string | null>,
 ) {
   const running = new Map<string, AbortController>();
+  /** Gelesene, noch nicht gesendete Tabellen (die Oberfläche kennt nur ihre Nummern). */
+  const pendingTables = new PendingTables();
   /** Rückfragen, auf deren Antwort ein Tool-Aufruf wartet (Aufruf-ID → Antwort). */
   const pendingDecisions = new Map<string, (answer: ToolAnswer) => void>();
 
@@ -191,13 +210,36 @@ export function registerChatHandlers(
     const checkedFiles = checkFileInputs(request.files);
     if (!checkedFiles.ok) throw new Error(checkedFiles.error);
     const fileInputs = checkedFiles.value;
+    // Tabellen zählen zu den Dateien: zusammen höchstens so viele wie Dateien allein.
+    const checkedTables = checkTableInputs(
+      request.tables,
+      FILES_MAX_PER_MESSAGE - fileInputs.length,
+    );
+    if (!checkedTables.ok) {
+      throw new Error(tr('files.tooMany', { max: FILES_MAX_PER_MESSAGE }));
+    }
+    const tableInputs = checkedTables.value;
     if (
       request.content.trim() === '' &&
       imageInputs.length === 0 &&
-      fileInputs.length === 0
+      fileInputs.length === 0 &&
+      tableInputs.length === 0
     ) {
       throw new Error(tr('error.invalidChatRequest'));
     }
+    const pendingList = pendingTables.takeAll(tableInputs.map((t) => t.id));
+    if (!pendingList) throw new Error(tr('tables.gone'));
+    // SQL-Namen sind im ganzen Chat eindeutig (auch gegenüber älteren Tabellen).
+    const sqlNames: string[] = chats.chatExists(request.chatId)
+      ? chats.tableSqlNames(request.chatId)
+      : [];
+    // Die gespeicherte Tabelle behält die Nummer des Anhängens: So findet „Bearbeiten“ sie auch dann,
+    // wenn die Oberfläche die Nachricht noch aus der Zeit vor dem Senden zeigt.
+    const storedTables: StoredTable[] = pendingList.map((table, index) => {
+      const sqlName = sqlTableName(table.name, sqlNames);
+      sqlNames.push(sqlName);
+      return { id: tableInputs[index].id, sqlName, ...table };
+    });
     const storedImages: StoredImage[] = imageInputs.map((image) => ({
       id: image.id,
       name: image.name,
@@ -213,7 +255,9 @@ export function registerChatHandlers(
           ? titleFromMessage(request.content)
           : imageInputs.length > 0
             ? tr('chat.imageTitle', { name: imageInputs[0].name })
-            : tr('chat.fileTitle', { name: fileInputs[0].name }),
+            : tr('chat.fileTitle', {
+                name: (fileInputs[0] ?? storedTables[0]).name,
+              }),
         model: request.model,
         settings: request.settings,
       });
@@ -254,6 +298,15 @@ export function registerChatHandlers(
           ...(file.pages !== undefined && { pages: file.pages }),
         })),
       }),
+      ...(storedTables.length > 0 && {
+        tables: storedTables.map((table) => ({
+          id: table.id,
+          name: table.name,
+          sqlName: table.sqlName,
+          rows: table.rows.length,
+          columns: table.columns.length,
+        })),
+      }),
       thinking: '',
       status: 'done',
     };
@@ -268,6 +321,7 @@ export function registerChatHandlers(
     chats.appendMessage(request.chatId, userMessage);
     if (storedImages.length > 0) chats.addImages(userMessage.id, storedImages);
     if (storedFiles.length > 0) chats.addFiles(userMessage.id, storedFiles);
+    if (storedTables.length > 0) chats.addTables(userMessage.id, storedTables);
     chats.appendMessage(request.chatId, answer);
 
     const controller = new AbortController();
@@ -294,6 +348,29 @@ export function registerChatHandlers(
       const file = chats.getFile(id);
       if (file) fileText.set(id, file.text);
     }
+    // Tabellen: Mit Werkzeugen sieht das Modell Spalten und ein paar Zeilen (den Rest fragt es mit
+    // SQL ab), ohne Werkzeuge kleine Tabellen ganz als Text. Abfragbar sind die letzten 3.
+    const tableIds = [...tablesToSend(sendable.filter(isUsable))];
+    const tablesWithTools =
+      tableIds.length > 0 && !workspace
+        ? await supportsTools(provider, request.model)
+        : false;
+    const tableText = new Map<string, string>();
+    for (const id of tableIds) {
+      if (tablesWithTools) {
+        const head = chats.getTableHead(id);
+        if (head) tableText.set(id, tableSchemaBlock(head));
+      } else {
+        const table = chats.getTable(id);
+        if (table) {
+          tableText.set(
+            id,
+            tableAsText(table) ??
+              tableTooBigForModel(table.name, table.rows.length),
+          );
+        }
+      }
+    }
     const plainRequest = buildChatRequest(
       request.model,
       sendable,
@@ -305,6 +382,7 @@ export function registerChatHandlers(
         vision,
         data: (id) => imageData.get(id),
         fileText: (id) => fileText.get(id),
+        tableText: (id) => tableText.get(id),
       },
     );
     const chatRequest = compacted.compaction
@@ -358,6 +436,7 @@ export function registerChatHandlers(
       codeMode,
       knowledgeSearch,
       web,
+      tablesWithTools ? tableIds : [],
       { projectId: project?.id, question: request.content },
       request.chatId,
       answer,
@@ -403,6 +482,51 @@ export function registerChatHandlers(
       return file
         ? { ok: true, value: file }
         : { ok: false, error: tr('files.notFound') };
+    },
+  );
+
+  // Eine Tabelle (CSV, TSV, Excel) für die Nachricht lesen – die Daten bleiben hier, zurück geht
+  // nur eine Nummer; erst das Senden legt die Tabelle bei der Nachricht ab.
+  ipcMain.handle(
+    IpcChannels.readChatTable,
+    (_event, name: unknown, data: unknown) =>
+      readChatTable(
+        name,
+        data,
+        // Der Worker liegt nach dem Bauen als eigene Datei neben main.js.
+        () =>
+          new DataWorker(processSpawn(path.join(__dirname, 'data-worker.cjs'))),
+        pendingTables,
+      ),
+  );
+
+  ipcMain.handle(IpcChannels.discardChatTable, (_event, tableId: unknown) => {
+    if (typeof tableId === 'string') pendingTables.discard(tableId);
+  });
+
+  // „Bearbeiten“ und „Antwort wiederholen“: die Tabelle der alten Nachricht neu zum Senden holen.
+  ipcMain.handle(
+    IpcChannels.reuseChatTable,
+    (_event, tableId: unknown): Result<ReadChatTable> => {
+      const table =
+        typeof tableId === 'string' && tableId.length <= 100
+          ? chats.getTable(tableId)
+          : null;
+      if (!table) return { ok: false, error: tr('tables.gone') };
+      const id = pendingTables.add({
+        name: table.name,
+        columns: table.columns,
+        rows: table.rows,
+      });
+      return {
+        ok: true,
+        value: {
+          id,
+          name: table.name,
+          rows: table.rows.length,
+          columns: table.columns.length,
+        },
+      };
     },
   );
 
@@ -466,6 +590,8 @@ export function registerChatHandlers(
     contextLength: number = OLLAMA_DEFAULT_CONTEXT,
     /** Schalter „Internet“: was das Modell lesen und suchen darf (null = nichts davon anbieten). */
     web: WebAccess | null = null,
+    /** Die Tabellen dieser Antwort für `table_query` und `table_chart` (null = keine). */
+    tables: TableRunner | null = null,
   ): ToolRuntime {
     const codeOffers = code
       ? filterForMode(
@@ -519,6 +645,7 @@ export function registerChatHandlers(
         ...skillOffers,
         ...mailOffers(),
         ...webOffers,
+        ...(tables ? tableTools() : []),
         ...codeOffers,
         ...mcpTools.offered(grants.serverIds),
         ...(offerAccess ? [grants.tool()].filter((t) => t !== null) : []),
@@ -594,6 +721,12 @@ export function registerChatHandlers(
             isError: false,
           };
         }
+        if (tool.serverId === TABLES_SERVER && tables) {
+          return {
+            ...(await tables.call(tool.toolName, args)),
+            isError: false,
+          };
+        }
         if (tool.serverId === SKILL_TOOL_SERVER) {
           const found = offeredSkills.find((t) => t.name === tool.toolName);
           // Frisch aus der Datei – falls du ihn gerade bearbeitet hast.
@@ -654,7 +787,12 @@ export function registerChatHandlers(
     depth: ResearchDepth,
   ) {
     const question = checkQuestion(request.content);
-    if (!question || request.images?.length || request.files?.length) {
+    if (
+      !question ||
+      request.images?.length ||
+      request.files?.length ||
+      request.tables?.length
+    ) {
       throw new Error(tr('research.invalid'));
     }
     if (researching) throw new Error(tr('research.busy'));
@@ -770,6 +908,8 @@ export function registerChatHandlers(
     } | null,
     /** Schalter „Internet“: lesen und/oder suchen, dazu die Adressen, die ohne Rückfrage gelesen werden; sonst null. */
     web: { read: boolean; search: boolean; links: string[] } | null,
+    /** Abfragbare Tabellen dieses Chats (leer = keine oder das Modell kann keine Werkzeuge). */
+    tableIds: string[],
     memoryContext: { projectId: string | undefined; question: string },
     chatId: string,
     initial: MessageRecord,
@@ -796,6 +936,8 @@ export function registerChatHandlers(
       }
     };
 
+    // Hintergrund-Thread für die Tabellen dieser Antwort (wird am Ende beendet).
+    let tableRunner: TableRunner | null = null;
     try {
       // Eingeschaltete Skills, frisch aus ihren Dateien – dann davor die Erinnerungen.
       const activeSkills = (
@@ -898,6 +1040,24 @@ export function registerChatHandlers(
           ? await Workspace.open(workspacePath)
           : null;
       controller.signal.throwIfAborted();
+      if (canUseTools && !workspacePath && tableIds.length > 0) {
+        tableRunner = new TableRunner(
+          new DataWorker(processSpawn(path.join(__dirname, 'data-worker.cjs'))),
+          () =>
+            tableIds.flatMap((id) => {
+              const table = chats.getTable(id);
+              return table
+                ? [
+                    {
+                      sqlName: table.sqlName,
+                      columns: table.columns,
+                      rows: table.rows,
+                    },
+                  ]
+                : [];
+            }),
+        );
+      }
       const runtime = toolRuntime(
         grants,
         controller.signal,
@@ -915,6 +1075,7 @@ export function registerChatHandlers(
               links: new Set(web.links),
             }
           : null,
+        tableRunner,
       );
       await runAnswer({
         provider,
@@ -935,6 +1096,7 @@ export function registerChatHandlers(
         emit({ requestId, type: 'error', error: describeChatError(error) });
       }
     }
+    tableRunner?.close();
     // Endet der Stream ohne „done“ (Verbindung weg), gilt die Antwort als abgebrochen.
     if (answer.status === 'streaming') {
       emit({ requestId, type: 'aborted' });
@@ -978,6 +1140,7 @@ function isChatSendRequest(value: unknown): value is ChatSendRequest {
     typeof r.content === 'string' &&
     (r.images === undefined || Array.isArray(r.images)) &&
     (r.files === undefined || Array.isArray(r.files)) &&
+    (r.tables === undefined || Array.isArray(r.tables)) &&
     (r.folderId === undefined || typeof r.folderId === 'string') &&
     (r.research === undefined || isResearchDepth(r.research))
   );

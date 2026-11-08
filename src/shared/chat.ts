@@ -6,6 +6,7 @@ import type {
   ToolCallRecord,
 } from './api';
 import { fileBlock, fileMarker, fileOutOfContext, filesToSend } from './files';
+import { tableMarker, tableOutOfContext, tablesToSend } from './tables';
 import { imageMarker, imagesToSend } from './images';
 import { settleToolCalls, toolRoundMessages } from './tools';
 
@@ -83,6 +84,7 @@ export function toRequestMessages(
     ? imagesToSend(usable, attach.vision)
     : new Set<string>();
   const sentFiles = attach ? filesToSend(usable) : new Set<string>();
+  const sentTables = attach ? tablesToSend(usable) : new Set<string>();
   return usable.flatMap((m): ChatMessage[] => {
     const attached: string[] = [];
     const markers: string[] = [];
@@ -94,15 +96,25 @@ export function toRequestMessages(
       else markers.push(imageMarker(image.name));
     }
     // Dateien: der Text vor deiner Frage; ältere nur noch als Hinweis.
-    const blocks = (m.files ?? []).map((file) => {
-      if (!attach) return fileMarker(file.name);
-      const text = sentFiles.has(file.id)
-        ? attach.fileText?.(file.id)
-        : undefined;
-      return text !== undefined
-        ? fileBlock(file.name, text)
-        : fileOutOfContext(file.name);
-    });
+    const blocks = [
+      ...(m.files ?? []).map((file) => {
+        if (!attach) return fileMarker(file.name);
+        const text = sentFiles.has(file.id)
+          ? attach.fileText?.(file.id)
+          : undefined;
+        return text !== undefined
+          ? fileBlock(file.name, text)
+          : fileOutOfContext(file.name);
+      }),
+      // Tabellen: Beschreibung (oder bei Modellen ohne Werkzeuge der Inhalt); ältere nur als Hinweis.
+      ...(m.tables ?? []).map((table) => {
+        if (!attach) return tableMarker(table.name);
+        const text = sentTables.has(table.id)
+          ? attach.tableText?.(table.id)
+          : undefined;
+        return text !== undefined ? text : tableOutOfContext(table.name);
+      }),
+    ];
     const withMarkers =
       markers.length > 0
         ? [...markers, m.content]
@@ -133,6 +145,8 @@ export interface AttachmentSource {
   data: (imageId: string) => string | undefined;
   /** Gelesener Text einer Datei (undefined = nicht verfügbar → Hinweis „nicht mehr im Kontext“). */
   fileText?: (fileId: string) => string | undefined;
+  /** Was das Modell zu einer Tabelle sieht (undefined = nicht verfügbar → Hinweis „nicht mehr abfragbar“). */
+  tableText?: (tableId: string) => string | undefined;
 }
 
 /** Geht diese Nachricht an das Modell? Fehlgeschlagene und leere (ohne Bild oder Datei) nicht. */
@@ -140,7 +154,8 @@ export const isUsable = (m: MessageRecord): boolean =>
   m.status !== 'error' &&
   (m.content.trim() !== '' ||
     (m.images?.length ?? 0) > 0 ||
-    (m.files?.length ?? 0) > 0);
+    (m.files?.length ?? 0) > 0 ||
+    (m.tables?.length ?? 0) > 0);
 
 function toolRounds(calls: ToolCallRecord[]): ToolCallRecord[][] {
   const rounds = new Map<number, ToolCallRecord[]>();

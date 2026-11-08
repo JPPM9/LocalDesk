@@ -178,8 +178,8 @@
     "send": "Send",
     "stop": "Stop",
     "attach": {
-      "button": "Attach a file or image",
-      "drop": "Drop a file or image here",
+      "button": "Attach a file, table or image",
+      "drop": "Drop a file, table or image here",
       "preparing": "Reading …"
     },
     "files": {
@@ -193,6 +193,14 @@
       "tight": "The files need about {{tokens}} tokens. The context ({{length}} tokens) is too tight for that – Ollama would silently cut off the beginning of the chat.",
       "raise": "Raise the context length to {{length}}",
       "noRaise": "Even this model's largest context ({{length}}) is not enough – use a shorter file or “Knowledge”."
+    },
+    "tables": {
+      "size": "{{rows}} rows · {{columns}} columns"
+    },
+    "chart": {
+      "label": "Chart: {{title}}",
+      "untitled": "Chart",
+      "empty": "This chart cannot be shown."
     },
     "images": {
       "remove": "Remove image “{{name}}”",

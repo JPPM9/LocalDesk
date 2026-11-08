@@ -7,6 +7,7 @@ import type {
   ToolAnswer,
 } from '../shared/api';
 import { combineStats } from '../shared/chat';
+import type { TableChart } from '../shared/table-chart';
 import {
   deniedResult,
   limitResult,
@@ -28,6 +29,8 @@ export const emptyAnswer = () => tr('chat.emptyAnswer');
 export interface ToolResult {
   text: string;
   isError: boolean;
+  /** Diagramm aus `table_chart` – wird beim Aufruf mitgespeichert und in der Oberfläche gezeichnet. */
+  chart?: TableChart;
 }
 
 /** Was die Schleife von außen braucht – im Test nachgebaut, in der App die MCP-Server. */
@@ -238,6 +241,7 @@ async function runToolCall(
   update({
     status: result.isError ? 'error' : 'done',
     result: limitResult(result.text),
+    ...(result.chart && { chart: result.chart }),
   });
   return record;
 }

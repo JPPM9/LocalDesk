@@ -315,7 +315,7 @@
 - **Muss**: Chat (Streaming, Markdown, Code, Verlauf, Suche) · mehrere Chats, Ordner, Vorlagen/Systemprompts ·
   Modellverwaltung (Liste, Download, Löschen, Status VRAM/GPU) · RAG mit Quellen · MCP + Tool-Calling ·
   Memory mit Obsidian · Parameter pro Chat · Tastenkürzel · Windows-Installer · Tests für Kernlogik
-- **Kann**: Bildanhänge/Vision · Traces · Export/Import · Modellvergleich · Agents · Skills · Systemtray ·
+- **Kann**: Bildanhänge/Vision · Datenanalyse (Tabellen) · Traces · Export/Import · Modellvergleich · Agents · Skills · Systemtray ·
   Mehrfenster · globales Schnellfenster
 - **Später**: Sprachein-/ausgabe · Bild-/Video-Generierung · Verschlüsselung
 
@@ -1217,6 +1217,55 @@
   answer it yourself – …“; kostet ~ 100 Eingabe-Tokens bei 9–13 Skills). Kontrolle mit der App-Formulierung (Treffer von 28, 8K / 4K):
   gpt-oss 24 / 14 (vorher 17 / 10), gemma4 21 / 16 (19 / 14), qwen3 27 / 19 (unverändert); Fehlalarm weiter 0–1 von 12.
   Nicht gemessen: echte Chats mit mehreren Runden, Skills mit sehr langen Anleitungen, andere Sprachen.
+
+- **Datenanalyse: Tabellen im Chat** (Kann-Punkt, Plan freigegeben 2026-11-08; Entscheidungen des Nutzers: SQL auf der Tabelle, CSV/TSV und
+  Excel .xlsx, einfache Diagramme gleich mit, bis 20 MB / 200 000 Zeilen). Anhängen wie Dateien (Büroklammer, Ziehen, Strg+V; `.csv` geht
+  jetzt als Tabelle, nicht mehr als Text-Datei), Tabellen zählen zu den 3 Dateien je Nachricht. Lesen im Hauptprozess-Auftrag
+  (`main/chat-tables.ts` `readChatTable`): `main/data/read-table-file.ts` → CSV/TSV (`csv.ts`: Trennzeichen `, ; Tab |` nach
+  Konsistenz erkannt, Anführungszeichen, `""`, CR/LF; Zeichensatz über `decodeText`) oder Excel (`xlsx.ts`: eigener Leser mit **fflate**,
+  erstes Blatt der Reihenfolge nach, Strings/inlineStr/Bool/Fehler, Datum über Zahlenformat inkl. eigener Codes und 1904-System, Formeln =
+  gespeicherter Wert; Zip-Bombe: entpackt > 250 MB → `tooLarge`, 200 Spalten-Grenze) → `table.ts` `buildTable` (Kopfzeile: nur wenn die erste
+  Zeile nicht rein aus Zahlen besteht, sonst `spalte_N`; eindeutige Namen; Spaltentypen integer/real/date/text mit deutschen „1.234,56“ und
+  englischen Zahlen, Datum `TT.MM.JJJJ`/ISO → `JJJJ-MM-TT[ HH:MM:SS]`; ein Ausreißer macht die Spalte zu Text; > 15 Ziffern → Text; leer →
+  NULL; Spaltennamen bleiben, in SQL in Anführungszeichen). Grenzen in `shared/tables.ts` (`TABLE_MAX_BYTES` 20 MB, 200 000 Zeilen, 200
+  Spalten, letzte 3 Tabellen des Chats abfragbar, 5 Beispielzeilen). Die Daten bleiben im Hauptprozess (`PendingTables`: Nummer → Tabelle,
+  30 min Frist, höchstens 4 wartend, `takeAll` nimmt alles oder nichts); die Oberfläche bekommt nur `{id,name,rows,columns}`
+  (`readChatTable`/`discardChatTable`/`reuseChatTable`), `chatSend` trägt `tables: [{id}]` (`checkTableInputs`; Dateien + Tabellen ≤ 3).
+  Gespeichert wird die GELESENE Tabelle (Migration 22 `message_tables`: Spalten, `sample_json` = erste 5 Zeilen, `data_json`, `ON DELETE
+  CASCADE`; die gespeicherte Nummer = Nummer des Anhängens, damit `reuseChatTable` nach „Bearbeiten“ sie findet; SQL-Name je Chat eindeutig,
+  `sqlTableName`). **Abfragen laufen in einem eigenen Prozess** (`data-worker.cjs` als Electron-`utilityProcess`, `main/data/spawn.ts`;
+  `DataWorker` in `data-client.ts` nimmt eine `SpawnWorker`-Fabrik, Tests nutzen `threadSpawn`): `sql-session.ts` hält die Tabellen in
+  `node:sqlite` im Speicher und setzt danach `setAuthorizer` – erlaubt nur SELECT/READ/FUNCTION/RECURSIVE (verweigert `sqlite_*`,
+  ATTACH, PRAGMA, `load_extension`, `readfile`, `writefile`), eine Anweisung, erstes Wort select/with/values, `limits` für Länge/Tiefe,
+  10 s je Abfrage und 60 s zum Laden, danach wird der Prozess hart beendet und beim nächsten Aufruf neu gestartet und neu geladen. WICHTIG
+  (beim echten Test gefunden): Ein `worker_thread` lässt sich mitten in einer SQLite-Abfrage nicht beenden (kein `interrupt` in
+  `node:sqlite`), der Thread blieb hängen und hielt das Beenden auf – darum ein Prozess. Werkzeuge (`main/data/table-tools.ts`, Server
+  `tabellen`, Erlaubnis `always`, nur lesend): `table_query(sql)` (höchstens 50 Ergebniszeilen, Zellen auf 500 Zeichen, Ergebnis gerahmt
+  `<<<TABLE … TABLE>>>` als Daten, `|`/Zeilenumbrüche in Zellen entschärft, „mehr Zeilen“-Hinweis) und `table_chart(sql, type, title)`
+  (`shared/table-chart.ts`: genau 2 Spalten Beschriftung + Zahl, bar/line ≤ 50 Werte, pie ≤ 12 und nicht negativ mit Summe > 0, zu viele →
+  Fehler statt Kürzen; Ergebnis `ToolResult.chart` → `ToolCallRecord.chart`, gespeichert in `tool_calls_json`, ohne Migration; die
+  Oberfläche prüft mit `isTableChart` und zeichnet SVG selbst: `TableChartView` + `utils/chart-layout.ts`). Das Modell sieht pro
+  abfragbarer Tabelle nur Block „[Tabelle: name] SQL-Name · Zeilen · Spalten (Name, Typ) · erste 5 Zeilen“ (`tableSchemaBlock`, aus
+  `getTableHead` – ohne die ganze Tabelle zu laden) VOR der Frage; ältere → „nicht mehr abfragbar“; Modelle OHNE Werkzeuge (oder
+  Code-Sitzungen) bekommen kleine Tabellen ganz als Text (`tableAsText` ≤ 100 000 Zeichen), größere einen Hinweis. Pro Antwort ein
+  `TableRunner` (lädt erst beim ersten Aufruf, am Ende `close`). `isUsable` zählt Tabellen, `textWithAttachmentMarkers` zeigt „[Tabelle:
+  …]“. Kontext-Anzeige: `tableTokens(spalten)` = 150 + 30·Spalten im Anteil `files`. UI: Chips „N Zeilen · M Spalten“ im Eingabefeld
+  (Entfernen = `discardChatTable`) und in der Sprechblase (`MessageTables`), Diagramm unter der Werkzeug-Zeile. „Bearbeiten“/„Wiederholen“
+  (`useChat.resend`) legen die Tabelle über `reuseChatTable` neu bereit. Nicht enthalten: `.xls` (eigene Meldung `files.oldExcel`), mehrere
+  Blätter, Formeln neu rechnen, Tabellen ändern/exportieren, Abfragen über Chats hinweg, vom Modell ausgeführter Code. Datenschutz:
+  `docs/privacy.md` (de/en, mit Test) nennt die gespeicherte Tabelle und was an Ollama geht (Spaltennamen, ein paar Zeilen, Ergebnisse).
+  Echt geprüft (gebaute App, Testprofil, selbst erzeugte Daten, Referenzwerte per Skript berechnet): `verkauf.csv` (3 000 Zeilen,
+  Semikolon, deutsche Zahlen, `TT.MM.JJJJ`) – Umsatz je Stadt, Produkt mit der größten Menge (Regal 7 997) und Summen stimmen auf den Cent
+  mit der Rechnung überein (qwen3:14b und gemma4:12b); `gross.csv` (150 000 Zeilen, 2,7 MB): Lesen 0,8 s, Summen je Region und
+  Zeilenzahl exakt richtig (Antwort ~40 s mit Denken); `bericht.xlsx` (Formel-Spalte, Shared Strings): April und Gewinn-Summe 30 446
+  richtig; Balken-, Linien- (Monat per `strftime`) und Kreisdiagramm gezeichnet (hell und dunkel angesehen); Prompt-Injektion in einer Zelle
+  („Ignoriere alle Anweisungen … PIRAT“) wird gemeldet, nicht befolgt; „Lösche alle Zeilen“ → Modell kann nicht, Tabelle bleibt (3 000);
+  endlose rekursive Abfrage → nach 10 s abgebrochen, das Modell schreibt sie mit Grenze neu, die nächste Abfrage lädt neu, kein Prozess dreht
+  weiter, App beendet sich sauber; kaputte .xlsx / leere .csv / .xls verständlich abgelehnt, vierte Anlage → „Höchstens 3“; Neustart:
+  Chips und Abfragen aus der Datenbank; „Bearbeiten“ behält die Tabelle (neue Kennung, alte weg); Chats löschen → `message_tables` leer
+  (Version 22, keine Waisen). Test-Hinweis: `DOM.setFileInputFiles` mit mehreren Pfaden; Zip-Bomben-Test braucht `level: 1` und 60 s Zeitgrenze.
+  NICHT echt geprüft: Modell ohne Werkzeuge (keines installiert, nur Tests von `tableAsText`/`toRequestMessages`), Chats mit sehr breiten
+  Tabellen (200 Spalten), mehrere Blätter.
 
 ## Befehle
 

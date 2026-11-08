@@ -2,6 +2,7 @@ import type { MessageRecord, Result } from './api';
 import type { FileKind } from './file-kinds';
 import { imageMarker } from './images';
 import { messageLocale, tr } from './messages';
+import { tableMarker } from './tables';
 
 /**
  * Dateien im Chat: Die Oberfläche schickt eine Datei an den Hauptprozess, der den Text
@@ -165,10 +166,11 @@ export function filesToSend(
  * (für Zusammenfassungen und Notizen – ohne den Inhalt der Dateien).
  */
 export function textWithAttachmentMarkers(
-  message: Pick<MessageRecord, 'content' | 'images' | 'files'>,
+  message: Pick<MessageRecord, 'content' | 'images' | 'files' | 'tables'>,
 ): string {
   return [
     ...(message.files ?? []).map((file) => fileMarker(file.name)),
+    ...(message.tables ?? []).map((table) => tableMarker(table.name)),
     ...(message.images ?? []).map((image) => imageMarker(image.name)),
     message.content.trim(),
   ]

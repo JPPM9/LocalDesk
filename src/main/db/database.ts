@@ -281,6 +281,26 @@ const migrations: string[] = [
 
   CREATE INDEX message_files_by_message ON message_files(message_id, position);
   `,
+  // 22: Tabellen in Nachrichten (CSV, TSV, Excel) für die Datenanalyse: gespeichert wird die gelesene
+  // Tabelle (Spalten mit Typen und die Zeilen als JSON), nicht die Originaldatei. Sie gehört zur
+  // Nachricht und verschwindet mit ihr (und mit dem Chat).
+  `
+  CREATE TABLE message_tables (
+    id           TEXT PRIMARY KEY,
+    message_id   TEXT NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
+    position     INTEGER NOT NULL,
+    name         TEXT NOT NULL,
+    sql_name     TEXT NOT NULL,
+    row_count    INTEGER NOT NULL,
+    column_count INTEGER NOT NULL,
+    columns_json TEXT NOT NULL,
+    -- die ersten Zeilen extra: Die Beschreibung für das Modell braucht nicht die ganze Tabelle
+    sample_json  TEXT NOT NULL,
+    data_json    TEXT NOT NULL
+  );
+
+  CREATE INDEX message_tables_by_message ON message_tables(message_id, position);
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */

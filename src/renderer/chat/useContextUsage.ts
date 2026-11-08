@@ -8,6 +8,7 @@ import type {
 } from '../../shared/api';
 import { isUsable, toRequestMessages } from '../../shared/chat';
 import { fileTokens, filesToSend } from '../../shared/files';
+import { tableTokens, tablesToSend } from '../../shared/tables';
 import { compactedHistory, type ChatCompaction } from '../../shared/compaction';
 import {
   contextUsage,
@@ -104,10 +105,17 @@ export function useContextUsage(
     // Dateien: Die letzten 3 gehen mit ihrem ganzen Text mit – geschätzt aus der Länge.
     const sendable = compacted.messages.filter(isUsable);
     const sentFiles = filesToSend(sendable);
-    const filesTokens = sendable
-      .flatMap((m) => m.files ?? [])
-      .filter((f) => sentFiles.has(f.id))
-      .reduce((sum, f) => sum + fileTokens(f.chars), 0);
+    // Tabellen: Das Modell sieht Spalten und ein paar Zeilen (den Rest fragt es mit SQL ab).
+    const sentTables = tablesToSend(sendable);
+    const filesTokens =
+      sendable
+        .flatMap((m) => m.files ?? [])
+        .filter((f) => sentFiles.has(f.id))
+        .reduce((sum, f) => sum + fileTokens(f.chars), 0) +
+      sendable
+        .flatMap((m) => m.tables ?? [])
+        .filter((x) => sentTables.has(x.id))
+        .reduce((sum, x) => sum + tableTokens(x.columns), 0);
     const parts = estimateContextParts({
       filesTokens,
       summaryText: compacted.compaction?.summary,
@@ -123,6 +131,7 @@ export function useContextUsage(
         vision: modelSupportsVision,
         data: () => '-',
         fileText: () => '',
+        tableText: () => '',
       }),
       knowledgeActive: Boolean(
         settings.collections?.length || project?.collectionId,

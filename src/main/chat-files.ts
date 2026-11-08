@@ -35,6 +35,9 @@ export async function readChatFile(
   }
   const clean = cleanFileName(name);
   const kind = kindOfName(clean);
+  if (!kind && /\.xls$/i.test(clean)) {
+    return { ok: false, error: tr('files.oldExcel', { name: clean }) };
+  }
   if (!kind) {
     return { ok: false, error: tr('files.unsupported', { name: clean }) };
   }

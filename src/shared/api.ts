@@ -21,6 +21,8 @@ import type { ServerProbe } from './failover';
 import type { GithubOpenResult } from './github';
 import type { ChatFileInput, MessageFile, ReadChatFile } from './files';
 import type { ChatImageInput, MessageImage } from './images';
+import type { TableChart } from './table-chart';
+import type { ChatTableInput, MessageTable, ReadChatTable } from './tables';
 import type { MailSuggestion } from './mail-sorting';
 import type {
   SkillImportFile,
@@ -373,6 +375,8 @@ export interface ToolCallRecord {
   alwaysAsk?: boolean;
   /** Was das Modell als Ergebnis bekommen hat (auch bei Fehler oder Ablehnung). */
   result?: string;
+  /** Diagramm aus einer Tabelle (`table_chart`) – die Oberfläche zeichnet es unter dem Aufruf. */
+  chart?: TableChart;
 }
 
 /** Deine Antwort auf eine Rückfrage. */
@@ -500,6 +504,8 @@ export interface MessageRecord {
   images?: MessageImage[];
   /** Dateien, die du mit dieser Nachricht geschickt hast (ohne Text – `getChatFile` holt ihn). */
   files?: MessageFile[];
+  /** Tabellen (CSV, TSV, Excel), die du mit dieser Nachricht geschickt hast – das Modell fragt sie mit SQL ab. */
+  tables?: MessageTable[];
   /** „Gedanken“ von Denkmodellen (qwen3, gpt-oss …), getrennt von der Antwort. */
   thinking: string;
   status: MessageStatus;
@@ -597,6 +603,8 @@ export interface ChatSendRequest {
   images?: ChatImageInput[];
   /** Dateien (Text schon gelesen, höchstens 3). */
   files?: ChatFileInput[];
+  /** Tabellen, vorher mit `readChatTable` gelesen (nur die Nummern; Dateien und Tabellen zusammen höchstens 3). */
+  tables?: ChatTableInput[];
   /** Nur für neue Chats: Einstellungen, die vor der ersten Nachricht gewählt wurden. */
   settings?: ChatSettings;
   /** Nur für neue Chats: gleich in diesem Projekt anlegen. */
@@ -919,6 +927,15 @@ export interface LocalDeskApi {
   ) => Promise<Result<ReadChatFile>>;
   /** Der gelesene Text einer Datei aus einer Nachricht (z. B. zum Neu-Senden nach „Bearbeiten“). */
   getChatFile: (fileId: string) => Promise<Result<ReadChatFile>>;
+  /** Liest eine Tabelle (CSV, TSV, Excel) für eine Nachricht – die Daten bleiben im Hauptprozess, zurück kommt eine Nummer. */
+  readChatTable: (
+    name: string,
+    data: Uint8Array,
+  ) => Promise<Result<ReadChatTable>>;
+  /** Wirft eine gelesene, noch nicht gesendete Tabelle weg (Chip entfernt). */
+  discardChatTable: (tableId: string) => Promise<void>;
+  /** Holt eine Tabelle einer gespeicherten Nachricht neu zum Senden (nach „Bearbeiten“ und „Antwort wiederholen“). */
+  reuseChatTable: (tableId: string) => Promise<Result<ReadChatTable>>;
   chatCancel: (requestId: string) => Promise<void>;
   /** Löscht die Nachricht und alle danach (Bearbeiten/Wiederholen); false = ging nicht (läuft gerade / gibt es nicht). */
   chatTruncate: (chatId: string, messageId: string) => Promise<boolean>;
@@ -1058,6 +1075,9 @@ export const IpcChannels = {
   getChatImage: 'chat:get-image',
   readChatFile: 'chat:read-file',
   getChatFile: 'chat:get-file',
+  readChatTable: 'chat:read-table',
+  discardChatTable: 'chat:discard-table',
+  reuseChatTable: 'chat:reuse-table',
   chatCancel: 'chat:cancel',
   chatTruncate: 'chat:truncate',
   copyText: 'clipboard:copy-text',

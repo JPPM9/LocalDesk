@@ -19,7 +19,9 @@ import { CodeChangeRow } from '../code/CodeChangeRow';
 import { DiffView } from '../code/DiffView';
 import { SKILL_TOOL_SERVER } from '../../../shared/skills';
 import { summarizeArguments } from '../../../shared/tools';
+import { isTableChart } from '../../../shared/table-chart';
 import { AccessCard } from './AccessCard';
+import { TableChartView } from './TableChartView';
 import { MemoryEditor } from './MemoryEditor';
 
 interface ToolCallViewProps {
@@ -171,7 +173,9 @@ export function ToolCallView({
 
   if (isCodeChange) return <CodeChangeRow call={call} />;
 
-  return (
+  // Diagramm aus `table_chart`: gleich sichtbar unter der Zeile (nur, wenn es die Prüfung besteht).
+  const chart = isTableChart(call.chart) ? call.chart : null;
+  const row = (
     <details className="group rounded-xl border border-border text-[13px]">
       <summary className="flex cursor-pointer items-center gap-2 px-3 py-2 text-muted select-none hover:text-text">
         <StatusIcon status={call.status} />
@@ -239,6 +243,15 @@ export function ToolCallView({
         )}
       </div>
     </details>
+  );
+  if (!chart) return row;
+  return (
+    <div className="space-y-2">
+      {row}
+      <div className="rounded-xl border border-border bg-surface px-3 py-2.5">
+        <TableChartView chart={chart} />
+      </div>
+    </div>
   );
 }
 

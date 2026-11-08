@@ -43,6 +43,12 @@ const config: ForgeConfig = {
           target: 'main',
         },
         {
+          // Hintergrund-Thread für Tabellen: CSV/TSV/Excel lesen und SQL-Abfragen beantworten.
+          entry: 'src/main/data/data-worker.ts',
+          config: 'vite.main.config.mts',
+          target: 'main',
+        },
+        {
           entry: 'src/preload/preload.ts',
           config: 'vite.preload.config.mts',
           target: 'preload',

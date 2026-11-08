@@ -46,6 +46,21 @@ describe('Datenschutzerklärung', () => {
     expect(privacy).toContain('Die Notizen werden nicht gespeichert');
   });
 
+  it('beschreibt in beiden Sprachen, was von angehängten Tabellen gespeichert wird und woher das Modell sie sieht', () => {
+    expect(privacy).toContain(
+      'for tables you attach (CSV, TSV, Excel) it stores the',
+    );
+    expect(privacy).toContain(
+      'the column names, a few rows and the results of the queries',
+    );
+    expect(privacy).toContain(
+      'bei angehängten\n  Tabellen (CSV, TSV, Excel) die Tabelle',
+    );
+    expect(privacy).toContain(
+      'die Spaltennamen, ein paar Zeilen und die Ergebnisse der Abfragen',
+    );
+  });
+
   it('enthält die Zusage zur eingeschränkten Nutzung von Google-Daten', () => {
     expect(privacy).toContain('Google API Services User Data Policy');
     expect(privacy).toContain('Limited Use');

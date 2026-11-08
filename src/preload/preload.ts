@@ -231,6 +231,12 @@ const api: LocalDeskApi = {
   readChatFile: (name, data) =>
     ipcRenderer.invoke(IpcChannels.readChatFile, name, data),
   getChatFile: (fileId) => ipcRenderer.invoke(IpcChannels.getChatFile, fileId),
+  readChatTable: (name, data) =>
+    ipcRenderer.invoke(IpcChannels.readChatTable, name, data),
+  discardChatTable: (tableId) =>
+    ipcRenderer.invoke(IpcChannels.discardChatTable, tableId),
+  reuseChatTable: (tableId) =>
+    ipcRenderer.invoke(IpcChannels.reuseChatTable, tableId),
   chatCancel: (requestId) =>
     ipcRenderer.invoke(IpcChannels.chatCancel, requestId),
   chatTruncate: (chatId, messageId) =>

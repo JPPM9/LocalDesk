@@ -12,6 +12,7 @@ import {
   FileText,
   Paperclip,
   Square,
+  Table2,
   TriangleAlert,
   X,
 } from 'lucide-react';
@@ -29,14 +30,22 @@ import {
 import {
   FileProblem,
   prepareFile,
+  prepareTable,
   type Attachments,
   type PreparedFile,
+  type PreparedTable,
 } from '../../chat/files';
 import {
   ImageProblem,
   prepareImage,
   type PreparedImage,
 } from '../../chat/images';
+import {
+  isTableName,
+  TABLE_EXTENSIONS,
+  TABLE_MAX_BYTES,
+  tableTokens,
+} from '../../../shared/tables';
 import { useShortcut } from '../../shortcuts/useShortcut';
 import { formatContext } from '../../utils/format';
 import type { ResearchDepth } from '../../../shared/research';
@@ -95,6 +104,7 @@ const ACCEPT = [
   '.heic',
   '.heif',
   ...READABLE_EXTENSIONS,
+  ...TABLE_EXTENSIONS,
 ].join(',');
 
 export function ChatInput({
@@ -106,7 +116,7 @@ export function ChatInput({
   attach,
   research,
 }: ChatInputProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [text, setText] = useState('');
   // Die Startkarte einer Recherche ist offen.
   const [startCard, setStartCard] = useState(false);
@@ -124,10 +134,13 @@ export function ChatInput({
   // vorbereitet wird, Hinweis, Ziehen über dem Fenster.
   const [images, setImages] = useState<PreparedImage[]>([]);
   const [files, setFiles] = useState<PreparedFile[]>([]);
+  const [tables, setTables] = useState<PreparedTable[]>([]);
   const imagesRef = useRef(images);
   imagesRef.current = images;
   const filesRef = useRef(files);
   filesRef.current = files;
+  const tablesRef = useRef(tables);
+  tablesRef.current = tables;
   const [preparing, setPreparing] = useState(0);
   const [problem, setProblem] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -205,7 +218,13 @@ export function ChatInput({
   /** Lässt die Dateien lesen und hängt sie an (höchstens 3; Fehler als Hinweis, der Rest geht weiter). */
   const addDocuments = async (list: File[], problems: string[]) => {
     if (list.length === 0) return;
-    const room = Math.max(0, FILES_MAX_PER_MESSAGE - filesRef.current.length);
+    // Dateien und Tabellen zählen zusammen.
+    const room = Math.max(
+      0,
+      FILES_MAX_PER_MESSAGE -
+        filesRef.current.length -
+        tablesRef.current.length,
+    );
     if (list.length > room) {
       problems.push(t('chat.files.tooMany', { max: FILES_MAX_PER_MESSAGE }));
     }
@@ -228,6 +247,37 @@ export function ChatInput({
     }
   };
 
+  /** Lässt die Tabellen (CSV, TSV, Excel) lesen und hängt sie an – zusammen mit den Dateien höchstens 3. */
+  const addTables = async (list: File[], problems: string[]) => {
+    if (list.length === 0) return;
+    const room = Math.max(
+      0,
+      FILES_MAX_PER_MESSAGE -
+        filesRef.current.length -
+        tablesRef.current.length,
+    );
+    if (list.length > room) {
+      problems.push(t('chat.files.tooMany', { max: FILES_MAX_PER_MESSAGE }));
+    }
+    for (const file of list.slice(0, room)) {
+      try {
+        const prepared = await prepareTable(file);
+        setTables((current) => [...current, prepared]);
+      } catch (error) {
+        problems.push(
+          error instanceof FileProblem && error.tooBig
+            ? t('chat.files.tooBig', {
+                name: error.fileName,
+                max: TABLE_MAX_BYTES / 1024 / 1024,
+              })
+            : error instanceof Error && error.message
+              ? error.message
+              : t('chat.files.unreadable', { name: file.name }),
+        );
+      }
+    }
+  };
+
   const addAttachments = async (all: File[]) => {
     if (!attach || all.length === 0) return;
     setProblem(null);
@@ -236,8 +286,12 @@ export function ChatInput({
     try {
       await Promise.all([
         addImages(all.filter(isImage), problems),
+        addTables(
+          all.filter((file) => !isImage(file) && isTableName(file.name)),
+          problems,
+        ),
         addDocuments(
-          all.filter((file) => !isImage(file)),
+          all.filter((file) => !isImage(file) && !isTableName(file.name)),
           problems,
         ),
       ]);
@@ -295,8 +349,14 @@ export function ChatInput({
   };
   const removeFile = (id: string) =>
     setFiles((current) => current.filter((f) => f.id !== id));
+  // Die Tabelle liegt im Hauptprozess – dort gleich wegwerfen.
+  const removeTable = (id: string) => {
+    void window.api.discardChatTable(id);
+    setTables((current) => current.filter((x) => x.id !== id));
+  };
 
-  const hasAttachment = images.length > 0 || files.length > 0;
+  const hasAttachment =
+    images.length > 0 || files.length > 0 || tables.length > 0;
   const canSend =
     !disabled &&
     !isRunning &&
@@ -312,10 +372,11 @@ export function ChatInput({
       return;
     }
     // Die Vorschau-Adressen der Bilder gehen mit: Die Nachricht zeigt dieselben Bilder.
-    onSend(text, { images, files });
+    onSend(text, { images, files, tables });
     setText('');
     setImages([]);
     setFiles([]);
+    setTables([]);
     setProblem(null);
   };
 
@@ -341,12 +402,14 @@ export function ChatInput({
   };
 
   // Passen die Dateien noch in den Kontext? Sonst Hinweis (Ollama würde den Anfang still abschneiden).
-  const fileTokenSum = files.reduce((sum, f) => sum + fileTokens(f.chars), 0);
+  const fileTokenSum =
+    files.reduce((sum, f) => sum + fileTokens(f.chars), 0) +
+    tables.reduce((sum, x) => sum + tableTokens(x.columns), 0);
   const context = attach?.context;
   const needed = (context?.used ?? 0) + fileTokenSum;
   const tooTight =
     context !== undefined &&
-    files.length > 0 &&
+    (files.length > 0 || tables.length > 0) &&
     context.length - needed < ANSWER_RESERVE;
   const raiseTo =
     tooTight && context
@@ -386,6 +449,33 @@ export function ChatInput({
                 onClick={() => removeFile(file.id)}
                 title={t('chat.files.remove', { name: file.name })}
                 aria-label={t('chat.files.remove', { name: file.name })}
+                className="absolute -top-1.5 -right-1.5 grid h-5 w-5 place-items-center rounded-full border border-border bg-surface text-muted hover:text-text"
+              >
+                <X size={12} />
+              </button>
+            </li>
+          ))}
+          {tables.map((table) => (
+            <li
+              key={table.id}
+              title={table.name}
+              className="relative flex max-w-[260px] items-center gap-2 rounded-lg border border-border bg-surface py-1.5 pr-3 pl-2.5 text-xs"
+            >
+              <Table2 size={16} className="shrink-0 text-muted" />
+              <span className="min-w-0">
+                <span className="block truncate font-medium">{table.name}</span>
+                <span className="block text-subtle">
+                  {t('chat.tables.size', {
+                    rows: table.rows.toLocaleString(i18n.language),
+                    columns: table.columns,
+                  })}
+                </span>
+              </span>
+              <button
+                type="button"
+                onClick={() => removeTable(table.id)}
+                title={t('chat.files.remove', { name: table.name })}
+                aria-label={t('chat.files.remove', { name: table.name })}
                 className="absolute -top-1.5 -right-1.5 grid h-5 w-5 place-items-center rounded-full border border-border bg-surface text-muted hover:text-text"
               >
                 <X size={12} />

@@ -17,6 +17,11 @@ import type { FileKind } from '../../shared/file-kinds';
 import type { MessageFile } from '../../shared/files';
 import type { ImageMime, MessageImage } from '../../shared/images';
 import {
+  TABLE_SAMPLE_ROWS,
+  type MessageTable,
+  type ParsedTable,
+} from '../../shared/tables';
+import {
   buildFtsQuery,
   HIGHLIGHT_END,
   HIGHLIGHT_START,
@@ -73,6 +78,22 @@ export interface StoredFile {
   kind: FileKind;
   text: string;
   pages?: number;
+}
+
+/** Eine Tabelle, so wie sie zu einer Nachricht gespeichert wird (die gelesene Tabelle). */
+export interface StoredTable extends ParsedTable {
+  id: string;
+  name: string;
+  sqlName: string;
+}
+
+/** Eine Tabelle ohne ihre Daten: Spalten, Zeilenzahl und die ersten Zeilen. */
+export interface TableHead {
+  name: string;
+  sqlName: string;
+  rowCount: number;
+  columns: ParsedTable['columns'];
+  sample: ParsedTable['rows'];
 }
 
 /** Felder einer Antwort, die sich nach dem Anlegen noch ändern. */
@@ -182,11 +203,44 @@ export class ChatRepository {
         },
       ]);
     }
+    // Tabellen ohne ihre Daten – die lädt nur die Datenanalyse (`tablesOfChat`).
+    const tableRows = this.db
+      .prepare(
+        `SELECT t.id, t.message_id, t.name, t.sql_name, t.row_count, t.column_count
+           FROM message_tables t JOIN messages m ON m.id = t.message_id
+          WHERE m.chat_id = ? ORDER BY t.position`,
+      )
+      .all(chatId) as unknown as {
+      id: string;
+      message_id: string;
+      name: string;
+      sql_name: string;
+      row_count: number;
+      column_count: number;
+    }[];
+    const tables = new Map<string, MessageTable[]>();
+    for (const row of tableRows) {
+      tables.set(row.message_id, [
+        ...(tables.get(row.message_id) ?? []),
+        {
+          id: row.id,
+          name: row.name,
+          sqlName: row.sql_name,
+          rows: row.row_count,
+          columns: row.column_count,
+        },
+      ]);
+    }
     return {
       ...toSummary(chat),
       settings: parseSettings(chat.settings_json),
       messages: rows.map((row) =>
-        toMessage(row, images.get(row.id), files.get(row.id)),
+        toMessage(
+          row,
+          images.get(row.id),
+          files.get(row.id),
+          tables.get(row.id),
+        ),
       ),
       ...(chat.summary_at_count !== null && {
         summaryAtCount: chat.summary_at_count,
@@ -386,6 +440,88 @@ export class ChatRepository {
     return { ...rest, ...(pages !== null && { pages }) };
   }
 
+  /** Speichert die Tabellen einer Nachricht in dieser Reihenfolge. */
+  addTables(messageId: string, tables: StoredTable[]) {
+    const insert = this.db.prepare(
+      `INSERT INTO message_tables
+         (id, message_id, position, name, sql_name, row_count, column_count, columns_json, sample_json, data_json)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    );
+    tables.forEach((table, position) =>
+      insert.run(
+        table.id,
+        messageId,
+        position,
+        table.name,
+        table.sqlName,
+        table.rows.length,
+        table.columns.length,
+        JSON.stringify(table.columns),
+        JSON.stringify(table.rows.slice(0, TABLE_SAMPLE_ROWS)),
+        JSON.stringify(table.rows),
+      ),
+    );
+  }
+
+  /** Eine gespeicherte Tabelle mit ihren Daten (null = gibt es nicht). */
+  getTable(tableId: string): StoredTable | null {
+    const row = this.db
+      .prepare(
+        'SELECT id, name, sql_name, columns_json, data_json FROM message_tables WHERE id = ?',
+      )
+      .get(tableId) as unknown as TableRow | undefined;
+    return row ? toStoredTable(row) : null;
+  }
+
+  /** Spalten und die ersten Zeilen einer Tabelle – ohne die ganze Tabelle zu laden (null = gibt es nicht). */
+  getTableHead(tableId: string): TableHead | null {
+    const row = this.db
+      .prepare(
+        'SELECT name, sql_name, row_count, columns_json, sample_json FROM message_tables WHERE id = ?',
+      )
+      .get(tableId) as unknown as
+      | {
+          name: string;
+          sql_name: string;
+          row_count: number;
+          columns_json: string;
+          sample_json: string;
+        }
+      | undefined;
+    return row
+      ? {
+          name: row.name,
+          sqlName: row.sql_name,
+          rowCount: row.row_count,
+          columns: JSON.parse(row.columns_json) as ParsedTable['columns'],
+          sample: JSON.parse(row.sample_json) as ParsedTable['rows'],
+        }
+      : null;
+  }
+
+  /** Die letzten `limit` Tabellen eines Chats (älteste zuerst) mit Daten – das sind die abfragbaren. */
+  tablesOfChat(chatId: string, limit: number): StoredTable[] {
+    const rows = this.db
+      .prepare(
+        `SELECT t.id, t.name, t.sql_name, t.columns_json, t.data_json
+           FROM message_tables t JOIN messages m ON m.id = t.message_id
+          WHERE m.chat_id = ? ORDER BY m.position DESC, t.position DESC LIMIT ?`,
+      )
+      .all(chatId, limit) as unknown as TableRow[];
+    return rows.reverse().map(toStoredTable);
+  }
+
+  /** Alle SQL-Namen der Tabellen eines Chats (damit ein neuer Name eindeutig bleibt). */
+  tableSqlNames(chatId: string): string[] {
+    const rows = this.db
+      .prepare(
+        `SELECT t.sql_name FROM message_tables t JOIN messages m ON m.id = t.message_id
+          WHERE m.chat_id = ?`,
+      )
+      .all(chatId) as unknown as { sql_name: string }[];
+    return rows.map((r) => r.sql_name);
+  }
+
   /** Ein gespeichertes Bild mit seinen Bytes (null = gibt es nicht). */
   getImage(
     imageId: string,
@@ -573,6 +709,7 @@ function toMessage(
   row: MessageRow,
   images?: MessageImage[],
   files?: MessageFile[],
+  tables?: MessageTable[],
 ): MessageRecord {
   const toolCalls = parseToolCalls(row.tool_calls_json);
   const knowledge = parseSources(row.sources_json);
@@ -582,6 +719,7 @@ function toMessage(
     content: row.content,
     ...(images && images.length > 0 && { images }),
     ...(files && files.length > 0 && { files }),
+    ...(tables && tables.length > 0 && { tables }),
     thinking: row.thinking,
     status: row.status,
     model: row.model ?? undefined,
@@ -595,5 +733,23 @@ function toMessage(
         row.status === 'streaming' ? toolCalls : settleToolCalls(toolCalls),
     }),
     ...knowledge,
+  };
+}
+
+interface TableRow {
+  id: string;
+  name: string;
+  sql_name: string;
+  columns_json: string;
+  data_json: string;
+}
+
+function toStoredTable(row: TableRow): StoredTable {
+  return {
+    id: row.id,
+    name: row.name,
+    sqlName: row.sql_name,
+    columns: JSON.parse(row.columns_json) as ParsedTable['columns'],
+    rows: JSON.parse(row.data_json) as ParsedTable['rows'],
   };
 }
