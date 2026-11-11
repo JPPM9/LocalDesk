@@ -144,3 +144,7 @@ vite.config.ts.timestamp-*
 
 # Electron-Forge
 out/
+
+# Design-Arbeitsdateien (lokal; DESIGN.md und JOURNEY.md werden committet)
+.design-foundations/
+mocks/
