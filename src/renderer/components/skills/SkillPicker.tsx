@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { WandSparkles } from 'lucide-react';
+import { ScrollText } from 'lucide-react';
 import { OLLAMA_DEFAULT_CONTEXT } from '../../../shared/context';
 import { fitSkillCatalog, type SkillView } from '../../../shared/skills';
 import { messageLocale } from '../../../shared/messages';
@@ -60,12 +60,10 @@ export function SkillPicker({
   return (
     <>
       {modelSupportsTools === false && (
-        <p className="mb-1.5 text-[11.5px] text-warn">
-          {t('skillPicker.noTools')}
-        </p>
+        <p className="mb-2 text-xs text-warn">{t('skillPicker.noTools')}</p>
       )}
       {fit && fit.hidden > 0 && (
-        <p className="mb-1.5 text-[11.5px] text-warn">
+        <p className="mb-2 text-xs text-warn">
           {t('skillPicker.hidden', {
             context: (contextLength ?? OLLAMA_DEFAULT_CONTEXT).toLocaleString(
               messageLocale(),
@@ -79,7 +77,7 @@ export function SkillPicker({
         {skills.map((skill) => (
           <li key={skill.id}>
             <label
-              className={`flex items-start gap-2 rounded px-1.5 py-1 ${
+              className={`flex items-start gap-2 rounded px-2 py-1 ${
                 skill.error
                   ? 'opacity-60'
                   : 'cursor-pointer hover:bg-surface-hover'
@@ -95,7 +93,7 @@ export function SkillPicker({
               <span className="min-w-0 flex-1">
                 <span className="block truncate">{skill.name}</span>
                 <span
-                  className={`block line-clamp-2 text-[11.5px] ${
+                  className={`block line-clamp-2 text-xs ${
                     skill.error ? 'text-error' : 'text-subtle'
                   }`}
                 >
@@ -116,7 +114,7 @@ export function SkillsButton(props: SkillPickerProps) {
   const { t } = useTranslation();
   return (
     <PickerButton
-      icon={WandSparkles}
+      icon={ScrollText}
       label={t('skillPicker.button')}
       chipText={t('skillPicker.chip')}
       count={props.selected.length}
@@ -126,7 +124,7 @@ export function SkillsButton(props: SkillPickerProps) {
       <SkillPicker {...props} />
       <Link
         to="/skills"
-        className="block text-[11.5px] text-accent-text hover:underline"
+        className="block text-xs text-accent-text hover:underline"
       >
         {t('skillPicker.manage')}
       </Link>

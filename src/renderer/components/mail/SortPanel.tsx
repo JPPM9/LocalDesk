@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LoaderCircle, Star, Tag, WandSparkles, X } from 'lucide-react';
+import { LoaderCircle, Star, Tag, ScrollText, X } from 'lucide-react';
 import type { MailChange, MailLabel } from '../../../shared/mail';
 import {
   isSortableLabel,
@@ -144,7 +144,7 @@ export function SortPanel({
               <button
                 type="button"
                 onClick={() => void window.api.cancelMailSorting()}
-                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-[13px] hover:bg-surface-hover"
+                className="flex shrink-0 items-center gap-2 rounded-lg border border-border px-3 py-2 text-[13px] hover:bg-surface-hover"
               >
                 <LoaderCircle size={15} className="animate-spin" />
                 {t('mail.cancel')}
@@ -154,9 +154,9 @@ export function SortPanel({
                 type="button"
                 onClick={() => void suggest()}
                 disabled={!model || count === 0}
-                className="flex shrink-0 items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-[13px] font-medium text-white hover:opacity-90 disabled:opacity-40"
+                className="flex shrink-0 items-center gap-2 rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-white hover:opacity-90 disabled:opacity-40"
               >
-                <WandSparkles size={15} />
+                <ScrollText size={15} />
                 {t('mailSort.start')}
               </button>
             )}
@@ -199,7 +199,7 @@ export function SortPanel({
             </div>
           )}
           {outcome && (
-            <div className="space-y-1 rounded-xl border border-border bg-surface px-4 py-2.5 text-[13px]">
+            <div className="space-y-1 rounded-xl border border-border bg-surface px-4 py-3 text-[13px]">
               <p className="text-ok">
                 {t('mailSort.applied', { count: outcome.applied })}
               </p>
@@ -221,7 +221,7 @@ export function SortPanel({
                 {suggestions.map((s) => (
                   <li
                     key={s.messageId}
-                    className="space-y-1.5 rounded-xl border border-border bg-surface px-4 py-3"
+                    className="space-y-2 rounded-xl border border-border bg-surface px-4 py-3"
                   >
                     <div className="flex items-baseline gap-2">
                       <span className="shrink-0 font-medium">
@@ -304,7 +304,7 @@ export function SortPanel({
                   type="button"
                   onClick={() => void apply()}
                   disabled={selected.length === 0 || applying}
-                  className="flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-[13px] font-medium text-white hover:opacity-90 disabled:opacity-40"
+                  className="flex items-center gap-2 rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-white hover:opacity-90 disabled:opacity-40"
                 >
                   {applying && (
                     <LoaderCircle size={15} className="animate-spin" />

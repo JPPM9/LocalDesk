@@ -31,7 +31,7 @@ export function FileView({ sessionId, path, onClose }: FileViewProps) {
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex h-10 shrink-0 items-center gap-2 border-b border-border px-4">
         <span
-          className="min-w-0 flex-1 truncate font-mono text-[12.5px]"
+          className="min-w-0 flex-1 truncate font-mono text-[13px]"
           title={path}
         >
           {path}
@@ -61,7 +61,7 @@ export function FileView({ sessionId, path, onClose }: FileViewProps) {
         ) : file.binary ? (
           <p className="p-4 text-muted">{t('code.binary')}</p>
         ) : (
-          <table className="font-mono text-[12.5px] leading-[1.55]">
+          <table className="font-mono text-[13px] leading-[1.55]">
             <tbody>
               {lines.map((line, i) => (
                 <tr key={i}>

@@ -14,7 +14,7 @@ export function SkillFindings({ findings }: { findings: SkillFinding[] }) {
   );
   return (
     <div className="space-y-1 text-xs">
-      <p className="flex items-center gap-1.5 font-medium">
+      <p className="flex items-center gap-2 font-medium">
         {findings.some((f) => f.severity === 'warn') ? (
           <ShieldAlert size={13} className="text-warn" />
         ) : (

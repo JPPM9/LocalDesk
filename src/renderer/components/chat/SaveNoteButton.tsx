@@ -70,7 +70,7 @@ export function SaveNoteButton({
         {message && (
           <p
             role="status"
-            className={`fixed right-6 bottom-28 z-50 max-w-md rounded-xl border border-border bg-surface px-3.5 py-2.5 text-xs shadow-card ${
+            className={`fixed right-6 bottom-28 z-50 max-w-md rounded-xl border border-border bg-surface px-4 py-3 text-xs shadow-card ${
               state.kind === 'error' ? 'text-error' : 'text-ok'
             }`}
           >
@@ -84,7 +84,7 @@ export function SaveNoteButton({
   return message ? (
     <span
       role="status"
-      className={`flex items-center gap-1 text-[11px] ${
+      className={`flex items-center gap-1 text-xs ${
         state.kind === 'error' ? 'text-error' : 'text-ok'
       }`}
     >
@@ -97,7 +97,7 @@ export function SaveNoteButton({
       onClick={() => void save()}
       disabled={state.kind === 'saving'}
       title={label}
-      className="flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] text-muted opacity-0 group-hover:opacity-100 hover:bg-surface-hover hover:text-text focus:opacity-100 disabled:opacity-50"
+      className="flex items-center gap-1 rounded px-2 py-0.5 text-xs text-muted opacity-0 group-hover:opacity-100 hover:bg-surface-hover hover:text-text focus:opacity-100 disabled:opacity-50"
     >
       <NotebookPen size={12} />
       {t('chatNote.toObsidian')}

@@ -54,7 +54,7 @@ export function McpServerPicker({
   return (
     <div className="space-y-2">
       {modelSupportsTools === false && selected.length > 0 && (
-        <p className="flex gap-1.5 rounded border border-warn/40 bg-warn/10 px-2 py-1.5 text-xs">
+        <p className="flex gap-2 rounded border border-warn/40 bg-warn/10 px-2 py-2 text-xs">
           <TriangleAlert size={13} className="mt-0.5 shrink-0 text-warn" />
           {t('mcpPicker.modelNoTools')}
         </p>
@@ -66,7 +66,7 @@ export function McpServerPicker({
           ).length;
           return (
             <li key={config.id}>
-              <label className="flex cursor-pointer items-start gap-2 rounded px-1.5 py-1 hover:bg-surface-hover">
+              <label className="flex cursor-pointer items-start gap-2 rounded px-2 py-1 hover:bg-surface-hover">
                 <input
                   type="checkbox"
                   checked={selected.includes(config.id)}
@@ -74,13 +74,13 @@ export function McpServerPicker({
                   className="mt-1 accent-[var(--ld-accent)]"
                 />
                 <span className="min-w-0 flex-1">
-                  <span className="flex items-center gap-1.5">
+                  <span className="flex items-center gap-2">
                     <span
                       className={`h-1.5 w-1.5 shrink-0 rounded-full ${STATE_DOT[status.state]}`}
                     />
                     <span className="truncate">{config.name}</span>
                   </span>
-                  <span className="block truncate text-[11px] text-muted">
+                  <span className="block truncate text-xs text-muted">
                     {!config.enabled
                       ? t('mcpPicker.disabled')
                       : status.state === 'running'

@@ -37,7 +37,7 @@ export function CodeModeSwitch({
             disabled={disabled}
             onClick={() => onChange(value)}
             title={t(`code.mode.${value}Hint`)}
-            className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs disabled:opacity-60 ${
+            className={`flex items-center gap-2 rounded-full px-3 py-1 text-xs disabled:opacity-60 ${
               active
                 ? 'bg-accent-soft text-accent-text'
                 : 'text-muted hover:text-text'

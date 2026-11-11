@@ -59,7 +59,7 @@ export function ModelsPage() {
       type="button"
       onClick={load}
       disabled={loading}
-      className="flex items-center gap-1.5 rounded border border-border px-2.5 py-1 text-xs hover:bg-surface-hover disabled:opacity-50"
+      className="flex items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-50"
     >
       <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
       {t('models.refresh')}
@@ -88,7 +88,7 @@ export function ModelsPage() {
     if (!result.ok) {
       return (
         <div className="rounded border border-error/40 bg-error/10 p-4">
-          <p className="font-semibold text-error">{t('models.error')}</p>
+          <p className="font-medium text-error">{t('models.error')}</p>
           <p className="mt-1 text-muted">{result.error}</p>
         </div>
       );
@@ -148,35 +148,31 @@ function ModelTable({
               <td className="px-3 py-2 font-medium whitespace-nowrap">
                 {model.name}
               </td>
-              <td className="px-3 py-2 tabular-nums">
+              <td className="px-3 py-2 font-mono text-[13px] tabular-nums">
                 {model.parameterSize ?? '–'}
               </td>
-              <td className="px-3 py-2 tabular-nums">
+              <td className="px-3 py-2 font-mono text-[13px] tabular-nums">
                 {model.quantization ?? '–'}
               </td>
-              <td className="px-3 py-2 tabular-nums whitespace-nowrap">
+              <td className="px-3 py-2 font-mono text-[13px] tabular-nums whitespace-nowrap">
                 {formatBytes(model.sizeBytes)}
               </td>
-              <td className="px-3 py-2 tabular-nums">
+              <td className="px-3 py-2 font-mono text-[13px] tabular-nums">
                 {formatContext(model.contextLength)}
               </td>
               <td className="px-3 py-2">
-                <div className="flex flex-wrap gap-1">
+                <span className="font-mono text-xs text-muted">
                   {model.capabilities
                     .filter((c) => !HIDDEN_CAPABILITIES.has(c))
-                    .map((capability) => (
-                      <span
-                        key={capability}
-                        className="rounded bg-accent-soft px-1.5 py-0.5 text-[11px] text-accent-text"
-                      >
-                        {t(`models.capability.${capability}`, {
-                          defaultValue: capability,
-                        })}
-                      </span>
-                    ))}
-                </div>
+                    .map((capability) =>
+                      t(`models.capability.${capability}`, {
+                        defaultValue: capability,
+                      }),
+                    )
+                    .join(' · ')}
+                </span>
               </td>
-              <td className="px-3 py-2 tabular-nums whitespace-nowrap text-muted">
+              <td className="px-3 py-2 font-mono text-[13px] tabular-nums whitespace-nowrap text-muted">
                 {formatDate(model.modifiedAt)}
               </td>
               <td className="px-2 py-2 text-right">

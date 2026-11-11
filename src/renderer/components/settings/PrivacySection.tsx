@@ -16,8 +16,8 @@ export function PrivacySection() {
   return (
     <section className="space-y-3">
       <div>
-        <h2 className="font-semibold">{t('privacy.title')}</h2>
-        <p className="mt-1 flex items-start gap-1.5 text-xs text-muted">
+        <h2 className="font-medium">{t('privacy.title')}</h2>
+        <p className="mt-1 flex items-start gap-2 text-xs text-muted">
           <ShieldCheck size={14} className="mt-px shrink-0 text-ok" />
           {t('privacy.intro')}
         </p>
@@ -33,7 +33,7 @@ export function PrivacySection() {
         <p className="text-xs text-error">{t('privacy.missing')}</p>
       )}
       {text && (
-        <div className="max-h-[32rem] overflow-y-auto rounded-xl border border-border bg-surface px-5 py-4 text-[13.5px]">
+        <div className="max-h-[32rem] overflow-y-auto rounded-xl border border-border bg-surface px-5 py-4 text-sm">
           <Markdown text={text} />
         </div>
       )}

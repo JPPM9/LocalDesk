@@ -53,7 +53,7 @@ export function MemoryEditor({
     <div
       role="group"
       aria-label={title}
-      className="space-y-2 rounded-xl border border-accent/40 bg-accent-soft/50 px-3.5 py-3 text-sm"
+      className="space-y-2 rounded-xl border border-accent/40 bg-accent-soft/50 px-4 py-3 text-sm"
     >
       <div className="flex items-center gap-2 font-medium">
         <Brain size={16} className="shrink-0 text-accent-text" />
@@ -65,11 +65,11 @@ export function MemoryEditor({
         maxLength={MEMORY_TEXT_MAX}
         rows={2}
         aria-label={t('memories.text')}
-        className="w-full resize-y rounded border border-border bg-bg px-2 py-1.5 outline-none focus:border-accent"
+        className="w-full resize-y rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent"
       />
       <div className="flex flex-wrap items-center gap-2">
         {projectName && (
-          <label className="flex items-center gap-1.5 text-xs text-muted">
+          <label className="flex items-center gap-2 text-xs text-muted">
             {t('memories.scope')}
             <select
               value={scope}
@@ -83,7 +83,7 @@ export function MemoryEditor({
             </select>
           </label>
         )}
-        <span className="ml-auto text-[11px] text-muted">
+        <span className="ml-auto text-xs text-muted">
           {text.length}/{MEMORY_TEXT_MAX}
         </span>
       </div>

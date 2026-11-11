@@ -135,7 +135,7 @@ function Dialog({
             <Icon size={18} />
           </span>
           <div className="min-w-0">
-            <h2 id="confirm-title" className="font-semibold">
+            <h2 id="confirm-title" className="font-medium">
               {title}
             </h2>
             <p
@@ -151,7 +151,7 @@ function Dialog({
             ref={cancelRef}
             type="button"
             onClick={() => onSettle(false)}
-            className="rounded-lg border border-border bg-surface-2 px-3.5 py-1.5 text-sm hover:bg-surface-hover"
+            className="rounded-lg border border-border bg-surface-2 px-4 py-2 text-sm hover:bg-surface-hover"
           >
             {t('dialog.cancel')}
           </button>
@@ -159,7 +159,7 @@ function Dialog({
             ref={confirmRef}
             type="button"
             onClick={() => onSettle(true)}
-            className={`rounded-lg px-3.5 py-1.5 text-sm font-medium ${
+            className={`rounded-lg px-4 py-2 text-sm font-medium ${
               danger
                 ? 'bg-error text-bg hover:opacity-90'
                 : 'bg-accent text-white hover:opacity-90'

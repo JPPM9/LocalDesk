@@ -10,21 +10,33 @@ import {
 const WIDTH = 640;
 const HEIGHT = 320;
 
-/** Zwölf gut unterscheidbare Farben für die Stücke eines Kreisdiagramms (hell und dunkel lesbar). */
-const PIE_COLORS = [
-  '#4f7cff',
-  '#f08c3a',
-  '#2bb673',
-  '#d6568c',
-  '#8a63d2',
-  '#e2b93b',
-  '#2aa5c4',
-  '#d9534f',
-  '#7a9a2e',
-  '#a0714f',
-  '#5f6b7a',
-  '#c76dd1',
+/**
+ * Farben der Stücke eines Kreisdiagramms: Das größte Stück bekommt den Akzent, alle anderen
+ * Graustufen (die Legende und der Tooltip sagen, welches Stück was ist).
+ */
+const PIE_NEUTRALS = [
+  '#9a9aa0',
+  '#76767c',
+  '#b5b5ba',
+  '#5f5f65',
+  '#cdcdd1',
+  '#85858b',
+  '#a6a6ab',
+  '#6b6b71',
+  '#c0c0c5',
+  '#8f8f95',
+  '#b0b0b5',
 ];
+const PIE_ACCENT = 'var(--color-accent)';
+
+/** Farbe je Stück: Rang 1 = Akzent, die übrigen der Reihe nach grau. */
+function pieColors(values: number[]): string[] {
+  const lead = values.indexOf(Math.max(...values));
+  let next = 0;
+  return values.map((_, i) =>
+    i === lead ? PIE_ACCENT : PIE_NEUTRALS[next++ % PIE_NEUTRALS.length],
+  );
+}
 
 /**
  * Ein Diagramm aus einer Tabelle (Werkzeug `table_chart`): Balken, Linie oder Kreis als SVG.
@@ -44,7 +56,7 @@ export function TableChartView({ chart }: { chart: TableChart }) {
 
   return (
     <figure
-      className="space-y-1.5"
+      className="space-y-2"
       role="img"
       aria-label={t('chat.chart.label', { title })}
     >
@@ -208,6 +220,7 @@ function Pie({
   format: (n: number) => string;
 }) {
   const slices = pieSlices(chart.values);
+  const colors = pieColors(chart.values);
   const cx = 150;
   const cy = 150;
   const r = 120;
@@ -223,7 +236,7 @@ function Pie({
         <path
           key={slice.index}
           d={slicePath(cx, cy, r, slice.start, slice.end)}
-          fill={PIE_COLORS[slice.index % PIE_COLORS.length]}
+          style={{ fill: colors[slice.index] }}
           className="stroke-bg"
           strokeWidth={1.5}
         >
@@ -236,7 +249,7 @@ function Pie({
             width={12}
             height={12}
             rx={2}
-            fill={PIE_COLORS[slice.index % PIE_COLORS.length]}
+            style={{ fill: colors[slice.index] }}
           />
           <text x={20} y={10} className="fill-text" fontSize={12}>
             {shortLabel(chart.labels[slice.index], 28)}

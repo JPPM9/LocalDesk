@@ -73,13 +73,13 @@ export function ServerSettings() {
   return (
     <section className="space-y-3">
       <div>
-        <h2 className="font-semibold">{t('servers.title')}</h2>
+        <h2 className="font-medium">{t('servers.title')}</h2>
         <p className="mt-1 text-xs text-muted">{t('servers.intro')}</p>
       </div>
 
       <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
         {profiles.map((profile) => (
-          <li key={profile.id} className="flex items-center gap-3 px-3 py-2.5">
+          <li key={profile.id} className="flex items-center gap-3 px-3 py-3">
             {/* Größere Klickfläche um den kleinen Radio-Knopf (mind. 24 px). */}
             <label className="grid h-7 w-7 shrink-0 cursor-pointer place-items-center">
               <input
@@ -99,7 +99,7 @@ export function ServerSettings() {
                   {displayName(profile.name)}
                 </span>
                 {profile.active && (
-                  <span className="rounded bg-accent-soft px-1.5 text-[11px] text-accent-text">
+                  <span className="rounded bg-accent-soft px-2 text-xs text-accent-text">
                     {t('servers.active')}
                   </span>
                 )}
@@ -146,7 +146,7 @@ export function ServerSettings() {
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               placeholder={t('servers.namePlaceholder')}
-              className="w-full rounded border border-border bg-bg px-2 py-1.5 outline-none focus:border-accent"
+              className="w-full rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent"
             />
           </Field>
           <Field label={t('servers.address')} hint={t('servers.addressHint')}>
@@ -154,7 +154,7 @@ export function ServerSettings() {
               value={form.address}
               onChange={(e) => setForm({ ...form, address: e.target.value })}
               placeholder="192.168.1.20"
-              className="w-full rounded border border-border bg-bg px-2 py-1.5 font-mono outline-none focus:border-accent"
+              className="w-full rounded border border-border bg-bg px-2 py-2 font-mono outline-none focus:border-accent"
             />
           </Field>
           <div className="flex items-center gap-2">
@@ -185,7 +185,7 @@ export function ServerSettings() {
           onClick={() =>
             setForm({ id: crypto.randomUUID(), name: '', address: '' })
           }
-          className="flex items-center gap-1.5 rounded border border-border px-3 py-1.5 hover:bg-surface-hover"
+          className="flex items-center gap-2 rounded border border-border px-3 py-2 hover:bg-surface-hover"
         >
           <Plus size={15} />
           {t('servers.add')}

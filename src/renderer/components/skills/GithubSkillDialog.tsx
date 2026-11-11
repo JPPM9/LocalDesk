@@ -27,7 +27,7 @@ interface GithubSkillDialogProps {
 }
 
 const BUTTON =
-  'rounded-lg border border-border bg-surface-2 px-3.5 py-1.5 text-sm hover:bg-surface-hover';
+  'rounded-lg border border-border bg-surface-2 px-4 py-2 text-sm hover:bg-surface-hover';
 
 /**
  * „Von GitHub“: Suchbegriff → Projekte → Skills darin → Auswahl → Vorschau mit
@@ -140,7 +140,7 @@ export function GithubSkillDialog({
         className="flex max-h-[90vh] w-full max-w-2xl flex-col space-y-3 rounded-xl border border-border bg-surface p-5 shadow-xl"
         onClick={(event) => event.stopPropagation()}
       >
-        <h2 id="github-skill-title" className="font-semibold">
+        <h2 id="github-skill-title" className="font-medium">
           {t('skills.github.title')}
         </h2>
         <p className="text-sm text-muted">{t('skills.github.intro')}</p>
@@ -161,7 +161,7 @@ export function GithubSkillDialog({
             type="button"
             onClick={() => void open(input, false)}
             disabled={busy !== null || !input.trim()}
-            className="flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
           >
             {busy === 'opening' ? (
               <LoaderCircle size={15} className="animate-spin" />
@@ -173,7 +173,7 @@ export function GithubSkillDialog({
               : t('skills.github.go')}
           </button>
         </div>
-        <p className="flex items-start gap-1.5 text-xs text-muted">
+        <p className="flex items-start gap-2 text-xs text-muted">
           <TriangleAlert size={13} className="mt-0.5 shrink-0 text-warn" />
           {t('skills.github.warning')}
         </p>
@@ -220,7 +220,7 @@ export function GithubSkillDialog({
                   const checked = picked.has(skill.index);
                   return (
                     <li key={skill.index}>
-                      <label className="flex cursor-pointer items-start gap-2.5 rounded-xl border border-border bg-bg px-4 py-3">
+                      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-bg px-4 py-3">
                         <input
                           type="checkbox"
                           checked={checked}
@@ -327,7 +327,7 @@ export function GithubSkillDialog({
               type="button"
               onClick={() => void check()}
               disabled={busy !== null || picked.size === 0}
-              className="flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
             >
               {busy === 'checking' && (
                 <LoaderCircle size={15} className="animate-spin" />

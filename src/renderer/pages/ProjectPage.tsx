@@ -118,7 +118,7 @@ export function ProjectPage() {
             <button
               type="button"
               onClick={() => navigate(`/chat?project=${project.id}`)}
-              className="flex items-center gap-1.5 rounded border border-border px-2.5 py-1 text-xs hover:bg-surface-hover"
+              className="flex items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
             >
               <MessageSquarePlus size={14} />
               {t('projects.newChat')}
@@ -162,7 +162,7 @@ export function ProjectPage() {
               onKeyDown={(e) => {
                 if (e.key === 'Enter') e.currentTarget.blur();
               }}
-              className="w-full rounded border border-border bg-surface px-2 py-1.5 outline-none focus:border-accent"
+              className="w-full rounded border border-border bg-surface px-2 py-2 outline-none focus:border-accent"
             />
           </label>
 
@@ -182,16 +182,16 @@ export function ProjectPage() {
               onBlur={() => void saveInstructions()}
               rows={5}
               placeholder={t('projects.instructionsPlaceholder')}
-              className="w-full resize-y rounded border border-border bg-surface px-2 py-1.5 outline-none focus:border-accent"
+              className="w-full resize-y rounded border border-border bg-surface px-2 py-2 outline-none focus:border-accent"
             />
-            <span className="block text-[11px] text-muted">
+            <span className="block text-xs text-muted">
               {t('projects.instructionsHint')}
             </span>
           </label>
 
           <section className="space-y-2">
             <div>
-              <h2 className="font-semibold">{t('projects.skills')}</h2>
+              <h2 className="font-medium">{t('projects.skills')}</h2>
               <p className="text-xs text-muted">{t('projects.skillsHint')}</p>
             </div>
             <div className="rounded-xl border border-border bg-surface p-3">
@@ -208,7 +208,7 @@ export function ProjectPage() {
 
           <section className="space-y-3">
             <div>
-              <h2 className="font-semibold">{t('projects.documents')}</h2>
+              <h2 className="font-medium">{t('projects.documents')}</h2>
               <p className="text-xs text-muted">
                 {t('projects.documentsHint')}
               </p>
@@ -234,7 +234,7 @@ export function ProjectPage() {
           </section>
 
           <section className="space-y-2">
-            <h2 className="font-semibold">
+            <h2 className="font-medium">
               {t('projects.chats', { count: chats.length })}
             </h2>
             {chats.length === 0 ? (

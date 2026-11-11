@@ -62,7 +62,7 @@ export function SettingsFields({
           onChange={(e) => set('systemPrompt', e.target.value || undefined)}
           rows={6}
           placeholder={t('settingsPanel.systemPromptPlaceholder')}
-          className="w-full resize-y rounded border border-border bg-bg px-2 py-1.5 outline-none focus:border-accent"
+          className="w-full resize-y rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent"
         />
       </Field>
 
@@ -84,7 +84,7 @@ export function SettingsFields({
               e.target.value ? Number(e.target.value) : undefined,
             )
           }
-          className="w-full rounded border border-border bg-bg px-2 py-1.5 outline-none focus:border-accent"
+          className="w-full rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent"
         >
           <option value="">
             {t('settingsPanel.contextDefault', {
@@ -148,7 +148,7 @@ export function SettingsFields({
             )
           }
           placeholder={t('settingsPanel.seedPlaceholder')}
-          className="w-full rounded border border-border bg-bg px-2 py-1.5 tabular-nums outline-none focus:border-accent"
+          className="w-full rounded border border-border bg-bg px-2 py-2 tabular-nums outline-none focus:border-accent"
         />
       </Field>
 
@@ -164,7 +164,7 @@ export function SettingsFields({
           <select
             value={thinkToValue(settings.think)}
             onChange={(e) => set('think', valueToThink(e.target.value))}
-            className="w-full rounded border border-border bg-bg px-2 py-1.5 outline-none focus:border-accent"
+            className="w-full rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent"
           >
             <option value="">{t('settingsPanel.default')}</option>
             {style === 'toggle' ? (
@@ -201,9 +201,9 @@ export function Field({
 }) {
   const { t } = useTranslation();
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-semibold">{label}</label>
+        <label className="text-xs font-medium">{label}</label>
         <div className="flex items-center gap-1">
           {value && (
             <span className="tabular-nums text-xs text-muted">{value}</span>
@@ -222,7 +222,7 @@ export function Field({
         </div>
       </div>
       {children}
-      {hint && <p className="text-[11px] leading-snug text-muted">{hint}</p>}
+      {hint && <p className="text-xs leading-snug text-muted">{hint}</p>}
     </div>
   );
 }

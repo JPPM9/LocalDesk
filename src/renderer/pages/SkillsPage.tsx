@@ -40,7 +40,7 @@ const ICON_BTN =
 const SIDEBAR_BTN =
   'grid h-8 w-7 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text';
 const FIELD =
-  'w-full rounded border border-border bg-bg px-2.5 py-1.5 outline-none focus:border-accent';
+  'w-full rounded border border-border bg-bg px-3 py-2 outline-none focus:border-accent';
 
 export function SkillsPage() {
   const { t } = useTranslation();
@@ -210,11 +210,11 @@ export function SkillsPage() {
         </div>
       )}
       <aside className="flex w-[270px] shrink-0 flex-col border-r border-border bg-surface">
-        <div className="flex gap-1.5 px-2.5 pt-3 pb-2">
+        <div className="flex gap-2 px-3 pt-3 pb-2">
           <button
             type="button"
             onClick={() => navigate(`/skills/${NEW}`)}
-            className="flex min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-accent px-2.5 py-1.5 font-medium text-white hover:opacity-90"
+            className="flex min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-accent px-3 py-2 font-medium text-white hover:opacity-90"
           >
             <Plus size={16} />
             {t('skills.new')}
@@ -257,11 +257,11 @@ export function SkillsPage() {
           </button>
         </div>
         {notice && (
-          <p className="mx-2.5 mb-2 rounded-lg border border-ok/40 bg-ok/10 px-2.5 py-1.5 text-xs">
+          <p className="mx-3 mb-2 rounded-lg border border-ok/40 bg-ok/10 px-3 py-2 text-xs">
             {notice}
           </p>
         )}
-        <nav className="min-h-0 flex-1 overflow-y-auto px-2.5 pb-2">
+        <nav className="min-h-0 flex-1 overflow-y-auto px-3 pb-2">
           {listError && (
             <p className="px-2 py-2 text-xs text-error">{listError}</p>
           )}
@@ -275,14 +275,14 @@ export function SkillsPage() {
               key={skill.id}
               to={`/skills/${skill.id}`}
               className={({ isActive }) =>
-                `my-px block rounded-lg px-2.5 py-2 ${
+                `my-px block rounded-lg px-3 py-2 ${
                   isActive
                     ? 'bg-surface-hover font-medium text-text'
                     : 'text-muted hover:bg-surface-hover hover:text-text'
                 }`
               }
             >
-              <div className="flex items-center gap-1.5 truncate">
+              <div className="flex items-center gap-2 truncate">
                 {skill.error && (
                   <CircleAlert size={13} className="shrink-0 text-error" />
                 )}
@@ -338,7 +338,7 @@ export function SkillsPage() {
                   type="button"
                   onClick={() => void onSave()}
                   disabled={!dirty}
-                  className="flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-[13px] font-medium text-white hover:opacity-90 disabled:opacity-40"
+                  className="flex items-center gap-2 rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-white hover:opacity-90 disabled:opacity-40"
                 >
                   <Save size={15} />
                   {t('skills.save')}
@@ -352,7 +352,7 @@ export function SkillsPage() {
           {draft ? (
             <div className="mx-auto max-w-3xl space-y-5 px-7 py-6">
               {(error || selected?.error) && (
-                <p className="rounded-xl border border-error/40 bg-error/10 px-3.5 py-2.5 text-error">
+                <p className="rounded-xl border border-error/40 bg-error/10 px-4 py-3 text-error">
                   {error ?? t('skills.broken', { error: selected?.error })}
                 </p>
               )}
@@ -371,7 +371,7 @@ export function SkillsPage() {
                 hint={t('skills.descriptionHint')}
               >
                 {skillDescriptionHint(draft.description) && (
-                  <p className="mb-1.5 text-xs text-warn">
+                  <p className="mb-2 text-xs text-warn">
                     {t(
                       skillDescriptionHint(draft.description) === 'missing'
                         ? 'skills.descMissing'
@@ -406,7 +406,7 @@ export function SkillsPage() {
                 />
               </Field>
               {advice && !advice.fits && advice.suggested !== null && (
-                <p className="rounded-xl border border-warn/40 bg-warn/10 px-3.5 py-2.5 text-sm">
+                <p className="rounded-xl border border-warn/40 bg-warn/10 px-4 py-3 text-sm">
                   {t('skills.tooBig', {
                     context:
                       OLLAMA_DEFAULT_CONTEXT.toLocaleString(messageLocale()),
@@ -420,7 +420,7 @@ export function SkillsPage() {
                     {selected.files.map((file) => (
                       <li
                         key={file.path}
-                        className="flex items-center gap-3 px-3 py-1.5 text-xs"
+                        className="flex items-center gap-3 px-3 py-2 text-xs"
                       >
                         <span className="min-w-0 flex-1 truncate font-mono">
                           {file.path}

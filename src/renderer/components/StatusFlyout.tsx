@@ -86,9 +86,9 @@ export function StatusFlyout({
           aria-label={t('nav.status')}
           className="fixed top-2 left-[68px] z-40 flex max-h-[calc(100vh-1rem)] w-[360px] flex-col rounded-xl border border-border bg-bg shadow-xl"
         >
-          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-4 py-2.5">
+          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-4 py-3">
             <div className="min-w-0">
-              <h2 className="font-semibold">{t('status.pageTitle')}</h2>
+              <h2 className="font-medium">{t('status.pageTitle')}</h2>
               <p className="truncate text-xs text-muted">{statusText}</p>
             </div>
             <div className="flex shrink-0 items-center gap-1">

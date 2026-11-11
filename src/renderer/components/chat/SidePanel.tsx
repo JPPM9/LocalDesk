@@ -64,7 +64,7 @@ export function SidePanel(props: SidePanelProps) {
               role="tab"
               aria-selected={props.tab === tab}
               onClick={() => props.onTab(tab)}
-              className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1 text-[12.5px] ${
+              className={`flex flex-1 items-center justify-center gap-2 rounded-md px-2 py-1 text-[13px] ${
                 props.tab === tab
                   ? 'bg-surface text-text shadow-card'
                   : 'text-muted hover:text-text'
@@ -86,7 +86,7 @@ export function SidePanel(props: SidePanelProps) {
           <X size={16} />
         </button>
       </div>
-      <div className="flex-1 overflow-y-auto px-3.5 pb-4">
+      <div className="flex-1 overflow-y-auto px-4 pb-4">
         {props.tab === 'sources' && <SourcesTab messages={props.messages} />}
         {props.tab === 'project' && <ProjectTab project={props.project} />}
         {props.tab === 'context' && <ContextTab {...props} />}
@@ -117,7 +117,7 @@ function SourcesTab({ messages }: { messages: MessageRecord[] }) {
   }
   return (
     <div className="space-y-2">
-      <p className="text-[11px] text-muted">{t('sidePanel.sourcesOf')}</p>
+      <p className="text-xs text-muted">{t('sidePanel.sourcesOf')}</p>
       <SourceList
         key={answer.id}
         sources={answer.sources}
@@ -142,7 +142,7 @@ function ProjectTab({ project }: { project: ChatFolder | undefined }) {
   return (
     <div className="space-y-4 text-sm">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="truncate font-semibold">{project.name}</h3>
+        <h3 className="truncate font-medium">{project.name}</h3>
         <Link
           to={`/projects/${project.id}`}
           className="shrink-0 text-xs text-accent-text hover:underline"
@@ -155,7 +155,7 @@ function ProjectTab({ project }: { project: ChatFolder | undefined }) {
           {t('projects.instructions')}
         </h4>
         {project.instructions ? (
-          <p className="max-h-40 overflow-auto rounded bg-bg px-2 py-1.5 text-xs whitespace-pre-wrap">
+          <p className="max-h-40 overflow-auto rounded bg-bg px-2 py-2 text-xs whitespace-pre-wrap">
             {project.instructions}
           </p>
         ) : (
@@ -186,15 +186,15 @@ function ProjectTab({ project }: { project: ChatFolder | undefined }) {
 }
 
 const PART_COLORS: Record<ContextPart, string> = {
-  memory: 'bg-accent/50',
-  skills: 'bg-[#8b5cf6]',
-  summary: 'bg-[#14b8a6]',
-  instructions: 'bg-muted',
+  instructions: 'bg-muted/25',
+  memory: 'bg-muted/35',
+  summary: 'bg-muted/45',
+  skills: 'bg-muted/55',
   history: 'bg-accent',
-  images: 'bg-[#ec4899]',
-  files: 'bg-[#f97316]',
-  knowledge: 'bg-ok',
-  tools: 'bg-warn',
+  images: 'bg-muted/65',
+  files: 'bg-muted/75',
+  knowledge: 'bg-muted/90',
+  tools: 'bg-muted/15',
 };
 
 /** Füllstand: Anteile, Warnung, „Kontextlänge erhöhen“ mit geschätztem Speicher. */
@@ -242,9 +242,9 @@ function ContextTab({
 
   return (
     <div className="space-y-4 text-sm">
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         <div className="flex items-baseline justify-between">
-          <span className="font-semibold">
+          <span className="font-medium">
             {t('sidePanel.used', {
               used: usage.used.toLocaleString(messageLocale()),
               total: formatContext(usage.contextLength),
@@ -284,11 +284,11 @@ function ContextTab({
             </li>
           ))}
         </ul>
-        <p className="text-[11px] text-muted">{t('sidePanel.estimateHint')}</p>
+        <p className="text-xs text-muted">{t('sidePanel.estimateHint')}</p>
       </div>
 
       {compaction && (
-        <div className="space-y-1.5 rounded border border-border bg-surface px-3 py-2 text-xs">
+        <div className="space-y-2 rounded border border-border bg-surface px-3 py-2 text-xs">
           <p>
             {t('compact.active', {
               count: compaction.messagesCovered,
@@ -301,7 +301,7 @@ function ContextTab({
           <button
             type="button"
             onClick={onClearCompaction}
-            className="rounded border border-border px-2.5 py-1 hover:bg-surface-hover"
+            className="rounded border border-border px-3 py-1 hover:bg-surface-hover"
           >
             {t('compact.clear')}
           </button>
@@ -316,7 +316,7 @@ function ContextTab({
               : 'border-warn/40 bg-warn/10'
           }`}
         >
-          <p className="flex gap-1.5">
+          <p className="flex gap-2">
             <TriangleAlert size={14} className="mt-0.5 shrink-0" />
             {t(`sidePanel.level.${usage.level}`)}
           </p>
@@ -327,7 +327,7 @@ function ContextTab({
                 onClick={() =>
                   onChangeSettings({ ...settings, contextLength: suggestion })
                 }
-                className="rounded bg-accent px-2.5 py-1 text-white"
+                className="rounded bg-accent px-3 py-1 text-white"
               >
                 {t('sidePanel.increase', { size: formatContext(suggestion) })}
               </button>
@@ -359,7 +359,7 @@ function ContextTab({
               <button
                 type="button"
                 onClick={onCompact}
-                className="rounded border border-border bg-surface px-2.5 py-1 hover:bg-surface-hover"
+                className="rounded border border-border bg-surface px-3 py-1 hover:bg-surface-hover"
               >
                 {t('compact.button')}
               </button>

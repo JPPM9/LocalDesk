@@ -83,7 +83,7 @@ export function ChatList(props: ChatListProps) {
   const byDay = (list: ChatSummary[]) =>
     groupChatsByDay(list, new Date()).map((group) => (
       <div key={group.key}>
-        <div className="px-2.5 pt-3 pb-1 text-[11.5px] font-semibold text-subtle">
+        <div className="px-3 pt-3 pb-1 text-xs font-medium text-subtle">
           {t(`chat.day.${group.key}`)}
         </div>
         {group.chats.map(row)}
@@ -102,13 +102,13 @@ export function ChatList(props: ChatListProps) {
 
   return (
     <aside className="flex w-[270px] shrink-0 flex-col border-r border-border bg-surface">
-      <div className="space-y-2 px-2.5 pt-3 pb-2">
-        <div className="flex gap-1.5">
+      <div className="space-y-2 px-3 pt-3 pb-2">
+        <div className="flex gap-2">
           <button
             type="button"
             onClick={onNew}
             title={shortcutLabel('newChat')}
-            className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg bg-accent px-3 py-1.5 font-medium text-white hover:opacity-90"
+            className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg bg-accent px-3 py-2 font-medium text-white hover:opacity-90"
           >
             <Plus size={16} />
             {t('chat.newChat')}
@@ -132,7 +132,7 @@ export function ChatList(props: ChatListProps) {
             <PanelLeftClose size={17} />
           </button>
         </div>
-        <div className="flex items-center gap-2 rounded-lg bg-surface-2 px-2.5 focus-within:ring-2 focus-within:ring-accent/40">
+        <div className="flex items-center gap-2 rounded-lg bg-surface-2 px-3 focus-within:ring-2 focus-within:ring-accent/40">
           <Search size={15} className="shrink-0 text-subtle" />
           <input
             ref={searchRef}
@@ -143,7 +143,7 @@ export function ChatList(props: ChatListProps) {
             placeholder={t('search.placeholder')}
             title={shortcutLabel('search')}
             aria-label={t('search.placeholder')}
-            className="min-w-0 flex-1 bg-transparent py-1.5 outline-none placeholder:text-subtle [&::-webkit-search-cancel-button]:hidden"
+            className="min-w-0 flex-1 bg-transparent py-2 outline-none placeholder:text-subtle [&::-webkit-search-cancel-button]:hidden"
           />
           {query && (
             <button
@@ -167,7 +167,7 @@ export function ChatList(props: ChatListProps) {
               onBlur={() => void createFolder()}
               placeholder={t('folders.namePlaceholder')}
               aria-label={t('folders.new')}
-              className="w-full rounded border border-accent bg-surface px-2 py-1.5 outline-none"
+              className="w-full rounded border border-accent bg-surface px-2 py-2 outline-none"
             />
             {folderError && (
               <p className="mt-1 text-xs text-error">{folderError}</p>
@@ -179,7 +179,7 @@ export function ChatList(props: ChatListProps) {
       {searchResult ? (
         <SearchResults result={searchResult} />
       ) : (
-        <nav className="min-h-0 flex-1 space-y-0.5 overflow-y-auto px-2.5 pb-2">
+        <nav className="min-h-0 flex-1 space-y-0.5 overflow-y-auto px-3 pb-2">
           {chats.length === 0 && folders.length === 0 && (
             <p className="px-2 py-4 text-center text-xs text-muted">
               {t('chat.noChats')}
@@ -218,7 +218,7 @@ export function ChatList(props: ChatListProps) {
           )}
         </nav>
       )}
-      <div className="border-t border-border px-3 py-2.5">
+      <div className="border-t border-border px-3 py-3">
         <StatusPill />
       </div>
     </aside>

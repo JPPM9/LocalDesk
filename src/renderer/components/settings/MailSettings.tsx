@@ -94,7 +94,7 @@ export function MailSettings() {
   return (
     <section className="space-y-3">
       <div>
-        <h2 className="font-semibold">{t('mailSettings.title')}</h2>
+        <h2 className="font-medium">{t('mailSettings.title')}</h2>
         <p className="mt-1 text-xs text-muted">{t('mailSettings.intro')}</p>
         <p className="mt-1 text-xs text-muted">{t('mailSettings.guide')}</p>
       </div>
@@ -116,7 +116,7 @@ export function MailSettings() {
                 onChange={(e) => setClientId(e.target.value)}
                 placeholder="123456789012-abc….apps.googleusercontent.com"
                 spellCheck={false}
-                className="w-full rounded border border-border bg-bg px-2 py-1.5 font-mono text-xs outline-none focus:border-accent"
+                className="w-full rounded border border-border bg-bg px-2 py-2 font-mono text-xs outline-none focus:border-accent"
               />
             </Field>
             <Field
@@ -130,7 +130,7 @@ export function MailSettings() {
                 placeholder="GOCSPX-…"
                 spellCheck={false}
                 autoComplete="off"
-                className="w-full rounded border border-border bg-bg px-2 py-1.5 font-mono text-xs outline-none focus:border-accent"
+                className="w-full rounded border border-border bg-bg px-2 py-2 font-mono text-xs outline-none focus:border-accent"
               />
             </Field>
             {error && <p className="text-xs text-error">{error}</p>}
@@ -155,7 +155,7 @@ export function MailSettings() {
         ) : google ? (
           <div className="space-y-3">
             <div className="space-y-2">
-              <p className="flex items-center gap-1.5 text-xs text-ok">
+              <p className="flex items-center gap-2 text-xs text-ok">
                 <CircleCheck size={13} />
                 {t('mailSettings.saved')} · {t('mailSettings.secretStored')}
               </p>
@@ -196,11 +196,11 @@ export function MailSettings() {
                   {t('mailSettings.noAccounts')}
                 </p>
               ) : (
-                <ul className="space-y-1.5">
+                <ul className="space-y-2">
                   {accounts.map((account) => (
                     <li
                       key={account.id}
-                      className="flex items-center gap-2 rounded-lg border border-border bg-bg px-3 py-1.5"
+                      className="flex items-center gap-2 rounded-lg border border-border bg-bg px-3 py-2"
                     >
                       <span className="min-w-0 flex-1 truncate text-[13px]">
                         {account.email}
@@ -208,7 +208,7 @@ export function MailSettings() {
                       <button
                         type="button"
                         onClick={() => void disconnect(account)}
-                        className="min-h-7 rounded border border-border px-2.5 py-1 text-xs hover:bg-surface-hover"
+                        className="min-h-7 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
                       >
                         {t('mailSettings.disconnect')}
                       </button>
@@ -247,7 +247,7 @@ export function MailSettings() {
                   )}
                 </button>
               )}
-              <p className="flex items-center gap-1.5 text-xs text-subtle">
+              <p className="flex items-center gap-2 text-xs text-subtle">
                 <Lock size={12} />
                 {t('mailSettings.encrypted')}
               </p>

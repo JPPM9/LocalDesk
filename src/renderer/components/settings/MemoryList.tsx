@@ -78,7 +78,7 @@ export function MemoryList() {
   return (
     <div className="space-y-3 rounded-xl border border-border bg-surface p-4">
       <div className="flex items-baseline justify-between">
-        <h3 className="text-sm font-semibold">
+        <h3 className="text-sm font-medium">
           {t('memories.title', { count: memories.length })}
         </h3>
         <button
@@ -100,13 +100,13 @@ export function MemoryList() {
               {group.items.map((memory) => (
                 <li
                   key={memory.id}
-                  className="group flex items-start gap-2 rounded border border-border bg-bg px-2 py-1.5 text-sm"
+                  className="group flex items-start gap-2 rounded border border-border bg-bg px-2 py-2 text-sm"
                 >
                   <span className="min-w-0 flex-1 whitespace-pre-wrap">
                     {memory.text}
                   </span>
                   {memory.created && (
-                    <span className="shrink-0 tabular-nums text-[11px] text-muted">
+                    <span className="shrink-0 tabular-nums text-xs text-muted">
                       {memory.created}
                     </span>
                   )}
@@ -143,13 +143,13 @@ export function MemoryList() {
           }}
           placeholder={t('memories.placeholder')}
           maxLength={500}
-          className="min-w-0 flex-1 rounded border border-border bg-bg px-2 py-1.5 text-sm outline-none focus:border-accent"
+          className="min-w-0 flex-1 rounded border border-border bg-bg px-2 py-2 text-sm outline-none focus:border-accent"
         />
         <select
           value={scope}
           onChange={(e) => setScope(e.target.value)}
           aria-label={t('memories.scope')}
-          className="max-w-40 rounded border border-border bg-bg px-2 py-1.5 text-xs outline-none focus:border-accent"
+          className="max-w-40 rounded border border-border bg-bg px-2 py-2 text-xs outline-none focus:border-accent"
         >
           <option value="">{t('memories.global')}</option>
           {projects.map((p) => (
@@ -162,7 +162,7 @@ export function MemoryList() {
           type="button"
           onClick={() => void add()}
           disabled={!text.trim()}
-          className="flex shrink-0 items-center gap-1 rounded bg-accent px-2.5 py-1 text-xs text-white disabled:opacity-40"
+          className="flex shrink-0 items-center gap-1 rounded bg-accent px-3 py-1 text-xs text-white disabled:opacity-40"
         >
           <Plus size={13} />
           {t('memories.add')}

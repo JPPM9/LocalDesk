@@ -117,7 +117,7 @@ export function CodeAgent({ sessionId, onChanged }: CodeAgentProps) {
       </StickyScroll>
       <div className="mx-auto w-full max-w-[820px] px-7 pb-4">
         {planReady && (
-          <div className="mb-2 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-accent/40 bg-accent-soft px-4 py-2.5">
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-accent/40 bg-accent-soft px-4 py-3">
             <div className="min-w-0 text-sm">
               <p className="font-medium text-accent-text">
                 {t('code.plan.ready')}
@@ -128,7 +128,7 @@ export function CodeAgent({ sessionId, onChanged }: CodeAgentProps) {
               type="button"
               onClick={approvePlan}
               disabled={!model}
-              className="shrink-0 rounded-lg bg-accent px-3.5 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+              className="shrink-0 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
             >
               {t('code.plan.execute')}
             </button>

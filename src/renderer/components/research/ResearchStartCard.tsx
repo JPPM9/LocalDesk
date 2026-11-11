@@ -62,7 +62,7 @@ export function ResearchStartCard({
     <div
       role="group"
       aria-label={t('research.cardTitle')}
-      className="mb-2 space-y-3 rounded-xl border border-accent/40 bg-accent-soft/50 px-3.5 py-3"
+      className="mb-2 space-y-3 rounded-xl border border-accent/40 bg-accent-soft/50 px-4 py-3"
     >
       <div className="flex items-center gap-2 font-medium">
         <Telescope size={16} className="shrink-0 text-accent-text" />
@@ -73,13 +73,13 @@ export function ResearchStartCard({
       </p>
 
       <fieldset className="space-y-1">
-        <legend className="mb-1 text-xs font-semibold">
+        <legend className="mb-1 text-xs font-medium">
           {t('research.depthLabel')}
         </legend>
         {RESEARCH_DEPTH_LIST.map((value) => (
           <label
             key={value}
-            className={`flex cursor-pointer items-start gap-2 rounded-lg border px-2.5 py-1.5 ${
+            className={`flex cursor-pointer items-start gap-2 rounded-lg border px-3 py-2 ${
               depth === value
                 ? 'border-accent/60 bg-surface'
                 : 'border-transparent hover:bg-surface-hover'
@@ -96,7 +96,7 @@ export function ResearchStartCard({
               <span className="block text-[13px]">
                 {t(`research.depth.${value}`)}
               </span>
-              <span className="block text-[11.5px] text-muted">
+              <span className="block text-xs text-muted">
                 {t('research.depthHint', {
                   searches: RESEARCH_DEPTHS[value].searches,
                   pages: RESEARCH_DEPTHS[value].pages,
@@ -122,7 +122,7 @@ export function ResearchStartCard({
         </p>
       )}
       {!fits && (
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-warn/40 bg-warn/10 px-3 py-2 text-xs">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border border-warn/40 bg-warn/10 px-3 py-2 text-xs">
           <TriangleAlert size={14} className="shrink-0 text-warn" />
           <span className="min-w-0 flex-1">
             {t('research.contextTight', {
@@ -142,7 +142,7 @@ export function ResearchStartCard({
             <button
               type="button"
               onClick={() => context.onRaise(raiseTo)}
-              className="rounded-lg bg-accent px-2.5 py-1 text-xs font-medium text-white hover:opacity-90"
+              className="rounded-lg bg-accent px-3 py-1 text-xs font-medium text-white hover:opacity-90"
             >
               {t('research.raise', { length: formatContext(raiseTo) })}
             </button>

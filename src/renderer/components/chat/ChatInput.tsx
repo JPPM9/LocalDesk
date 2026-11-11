@@ -418,7 +418,7 @@ export function ChatInput({
 
   return (
     <div
-      className={`rounded-2xl border bg-surface-2 px-3 pt-2.5 pb-2 transition-colors focus-within:border-accent/60 ${
+      className={`rounded-2xl border bg-surface-2 px-3 pt-3 pb-2 transition-colors focus-within:border-accent/60 ${
         dragging ? 'border-accent ring-2 ring-accent/30' : 'border-border'
       }`}
     >
@@ -433,7 +433,7 @@ export function ChatInput({
             <li
               key={file.id}
               title={file.name}
-              className="relative flex max-w-[260px] items-center gap-2 rounded-lg border border-border bg-surface py-1.5 pr-3 pl-2.5 text-xs"
+              className="relative flex max-w-[260px] items-center gap-2 rounded-lg border border-border bg-surface py-2 pr-3 pl-3 text-xs"
             >
               <FileText size={16} className="shrink-0 text-muted" />
               <span className="min-w-0">
@@ -459,7 +459,7 @@ export function ChatInput({
             <li
               key={table.id}
               title={table.name}
-              className="relative flex max-w-[260px] items-center gap-2 rounded-lg border border-border bg-surface py-1.5 pr-3 pl-2.5 text-xs"
+              className="relative flex max-w-[260px] items-center gap-2 rounded-lg border border-border bg-surface py-2 pr-3 pl-3 text-xs"
             >
               <Table2 size={16} className="shrink-0 text-muted" />
               <span className="min-w-0">
@@ -507,7 +507,7 @@ export function ChatInput({
         </ul>
       )}
       {tooTight && context && (
-        <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-warn/40 bg-warn/10 px-3 py-2 text-xs">
+        <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border border-warn/40 bg-warn/10 px-3 py-2 text-xs">
           <TriangleAlert size={14} className="shrink-0 text-warn" />
           <span className="min-w-0 flex-1">
             {t('chat.files.tight', {
@@ -527,7 +527,7 @@ export function ChatInput({
             <button
               type="button"
               onClick={() => context.onRaise(raiseTo)}
-              className="rounded-lg bg-accent px-2.5 py-1 text-xs font-medium text-white hover:opacity-90"
+              className="rounded-lg bg-accent px-3 py-1 text-xs font-medium text-white hover:opacity-90"
             >
               {t('chat.files.raise', { length: formatContext(raiseTo) })}
             </button>
@@ -557,14 +557,14 @@ export function ChatInput({
         )}
         disabled={disabled}
         rows={1}
-        className="field-sizing-content max-h-48 min-h-11 w-full resize-none bg-transparent px-1.5 py-1 text-[14.5px] outline-none placeholder:text-subtle disabled:opacity-50"
+        className="field-sizing-content max-h-48 min-h-11 w-full resize-none bg-transparent px-2 py-1 text-[15px] outline-none placeholder:text-subtle disabled:opacity-50"
       />
       {problem && (
-        <p role="alert" className="px-1.5 pb-1 text-xs text-error">
+        <p role="alert" className="px-2 pb-1 text-xs text-error">
           {problem}
         </p>
       )}
-      <div className="mt-1.5 flex items-center gap-1.5 border-t border-border pt-2">
+      <div className="mt-2 flex items-center gap-2 border-t border-border pt-2">
         {attach && (
           <>
             <input
@@ -597,7 +597,7 @@ export function ChatInput({
             type="button"
             onClick={onStop}
             title={t('chat.stop')}
-            className="flex h-9 items-center gap-1.5 rounded-xl border border-border bg-surface px-3 text-sm hover:bg-surface-hover"
+            className="flex h-9 items-center gap-2 rounded-xl border border-border bg-surface px-3 text-sm hover:bg-surface-hover"
           >
             <Square size={13} className="fill-current" />
             {t('chat.stop')}

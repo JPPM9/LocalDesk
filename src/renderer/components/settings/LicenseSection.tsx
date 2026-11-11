@@ -33,7 +33,7 @@ export function LicenseSection() {
         <p className="text-xs text-error">{t('settings.licensesMissing')}</p>
       )}
       {text && (
-        <pre className="max-h-96 overflow-auto rounded-lg border border-border bg-bg p-3 font-mono text-[11.5px] leading-relaxed whitespace-pre-wrap">
+        <pre className="max-h-96 overflow-auto rounded-lg border border-border bg-bg p-3 font-mono text-xs leading-relaxed whitespace-pre-wrap">
           {text}
         </pre>
       )}

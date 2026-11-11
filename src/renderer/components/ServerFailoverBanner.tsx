@@ -38,7 +38,7 @@ export function ServerFailoverBanner({ chatModel }: { chatModel: string }) {
     return (
       <div
         role="status"
-        className="mb-2 space-y-1.5 rounded-xl border border-border bg-surface px-3.5 py-2.5 text-sm"
+        className="mb-2 space-y-2 rounded-xl border border-border bg-surface px-4 py-3 text-sm"
       >
         <p className="flex items-center gap-2 font-medium">
           <Undo2 size={15} className="shrink-0 text-ok" />
@@ -73,7 +73,7 @@ export function ServerFailoverBanner({ chatModel }: { chatModel: string }) {
   return (
     <div
       role="alert"
-      className="mb-2 space-y-2 rounded-xl border border-warn/40 bg-warn/10 px-3.5 py-2.5 text-sm"
+      className="mb-2 space-y-2 rounded-xl border border-warn/40 bg-warn/10 px-4 py-3 text-sm"
     >
       <p className="flex items-start gap-2 font-medium">
         <ServerCrash size={15} className="mt-0.5 shrink-0 text-warn" />

@@ -95,7 +95,7 @@ export function SettingsPage() {
               type="button"
               onClick={() => jump(id)}
               aria-current={active === id ? 'true' : undefined}
-              className={`block w-full rounded-lg px-3 py-1.5 text-left text-[13.5px] ${
+              className={`block w-full rounded-lg px-3 py-2 text-left text-sm ${
                 active === id
                   ? 'bg-accent-soft font-medium text-accent-text'
                   : 'text-muted hover:bg-surface-hover hover:text-text'
@@ -117,7 +117,7 @@ export function SettingsPage() {
           {section(
             'ueber',
             <section>
-              <h2 className="mb-3 font-semibold">{t('settings.about')}</h2>
+              <h2 className="mb-3 font-medium">{t('settings.about')}</h2>
               {info ? (
                 <dl className="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-1 rounded-xl border border-border bg-surface p-4 text-[13px] tabular-nums">
                   <dt className="text-muted">{t('settings.version')}</dt>

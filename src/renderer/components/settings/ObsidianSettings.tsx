@@ -63,7 +63,7 @@ export function ObsidianSettings() {
   return (
     <section className="space-y-3">
       <div>
-        <h2 className="font-semibold">{t('obsidian.title')}</h2>
+        <h2 className="font-medium">{t('obsidian.title')}</h2>
         <p className="mt-1 text-xs text-muted">{t('obsidian.intro')}</p>
       </div>
 
@@ -71,17 +71,17 @@ export function ObsidianSettings() {
         <div className="space-y-2 rounded-xl border border-border bg-surface p-4">
           <p className="font-mono text-xs break-all">{status.vaultPath}</p>
           {!status.ok ? (
-            <p className="flex items-center gap-1.5 text-xs text-error">
+            <p className="flex items-center gap-2 text-xs text-error">
               <TriangleAlert size={13} />
               {status.error}
             </p>
           ) : status.looksLikeVault ? (
-            <p className="flex items-center gap-1.5 text-xs text-ok">
+            <p className="flex items-center gap-2 text-xs text-ok">
               <CircleCheck size={13} />
               {t('obsidian.recognized')}
             </p>
           ) : (
-            <p className="flex items-center gap-1.5 text-xs text-warn">
+            <p className="flex items-center gap-2 text-xs text-warn">
               <TriangleAlert size={13} />
               {t('obsidian.noObsidianFolder')}
             </p>
@@ -122,12 +122,12 @@ export function ObsidianSettings() {
                   value={vaultPath}
                   onChange={(e) => setVaultPath(e.target.value)}
                   placeholder="C:\\Users\\…\\Obsidian\\Mein Vault"
-                  className="min-w-0 flex-1 rounded border border-border bg-bg px-2 py-1.5 font-mono text-xs outline-none focus:border-accent"
+                  className="min-w-0 flex-1 rounded border border-border bg-bg px-2 py-2 font-mono text-xs outline-none focus:border-accent"
                 />
                 <button
                   type="button"
                   onClick={() => void pick()}
-                  className="flex shrink-0 items-center gap-1.5 rounded border border-border px-2.5 py-1 text-xs hover:bg-surface-hover"
+                  className="flex shrink-0 items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
                 >
                   <FolderOpen size={13} />
                   {t('obsidian.pick')}
@@ -138,7 +138,7 @@ export function ObsidianSettings() {
               <input
                 value={folder}
                 onChange={(e) => setFolder(e.target.value)}
-                className="w-full rounded border border-border bg-bg px-2 py-1.5 outline-none focus:border-accent"
+                className="w-full rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent"
               />
             </Field>
             {error && <p className="text-xs text-error">{error}</p>}
@@ -164,7 +164,7 @@ export function ObsidianSettings() {
           <button
             type="button"
             onClick={startEdit}
-            className="flex items-center gap-1.5 rounded border border-border px-3 py-1.5 hover:bg-surface-hover"
+            className="flex items-center gap-2 rounded border border-border px-3 py-2 hover:bg-surface-hover"
           >
             <FolderOpen size={15} />
             {t('obsidian.setUp')}
@@ -180,7 +180,7 @@ function VaultKnowledgeHint() {
   const vault = useCollections()?.find((c) => c.config.kind === 'obsidian');
   if (!vault) return null;
   return (
-    <p className="flex items-start gap-1.5 text-xs text-muted">
+    <p className="flex items-start gap-2 text-xs text-muted">
       <Library size={13} className="mt-0.5 shrink-0" />
       <span>
         {vault.stats.documents > 0

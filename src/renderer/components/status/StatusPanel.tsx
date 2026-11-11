@@ -45,7 +45,7 @@ export function StatusPanel({
       />
       <section className="space-y-3">
         <div>
-          <h2 className="font-semibold">{t('status.loadedTitle')}</h2>
+          <h2 className="font-medium">{t('status.loadedTitle')}</h2>
           {!compact && (
             <p className="mt-1 text-xs text-muted">{t('status.loadedIntro')}</p>
           )}
@@ -95,7 +95,7 @@ function LoadedModelCard({ model, now }: { model: RunningModel; now: number }) {
   return (
     <article className="space-y-3 rounded-xl border border-border bg-surface p-4">
       <div className="flex items-baseline justify-between gap-3">
-        <h3 className="truncate font-semibold">{model.name}</h3>
+        <h3 className="truncate font-medium">{model.name}</h3>
         <span className="shrink-0 text-xs text-muted tabular-nums">
           {[model.parameterSize, model.quantization]
             .filter(Boolean)

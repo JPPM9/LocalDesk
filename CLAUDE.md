@@ -810,7 +810,7 @@
   per `taskkill /IM LocalDesk.exe` ALLE LocalDesk-Fenster – vorher sicherstellen, dass der Nutzer keins offen hat.
   Nächste Version: `package.json` erhöhen, neuer Changelog-Abschnitt, committen, pushen, `npm run release`, Freigabe,
   `npm run release -- --publish`.
-- **App-Symbol**: `assets/icon.svg` (Sprechblase mit „>_“ auf Akzent-Blau) ist die Quelle;
+- **App-Symbol**: `assets/icon.svg` (Sprechblase mit „>_“, flach auf Akzent „Glut“ #b8501a) ist die Quelle;
   `node scripts/build-icons.mjs` erzeugt `assets/icon.png` (512 px) und `assets/icon.ico`
   (16–256 px, PNG-Einträge) – ohne Pakete, gezeichnet mit Edge headless (transparenter Hintergrund).
   `.exe`-Symbol über `packagerConfig.icon` (Forge), Fenster im Dev-Modus über `BrowserWindow.icon`
@@ -1266,6 +1266,22 @@
   (Version 22, keine Waisen). Test-Hinweis: `DOM.setFileInputFiles` mit mehreren Pfaden; Zip-Bomben-Test braucht `level: 1` und 60 s Zeitgrenze.
   NICHT echt geprüft: Modell ohne Werkzeuge (keines installiert, nur Tests von `tableAsText`/`toRequestMessages`), Chats mit sehr breiten
   Tabellen (200 Spalten), mehrere Blätter.
+
+- **Oberfläche „Werkbank“ (Unslop-Durchgang, 2026-11-11, auf Wunsch des Nutzers mit dem Skill „unslop“, Richtung vom Nutzer gewählt):**
+  Audit fand wenig Slop (keine Emoji/Glows, ein Akzent): Verlauf in Logo-Kachel und Antwort-Avatar, 2 Beschriftungen in Großbuchstaben, 9
+  Schriftgrößen, 40× semibold, Abstände auf 2-px-Halbschritten (308 Stellen), blaue Fähigkeits-Pillen, Funkel-Icons (Skills, Mail),
+  Regenbogen im Kontext-Balken, bläuliche Graus. Richtung: Produkt = lokaler KI-Chat; Charakter trocken, genau, ruhig; Welt = Werkbank/
+  Messgeräte bei Nacht; Momente = Status-Seite (Messwerte groß in Mono) und Diagramme; Signatur = Messwerte in Mono. Umgesetzt: Graphit-
+  Rampe in `index.css` (dunkel #0f0f10/#141415/#19191b/#1f1f21, hell #fafafa/#fff/#f4f4f5, Text #ededed/#a1a1a6/#8b8b91 bzw.
+  #171717/#525252/#6e6e73), EIN Akzent „Glut“ #b8501a (weiße Schrift 5,0 : 1; als Schrift `accent-text` #f2a66b dunkel / #9a3f0c hell),
+  Meldefarben getönt (warn gelb, damit er vom Akzent unterscheidbar bleibt); Schriftgrößen 12/13/14/15 (`text-xs`, `text-[13px]`,
+  `text-sm`, `text-[15px]`), Gewichte 400/500; alle halben Tailwind-Schritte (1.5/2.5/3.5) auf das 4-px-Raster gehoben (nur 0.5 = 2 px
+  bleibt); aktive Navigation = Flächenstufe statt blauer Pille; Antwort-Kopf = Punkt + Modellname in Mono (kein Funkeln); Fähigkeiten
+  der Modelle als ruhiger Mono-Text mit „·“; Statistikzeile und Modelltabelle in Mono; Status-Seite mit 28-px-Messwerten; Kontext-
+  Balken in neutralen Stufen, Akzent nur für den Verlauf; Diagramme: Balken/Linie Akzent, Kreis = größtes Stück Akzent, Rest grau;
+  Skills-Icon `ScrollText`, Mail-Zusammenfassen `TextQuote`; Platzhalter ohne „ …“. App-Symbol neu gerendert
+  (`node scripts/build-icons.mjs`). Kontraste gerechnet (Skript im Scratchpad). Nicht geändert: Layout, Inhalte, Funktionen. Offen:
+  `docs/screenshot.png` im README zeigt noch das alte Blau; Mono ist Cascadia Mono/Consolas (keine Schrift mitgeliefert).
 
 ## Befehle
 

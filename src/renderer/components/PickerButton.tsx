@@ -62,7 +62,7 @@ export function PickerButton({
         title={label}
         aria-label={label}
         aria-expanded={open}
-        className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12.5px] ${
+        className={`flex items-center gap-2 rounded-full border px-3 py-1 text-[13px] ${
           active || open
             ? 'border-transparent bg-accent-soft text-accent-text'
             : 'border-border bg-surface text-muted hover:text-text'
@@ -79,8 +79,8 @@ export function PickerButton({
           className="absolute bottom-full left-0 z-30 mb-2 w-72 space-y-2 rounded-xl border border-border bg-surface p-3 shadow-card"
         >
           <div>
-            <h3 className="text-xs font-semibold">{title}</h3>
-            <p className="text-[11px] text-muted">{intro}</p>
+            <h3 className="text-xs font-medium">{title}</h3>
+            <p className="text-xs text-muted">{intro}</p>
           </div>
           {children}
         </div>

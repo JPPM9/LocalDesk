@@ -33,7 +33,7 @@ export function AppearanceSettings() {
 
   return (
     <section>
-      <h2 className="mb-1 font-semibold">{t('appearance.title')}</h2>
+      <h2 className="mb-1 font-medium">{t('appearance.title')}</h2>
       <p className="mb-3 text-xs text-muted">{t('appearance.intro')}</p>
       <div
         role="radiogroup"
@@ -50,7 +50,7 @@ export function AppearanceSettings() {
               role="radio"
               aria-checked={active}
               onClick={() => choose(choice)}
-              className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-sm ${
+              className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm ${
                 active
                   ? 'bg-surface text-text shadow-card'
                   : 'text-muted hover:text-text'
@@ -63,7 +63,7 @@ export function AppearanceSettings() {
         })}
       </div>
 
-      <h2 className="mt-6 mb-1 font-semibold">{t('appearance.language')}</h2>
+      <h2 className="mt-6 mb-1 font-medium">{t('appearance.language')}</h2>
       <p className="mb-3 text-xs text-muted">{t('appearance.languageIntro')}</p>
       <div
         role="radiogroup"
@@ -79,7 +79,7 @@ export function AppearanceSettings() {
               role="radio"
               aria-checked={active}
               onClick={() => void chooseLanguage(choice)}
-              className={`rounded-md px-3 py-1.5 text-sm ${
+              className={`rounded-md px-3 py-2 text-sm ${
                 active
                   ? 'bg-surface text-text shadow-card'
                   : 'text-muted hover:text-text'

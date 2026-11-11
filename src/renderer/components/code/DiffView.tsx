@@ -5,7 +5,7 @@
 export function DiffView({ text }: { text: string }) {
   const lines = text.split('\n');
   return (
-    <pre className="max-h-96 overflow-auto rounded-lg border border-border bg-bg py-1.5 font-mono text-[12px] leading-[1.5]">
+    <pre className="max-h-96 overflow-auto rounded-lg border border-border bg-bg py-2 font-mono text-xs leading-[1.5]">
       {lines.map((line, i) => (
         <div key={i} className={`px-3 whitespace-pre ${lineClass(line)}`}>
           {line || ' '}
@@ -17,7 +17,7 @@ export function DiffView({ text }: { text: string }) {
 
 function lineClass(line: string): string {
   if (line.startsWith('+++') || line.startsWith('---')) {
-    return 'font-semibold text-muted';
+    return 'font-medium text-muted';
   }
   if (line.startsWith('@@')) return 'text-accent-text';
   if (line.startsWith('+')) return 'bg-ok/15 text-text';

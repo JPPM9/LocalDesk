@@ -61,7 +61,7 @@ export function WebSearchSettings() {
   return (
     <section className="space-y-3">
       <div>
-        <h2 className="font-semibold">{t('webSearchSettings.title')}</h2>
+        <h2 className="font-medium">{t('webSearchSettings.title')}</h2>
         <p className="mt-1 text-xs text-muted">
           {t('webSearchSettings.intro')}
         </p>
@@ -89,7 +89,7 @@ export function WebSearchSettings() {
                 placeholder={t('webSearchSettings.keyPlaceholder')}
                 spellCheck={false}
                 autoComplete="off"
-                className="w-full rounded border border-border bg-bg px-2 py-1.5 font-mono text-xs outline-none focus:border-accent"
+                className="w-full rounded border border-border bg-bg px-2 py-2 font-mono text-xs outline-none focus:border-accent"
               />
             </Field>
             {error && <p className="text-xs text-error">{error}</p>}
@@ -119,7 +119,7 @@ export function WebSearchSettings() {
           </div>
         ) : (
           <div className="space-y-3">
-            <p className="flex items-center gap-1.5 text-xs text-ok">
+            <p className="flex items-center gap-2 text-xs text-ok">
               <CircleCheck size={13} />
               {t('webSearchSettings.saved')} ·{' '}
               {t('webSearchSettings.encrypted')}
@@ -130,7 +130,7 @@ export function WebSearchSettings() {
                 onClick={() => void test()}
                 disabled={testing}
                 title={t('webSearchSettings.testHint')}
-                className="flex items-center gap-1.5 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-40"
+                className="flex items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-40"
               >
                 {testing && <LoaderCircle size={12} className="animate-spin" />}
                 {testing

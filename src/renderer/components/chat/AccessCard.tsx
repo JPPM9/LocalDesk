@@ -68,7 +68,7 @@ export function AccessCard({ call, onDecision }: AccessCardProps) {
     <div
       role="group"
       aria-label={t(what === 'mail' ? 'access.askMail' : 'access.askFiles')}
-      className="space-y-2.5 rounded-xl border border-accent/40 bg-accent-soft/50 px-3.5 py-3"
+      className="space-y-3 rounded-xl border border-accent/40 bg-accent-soft/50 px-4 py-3"
     >
       <div className="flex items-center gap-2 font-medium">
         <ShieldQuestion size={16} className="shrink-0 text-accent-text" />
@@ -83,7 +83,7 @@ export function AccessCard({ call, onDecision }: AccessCardProps) {
 
       {what === 'mail' ? (
         <fieldset className="space-y-1">
-          <legend className="mb-1 flex items-center gap-1.5 text-xs text-muted">
+          <legend className="mb-1 flex items-center gap-2 text-xs text-muted">
             <Mail size={13} />
             {t('access.pickAccount')}
           </legend>
@@ -101,7 +101,7 @@ export function AccessCard({ call, onDecision }: AccessCardProps) {
         </fieldset>
       ) : (
         <fieldset className="space-y-1">
-          <legend className="mb-1 flex items-center gap-1.5 text-xs text-muted">
+          <legend className="mb-1 flex items-center gap-2 text-xs text-muted">
             <FolderOpen size={13} />
             {t('access.pickServers')}
           </legend>

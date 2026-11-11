@@ -92,6 +92,7 @@
     "utilization": "Utilization",
     "vram": "Graphics memory (VRAM)",
     "vramUsed": "{{used}} of {{total}} used",
+    "vramOf": "of {{total}} used",
     "ollama": "Ollama",
     "others": "other programs",
     "free": "free",
@@ -146,7 +147,7 @@
     "skillsHint": "Apply in every chat of this project – in addition to the skills you turn on in the chat."
   },
   "search": {
-    "placeholder": "Search chats …",
+    "placeholder": "Search chats",
     "clear": "Clear search",
     "noResults": "Nothing found",
     "chats": "Chats",
@@ -168,7 +169,7 @@
     "newChat": "New chat",
     "empty": "Pick a model above and write a message.",
     "modelsError": "Couldn't load models: {{error}}",
-    "inputPlaceholder": "Write a message …",
+    "inputPlaceholder": "Write a message",
     "inputNoModel": "No model available – is Ollama running?",
     "hint": "Enter to send · Shift+Enter new line · Ctrl+/ all shortcuts",
     "noChats": "No chats yet",
@@ -818,7 +819,7 @@
   "mail": {
     "title": "E-mail",
     "account": "Account",
-    "search": "Search Gmail …",
+    "search": "Search Gmail",
     "searchHint": "Gmail search, e.g. “is:unread” or “from:bank”. Enter searches, empty = inbox.",
     "refresh": "Reload",
     "inbox": "Inbox",

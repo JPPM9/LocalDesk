@@ -61,18 +61,18 @@ export function CodePage() {
   return (
     <div className="flex h-full">
       <aside className="flex w-[270px] shrink-0 flex-col border-r border-border bg-surface">
-        <div className="px-2.5 pt-3 pb-2">
+        <div className="px-3 pt-3 pb-2">
           <button
             type="button"
             onClick={() => void create()}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-3 py-1.5 font-medium text-white hover:opacity-90"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-3 py-2 font-medium text-white hover:opacity-90"
           >
             <Plus size={16} />
             {t('code.new')}
           </button>
           {error && <p className="px-1 pt-2 text-xs text-error">{error}</p>}
         </div>
-        <nav className="min-h-0 flex-1 overflow-y-auto px-2.5 pb-2">
+        <nav className="min-h-0 flex-1 overflow-y-auto px-3 pb-2">
           {sessions?.length === 0 && (
             <p className="px-2 py-4 text-center text-xs text-muted">
               {t('code.none')}
@@ -83,7 +83,7 @@ export function CodePage() {
               <NavLink
                 to={`/code/${s.id}`}
                 className={({ isActive }) =>
-                  `block rounded-lg px-2.5 py-2 pr-8 ${
+                  `block rounded-lg px-3 py-2 pr-8 ${
                     isActive
                       ? 'bg-surface-hover font-medium text-text'
                       : 'text-muted hover:bg-surface-hover hover:text-text'
@@ -92,7 +92,7 @@ export function CodePage() {
               >
                 <div className="truncate">{s.title}</div>
                 <div
-                  className="truncate font-mono text-[11px] font-normal text-subtle"
+                  className="truncate font-mono text-xs font-normal text-subtle"
                   title={s.workspace}
                 >
                   {s.workspace}
@@ -116,14 +116,11 @@ export function CodePage() {
         <>
           <div className="flex w-[260px] shrink-0 flex-col border-r border-border">
             <div className="flex h-14 shrink-0 items-center border-b border-border px-3">
-              <span
-                className="truncate font-semibold"
-                title={session.workspace}
-              >
+              <span className="truncate font-medium" title={session.workspace}>
                 {session.title}
               </span>
             </div>
-            <div className="min-h-0 flex-1 overflow-y-auto px-1.5 py-2">
+            <div className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
               <FileTree
                 sessionId={session.id}
                 selected={file}

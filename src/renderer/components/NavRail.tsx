@@ -11,7 +11,7 @@ import {
   Moon,
   Settings,
   Sun,
-  WandSparkles,
+  ScrollText,
   type LucideIcon,
 } from 'lucide-react';
 import appIcon from '../../../assets/icon.png';
@@ -33,7 +33,7 @@ const ITEMS: NavItem[] = [
   { to: '/mail', labelKey: 'nav.mail', icon: Mail },
   { to: '/code', labelKey: 'nav.code', icon: FolderCode },
   { to: '/knowledge', labelKey: 'nav.knowledge', icon: Library },
-  { to: '/skills', labelKey: 'nav.skills', icon: WandSparkles },
+  { to: '/skills', labelKey: 'nav.skills', icon: ScrollText },
   { to: '/models', labelKey: 'nav.models', icon: Boxes },
 ];
 
@@ -47,7 +47,7 @@ const THEME_ICON = { system: Monitor, light: Sun, dark: Moon } as const;
 const itemClass = ({ isActive }: { isActive: boolean }) =>
   `relative grid h-10 w-10 place-items-center rounded-xl transition-colors ${
     isActive
-      ? 'bg-accent-soft text-accent-text'
+      ? 'bg-surface-hover text-text shadow-[inset_0_1px_0_rgb(255_255_255/0.06)]'
       : 'text-muted hover:bg-surface-hover hover:text-text'
   }`;
 
@@ -75,7 +75,7 @@ export function NavRail() {
   return (
     <nav
       aria-label={t('nav.main')}
-      className="flex w-[60px] shrink-0 flex-col items-center gap-1.5 border-r border-border bg-sidebar py-3"
+      className="flex w-[60px] shrink-0 flex-col items-center gap-2 border-r border-border bg-sidebar py-3"
     >
       <img
         src={appIcon}

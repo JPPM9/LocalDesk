@@ -104,7 +104,7 @@ export function CompactionDialog({
         className="flex max-h-[90vh] w-full max-w-xl flex-col space-y-3 rounded-xl border border-border bg-surface p-5 shadow-xl"
         onClick={(event) => event.stopPropagation()}
       >
-        <h2 id="compact-title" className="font-semibold">
+        <h2 id="compact-title" className="font-medium">
           {t('compact.title')}
         </h2>
 
@@ -126,7 +126,7 @@ export function CompactionDialog({
               maxLength={COMPACTION_SUMMARY_MAX}
               onChange={(event) => setText(event.target.value)}
               rows={12}
-              className="min-h-40 w-full resize-y rounded border border-border bg-bg px-2.5 py-2 text-[13px] leading-relaxed outline-none focus:border-accent"
+              className="min-h-40 w-full resize-y rounded border border-border bg-bg px-3 py-2 text-[13px] leading-relaxed outline-none focus:border-accent"
             />
             <p className="text-xs text-muted">
               {t('compact.covered', { count: draft.messagesCovered })}{' '}
@@ -150,7 +150,7 @@ export function CompactionDialog({
             <button
               type="button"
               onClick={() => void run()}
-              className="rounded-lg border border-border bg-surface-2 px-3.5 py-1.5 text-sm hover:bg-surface-hover"
+              className="rounded-lg border border-border bg-surface-2 px-4 py-2 text-sm hover:bg-surface-hover"
             >
               {t('compact.retry')}
             </button>
@@ -158,7 +158,7 @@ export function CompactionDialog({
           <button
             type="button"
             onClick={close}
-            className="rounded-lg border border-border bg-surface-2 px-3.5 py-1.5 text-sm hover:bg-surface-hover"
+            className="rounded-lg border border-border bg-surface-2 px-4 py-2 text-sm hover:bg-surface-hover"
           >
             {t('compact.cancel')}
           </button>
@@ -167,7 +167,7 @@ export function CompactionDialog({
               type="button"
               onClick={() => void apply()}
               disabled={!text.trim()}
-              className="rounded-lg bg-accent px-3.5 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+              className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
             >
               {t('compact.apply')}
             </button>

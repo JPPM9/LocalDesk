@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Check, Copy, Pencil, RefreshCw } from 'lucide-react';
 
 const BUTTON =
-  'flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] text-muted hover:bg-surface-hover hover:text-text focus:opacity-100';
+  'flex items-center gap-1 rounded px-2 py-0.5 text-xs text-muted hover:bg-surface-hover hover:text-text focus:opacity-100';
 const HIDDEN = 'opacity-0 group-hover:opacity-100';
 
 /** Kleiner Knopf unter einer Nachricht; sichtbar beim Überfahren oder per Tastatur. */

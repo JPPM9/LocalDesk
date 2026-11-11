@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Sparkles, TriangleAlert } from 'lucide-react';
+import { TriangleAlert } from 'lucide-react';
 import type { MessageRecord, ToolDecision } from '../../../shared/api';
 import { Markdown } from './Markdown';
 import { MessageFiles } from './MessageFiles';
@@ -79,7 +79,7 @@ export function MessageView({
         {hasImages && <MessageImages images={message.images ?? []} />}
         {message.content.trim() !== '' && (
           <div className="flex justify-end">
-            <div className="max-w-[80%] rounded-2xl rounded-br-md bg-bubble px-4 py-2.5 whitespace-pre-wrap">
+            <div className="max-w-[80%] rounded-2xl rounded-br-md bg-bubble px-4 py-3 whitespace-pre-wrap">
               {message.content}
             </div>
           </div>
@@ -118,15 +118,13 @@ export function MessageView({
 
   return (
     <div className="group space-y-2">
-      <div className="flex items-center gap-2 text-[12.5px] text-muted">
-        <span className="grid h-[22px] w-[22px] place-items-center rounded-[7px] bg-gradient-to-b from-[#3b76f0] to-[#1d4fd0] text-white">
-          <Sparkles size={12} />
-        </span>
+      <div className="flex items-center gap-2 font-mono text-xs text-muted">
+        <span className="h-2 w-2 rounded-full bg-accent" aria-hidden="true" />
         {message.model}
       </div>
 
       {message.thinking && (
-        <details className="rounded-xl bg-surface-2 px-3.5 py-2 text-[13px] text-muted">
+        <details className="rounded-xl bg-surface-2 px-4 py-2 text-[13px] text-muted">
           <summary className="cursor-pointer select-none">
             {streaming && !message.content && !usedTools
               ? t('chat.thinkingNow')
@@ -137,7 +135,7 @@ export function MessageView({
       )}
 
       {usedTools && (
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           {toolCalls.map((call) => (
             <ToolCallView
               key={call.id}
@@ -167,7 +165,7 @@ export function MessageView({
       )}
 
       {message.knowledgeError && (
-        <p className="flex items-start gap-1.5 text-xs text-warn">
+        <p className="flex items-start gap-2 text-xs text-warn">
           <TriangleAlert size={13} className="mt-0.5 shrink-0" />
           {t('sources.error', { error: message.knowledgeError })}
         </p>
@@ -178,7 +176,7 @@ export function MessageView({
       {sources.length > 0 && <SourceList sources={sources} focus={citeFocus} />}
 
       {message.status === 'error' && (
-        <p className="rounded-xl border border-error/40 bg-error/10 px-3.5 py-2.5 text-error">
+        <p className="rounded-xl border border-error/40 bg-error/10 px-4 py-3 text-error">
           {t('chat.error', { error: message.error })}
         </p>
       )}
@@ -186,7 +184,7 @@ export function MessageView({
         <p className="text-xs text-muted">{t('chat.aborted')}</p>
       )}
       {message.stats && (
-        <p className="text-xs text-subtle tabular-nums">
+        <p className="font-mono text-xs text-subtle tabular-nums">
           {t('chat.stats', {
             tokens: message.stats.outputTokens,
             speed: message.stats.tokensPerSecond.toLocaleString(

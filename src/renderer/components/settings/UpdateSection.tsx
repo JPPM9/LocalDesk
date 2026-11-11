@@ -27,9 +27,9 @@ export function UpdateSection({ version }: { version: string }) {
   if (!state) return null;
 
   const button =
-    'flex items-center gap-1.5 rounded border border-border bg-surface px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-50';
+    'flex items-center gap-2 rounded border border-border bg-surface px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-50';
   const primary =
-    'flex items-center gap-1.5 rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90';
+    'flex items-center gap-2 rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90';
   const check = (
     <button
       type="button"
@@ -58,7 +58,7 @@ export function UpdateSection({ version }: { version: string }) {
 
       {state.kind === 'latest' && (
         <>
-          <p className="flex items-center gap-1.5 text-xs text-ok">
+          <p className="flex items-center gap-2 text-xs text-ok">
             <CircleCheck size={14} />
             {t('update.latest', { version: state.version })}
           </p>
@@ -68,7 +68,7 @@ export function UpdateSection({ version }: { version: string }) {
 
       {state.kind === 'error' && (
         <>
-          <p className="flex items-start gap-1.5 text-xs text-error">
+          <p className="flex items-start gap-2 text-xs text-error">
             <CircleAlert size={14} className="mt-0.5 shrink-0" />
             {state.error}
           </p>
@@ -143,7 +143,7 @@ export function UpdateSection({ version }: { version: string }) {
 
       {state.kind === 'ready' && (
         <>
-          <p className="flex items-center gap-1.5 text-xs text-ok">
+          <p className="flex items-center gap-2 text-xs text-ok">
             <CircleCheck size={14} />
             {t('update.ready', { version: state.version })}
           </p>

@@ -65,7 +65,7 @@ export function McpSettings() {
   return (
     <section className="space-y-3">
       <div>
-        <h2 className="font-semibold">{t('mcp.title')}</h2>
+        <h2 className="font-medium">{t('mcp.title')}</h2>
         <p className="mt-1 text-xs text-muted">{t('mcp.intro')}</p>
       </div>
 
@@ -92,7 +92,7 @@ export function McpSettings() {
               autoFocus
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full rounded border border-border bg-bg px-2 py-1.5 outline-none focus:border-accent"
+              className="w-full rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent"
             />
           </Field>
           <Field label={t('mcp.folders')} hint={t('mcp.foldersHint')}>
@@ -128,7 +128,7 @@ export function McpSettings() {
             <button
               type="button"
               onClick={() => void addFolders()}
-              className="flex items-center gap-1.5 rounded border border-border px-2.5 py-1 text-xs hover:bg-surface-hover"
+              className="flex items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
             >
               <Plus size={13} />
               {t('mcp.addFolder')}
@@ -166,7 +166,7 @@ export function McpSettings() {
               folders: [],
             })
           }
-          className="flex items-center gap-1.5 rounded border border-border px-3 py-1.5 hover:bg-surface-hover"
+          className="flex items-center gap-2 rounded border border-border px-3 py-2 hover:bg-surface-hover"
         >
           <Plus size={15} />
           {t('mcp.addFilesystem')}
@@ -221,7 +221,7 @@ function ServerCard({
             {config.folders.join(' · ')}
           </div>
         </div>
-        <label className="flex items-center gap-1.5 text-xs">
+        <label className="flex items-center gap-2 text-xs">
           <input
             type="checkbox"
             checked={config.enabled}
@@ -261,7 +261,7 @@ function ServerCard({
               <summary className="cursor-pointer text-muted">
                 {t('mcp.log')}
               </summary>
-              <pre className="mt-1 max-h-40 overflow-auto rounded bg-bg p-2 font-mono text-[11px] whitespace-pre-wrap">
+              <pre className="mt-1 max-h-40 overflow-auto rounded bg-bg p-2 font-mono text-xs whitespace-pre-wrap">
                 {status.log.join('\n')}
               </pre>
             </details>
@@ -350,7 +350,7 @@ function ToolRow({
       <div className="flex min-w-0 items-center gap-2">
         <span className="truncate font-mono">{tool.name}</span>
         <span
-          className={`shrink-0 rounded px-1.5 text-[11px] ${
+          className={`shrink-0 rounded px-2 text-xs ${
             tool.readOnly
               ? 'bg-accent-soft text-accent-text'
               : tool.destructive
@@ -384,7 +384,7 @@ function ToolRow({
               className={`px-2 py-0.5 ${
                 current === permission
                   ? permission === 'off'
-                    ? 'bg-surface-hover font-semibold text-text'
+                    ? 'bg-surface-hover font-medium text-text'
                     : 'bg-accent text-white'
                   : 'text-muted hover:bg-surface-hover'
               }`}

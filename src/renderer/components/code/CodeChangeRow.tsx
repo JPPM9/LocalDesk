@@ -68,7 +68,7 @@ export function CodeChangeRow({ call }: { call: ToolCallRecord }) {
         <span>
           {t(`code.change.${call.toolName}`, { defaultValue: call.toolName })}
         </span>
-        <span className="min-w-0 truncate font-mono text-[12.5px]">{path}</span>
+        <span className="min-w-0 truncate font-mono text-[13px]">{path}</span>
         <span className="ml-auto shrink-0 text-xs text-subtle">
           {state === 'undone'
             ? t('code.undone')

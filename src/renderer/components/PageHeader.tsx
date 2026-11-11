@@ -16,7 +16,7 @@ export function PageHeader({ title, actions, leading }: PageHeaderProps) {
           füllt nur den übrigen Platz, bleibt aber mindestens 6rem breit – sonst
           verschwände er bei offenem Seitenbereich. */}
       <h1
-        className="min-w-24 flex-1 basis-24 truncate text-base font-semibold"
+        className="min-w-24 flex-1 basis-24 truncate text-base font-medium"
         title={title}
       >
         {title}

@@ -15,7 +15,7 @@ export function GpuSection({ status, ollamaVramBytes }: GpuSectionProps) {
 
   return (
     <section className="space-y-3">
-      <h2 className="font-semibold">{t('gpu.title')}</h2>
+      <h2 className="font-medium">{t('gpu.title')}</h2>
       {renderBody()}
     </section>
   );
@@ -65,17 +65,15 @@ function GpuCard({
     <article className="space-y-4 rounded-xl border border-border bg-surface p-4">
       <div className="flex items-center gap-2">
         <MonitorCog size={16} className="text-muted" />
-        <h3 className="truncate font-semibold">{gpu.name}</h3>
+        <h3 className="truncate font-medium">{gpu.name}</h3>
       </div>
 
       <div>
-        <div className="mb-1 flex justify-between text-xs">
-          <span className="text-muted">{t('gpu.utilization')}</span>
-          <span className="tabular-nums">
-            {util !== undefined ? `${util} %` : '–'}
-          </span>
-        </div>
-        <div className="h-2.5 overflow-hidden rounded-full bg-bg">
+        <span className="text-xs text-muted">{t('gpu.utilization')}</span>
+        <p className="font-mono text-[28px] leading-none tabular-nums">
+          {util !== undefined ? `${util} %` : '–'}
+        </p>
+        <div className="mt-3 h-2 overflow-hidden rounded-sm bg-bg">
           <div
             className="h-full bg-accent transition-[width] duration-500"
             style={{ width: `${util ?? 0}%` }}
@@ -84,17 +82,17 @@ function GpuCard({
       </div>
 
       <div>
-        <div className="mb-1 flex justify-between text-xs">
-          <span className="text-muted">{t('gpu.vram')}</span>
-          <span className="tabular-nums">
-            {t('gpu.vramUsed', {
-              used: formatMemory(used),
-              total: formatMemory(total),
-            })}
+        <span className="text-xs text-muted">{t('gpu.vram')}</span>
+        <p className="flex items-baseline gap-2">
+          <span className="font-mono text-[28px] leading-none tabular-nums">
+            {formatMemory(used)}
           </span>
-        </div>
+          <span className="font-mono text-sm text-muted tabular-nums">
+            {t('gpu.vramOf', { total: formatMemory(total) })}
+          </span>
+        </p>
         <div
-          className="flex h-2.5 overflow-hidden rounded-full bg-bg"
+          className="mt-3 flex h-2 overflow-hidden rounded-sm bg-bg"
           role="img"
           aria-label={t('gpu.vramUsed', {
             used: formatMemory(used),
@@ -104,7 +102,7 @@ function GpuCard({
           <div className="bg-accent" style={{ width: `${percent(ollama)}%` }} />
           <div className="bg-muted" style={{ width: `${percent(others)}%` }} />
         </div>
-        <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 tabular-nums text-xs">
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono tabular-nums text-xs">
           <Legend
             className="bg-accent"
             label={t('gpu.ollama')}
@@ -123,12 +121,12 @@ function GpuCard({
         </div>
       </div>
 
-      <dl className="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-1 text-[13px]">
-        <dt className="text-muted">{t('gpu.temperature')}</dt>
+      <dl className="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-1 font-mono text-[13px]">
+        <dt className="font-sans text-muted">{t('gpu.temperature')}</dt>
         <dd className="tabular-nums">
           {gpu.temperatureC !== undefined ? `${gpu.temperatureC} °C` : '–'}
         </dd>
-        <dt className="text-muted">{t('gpu.power')}</dt>
+        <dt className="font-sans text-muted">{t('gpu.power')}</dt>
         <dd className="tabular-nums">
           {gpu.powerWatts !== undefined
             ? `${Math.round(gpu.powerWatts)} W` +
@@ -152,7 +150,7 @@ function Legend({
   value: string;
 }) {
   return (
-    <span className="flex items-center gap-1.5">
+    <span className="flex items-center gap-2">
       <span className={`inline-block h-2 w-2 rounded-sm ${className}`} />
       <span className="text-muted">{label}</span>
       {value}

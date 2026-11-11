@@ -87,7 +87,7 @@ export function SummaryPanel({
     <div
       role="group"
       aria-label={t('summary.title')}
-      className="mb-3 space-y-2 rounded-xl border border-accent/40 bg-accent-soft/50 px-3.5 py-3 text-sm"
+      className="mb-3 space-y-2 rounded-xl border border-accent/40 bg-accent-soft/50 px-4 py-3 text-sm"
     >
       {children}
     </div>
@@ -160,7 +160,7 @@ export function SummaryPanel({
       );
     case 'saved':
       return frame(
-        <p role="status" className="flex items-center gap-1.5 text-xs text-ok">
+        <p role="status" className="flex items-center gap-2 text-xs text-ok">
           <Check size={14} className="shrink-0" />
           {t('summary.saved', { path: state.path })}
         </p>,
@@ -168,7 +168,7 @@ export function SummaryPanel({
     case 'error':
       return frame(
         <>
-          <p className="flex items-start gap-1.5 text-xs text-error">
+          <p className="flex items-start gap-2 text-xs text-error">
             <CircleAlert size={14} className="mt-0.5 shrink-0" />
             {t('summary.error', { error: state.error })}
           </p>
@@ -237,7 +237,7 @@ function DraftEditor({
   const [text, setText] = useState(draft.text);
   const ready = title.trim() !== '' && text.trim() !== '';
   const field =
-    'w-full rounded border border-border bg-bg px-2 py-1.5 outline-none focus:border-accent';
+    'w-full rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent';
 
   return frame(
     <>

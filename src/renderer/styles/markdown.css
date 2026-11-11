@@ -1,11 +1,11 @@
 /* Darstellung von Modellantworten (Markdown) und Farben für Code-Hervorhebung. */
 
 :root {
-  --ld-code-bg: #f3f5f9;
+  --ld-code-bg: #f4f4f5;
   --ld-hl-keyword: #a626a4;
   --ld-hl-string: #50a14f;
   --ld-hl-number: #b76b01;
-  --ld-hl-comment: #8a94a3;
+  --ld-hl-comment: #85858b;
   --ld-hl-title: #4078f2;
   --ld-hl-type: #c18401;
   --ld-hl-attr: #986801;
@@ -14,11 +14,11 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --ld-code-bg: #10131a;
+    --ld-code-bg: #0f0f10;
     --ld-hl-keyword: #c678dd;
     --ld-hl-string: #98c379;
     --ld-hl-number: #d19a66;
-    --ld-hl-comment: #6b7380;
+    --ld-hl-comment: #77777d;
     --ld-hl-title: #61afef;
     --ld-hl-type: #e5c07b;
     --ld-hl-attr: #d19a66;
@@ -37,7 +37,7 @@
 .markdown h2,
 .markdown h3,
 .markdown h4 {
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.3;
   margin-top: 1.2em;
 }
@@ -103,7 +103,7 @@
 }
 .markdown th {
   background: var(--ld-surface);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* highlight.js-Klassen, wie rehype-highlight sie setzt */

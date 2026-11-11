@@ -44,12 +44,12 @@ export function SourceList({ sources, focus, expanded }: SourceListProps) {
 
   return (
     <div className="space-y-1 text-[13px]">
-      <div className="flex items-center gap-1.5 text-xs font-medium text-muted">
+      <div className="flex items-center gap-2 text-xs font-medium text-muted">
         <BookOpen size={12} />
         {t('sources.title', { count: sources.length })}
       </div>
       {sources.some((s) => s.reranked) && (
-        <p className="text-[11px] text-muted">{t('sources.reranked')}</p>
+        <p className="text-xs text-muted">{t('sources.reranked')}</p>
       )}
       <ul className="space-y-1">
         {sources.map((source) => (
@@ -60,14 +60,14 @@ export function SourceList({ sources, focus, expanded }: SourceListProps) {
             }}
             className="rounded-xl bg-surface-2"
           >
-            <div className="flex items-center gap-2 px-2.5 py-1.5">
+            <div className="flex items-center gap-2 px-3 py-2">
               <button
                 type="button"
                 onClick={() => toggle(source.n)}
                 aria-expanded={open.has(source.n)}
                 className="flex min-w-0 flex-1 items-center gap-2 text-left"
               >
-                <span className="grid h-5 min-w-5 shrink-0 place-items-center rounded-md bg-accent-soft px-1 text-[11px] font-semibold text-accent-text">
+                <span className="grid h-5 min-w-5 shrink-0 place-items-center rounded-md bg-accent-soft px-1 text-xs font-medium text-accent-text">
                   {source.n}
                 </span>
                 <span
@@ -93,12 +93,12 @@ export function SourceList({ sources, focus, expanded }: SourceListProps) {
             {open.has(source.n) && (
               <div className="space-y-1 border-t border-border px-3 py-2">
                 {source.heading && (
-                  <p className="text-[11px] text-muted">{source.heading}</p>
+                  <p className="text-xs text-muted">{source.heading}</p>
                 )}
                 <p className="max-h-60 overflow-auto text-xs whitespace-pre-wrap">
                   {source.text}
                 </p>
-                <p className="text-[10px] text-muted">
+                <p className="text-xs text-muted">
                   {t('sources.score', {
                     score: source.score.toLocaleString(messageLocale(), {
                       maximumFractionDigits: 2,

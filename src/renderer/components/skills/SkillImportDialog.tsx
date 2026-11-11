@@ -153,7 +153,7 @@ export function SkillImportDialog({
           void check([...event.dataTransfer.files]);
         }}
       >
-        <h2 id="skill-import-title" className="font-semibold">
+        <h2 id="skill-import-title" className="font-medium">
           {t('skills.import.title')}
         </h2>
         <p className="text-sm text-muted">{t('skills.import.intro')}</p>
@@ -179,7 +179,7 @@ export function SkillImportDialog({
                   <button
                     type="button"
                     onClick={() => inputRef.current?.click()}
-                    className="rounded-lg border border-border bg-surface-2 px-3 py-1.5 text-text hover:bg-surface-hover"
+                    className="rounded-lg border border-border bg-surface-2 px-3 py-2 text-text hover:bg-surface-hover"
                   >
                     {t('skills.import.choose')}
                   </button>
@@ -223,7 +223,7 @@ export function SkillImportDialog({
                 key={candidate.index}
                 className="space-y-2 rounded-xl border border-border bg-bg px-4 py-3"
               >
-                <label className="flex cursor-pointer items-start gap-2.5">
+                <label className="flex cursor-pointer items-start gap-3">
                   <input
                     type="checkbox"
                     checked={picked.has(candidate.index)}
@@ -239,7 +239,7 @@ export function SkillImportDialog({
                   </span>
                 </label>
                 {candidate.error ? (
-                  <p className="rounded border border-error/40 bg-error/10 px-2.5 py-1.5 text-xs text-error">
+                  <p className="rounded border border-error/40 bg-error/10 px-3 py-2 text-xs text-error">
                     {candidate.error}
                   </p>
                 ) : (
@@ -315,7 +315,7 @@ export function SkillImportDialog({
                       <summary className="cursor-pointer select-none text-muted">
                         {t('skills.import.showText')}
                       </summary>
-                      <pre className="mt-1 max-h-60 overflow-auto whitespace-pre-wrap rounded border border-border bg-surface p-2 font-mono text-[12px]">
+                      <pre className="mt-1 max-h-60 overflow-auto whitespace-pre-wrap rounded border border-border bg-surface p-2 font-mono text-xs">
                         {candidate.bodyPreview}
                         {candidate.bodyLength > candidate.bodyPreview.length &&
                           `\n\n${t('skills.import.cut', {
@@ -377,7 +377,7 @@ export function SkillImportDialog({
                 setPreview(null);
                 setFailed([]);
               }}
-              className="rounded-lg border border-border bg-surface-2 px-3.5 py-1.5 text-sm hover:bg-surface-hover"
+              className="rounded-lg border border-border bg-surface-2 px-4 py-2 text-sm hover:bg-surface-hover"
             >
               {onBack ? t('skills.github.back') : t('skills.import.other')}
             </button>
@@ -385,7 +385,7 @@ export function SkillImportDialog({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-border bg-surface-2 px-3.5 py-1.5 text-sm hover:bg-surface-hover"
+            className="rounded-lg border border-border bg-surface-2 px-4 py-2 text-sm hover:bg-surface-hover"
           >
             {t('dialog.cancel')}
           </button>
@@ -394,7 +394,7 @@ export function SkillImportDialog({
               type="button"
               onClick={() => void add()}
               disabled={ready.length === 0 || blocked || busy !== null}
-              className="flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-1.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
             >
               {busy === 'adding' && (
                 <LoaderCircle size={15} className="animate-spin" />

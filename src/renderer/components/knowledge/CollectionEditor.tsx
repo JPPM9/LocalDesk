@@ -69,7 +69,7 @@ export function SourcesEditor({
         <h3 className="text-xs font-medium text-muted">
           {t('knowledge.sources')}
         </h3>
-        <p className="text-[11px] text-muted">{t('knowledge.sourcesHint')}</p>
+        <p className="text-xs text-muted">{t('knowledge.sourcesHint')}</p>
       </div>
       <ul className="space-y-1">
         {sources.map((source) => (
@@ -106,7 +106,7 @@ export function SourcesEditor({
           type="button"
           onClick={() => void add('folder')}
           disabled={disabled}
-          className="flex items-center gap-1.5 rounded border border-border px-2.5 py-1 text-xs hover:bg-surface-hover disabled:opacity-40"
+          className="flex items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-40"
         >
           <FolderOpen size={13} />
           {t('knowledge.addFolder')}
@@ -115,7 +115,7 @@ export function SourcesEditor({
           type="button"
           onClick={() => void add('file')}
           disabled={disabled}
-          className="flex items-center gap-1.5 rounded border border-border px-2.5 py-1 text-xs hover:bg-surface-hover disabled:opacity-40"
+          className="flex items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-40"
         >
           <FileText size={13} />
           {t('knowledge.addFiles')}
@@ -141,7 +141,7 @@ export function IndexButton({
       <button
         type="button"
         onClick={() => void window.api.cancelIndexing(view.config.id)}
-        className="flex items-center gap-1.5 rounded border border-border px-2.5 py-1 text-xs hover:bg-surface-hover"
+        className="flex items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
       >
         <Square size={13} />
         {t('knowledge.cancel')}
@@ -157,7 +157,7 @@ export function IndexButton({
       type="button"
       onClick={() => void start()}
       disabled={disabled || view.config.sources.length === 0}
-      className="flex items-center gap-1.5 rounded bg-accent px-2.5 py-1 text-xs text-white disabled:opacity-40"
+      className="flex items-center gap-2 rounded bg-accent px-3 py-1 text-xs text-white disabled:opacity-40"
     >
       <RefreshCw size={13} />
       {view.stats.indexedAt ? t('knowledge.reindex') : t('knowledge.index')}
@@ -178,7 +178,7 @@ export function ProgressBox({ view }: { view: CollectionView }) {
         ? Math.round((progress.done / progress.total) * 100)
         : 0;
     return (
-      <div className="space-y-1.5 rounded-xl border border-border bg-surface px-3 py-2.5">
+      <div className="space-y-2 rounded-xl border border-border bg-surface px-3 py-3">
         <div className="flex justify-between text-xs">
           <span>
             {progress.phase === 'scanning'
@@ -200,7 +200,7 @@ export function ProgressBox({ view }: { view: CollectionView }) {
         </div>
         {progress.current && (
           <p
-            className="truncate font-mono text-[11px] text-muted"
+            className="truncate font-mono text-xs text-muted"
             title={progress.current}
           >
             {progress.current}
@@ -211,7 +211,7 @@ export function ProgressBox({ view }: { view: CollectionView }) {
   }
 
   return (
-    <div className="space-y-1 rounded-xl border border-border bg-surface px-3 py-2.5 text-xs">
+    <div className="space-y-1 rounded-xl border border-border bg-surface px-3 py-3 text-xs">
       <div className="flex flex-wrap gap-x-4 gap-y-1">
         <span>{t('knowledge.statFiles', { count: stats.documents })}</span>
         <span>{t('knowledge.statChunks', { count: stats.chunks })}</span>
@@ -243,7 +243,7 @@ export function ProgressBox({ view }: { view: CollectionView }) {
         <p className="text-muted">{t('knowledge.aborted')}</p>
       )}
       {progress?.error && (
-        <p className="flex items-start gap-1.5 text-error">
+        <p className="flex items-start gap-2 text-error">
           <CircleAlert size={13} className="mt-0.5 shrink-0" />
           {progress.error}
         </p>
@@ -274,7 +274,7 @@ export function DocumentList({ view }: { view: CollectionView }) {
           {t('knowledge.files', { count: stats.documents })}
         </h3>
         {stats.problems > 0 && (
-          <label className="flex items-center gap-1.5 text-xs text-muted">
+          <label className="flex items-center gap-2 text-xs text-muted">
             <input
               type="checkbox"
               checked={onlyProblems}
@@ -292,7 +292,7 @@ export function DocumentList({ view }: { view: CollectionView }) {
             <DocumentRow key={doc.id} doc={doc} sources={config.sources} />
           ))}
           {shown.length > MAX_ROWS && (
-            <li className="px-3 py-1.5 text-muted">
+            <li className="px-3 py-2 text-muted">
               {t('knowledge.moreFiles', { count: shown.length - MAX_ROWS })}
             </li>
           )}
@@ -318,7 +318,7 @@ function DocumentRow({
 }) {
   const { t } = useTranslation();
   return (
-    <li className="flex items-center gap-3 px-3 py-1.5" title={doc.path}>
+    <li className="flex items-center gap-3 px-3 py-2" title={doc.path}>
       <span className="min-w-0 flex-1 truncate font-mono">
         {shortPath(doc.path, sources)}
       </span>

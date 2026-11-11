@@ -52,7 +52,7 @@ export function ChatRow({
         onKeyDown={onKeyDown}
         onBlur={() => finishEdit(true)}
         aria-label={t('chat.rename')}
-        className="my-0.5 w-full rounded border border-accent bg-surface px-2 py-1.5 outline-none"
+        className="my-0.5 w-full rounded border border-accent bg-surface px-2 py-2 outline-none"
       />
     );
   }
@@ -68,7 +68,7 @@ export function ChatRow({
           event.dataTransfer.effectAllowed = 'move';
         }}
         className={({ isActive }) =>
-          `group my-px flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[13.5px] ${
+          `group my-px flex items-center gap-1 rounded-lg px-3 py-2 text-sm ${
             isActive
               ? 'bg-surface-hover font-medium text-text'
               : 'text-muted hover:bg-surface-hover hover:text-text'

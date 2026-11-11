@@ -43,7 +43,7 @@ export function RememberButton({
   return (
     <div className={`flex ${align === 'end' ? 'justify-end' : ''}`}>
       {state === 'saved' ? (
-        <span className="flex items-center gap-1 text-[11px] text-ok">
+        <span className="flex items-center gap-1 text-xs text-ok">
           <Check size={12} />
           {t('memories.saved')}
         </span>
@@ -52,7 +52,7 @@ export function RememberButton({
           type="button"
           onClick={() => setState('editing')}
           title={t('memories.rememberHint')}
-          className="flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] text-muted opacity-0 group-hover:opacity-100 hover:bg-surface-hover hover:text-text focus:opacity-100"
+          className="flex items-center gap-1 rounded px-2 py-0.5 text-xs text-muted opacity-0 group-hover:opacity-100 hover:bg-surface-hover hover:text-text focus:opacity-100"
         >
           <Brain size={12} />
           {t('memories.add')}

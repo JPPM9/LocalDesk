@@ -51,11 +51,11 @@ export function MoveMenu({
       aria-label={t('folders.moveTo')}
       className="absolute right-1 z-20 mt-0.5 w-52 rounded border border-border bg-surface py-1 shadow-lg"
     >
-      <div className="px-3 py-1 text-[11px] font-semibold tracking-wider text-muted uppercase">
+      <div className="px-3 py-1 text-xs font-medium text-muted">
         {t('folders.moveTo')}
       </div>
       {folders.length === 0 && (
-        <p className="px-3 py-1.5 text-xs text-muted">{t('folders.noneYet')}</p>
+        <p className="px-3 py-2 text-xs text-muted">{t('folders.noneYet')}</p>
       )}
       {options.map((option) => {
         const current = (option.id ?? undefined) === currentFolderId;
@@ -67,7 +67,7 @@ export function MoveMenu({
             role="menuitem"
             disabled={current}
             onClick={() => onPick(option.id)}
-            className="flex w-full items-center gap-2 px-3 py-1.5 text-left hover:bg-surface-hover disabled:text-muted disabled:hover:bg-transparent"
+            className="flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-surface-hover disabled:text-muted disabled:hover:bg-transparent"
           >
             <Icon size={14} className="shrink-0" />
             <span className="min-w-0 flex-1 truncate">{option.name}</span>

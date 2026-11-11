@@ -93,7 +93,7 @@ function Dir({
                 type="button"
                 onClick={() => toggle(entry.path)}
                 aria-expanded={open.has(entry.path)}
-                className="flex w-full items-center gap-1 rounded py-[3px] pr-2 text-left text-[13px] text-muted hover:bg-surface-hover hover:text-text"
+                className="flex w-full items-center gap-1 rounded py-1 pr-2 text-left text-[13px] text-muted hover:bg-surface-hover hover:text-text"
                 style={indent}
               >
                 <ChevronRight
@@ -122,7 +122,7 @@ function Dir({
               type="button"
               onClick={() => onSelect(entry.path)}
               aria-current={selected === entry.path ? 'true' : undefined}
-              className={`flex w-full items-center gap-1 rounded py-[3px] pr-2 text-left text-[13px] ${
+              className={`flex w-full items-center gap-1 rounded py-1 pr-2 text-left text-[13px] ${
                 selected === entry.path
                   ? 'bg-accent-soft text-accent-text'
                   : 'text-muted hover:bg-surface-hover hover:text-text'
@@ -130,7 +130,7 @@ function Dir({
               style={{ paddingLeft: `${8 + depth * 14 + 17}px` }}
             >
               <File size={14} className="shrink-0" />
-              <span className="truncate font-mono text-[12.5px]">
+              <span className="truncate font-mono text-[13px]">
                 {entry.name}
               </span>
             </button>

@@ -51,7 +51,7 @@ export function MailButton({
         <ul className="space-y-1">
           {accounts.map((account) => (
             <li key={account.id}>
-              <label className="flex cursor-pointer items-center gap-2 rounded px-1.5 py-1 hover:bg-surface-hover">
+              <label className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 hover:bg-surface-hover">
                 <input
                   type="checkbox"
                   checked={active.includes(account.id)}
@@ -67,7 +67,7 @@ export function MailButton({
         </ul>
       )}
       {modelSupportsTools === false && active.length > 0 && (
-        <p className="text-[11.5px] text-warn">{t('mailChat.noTools')}</p>
+        <p className="text-xs text-warn">{t('mailChat.noTools')}</p>
       )}
     </PickerButton>
   );

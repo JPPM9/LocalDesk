@@ -396,7 +396,7 @@ export function ChatPage() {
                 <Link
                   to={`/projects/${project.id}`}
                   title={t('folders.open')}
-                  className="flex max-w-48 items-center gap-1.5 rounded-full border border-border bg-surface-2 px-2.5 py-0.5 text-xs text-muted hover:text-text"
+                  className="flex max-w-48 items-center gap-2 rounded-full border border-border bg-surface-2 px-3 py-0.5 text-xs text-muted hover:text-text"
                 >
                   <FolderOpen size={13} className="shrink-0" />
                   <span className="truncate">
@@ -565,7 +565,7 @@ export function ChatPage() {
           )}
           {activeTemplate && messages.length === 0 && (
             <div className="mb-2 flex">
-              <span className="flex items-center gap-1.5 rounded-full bg-accent-soft px-3 py-1 text-xs text-accent-text">
+              <span className="flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 text-xs text-accent-text">
                 {t('templates.active', { name: activeTemplate.name })}
                 <button
                   type="button"
@@ -581,7 +581,7 @@ export function ChatPage() {
           )}
           <ServerFailoverBanner chatModel={model} />
           {chatHasImages && model && !visionModel && (
-            <p className="mb-2 flex items-start gap-2 rounded-xl border border-warn/40 bg-warn/10 px-3.5 py-2 text-xs">
+            <p className="mb-2 flex items-start gap-2 rounded-xl border border-warn/40 bg-warn/10 px-4 py-2 text-xs">
               <ImageOff size={14} className="mt-0.5 shrink-0 text-warn" />
               {t('chat.images.hintNoVision', { model })}
             </p>
@@ -670,7 +670,7 @@ export function ChatPage() {
             }
             onStop={stop}
           />
-          <p className="mt-2 text-center text-[11.5px] text-subtle">
+          <p className="mt-2 text-center text-xs text-subtle">
             {t('chat.hint')}
           </p>
         </div>

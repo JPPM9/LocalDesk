@@ -110,7 +110,7 @@ export function FolderSection({
           aria-expanded={!collapsed}
           onClick={onToggle}
           onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onToggle()}
-          className="group flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-[13.5px] font-medium text-text select-none hover:bg-surface-hover"
+          className="group flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-text select-none hover:bg-surface-hover"
         >
           <FolderIcon size={15} className="shrink-0 text-muted" />
           <span className="min-w-0 flex-1 truncate">{name}</span>
@@ -158,7 +158,7 @@ export function FolderSection({
       {!collapsed && (
         <div className="pl-5">
           {count === 0 ? (
-            <p className="px-2.5 py-1 text-xs text-subtle">
+            <p className="px-3 py-1 text-xs text-subtle">
               {t('folders.empty')}
             </p>
           ) : (

@@ -96,7 +96,7 @@ export function ToolCallView({
       <div
         role="group"
         aria-label={t('toolCall.askTitle', { tool: call.toolName })}
-        className="space-y-2 rounded-xl border border-accent/40 bg-accent-soft/50 px-3.5 py-3"
+        className="space-y-2 rounded-xl border border-accent/40 bg-accent-soft/50 px-4 py-3"
       >
         <div className="flex items-center gap-2 font-medium">
           <ShieldQuestion size={16} className="shrink-0 text-accent-text" />
@@ -114,7 +114,7 @@ export function ToolCallView({
           </p>
         )}
         {call.destructive && (
-          <p className="flex items-center gap-1.5 text-xs text-warn">
+          <p className="flex items-center gap-2 text-xs text-warn">
             <TriangleAlert size={13} className="shrink-0" />
             {t('toolCall.askDestructive')}
           </p>
@@ -228,7 +228,7 @@ export function ToolCallView({
         </span>
       </summary>
       <div className="space-y-2 border-t border-border px-3 py-2">
-        <p className="text-[11px] text-muted">
+        <p className="text-xs text-muted">
           {t('toolCall.server', { name: call.serverName || '–' })}
         </p>
         {!isResearch && (
@@ -248,7 +248,7 @@ export function ToolCallView({
   return (
     <div className="space-y-2">
       {row}
-      <div className="rounded-xl border border-border bg-surface px-3 py-2.5">
+      <div className="rounded-xl border border-border bg-surface px-3 py-3">
         <TableChartView chart={chart} />
       </div>
     </div>
@@ -285,7 +285,7 @@ function Section({
 }) {
   return (
     <div className="space-y-1">
-      <div className="text-[11px] font-medium text-muted">{label}</div>
+      <div className="text-xs font-medium text-muted">{label}</div>
       {children}
     </div>
   );
@@ -293,7 +293,7 @@ function Section({
 
 function Code({ text }: { text: string }) {
   return (
-    <pre className="max-h-64 overflow-auto rounded bg-bg px-2 py-1.5 font-mono text-xs whitespace-pre-wrap break-words">
+    <pre className="max-h-64 overflow-auto rounded bg-bg px-2 py-2 font-mono text-xs whitespace-pre-wrap break-words">
       {text}
     </pre>
   );

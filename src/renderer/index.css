@@ -6,48 +6,48 @@
  * Namen – die Komponenten müssen das Farbschema dadurch nicht kennen.
  * Ob hell oder dunkel, entscheidet Einstellungen → Darstellung (System / Hell / Dunkel);
  * der Main-Prozess stellt dafür Electrons nativeTheme um, und prefers-color-scheme folgt.
- * Akzent = das Blau aus dem App-Symbol.
+ * Richtung „Werkbank“: neutrales Graphit, ein Akzent in Glut-Orange (wie eine Messgeräte-Anzeige), Messwerte in Mono.
  */
 :root {
   color-scheme: light;
-  --ld-bg: #f7f8fa; /* Grund, Eingabefelder, Code */
+  --ld-bg: #fafafa; /* Grund, Eingabefelder, Code */
   --ld-surface: #ffffff; /* Flächen: Inhalt, Karten, Listen */
-  --ld-surface-2: #f3f5f9; /* zweite Ebene: Gedanken, Quellen, Kästen in Karten */
-  --ld-surface-hover: #eceff5;
-  --ld-sidebar: #eef1f6; /* Symbolleiste links */
-  --ld-border: #e3e7ee;
-  --ld-text: #161a21;
-  --ld-muted: #5f6878; /* Nebentexte */
-  --ld-subtle: #687080; /* ganz leise: Hinweise, Zähler (Kontrast ≥ 4,5) */
-  --ld-accent: #2563eb;
-  --ld-accent-soft: #e3ecfd;
-  --ld-accent-text: #1d4fd0; /* Akzent als Schrift auf hellem Grund */
-  --ld-bubble: #eaf0fd; /* deine Nachrichten */
+  --ld-surface-2: #f4f4f5; /* zweite Ebene: Gedanken, Quellen, Kästen in Karten */
+  --ld-surface-hover: #eeeef0;
+  --ld-sidebar: #f4f4f5; /* Symbolleiste links */
+  --ld-border: #e4e4e7;
+  --ld-text: #171717;
+  --ld-muted: #525252; /* Nebentexte */
+  --ld-subtle: #6e6e73; /* ganz leise: Hinweise, Zähler (Kontrast ≥ 4,5) */
+  --ld-accent: #b8501a; /* Glut: weiße Schrift darauf 5,0 : 1 */
+  --ld-accent-soft: #fbeee3;
+  --ld-accent-text: #9a3f0c; /* Akzent als Schrift auf hellem Grund */
+  --ld-bubble: #eeeef0; /* deine Nachrichten */
   --ld-ok: #15803d;
-  --ld-warn: #b45309;
+  --ld-warn: #a16207;
   --ld-error: #b91c1c;
-  --ld-shadow: 0 1px 2px rgb(16 24 40 / 0.06), 0 8px 24px rgb(16 24 40 / 0.06);
+  --ld-shadow: 0 1px 2px rgb(0 0 0 / 0.05), 0 8px 24px rgb(0 0 0 / 0.06);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --ld-bg: #0e1015;
-    --ld-surface: #161a22;
-    --ld-surface-2: #1b2029;
-    --ld-surface-hover: #212733;
-    --ld-sidebar: #13161d;
-    --ld-border: #262c38;
-    --ld-text: #e8ebf1;
-    --ld-muted: #98a1b0;
-    --ld-subtle: #848d9c;
-    --ld-accent: #356fe6; /* weiße Schrift darauf ≥ 4,5; als Schrift: accent-text */
-    --ld-accent-soft: #1b2843;
-    --ld-accent-text: #8fb1f6;
-    --ld-bubble: #1c2740;
-    --ld-ok: #4ade80;
-    --ld-warn: #fbbf24;
-    --ld-error: #f87171;
+    --ld-bg: #141415;
+    --ld-surface: #19191b;
+    --ld-surface-2: #1f1f21;
+    --ld-surface-hover: #262628;
+    --ld-sidebar: #0f0f10;
+    --ld-border: #2a2a2d;
+    --ld-text: #ededed;
+    --ld-muted: #a1a1a6;
+    --ld-subtle: #8b8b91;
+    --ld-accent: #b8501a; /* weiße Schrift darauf 5,0 : 1; als Schrift: accent-text */
+    --ld-accent-soft: #2c1d13;
+    --ld-accent-text: #f2a66b;
+    --ld-bubble: #232325;
+    --ld-ok: #4cc38a;
+    --ld-warn: #e6b422;
+    --ld-error: #ff6b6b;
     --ld-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 10px 30px rgb(0 0 0 / 0.35);
   }
 }

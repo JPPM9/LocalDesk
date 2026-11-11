@@ -61,9 +61,9 @@ export function StatusPill() {
     <Link
       to="/status"
       title={tooltip}
-      className="-mx-1.5 block rounded-lg px-1.5 py-1 hover:bg-surface-hover"
+      className="-mx-2 block rounded-lg px-2 py-1 hover:bg-surface-hover"
     >
-      <div className="flex items-start gap-2.5 text-xs" role="status">
+      <div className="flex items-start gap-3 text-xs" role="status">
         <span
           className={`mt-1 inline-block h-2 w-2 shrink-0 rounded-full ${dotClass}`}
         />
@@ -71,13 +71,13 @@ export function StatusPill() {
           <div className="truncate font-medium">{label}</div>
           {loadedText && (
             <div
-              className={`truncate text-[11.5px] ${partlyOnCpu ? 'text-warn' : 'text-muted'}`}
+              className={`truncate text-xs ${partlyOnCpu ? 'text-warn' : 'text-muted'}`}
             >
               {loadedText}
             </div>
           )}
           {gpuText && (
-            <div className="truncate text-[11.5px] text-subtle tabular-nums">
+            <div className="truncate text-xs text-subtle tabular-nums">
               {gpuText}
             </div>
           )}

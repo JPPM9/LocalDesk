@@ -20,7 +20,7 @@ export function CompactionDivider({
   const { t } = useTranslation();
   const saved = Math.max(0, compaction.tokensBefore - compaction.tokensAfter);
   return (
-    <div className="my-1 space-y-1.5 rounded-lg border border-dashed border-border px-3 py-2 text-xs text-muted">
+    <div className="my-1 space-y-2 rounded-lg border border-dashed border-border px-3 py-2 text-xs text-muted">
       <div className="flex items-center gap-2">
         <Layers size={13} className="shrink-0 text-accent-text" />
         <span className="min-w-0 flex-1">
@@ -43,7 +43,7 @@ export function CompactionDivider({
         <summary className="cursor-pointer select-none">
           {t('compact.show')}
         </summary>
-        <p className="mt-1.5 whitespace-pre-wrap text-text">
+        <p className="mt-2 whitespace-pre-wrap text-text">
           {compaction.summary}
         </p>
       </details>

@@ -23,7 +23,7 @@ export function ResearchButton({
       aria-pressed={armed}
       title={t('research.buttonTitle')}
       aria-label={t('research.buttonTitle')}
-      className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12.5px] disabled:opacity-40 ${
+      className={`flex items-center gap-2 rounded-full border px-3 py-1 text-[13px] disabled:opacity-40 ${
         armed
           ? 'border-transparent bg-accent-soft text-accent-text'
           : 'border-border bg-surface text-muted hover:text-text'

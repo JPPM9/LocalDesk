@@ -42,7 +42,7 @@ export function WebButton({
       title={t('webChat.title')}
       intro={t('webChat.intro')}
     >
-      <label className="flex cursor-pointer items-start gap-2 rounded px-1.5 py-1 hover:bg-surface-hover">
+      <label className="flex cursor-pointer items-start gap-2 rounded px-2 py-1 hover:bg-surface-hover">
         <input
           type="checkbox"
           checked={read}
@@ -51,13 +51,11 @@ export function WebButton({
         />
         <span className="min-w-0 flex-1">
           <span className="block">{t('webChat.switch')}</span>
-          <span className="block text-[11px] text-muted">
-            {t('webChat.hint')}
-          </span>
+          <span className="block text-xs text-muted">{t('webChat.hint')}</span>
         </span>
       </label>
       <label
-        className={`flex items-start gap-2 rounded px-1.5 py-1 ${
+        className={`flex items-start gap-2 rounded px-2 py-1 ${
           keySaved === false
             ? 'opacity-60'
             : 'cursor-pointer hover:bg-surface-hover'
@@ -72,13 +70,13 @@ export function WebButton({
         />
         <span className="min-w-0 flex-1">
           <span className="block">{t('webChat.searchSwitch')}</span>
-          <span className="block text-[11px] text-muted">
+          <span className="block text-xs text-muted">
             {t('webChat.searchHint')}
           </span>
         </span>
       </label>
       {keySaved === false && (
-        <p className="text-[11.5px] text-warn">
+        <p className="text-xs text-warn">
           {search ? t('webChat.searchKeyGone') : t('webChat.searchNoKey')}{' '}
           <Link to="/settings" className="text-accent-text underline">
             {t('webChat.toSettings')}
@@ -86,7 +84,7 @@ export function WebButton({
         </p>
       )}
       {modelSupportsTools === false && on && (
-        <p className="text-[11.5px] text-warn">{t('webChat.noTools')}</p>
+        <p className="text-xs text-warn">{t('webChat.noTools')}</p>
       )}
     </PickerButton>
   );

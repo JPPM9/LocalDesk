@@ -45,7 +45,7 @@ export function CollectionPicker({
     <ul className="space-y-1">
       {collections.map(({ config, stats }) => (
         <li key={config.id}>
-          <label className="flex cursor-pointer items-start gap-2 rounded px-1.5 py-1 hover:bg-surface-hover">
+          <label className="flex cursor-pointer items-start gap-2 rounded px-2 py-1 hover:bg-surface-hover">
             <input
               type="checkbox"
               checked={selected.includes(config.id)}
@@ -55,7 +55,7 @@ export function CollectionPicker({
             <span className="min-w-0 flex-1">
               <span className="block truncate">{config.name}</span>
               <span
-                className={`block truncate text-[11px] ${
+                className={`block truncate text-xs ${
                   stats.chunks === 0 ? 'text-warn' : 'text-muted'
                 }`}
               >
@@ -97,7 +97,7 @@ export function KnowledgeButton({
       intro={t('knowledgePicker.intro')}
     >
       <CollectionPicker {...props} />
-      <label className="flex cursor-pointer items-start gap-2 rounded px-1.5 py-1 hover:bg-surface-hover">
+      <label className="flex cursor-pointer items-start gap-2 rounded px-2 py-1 hover:bg-surface-hover">
         <input
           type="checkbox"
           checked={rerank}
@@ -106,7 +106,7 @@ export function KnowledgeButton({
         />
         <span className="min-w-0 flex-1">
           <span className="block">{t('knowledgePicker.rerank')}</span>
-          <span className="block text-[11px] text-muted">
+          <span className="block text-xs text-muted">
             {t('knowledgePicker.rerankHint')}
           </span>
         </span>

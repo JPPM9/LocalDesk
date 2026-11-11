@@ -25,7 +25,7 @@ export function ChatSettingsPanel({
   return (
     <aside className="flex w-[310px] shrink-0 flex-col border-l border-border bg-bg">
       <div className="flex h-14 shrink-0 items-center justify-between px-4">
-        <h2 className="font-semibold">{t('settingsPanel.title')}</h2>
+        <h2 className="font-medium">{t('settingsPanel.title')}</h2>
         <button
           type="button"
           onClick={onClose}
@@ -45,7 +45,7 @@ export function ChatSettingsPanel({
         />
       </div>
 
-      <p className="border-t border-border px-4 py-2.5 text-xs text-muted">
+      <p className="border-t border-border px-4 py-3 text-xs text-muted">
         {t('settingsPanel.footer')}
       </p>
     </aside>
@@ -102,7 +102,7 @@ function SaveAsTemplate({
             setName('');
             setMessage(null);
           }}
-          className="flex w-full items-center justify-center gap-1.5 rounded border border-border px-3 py-1.5 hover:bg-surface-hover"
+          className="flex w-full items-center justify-center gap-2 rounded border border-border px-3 py-2 hover:bg-surface-hover"
         >
           <BookmarkPlus size={15} />
           {t('templates.saveFromChat')}
@@ -116,7 +116,7 @@ function SaveAsTemplate({
             onKeyDown={onKeyDown}
             placeholder={t('templates.namePlaceholder')}
             aria-label={t('templates.name')}
-            className="min-w-0 flex-1 rounded border border-border bg-bg px-2 py-1.5 outline-none focus:border-accent"
+            className="min-w-0 flex-1 rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent"
           />
           <button
             type="button"

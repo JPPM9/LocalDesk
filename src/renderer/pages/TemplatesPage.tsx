@@ -116,17 +116,17 @@ export function TemplatesPage() {
   return (
     <div className="flex h-full">
       <aside className="flex w-[270px] shrink-0 flex-col border-r border-border bg-surface">
-        <div className="px-2.5 pt-3 pb-2">
+        <div className="px-3 pt-3 pb-2">
           <button
             type="button"
             onClick={() => navigate(`/templates/${NEW}`)}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-3 py-1.5 font-medium text-white hover:opacity-90"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-3 py-2 font-medium text-white hover:opacity-90"
           >
             <BookmarkPlus size={15} />
             {t('templates.new')}
           </button>
         </div>
-        <nav className="min-h-0 flex-1 overflow-y-auto px-2.5 pb-2">
+        <nav className="min-h-0 flex-1 overflow-y-auto px-3 pb-2">
           {loaded && templates.length === 0 && (
             <p className="px-2 py-4 text-center text-xs text-muted">
               {t('templates.none')}
@@ -137,7 +137,7 @@ export function TemplatesPage() {
               key={tpl.id}
               to={`/templates/${tpl.id}`}
               className={({ isActive }) =>
-                `my-px block rounded-lg px-2.5 py-2 ${
+                `my-px block rounded-lg px-3 py-2 ${
                   isActive
                     ? 'bg-surface-hover font-medium text-text'
                     : 'text-muted hover:bg-surface-hover hover:text-text'
@@ -167,7 +167,7 @@ export function TemplatesPage() {
                     onClick={() => navigate(`/chat?template=${draft.id}`)}
                     disabled={dirty}
                     title={dirty ? t('templates.saveFirst') : undefined}
-                    className="flex items-center gap-1.5 rounded border border-border px-2.5 py-1 text-xs hover:bg-surface-hover disabled:opacity-50"
+                    className="flex items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-50"
                   >
                     <MessageSquarePlus size={14} />
                     {t('templates.startChat')}
@@ -188,7 +188,7 @@ export function TemplatesPage() {
                   type="button"
                   onClick={() => void onSave()}
                   disabled={!dirty}
-                  className="flex items-center gap-1.5 rounded bg-accent px-2.5 py-1 text-xs text-white disabled:opacity-40"
+                  className="flex items-center gap-2 rounded bg-accent px-3 py-1 text-xs text-white disabled:opacity-40"
                 >
                   <Save size={14} />
                   {t('templates.save')}
@@ -212,7 +212,7 @@ export function TemplatesPage() {
                   value={draft.name}
                   onChange={(e) => update({ name: e.target.value })}
                   placeholder={t('templates.namePlaceholder')}
-                  className="w-full rounded border border-border bg-surface px-2 py-1.5 outline-none focus:border-accent"
+                  className="w-full rounded border border-border bg-surface px-2 py-2 outline-none focus:border-accent"
                 />
               </Field>
 
@@ -227,7 +227,7 @@ export function TemplatesPage() {
                 <select
                   value={draft.model ?? ''}
                   onChange={(e) => chooseModel(e.target.value)}
-                  className="w-full rounded border border-border bg-surface px-2 py-1.5 outline-none focus:border-accent"
+                  className="w-full rounded border border-border bg-surface px-2 py-2 outline-none focus:border-accent"
                 >
                   <option value="">{t('templates.anyModel')}</option>
                   {modelMissing && (
