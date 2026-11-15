@@ -9,7 +9,7 @@
 **Pins:** Schrift Inter (Vorgabe) · Fließtext mindestens 15 px (Vorgabe) · Dunkel zuerst, Hell vollwertig (Vorgabe) · Synthese des Nutzers vom 2026-11-15 aus Kandidat 5 „Späte Lampe“ und Kandidat 1 „Blaue Stunde“: Bernstein führt, blaue Tiefe; kein Kasten um den Inhalt; versetzte Flächen und Licht; Quellen als Fußnoten; schräger Ton-Schnitt · Getauscht gegenüber Hand 5: Signatur (jetzt der Ton-Schnitt aus 1), zweiter Farbton 230° nur für Tiefe und Schatten
 **Entscheidungen des Nutzers bei der Sperre (2026-11-15):** Die Farbe gilt so, wie sie im Vorschau-Blatt zu sehen war: Bernstein `#e69a58` in Dunkel trotz der Nähe zum früheren „Werkbank“-Orange, dunkler Bernstein `#825936` als Vollton in Hell. Die eine feine Kante am Eingabefeld ist angenommen („Ja, passt“). Sperre: „Ja, sperren“.
 
-<!-- Gehört zu JOURNEY.md (Aufbau, Abläufe, Seiten). Dieses Dokument regelt das Aussehen. Bausteine stehen unten (Phase 4); Stimme und Daten-Palette folgen in den Phasen 5 und 6. -->
+<!-- Gehört zu JOURNEY.md (Aufbau, Abläufe, Seiten). Dieses Dokument regelt das Aussehen. Bausteine stehen unten (Phase 4), die Stimme gleich nach „Nie“ (Phase 5); die Daten-Palette folgt in Phase 6. -->
 
 ## Richtung
 
@@ -533,6 +533,45 @@ Die eigene Nachricht hat `20px 20px 6px 20px` (die kleine Ecke zeigt zum Eingabe
 - **Kein Versatz auf Listen- und Formularseiten.**
 - **Keine Bewegung, die nichts mitteilt**; kein Federn.
 - **Keine Farbe als einziger Träger** einer Meldung oder eines Zustands.
+
+## Stimme
+
+**Stand Phase 5.** Die Wörter sind Teil der Oberfläche, nicht Beschriftung obendrauf (Metts/Welfle, *Writing Is Designing*). Die **Stimme** bleibt überall gleich, der **Ton** wechselt mit dem Moment (Podmajersky, *Strategic Writing for UX*). Deutsch (du-Form) und Englisch sind gleichwertig; das Englische ist keine Wort-für-Wort-Übersetzung, sondern dieselbe Stimme. Die Texte selbst, die Begriffstabelle (ein Wort je Sache und Sprache) und die Längengrenzen stehen in `JOURNEY.md` §Page specs, Abschnitt „Texte: Begriffe, Muster und Regeln“ und je Fläche unter „Texte (Phase 5)“. Änderungen an Wörtern beginnen dort, danach folgt der Code (wie bei Tokens).
+
+### Fünf Eigenschaften
+
+Alle konkret, keine Wohlfühlwörter. Jede hat ein Beispiel, das passt, und eines, das nicht passt.
+
+| Eigenschaft | Das heißt | Passt (Deutsch · Englisch) | Passt nicht (Deutsch · Englisch) |
+|---|---|---|---|
+| **Ruhig** | Sagt, was ist, ohne Alarm. Kein Ausrufezeichen, kein Witz, kein „Oops“. Besonders bei Fehlern (Yifrah: Fehlertexte sind der Ort für Genauigkeit, nicht für Persönlichkeit). | „Ollama ist nicht erreichbar. Starte Ollama, dann geht es hier von selbst weiter.“ · “Ollama is not reachable. Start Ollama and this picks up on its own.” | „Achtung! Die Verbindung ist weg!“ · “Oops! Something went wrong!” |
+| **Direkt** | Das Wichtigste zuerst, ein Satz eine Sache. Ein Knopf nennt die Tat: Verb und Objekt (Yifrah, Redish: vorn die Hauptsache). | „Modell herunterladen“ · “Download a model” | „Hier klicken, um ein neues Modell zu erhalten“ · “Click here to get a new model” |
+| **Genau** | Nennt Namen, Zahl, Ort und Ursache. Was nur geschätzt ist, heißt „geschätzt“. Sagt, was sicher ist („Dein Text bleibt im Feld.“). | „Geschätzt: 6.200 von 8.192 Tokens“ · “Estimated: 6,200 of 8,192 tokens” | „Alles im grünen Bereich“ · “Everything looks great” |
+| **Schlicht** | Einfache Wörter, kurze Sätze, ein Wort je Sache (Begriffstabelle). Ein Fachwort nur, wenn der Nutzer es auf dem Bildschirm sieht (Redish: einfache Sprache ist schneller zu befolgen). | „Der Grafikspeicher ist voll. Ein Teil des Modells läuft auf dem Prozessor.“ · “Graphics memory is full. Part of the model runs on the processor.” | „Die Allokation überschreitet das Limit; Offloading aktiv.“ · “Allocation exceeds the limit; offloading active.” |
+| **Auf Augenhöhe** | Du-Form, kein Vorwurf, keine Anbiederung, keine Werbung. LocalDesk spricht wie ein Kollege am Nachbarplatz, nicht wie ein Verkäufer und nicht wie ein Lehrer. | „Hier bündelst du Chats mit eigenen Anweisungen und Dokumenten.“ · “Group chats here, with their own instructions and documents.” | „Super, leg jetzt los und entdecke die Möglichkeiten!“ · “Awesome, start now and unlock the possibilities!” (Werbung); „Du hast vergessen, ein Modell zu installieren.“ · “You forgot to install a model.” (Vorwurf) |
+
+### Ton je Moment
+
+Die Stimme bleibt, der Ton passt sich dem Moment an.
+
+| Moment | Ton | Muster | Beispiel (Deutsch · Englisch) |
+|---|---|---|---|
+| **Ankommen** (Startseite) | ruhig, kurz, selbstverständlich | eine Zeile, die zeigt, dass alles hier läuft | „Alles läuft auf diesem PC.“ · “Everything runs on this PC.” |
+| **Leer** | einladend, sachlich | ein Satz, was hierher gehört, und genau eine Aktion (Redish) | „Hier bündelst du Chats mit eigenen Anweisungen und Dokumenten. [Neues Projekt]“ · “Group chats here, with their own instructions and documents. [New project]” |
+| **Arbeiten** | knapp, Zustand in Worten | Wort plus laufender Vorgang, kein Prozent ohne Zahl | „Wird gelesen …“ · “Reading …” |
+| **Rückfrage vor Folgenreichem** | ernst, genau | erst die Folge, dann die Wahl; der Knopf nennt die Tat, nie „Ja“ (Yifrah) | „Dieses Tool kann Dateien überschreiben.“ → [Einmal erlauben] [Ablehnen] · “This tool can overwrite files.” → [Allow once] [Deny] |
+| **Fehler** | ruhig, präzise, ohne Persönlichkeit | was passiert ist, warum, was tun; zuerst das Sichere (Yifrah; Nielsen 9) | „Die Antwort ist abgebrochen: Verbindung getrennt. Dein Text bleibt im Feld. Versuche es mit „Antwort wiederholen“ noch einmal.“ · “The answer stopped: connection lost. Your text stays in the field. Try “Regenerate response”.” |
+| **Erfolg** | knapp, ohne Feier | benennt das Ergebnis, nicht das Gefühl | „1 Änderung übernommen.“ · “1 change applied.” |
+
+### Schreibweise
+
+- **Du-Form**, nie „Sie“. Nie „wir“ für LocalDesk; die App gehört dem Nutzer, sie spricht von sich in der dritten Person („LocalDesk legt nur Abschnitte an“) oder gar nicht.
+- **Keine Ausrufezeichen. Keine Werbewörter** (super, toll, leistungsstark, nahtlos, einfach, kostenlos; powerful, seamless, simply, effortless, awesome, free). Kein „Oops“, kein „Leider“; „bitte“ nur, wenn die Bitte den Nutzer Mühe kostet.
+- **Beschriftungen, Knöpfe, Tooltips, Platzhalter und Überschriften ohne Schlusspunkt.** Hinweise, leere Zustände und Fehler sind Sätze mit Punkt.
+- **Platzhalter ohne „…“** („Nachricht schreiben“, „Chats durchsuchen“): Sie nennen die Aufgabe oder zeigen ein Format. „…“ steht nur für laufende Vorgänge („Wird gelesen …“) und Befehle, die weitere Eingabe öffnen („Verschieben nach …“), immer mit Leerzeichen davor.
+- **Schreibweisen:** deutsche Anführungszeichen „ “, englische “ ”; Kürzel „Strg+K“ und “Ctrl+K”; Trenner „·“; Weg in den Einstellungen „Einstellungen → Ollama-Server“; Dezimalkomma im Deutschen („9,3 GB“), Punkt im Englischen; Tausender „6.200“ und „6,200“; Zahl und Einheit mit geschütztem Leerzeichen. Zahlen, die sich ändern oder untereinander stehen, setzt die Schrift mit Tabellenziffern (siehe „Schrift“).
+- **Fehler:** was passiert ist, warum, was tun. Der Grund der App steht als schlichter Satz im Text, nie als Rohtext der Meldung (der steht nur hinter „Details“). Es steht dabei, was sicher ist; Vermutetes heißt „womöglich“.
+- **Länge vor Schönheit:** In der Seitenleiste (272 px) wird gekürzt statt umgebrochen, und Englisch ist oft länger. Deshalb gilt die gemessene Breite in Inter 14 px, Gewicht 500: Leistentext höchstens 200 px, Kachel-Titel höchstens 153 px, Nebenzeile im „+“-Menü höchstens 238 px bei 12 px. Gemessen in der Schrift der App; die Messdaten liegen lokal in `.design-foundations/build/phase-5-messung.json`.
 
 ## Tokens
 

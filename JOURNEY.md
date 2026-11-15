@@ -2,7 +2,7 @@
 
 <!-- Struktur- und Ablauf-Spezifikation von LocalDesk. Gehört zu DESIGN.md (visuelle Tokens). Für Farben, Schrift und Abstände siehe DESIGN.md (entsteht in Phase 3). -->
 
-**Status:** Gliederung vom Nutzer bestätigt am 2026-11-12 (Phase 1: Job, Journey, IA). Flows und Seiten-Specs (Phase 2) vom Nutzer bestätigt am 2026-11-14.
+**Status:** Gliederung vom Nutzer bestätigt am 2026-11-12 (Phase 1: Job, Journey, IA). Flows und Seiten-Specs (Phase 2) vom Nutzer bestätigt am 2026-11-14. Texte und Begriffe (Phase 5, 2026-11-15) stehen in §Page specs und sind vom Nutzer noch nicht bestätigt.
 **Grenze dieses Dokuments:** `journey` regelt die **Struktur** (Gliederung, Navigation, Wege zwischen Flächen). Die Bedienung **im** Chat (Eingabefeld, Rückfrage-Karten, laufende Antwort) ist in Phase 2 mit `usability` und `ai-native` spezifiziert und steht in §Flows und §Page specs; Aussagen aus `ai-native` sind dort als „aus Prinzipien abgeleitet, kein gesicherter Kanon“ markiert.
 **Stand:** 2026-11-12 · **Eigentümer:** der Nutzer (Besitzer der App und der Entscheidungen) · **Basis:** `Research-Dokument vom 2026-11-11` (ein Nutzer, seine eigenen Aussagen), `src/renderer/App.tsx`, `src/renderer/components/NavRail.tsx`, `src/renderer/shortcuts/keymap.ts`, freigegebener Aufbau-Mock (Drahtgitter).
 
@@ -96,7 +96,7 @@ Aufbau von oben nach unten, vier Zonen (Kopf, Bereiche, Listen, Fuß). Breite au
 
 | Zone | Inhalt (DE / EN) | Verhalten |
 |---|---|---|
-| **Kopf** (fix) | Marke „LocalDesk“ und Knopf „Seitenleiste einklappen / Collapse sidebar“ (Strg+B). Darunter Suchzeile „Suchen … / Search …“ mit Hinweis „Strg+K“. | Die Suchzeile ist ein Auslöser für die Palette, kein Ziel. |
+| **Kopf** (fix) | Marke „LocalDesk“ und Knopf „Seitenleiste einklappen / Collapse sidebar“ (Strg+B). Darunter Suchzeile „Suchen / Search“ mit Hinweis „Strg+K“. | Die Suchzeile ist ein Auslöser für die Palette, kein Ziel. |
 | **Bereiche** (fix) | **Chat · Vorlagen · Code · Modelle** / **Chat · Templates · Code · Models** | Aktueller Bereich ist hervorgehoben (`aria-current="page"`). |
 | **Listen** (scrollt) | **Projekte / Projects** (mit „+“ für neues Projekt) und **Letzte Chats / Recent chats** | Siehe Überlauf unten. Gruppenköpfe einklappbar, Zustand bleibt gemerkt. |
 | **Fuß** (fix) | **Modellstatus** (Beispiel: „qwen3:14b · 9,3 GB“, Punkt = Ollama erreichbar) und **Einstellungen / Settings** | Klick auf den Modellstatus öffnet wie heute ein Popup (Grafikkarte, geladene Modelle) mit Weg zur Status-Seite. |
@@ -115,7 +115,7 @@ Aufbau von oben nach unten, vier Zonen (Kopf, Bereiche, Listen, Fuß). Breite au
 | „Alle anzeigen“ | Öffnet die **Palette** mit vorgewähltem Bereich (Projekte oder Chats), dort scrollt die volle Liste mit Suche. Keine neue Seite. |
 | Lange Namen | Eine Zeile, am Ende gekürzt (…), voller Name im Tooltip. |
 | Niedriges Fenster (600 px) | Die Höchstzahlen sind Obergrenzen. Bei wenig Höhe scrollt die Zone früher. |
-| Leere Listen | Beide Listen zeigen unter ihrem Kopf einen Satz, was hier hingehört, und genau eine Aktion: „Projekte“ → „Neues Projekt“, „Letzte Chats“ → „Neuer Chat“ (Text Phase 5; angeglichen mit Zustimmung des Nutzers am 2026-11-14). |
+| Leere Listen | Beide Listen zeigen unter ihrem Kopf einen Satz, was hier hingehört, und genau eine Aktion: „Projekte“ → „Neues Projekt“, „Letzte Chats“ → „Neuer Chat“ (Wortlaut: §Page specs, Fläche 1, `RA-4` und `RA-5`; angeglichen mit Zustimmung des Nutzers am 2026-11-14). |
 
 **Drei Orte für den Modellzustand, je eine Rolle** (damit nichts dreimal dasselbe sagt):
 
@@ -180,11 +180,11 @@ Das „+“-Menü im Eingabefeld enthält **nur das, was die Leiste nicht enthä
 | Recherche / Research | Schalter | (keine Seite) |
 | Internet / Internet | Schalter | (keine Seite) |
 
-Eingeschaltetes erscheint als Chip über dem Textfeld (entfernbar). Die Startseite zeigt zusätzlich Einstiege (Tabelle auswerten, Recherche, E-Mail zusammenfassen, Aus Wissen fragen); sie sind Abkürzungen in den Chat, keine eigenen Ziele.
+Eingeschaltetes erscheint als Chip über dem Textfeld (entfernbar). Die Startseite zeigt zusätzlich Einstiege (Tabelle auswerten, Recherche, Mail zusammenfassen, Aus Wissen fragen); sie sind Abkürzungen in den Chat, keine eigenen Ziele.
 
 ### Labeling
 
-Bestehende i18n-Schlüssel bleiben, wo der Inhalt gleich bleibt. Neue Schlüssel nur für neue Ziele. **Endgültige Texte: Phase 5.** Die Spalte „Schlüssel“ zeigt den heutigen Bestand.
+Bestehende i18n-Schlüssel bleiben, wo der Inhalt gleich bleibt. Neue Schlüssel nur für neue Ziele. **Endgültige Texte: Phase 5**, je Fläche unter „Texte (Phase 5)“ in §Page specs; die Begriffstabelle steht dort vor Fläche 1. Die Spalte „Schlüssel“ zeigt den heutigen Bestand.
 
 | Konzept | DE | EN | Schlüssel heute |
 |---|---|---|---|
@@ -199,17 +199,17 @@ Bestehende i18n-Schlüssel bleiben, wo der Inhalt gleich bleibt. Neue Schlüssel
 | Einstellungen | Einstellungen | Settings | `nav.settings` |
 | Projekte | Projekte | Projects | `folders.*` / `projects.*` (neu für Gruppenkopf) |
 | Letzte Chats | Letzte Chats | Recent chats | neu |
-| Suchzeile | Suchen … | Search … | neu (heute `search.placeholder`) |
-| Verwalten | Verwalten … | Manage … | neu |
+| Suchzeile | Suchen | Search | neu (heute `search.placeholder` = „Chats durchsuchen“; die Zeile öffnet die ganze Palette, nicht nur die Chat-Suche) |
+| Verwalten (Link im „+“-Menü) | Wissen verwalten · Skills verwalten · E-Mail verwalten | Manage knowledge · Manage skills · Manage e-mail | neu (heute `skillPicker.manage` = „Skills verwalten …“); im übrigen Dokument bleibt „Verwalten …“ der Kurzname dieser drei Links |
 | Seitenleiste | Seitenleiste ein-/ausklappen | Collapse/expand sidebar | `nav.collapse`, `nav.expand` |
 
-Der englische Text ist länger als der deutsche (Recent chats, Show all): in der schmalen Leiste kürzen statt umbrechen (Phase 5).
+Der englische Text ist länger als der deutsche (Recent chats, Show all): in der schmalen Leiste kürzen statt umbrechen; die Grenzen sind in Pixeln gemessen (§Page specs, „Längengrenzen“).
 
 ### Suche: Befehlspalette (Strg+K)
 
-Strg+K öffnet die Palette **von jeder Seite aus, ohne Seitenwechsel** und übernimmt die heutige Chat-Suche (`useChatSearch`, Treffer in Titel und Inhalt). Die Kürzel-ID `search` bleibt, ihre Beschreibung ändert sich (Phase 5). AltGr bleibt unberührt (Strg nur ohne Alt, wie in `keymap.ts`).
+Strg+K öffnet die Palette **von jeder Seite aus, ohne Seitenwechsel** und übernimmt die heutige Chat-Suche (`useChatSearch`, Treffer in Titel und Inhalt). Die Kürzel-ID `search` bleibt, ihre Beschreibung heißt künftig „Befehlspalette öffnen“ (§Page specs, Fläche 1, `RA-7`). AltGr bleibt unberührt (Strg nur ohne Alt, wie in `keymap.ts`).
 
-**Bedienung:** Eingabezeile oben, Ergebnisliste darunter in Gruppen. Leere Eingabe zeigt zuerst „Zuletzt benutzt“ (die **5** zuletzt ausgeführten Ziele und Befehle, neueste zuerst, ohne einzelne Chats und Projekte), dann die Gruppen. Tippen filtert unscharf über Name und Stichwörter; Chats werden zusätzlich nach Inhalt durchsucht und mit Ausschnitt gezeigt. ↑/↓ wählt, Enter führt aus, Esc schließt und gibt den Fokus zurück, Strg+K bei offener Palette schließt sie. Ohne Treffer: Hinweis (Text Phase 5). Sichtbar höchstens 8 Zeilen, dann Scrollen.
+**Bedienung:** Eingabezeile oben, Ergebnisliste darunter in Gruppen. Leere Eingabe zeigt zuerst „Zuletzt benutzt“ (die **5** zuletzt ausgeführten Ziele und Befehle, neueste zuerst, ohne einzelne Chats und Projekte), dann die Gruppen. Tippen filtert unscharf über Name und Stichwörter; Chats werden zusätzlich nach Inhalt durchsucht und mit Ausschnitt gezeigt. ↑/↓ wählt, Enter führt aus, Esc schließt und gibt den Fokus zurück, Strg+K bei offener Palette schließt sie. Ohne Treffer: Hinweis mit dem Suchwort und einer Aktion (§Page specs, Fläche 2, `PA-3`). Sichtbar höchstens 8 Zeilen, dann Scrollen.
 
 **Reihenfolge und Obergrenzen der Projekt- und Chat-Zeilen (P-14, P-15):**
 
@@ -219,7 +219,7 @@ Strg+K öffnet die Palette **von jeder Seite aus, ohne Seitenwechsel** und über
 | Mit Eingabe | Treffer nach Übereinstimmung, bei Gleichstand zuletzt benutzt zuerst; höchstens **5** | Treffer nach Übereinstimmung (Titel vor Inhalt), bei Gleichstand jüngste Aktivität zuerst; höchstens **8** |
 | Geöffnet über „Alle anzeigen“ | alle Projekte, nach zuletzt benutzt, ohne Obergrenze (scrollt) | alle Chats, nach Aktivität, ohne Obergrenze (scrollt) |
 
-Gruppenreihenfolge in der Liste: Zuletzt benutzt, Gehen zu, Befehle, Projekte, Chats, Chat (Kontext), Darstellung, Fenster, Hilfe. Rechts steht, wo vorhanden, das Kürzel. Sie öffnet auch mit vorgewähltem Bereich („Alle anzeigen“).
+Gruppenreihenfolge in der Liste: Zuletzt benutzt, Gehen zu, Befehle, Projekte, Chats, In diesem Chat, Darstellung, Fenster, Hilfe. Rechts steht, wo vorhanden, das Kürzel. Sie öffnet auch mit vorgewähltem Bereich („Alle anzeigen“).
 
 **Befehlsliste.** Jede Zeile hat eine ID für den Abgleich. Dynamische Zeilen (P-14, P-15) gibt es je Projekt und je Chat.
 
@@ -237,14 +237,14 @@ Gruppenreihenfolge in der Liste: Zuletzt benutzt, Gehen zu, Befehle, Projekte, C
 | P-10 | Chats | **Chats durchsuchen / Search chats** | Eingabe wirkt als Suche über Titel und Inhalt; Treffer öffnen `/chat/:id` | Strg+K |
 | P-11 | Befehle | Neuer Chat / New chat | `/chat`, Fokus ins Eingabefeld | Strg+N |
 | P-12 | Befehle | Neues Projekt / New project | legt ein Projekt an | |
-| P-13 | Befehle | Seitenleiste ein-/ausklappen / Toggle sidebar | wie Strg+B | Strg+B |
+| P-13 | Befehle | Seitenleiste ein-/ausklappen / Collapse/expand sidebar | wie Strg+B | Strg+B |
 | P-14 | Projekte | `<Projektname>` | `/projects/:id` (eine Zeile je Projekt) | |
 | P-15 | Chats | `<Chat-Titel>` | `/chat/:id` (eine Zeile je Chat, mit Ausschnitt bei Inhaltstreffer) | |
-| P-16 | Chat (nur im Chat) | Ins Eingabefeld springen / Focus input | fokussiert das Eingabefeld | Strg+L |
-| P-17 | Chat (nur im Chat) | Chat-Einstellungen öffnen/schließen / Toggle chat settings | Seitenpanel | Strg+J |
-| P-18 | Chat (nur bei laufender Antwort) | Antwort stoppen / Stop response | bricht ab | Esc |
+| P-16 | In diesem Chat (nur im Chat) | Ins Eingabefeld springen / Jump to the message box | fokussiert das Eingabefeld | Strg+L |
+| P-17 | In diesem Chat (nur im Chat) | Chat-Einstellungen öffnen/schließen / Open/close chat settings | Seitenpanel | Strg+J |
+| P-18 | In diesem Chat (nur bei laufender Antwort) | Laufende Antwort stoppen / Stop the running answer | bricht ab | Esc |
 | P-19 | Darstellung | Design: Hell · Dunkel · Wie Windows / Theme: Light · Dark · System | schaltet das Farbschema (3 Zeilen); ersetzt den Wechsler der alten Symbolleiste | |
-| P-20 | Hilfe | Tastenkürzel anzeigen / Show shortcuts | öffnet die Übersicht | Strg+/ · F1 |
+| P-20 | Hilfe | Tastenkürzel anzeigen / Show keyboard shortcuts | öffnet die Übersicht | Strg+/ · F1 |
 | P-21 | Fenster | Vergrößern / Zoom in | Zoom der Oberfläche +1 Stufe | Strg+Plus |
 | P-22 | Fenster | Verkleinern / Zoom out | Zoom -1 Stufe | Strg+Minus |
 | P-23 | Fenster | Zoom zurücksetzen / Reset zoom | Zoom auf 100 % | Strg+0 |
@@ -300,7 +300,7 @@ Alle Kürzel kommen in die zentrale Kürzel-Verwaltung (`keymap.ts`) und die Üb
 | Strg+K fokussiert die Chat-Suche (wechselt zum Chat) | öffnet die Palette von jeder Seite | Bedeutung erweitert. |
 | Design-Wechsler in der Symbolleiste (system, hell, dunkel) | in Einstellungen und als Palettenbefehl P-19 | Verlagerung, vom Nutzer bestätigt. |
 | Menüzeile (File, Edit, View) | entfällt, eigene Titelleiste | Funktionen bleiben als Kürzel und Befehle (Tabelle „Menüzeile: Verbleib der Funktionen“). |
-| Ordner im Code, „Projekt“ im UI | durchgehend „Projekt“ | Begriffstabelle Phase 5. |
+| Ordner im Code, „Projekt“ im UI | durchgehend „Projekt“ | Begriffstabelle in §Page specs („Texte: Begriffe, Muster und Regeln“). |
 
 ### Validation
 
@@ -357,7 +357,7 @@ Alle Kürzel kommen in die zentrale Kürzel-Verwaltung (`keymap.ts`) und die Üb
    - nein: Der Chip „Internet“ erscheint (`EF-2`), die Zeile zeigt ihren Zustand.
    - Das Modell kann keine Werkzeuge: Warnung im Untermenü und Warnzeichen an der Zeile; der Haken bleibt möglich, der Hinweis nennt geeignete Modelle.
    - Für „Im Web suchen“ fehlt der Schlüssel: Hinweis mit Weg zu Einstellungen → Internet-Suche.
-   - Nichts eingerichtet (keine Sammlung, kein Server, kein Skill, kein Konto): Das Untermenü sagt, was fehlt, und führt zur Verwaltung.
+   - Nichts eingerichtet (keine Sammlung, kein MCP-Server, kein Skill, kein Konto): Das Untermenü sagt, was fehlt, und führt zur Verwaltung.
 7. Menü schließen (Esc oder Klick daneben). Der Fokus kehrt auf „+“ zurück.
 8. Senden. Schalter und Auswahl bleiben für diesen Chat gespeichert, der Chip bleibt stehen. Ausnahme Recherche: gilt nur für die nächste Nachricht (Ablauf 6).
 9. Ausschalten: × am Chip oder Haken im Untermenü entfernen. Ein Klick auf den Chip-Namen öffnet das Untermenü direkt.
@@ -374,21 +374,21 @@ Alle Kürzel kommen in die zentrale Kürzel-Verwaltung (`keymap.ts`) und die Üb
 2. **Entscheidung der App: Braucht dieses Werkzeug eine Freigabe?**
    - nein (nur lesend oder „Immer“ erlaubt): Die Zeile zeigt „läuft“, dann „fertig“. Aufklappen zeigt Eingabe und Ergebnis. Weiter bei 6.
    - ja: Die Zeile zeigt „wartet auf Freigabe“ und darunter die Rückfrage-Karte. Die Antwort wartet.
-3. Die Karte zeigt: was das Modell tun will, über welchen Server, eine Warnung bei verändernden Werkzeugen und die Vorschau (Vorher/Nachher bei Dateien, der Befehl, die Adresse, die Mail-Änderung).
+3. Die Karte zeigt: was das Modell tun will, über welchen MCP-Server, eine Warnung bei verändernden Werkzeugen und die Vorschau (Vorher/Nachher bei Dateien, der Befehl, die Adresse, die Mail-Änderung).
 4. **Entscheidung des Nutzers** (höchstens drei Knöpfe):
    - **Einmal erlauben** (je nach Art „Erlauben“, „Übernehmen“, „Ausführen“, „Committen“): gilt nur für diesen Aufruf.
-   - **Immer erlauben** (nur wo angeboten): gilt für dieses Werkzeug auf diesem Server, auch in anderen Chats. Die Karte sagt das und nennt, wo es sich ändern lässt (Einstellungen → MCP-Server).
+   - **Immer erlauben** (nur wo angeboten): gilt für dieses Werkzeug auf diesem MCP-Server, auch in anderen Chats. Die Karte sagt das und nennt, wo es sich ändern lässt (Einstellungen → MCP-Server).
    - **Ablehnen:** Das Werkzeug läuft nicht.
-5. Sonderformen derselben Stelle: „Erinnerung speichern“ (Text kürzen, Geltung wählen, speichern oder ablehnen) und „Zugriff anfragen“ (Postfach oder Datei-Server wählen; „Für diesen Chat erlauben“, „Nur diese Antwort“, „Ablehnen“).
+5. Sonderformen derselben Stelle: „Erinnerung speichern“ (Text kürzen, Geltung wählen, speichern oder ablehnen) und „Zugriff anfragen“ (Konto oder Dateisystem-Server wählen; „Für diesen Chat erlauben“, „Nur diese Antwort“, „Ablehnen“).
 6. Die Zeile zeigt das Ergebnis: fertig, abgelehnt, Fehler oder abgebrochen. Die Antwort läuft weiter.
 7. Im Code-Bereich hat jede Änderung zusätzlich „Rückgängig“ an ihrer Zeile.
 
 **Fehlerpfade:**
 - Werkzeug meldet einen Fehler: Zeile „Fehler“, das Ergebnis ist aufklappbar, das Modell antwortet weiter.
 - Nutzer reagiert nicht: Die Antwort wartet ohne Zeitlimit. Stopp und Esc beenden sie; die Zeile zeigt „abgebrochen“.
-- Nichts freizugeben (kein Konto, kein Server): Die Karte sagt das und führt zu den Einstellungen; es bleibt nur „Ablehnen“.
+- Nichts freizugeben (kein Konto, kein MCP-Server): Die Karte sagt das und führt zu den Einstellungen; es bleibt nur „Ablehnen“.
 - Rückgängig im Code-Bereich trifft auf spätere Änderungen: Bestätigungsdialog nennt den Verlust, bevor zurückgesetzt wird.
-- Server auf einem anderen Rechner: Jedes Werkzeug fragt nach, auch lesende; „Immer“ greift dort nicht.
+- Ollama-Server auf einem anderen PC: Jedes Werkzeug fragt nach, auch lesende; „Immer“ greift dort nicht.
 
 **Erfolg:** Die Entscheidung steht sichtbar in der Zeile, die Antwort ist vollständig.
 
@@ -421,26 +421,26 @@ Alle Kürzel kommen in die zentrale Kürzel-Verwaltung (`keymap.ts`) und die Üb
 **Art:** User Flow · **Einstieg:** App-Start ohne Ollama, oder Ollama fällt während der Arbeit aus · **Ziel:** Der Nutzer weiß, was los ist und was zu tun ist, und sieht, wenn es wieder geht.
 
 1. Die App fragt Ollama regelmäßig. Antwortet es nicht, wechselt der Modellstatus am Fuß der Leiste (`RA-6`) auf „nicht erreichbar“ (Text und Form, nicht nur Farbe).
-2. Auf der Startseite und im Chat erscheint über dem Eingabefeld ein Banner: welcher Server nicht antwortet. Das Eingabefeld ist gesperrt und nennt den Grund.
-3. Die App prüft die anderen eingetragenen Server.
-4. **Entscheidung: Ist ein anderer Server erreichbar?**
-   - ja: Der Banner nennt **einen** Server mit den Folgen: hat das Modell oder nicht, Wissen geht dort oder nicht, wohin die Daten dann gehen. Knopf „Zu diesem Server wechseln“. Sind mehrere erreichbar, steht der erste in der Reihenfolge der Einstellungen da; die übrigen liegen hinter „weitere Server (n)“ (aufklappbar, gleiche Angaben). So bleibt die Wahl bei wechseln oder nicht (Hick–Hyman 1952). Weiter bei 5.
-   - nein: Der Banner sagt das und führt zu Einstellungen → Ollama-Server. Was zu tun ist (Ollama starten), steht im Text (Phase 5). Weiter bei 6.
+2. Auf der Startseite und im Chat erscheint über dem Eingabefeld ein Banner: welcher Ollama-Server nicht erreichbar ist. Das Eingabefeld ist gesperrt und nennt den Grund.
+3. Die App prüft die anderen eingetragenen Ollama-Server.
+4. **Entscheidung: Ist ein anderer Ollama-Server erreichbar?**
+   - ja: Der Banner nennt **einen** Ollama-Server mit den Folgen: hat das Modell oder nicht, Wissen geht dort oder nicht, wohin die Daten dann gehen. Knopf „Zu diesem Ollama-Server wechseln“. Sind mehrere erreichbar, steht der erste in der Reihenfolge der Einstellungen da; die übrigen liegen hinter „Weitere Ollama-Server (n)“ (aufklappbar, gleiche Angaben). So bleibt die Wahl bei wechseln oder nicht (Hick–Hyman 1952). Weiter bei 5.
+   - nein: Der Banner sagt das und führt zu Einstellungen → Ollama-Server. Was zu tun ist (Ollama starten), steht im Text (Fläche 3, `SS-3`). Weiter bei 6.
 5. **Entscheidung: Wechseln?**
-   - ja: Modelle und Status kommen vom neuen Server. Fehlt dort das Modell, wird ein anderes gewählt und das gesagt. Arbeit geht weiter.
+   - ja: Modelle und Status kommen vom neuen Ollama-Server. Fehlt dort das Modell, wird ein anderes gewählt und das gesagt. Arbeit geht weiter.
    - nein: wie 4 „nein“.
 6. Der Nutzer startet Ollama außerhalb der App. Die Abfrage läuft weiter, niemand muss neu laden.
 7. Ollama antwortet wieder: Der Modellstatus wechselt zurück, das Eingabefeld wird frei, der Banner verschwindet.
-8. **Entscheidung (nur nach einem Wechsel): Zurück zum ursprünglichen Server?** Der Banner meldet, dass er wieder erreichbar ist: „Zurück“ oder „Hier bleiben“.
+8. **Entscheidung (nur nach einem Wechsel): Zurück zum ursprünglichen Ollama-Server?** Der Banner meldet, dass er wieder erreichbar ist: „Zurück“ oder „Hier bleiben“.
 
 **Fehlerpfade:**
 - Ausfall mitten in einer Antwort: Die Antwort endet mit Fehlermeldung in der Nachricht; „Antwort wiederholen“ bleibt. Der getippte Text im Eingabefeld bleibt erhalten.
 - Ausfall, während eine Rückfrage-Karte wartet (Ablauf 3): Die Antwort endet mit der Fehlermeldung, die Werkzeug-Zeile wechselt auf „abgebrochen“, die Knöpfe der Karte sind nicht mehr bedienbar, und nichts wird ausgeführt. Nach der Rückkehr stellt „Antwort wiederholen“ die Frage neu; eine alte Freigabe gilt nicht weiter. (Zielverhalten; im Code-Umbau gegen das heutige Verhalten prüfen.)
 - Ollama läuft, aber kein Modell ist installiert: kein Banner; das Eingabefeld nennt den Grund und führt zu „Modelle“.
-- Keine NVIDIA-Karte oder Server auf anderem Rechner: kein Fehler. Die Grafikkarten-Anzeige sagt, warum sie nichts misst; die geladenen Modelle zeigen, was Ollama meldet.
+- Keine NVIDIA-Karte oder Ollama-Server auf anderem PC: kein Fehler. Die Grafikkarten-Anzeige sagt, warum sie nichts misst; die geladenen Modelle zeigen, was Ollama meldet.
 - Andere Seiten: Modelle zeigt die Fehlermeldung mit „Aktualisieren“, Status zeigt die Verbindung als unterbrochen, Vorlagen, Skills, Einstellungen und Projekt bleiben benutzbar.
 
-**Erfolg:** Modellstatus zeigt wieder ein bereites System, das Eingabefeld ist frei. Das Ende der Störung ist sichtbar und ruhig (Peak-End, Kahneman): Ohne Serverwechsel kehrt der Zustand zurück, ohne dass der Nutzer etwas bestätigen muss. Nach einem Wechsel arbeitet er ungestört auf dem Ausweich-Server weiter; die Frage aus Schritt 8 („Zurück“ oder „Hier bleiben“) ist ein Angebot im Banner, das die Arbeit nicht anhält.
+**Erfolg:** Modellstatus zeigt wieder ein bereites System, das Eingabefeld ist frei. Das Ende der Störung ist sichtbar und ruhig (Peak-End, Kahneman): Ohne Serverwechsel kehrt der Zustand zurück, ohne dass der Nutzer etwas bestätigen muss. Nach einem Wechsel arbeitet er ungestört auf dem anderen Ollama-Server weiter; die Frage aus Schritt 8 („Zurück“ oder „Hier bleiben“) ist ein Angebot im Banner, das die Arbeit nicht anhält.
 
 ### Ablauf 6: Recherche starten
 
@@ -493,7 +493,7 @@ Alle Kürzel kommen in die zentrale Kürzel-Verwaltung (`keymap.ts`) und die Üb
 
 ## Page specs
 
-**Stand:** Phase 2, geschrieben am 2026-11-12, **vom Nutzer noch nicht bestätigt**. 15 Flächen. Farben, Schrift und fertige Texte fehlen hier mit Absicht (Phasen 3 und 5), Diagramm- und Tabellen-Regeln ebenso (Phase 6). Jeder Block hat eine Kennung (`RA-1`, `EF-7` …); die Abgleich-Tabelle am Ende ordnet jedes heutige Bedienelement einem Block zu.
+**Stand:** Phase 2, geschrieben am 2026-11-12, **vom Nutzer noch nicht bestätigt**. 15 Flächen. Farben und Schrift stehen in `DESIGN.md` (Phase 3). Die Texte stehen am Ende jeder Fläche unter „Texte (Phase 5)“, davor Begriffstabelle, Muster und Längengrenzen. Diagramm- und Tabellen-Regeln fehlen hier mit Absicht (Phase 6). Jeder Block hat eine Kennung (`RA-1`, `EF-7` …); die Abgleich-Tabelle am Ende ordnet jedes heutige Bedienelement einem Block zu.
 
 ### Gemeinsame Regeln für alle Flächen
 
@@ -519,6 +519,140 @@ Alle Kürzel kommen in die zentrale Kürzel-Verwaltung (`keymap.ts`) und die Üb
 
 Stufe **schmal** = Inhaltsbreite unter 1000 px, **breit** = ab 1000 px. Nichts scrollt waagerecht, nichts wird abgeschnitten. Was sich je Stufe ändert, steht bei der Fläche unter „Breite“. Lesespalten (Chat, Startseite) sind höchstens 800 px breit und stehen mittig; Formulare höchstens 720 px.
 
+### Texte: Begriffe, Muster und Regeln (Phase 5)
+
+**Stand:** Phase 5, geschrieben am 2026-11-15, **vom Nutzer noch nicht bestätigt**; sechs Wortentscheidungen stehen im Bericht der Phase zur Bestätigung. Die **Stimme** (fünf Eigenschaften, Ton je Moment, Schreibweise) steht in `DESIGN.md` §Stimme. Hier stehen die **Wörter** (Begriffstabelle), die **Muster** und die **Längengrenzen**; die **Texte** selbst stehen je Fläche am Ende ihrer Spec unter „Texte (Phase 5)“, mit den Block-IDs der Spec.
+
+**So sind die Text-Tabellen zu lesen.** Jede Zeile heißt `ID · Art · DE · EN`.
+
+| Spalte | Inhalt |
+|---|---|
+| ID | Block-ID der Spec (`RA-4`). Folgt ein zweiter Code-Ausdruck, ist das der **bestehende i18n-Schlüssel** (`folders.new`): Er bleibt, der Text ist dort gleich oder wird angeglichen (siehe „Anpassungen an bestehenden Schlüsseln“). Ohne Schlüssel ist der Text neu. |
+| Art | `Beschriftung` (Knopf, Zeile, Überschrift, Chip, aria-Name), `Tooltip`, `Platzhalter`, `Befehl` (Palettenzeile), `Status` (Wort für einen Zustand), `Hinweis` (erklärender Satz), `Leer` (leerer Zustand), `Fehler` (Fehlermeldung). |
+| DE · EN | Der Text. `{{name}}` und `{{error}}` sind Werte der App. `[Aktion]` ist ein Knopf oder Link. „…“ nur nach den Regeln in `DESIGN.md` §Stimme. |
+
+Eine Zeile `Ohne neuen Text` nennt die Blöcke, deren Text unverändert aus dem Bestand kommt (Schlüssel bleiben). Damit steht jeder Block einer Fläche entweder in der Tabelle oder in dieser Zeile.
+
+**Muster (aus `content-design`, Quelle je Zeile).**
+
+| Muster | Aufbau | Beispiel (DE) | Quelle |
+|---|---|---|---|
+| **Fehler** | Was ist passiert. Warum (die Ursache der App als `{{error}}`, wenn sie sie kennt). Was du tun kannst oder was sicher ist. Eine Aktion als Knopf, wenn es eine gibt. Nie Schuld beim Nutzer, nie „Oops“, nie „!“ | „Die Antwort ist abgebrochen: {{error}}. Dein Text bleibt im Feld. Versuche es mit „Antwort wiederholen“ noch einmal.“ | Yifrah; Nielsen 9 |
+| **Leer** | Ein Satz, was hierher gehört, sobald etwas da ist. Genau eine Aktion. Ist Ollama die Ursache, steht sie als erstes. | „Hier bündelst du Chats mit eigenen Anweisungen und Dokumenten. [Neues Projekt]“ | Redish; NN/g (First-use empty) |
+| **Kein Treffer** | „Nichts gefunden für „{{query}}““ plus ein Ausweg. | „Keine Mails für „{{query}}“. Prüfe die Schreibweise oder suche mit anderen Wörtern. [Posteingang zeigen]“ | Yifrah |
+| **Knopf** | Verb + Objekt; kein „OK“, kein „Ja“. Standardwörter (Senden, Stopp, Abbrechen, Speichern) nur, wo der Kontext sie trägt. | „Modell herunterladen“ | Yifrah; Nielsen 2 |
+| **Rückfrage vor Folgenreichem** | Titel nennt das Betroffene; Satz nennt die Folge und was erhalten bleibt; der Knopf nennt die Tat. „Bist du sicher?“ und „Wirklich löschen?“ entfallen. | Titel „Projekt „Studium“ löschen?“, Text „Die Chats darin bleiben erhalten. Anweisungen und eingelesene Dokumente werden entfernt.“, Knöpfe „Projekt löschen“ und „Abbrechen“ | Yifrah (Stakes-Clarity); Nielsen 5 |
+| **Tooltip** | Name, dann Kürzel: „Seitenleiste ausklappen · Strg+B“. Ein Wort oder eine kurze Wortgruppe. | „Suchen · Strg+K“ | Redish; Nielsen 10 |
+| **Platzhalter** | Aufgabe oder Format, kein „…“, nie die einzige Beschriftung. | „Nachricht schreiben“ | WCAG 1.3.1; Yifrah |
+
+**{{error}} nie roh.** Wo die App einen Fehlertext durchreicht, steht zuerst ein schlichter Satz mit der Ursache (nicht erreichbar, Zeitüberschreitung, Datei fehlt, keine Rechte, Datei beschädigt) und die Abhilfe. Der Rohtext der Meldung steht nur hinter „Details“ (aufklappbar) oder, wo keine Ursache bekannt ist, als Zusatz nach der Abhilfe. Die Zuordnung Fehler → Satz entsteht im Code-Umbau; die Sätze in den Tabellen unten sind die Vorlage. Was nur vermutet wird, heißt „womöglich“.
+
+**Begriffstabelle (DW-5.4).** Je Konzept ein Wort je Sprache. Die Spalte „Nicht verwenden“ wird von der Prüfung in allen neuen Texten gesucht.
+
+| Konzept | DE | EN | Nicht verwenden (DE · EN) |
+|---|---|---|---|
+| Sprachmodell | Modell | model | KI-Modell, LLM · AI model, LLM |
+| Programm, das die Modelle ausführt | Ollama | Ollama | KI-Server, Backend |
+| Rechner, auf dem Ollama läuft | Ollama-Server | Ollama server | Server (allein), Host, Instanz · server (alone), host, instance |
+| Computer des Nutzers | PC | PC | Rechner, Computer · computer |
+| Ollama ist nicht ansprechbar | nicht erreichbar | not reachable | offline, antwortet nicht, keine Verbindung · not responding, down |
+| Ollama ist wieder ansprechbar | erreichbar | reachable | online, verfügbar |
+| Gespräch | Chat | chat | Konversation, Unterhaltung · conversation, thread |
+| Einzelne Äußerung im Chat | Nachricht | message | Prompt (außer „Systemprompt“) |
+| Chats mit gemeinsamen Anweisungen und Dokumenten bündeln | Projekt | project | Gruppe, Arbeitsbereich · workspace, group |
+| Verzeichnis auf der Festplatte | Ordner | folder | Verzeichnis, Projektordner · directory |
+| Gespeicherte Aufgaben-Einstellung | Vorlage | template | Preset, Profil · preset, profile |
+| Eigene Dokumente, die das Modell durchsucht (Bereich, Schalter, Chip) | Wissen | Knowledge | Wissensbasis, RAG · knowledge base |
+| Eine Gruppe von Dokumenten darin | Sammlung | collection | Bibliothek, Index · library |
+| Dokumente für „Wissen“ lesbar machen | einlesen | index | indizieren, embedden · embed, ingest |
+| Anleitung für das Modell | Skill | skill | Fähigkeit, Plugin · plugin |
+| Was ein Modell kann (Bilder, Audio, Tools …) | Fähigkeit | capability | Feature, Funktion |
+| Aktion, die das Modell ausführen darf | Tool | tool | Funktion · function, plugin |
+| Menüzeile und Chip für die Auswahl der MCP-Server (heutiger Name, bleibt) | Werkzeuge | Tools | |
+| Programm, das Tools bereitstellt | MCP-Server | MCP server | Server (allein), Tool-Server · server (alone) |
+| Erlaubnis für ein Tool | Freigabe (Knopf „Erlauben“) | approval (button “Allow”) | Genehmigung, Zustimmung · permission |
+| Bereich und Menüzeile für Mails | E-Mail | e-mail | Postfach, Mailbox, Mail-Seite |
+| Eine einzelne Mail | Mail | mail | E-Mail (für die einzelne), Nachricht · message, email |
+| Das angemeldete Google-Konto | Konto | account | Postfach, Mail-Konto · mailbox |
+| Abschnitt in den Einstellungen | E-Mail-Konto | e-mail account | |
+| Eingang in Gmail | Posteingang | inbox | Eingang |
+| Hardware | Grafikkarte | graphics card | Grafikprozessor · graphics processor (die Kurzform „GPU“ bleibt, wo sie heute steht) |
+| Speicher der Grafikkarte | VRAM | VRAM | Videospeicher · video memory |
+| Überschrift der Karte mit diesem Speicher (heute `gpu.vram`) | Grafikspeicher | Graphics memory | |
+| Rechenwerk des PCs | CPU | CPU | Prozessor (außer in `status.cpuWarning`, das heute so steht) |
+| Platz des Modells für den Verlauf | Kontext (Kontextlänge) | context (context length) | Gedächtnis, Fenster · memory, window |
+| Maßeinheit des Kontexts | Tokens | tokens | Wörter (als Maß) |
+| Leiste links | Seitenleiste | sidebar | Navigation, Chatliste, Symbolleiste · rail, navigation bar |
+| Bereich rechts neben dem Chat | Seitenpanel | side panel | Seitenbereich, Inspektor |
+| Fenster auf Strg+K | Befehlspalette | command palette | Spotlight, Suchfenster · search window |
+| Datei an einer Nachricht | Anhang | attachment | Upload |
+| Textstelle, aus der eine Antwort stammt | Quelle | source | Referenz, Beleg · reference |
+| Ordner und Dateien einer Sammlung | Ordner und Dateien | folders and files | Quellen (nur im Chat heißt es Quelle) |
+| Ein Eintrag verschwindet, die Daten sind weg | löschen | delete | wegwerfen, streichen |
+| Ein Eintrag verlässt die Liste oder Verknüpfung, die Datei bleibt | entfernen | remove | löschen (wenn nichts verloren geht) |
+| Liste neu vom Ollama-Server oder aus Gmail holen | aktualisieren | refresh | neu laden · reload |
+| Datei oder Fenster neu von der Quelle lesen (Skills, Strg+R) | neu laden | reload | aktualisieren |
+| Modell in den Speicher holen (macht Ollama) | laden | load | einlesen |
+| Modell aus der Ollama-Bibliothek holen | herunterladen | download | laden, installieren · install |
+| Laufende Antwort des Modells anhalten | Stopp | Stop | Abbrechen (für die Antwort) · Cancel |
+| Vorgang oder Dialog verlassen, ohne Ergebnis (Einlesen, Download, Zusammenfassung, Vorschläge, Dialog) | Abbrechen | Cancel | Stopp, Beenden · Stop |
+| Eine fehlgeschlagene Aktion noch einmal ausführen | Erneut versuchen | Try again | Nochmal versuchen, Wiederholen · Retry |
+| Fakt als Erinnerung speichern (an einer Nachricht und in den Einstellungen) | merken | remember | speichern (für Erinnerungen) |
+| Entwurf einer Zusammenfassung neu schreiben lassen | Neu erzeugen | Generate again | Wiederholen · Regenerate |
+| Antwort neu erzeugen | Antwort wiederholen | regenerate response | neu generieren |
+| Kurzfassung eines Chats oder einer Mail | zusammenfassen | summarize | |
+| Älteren Teil des Chats für das Modell ersetzen | verdichten | compact | komprimieren, kürzen |
+| Hell, Dunkel, Wie Windows | Design | theme | Farbschema, Modus · color scheme, mode |
+| Obsidian-Ordner | Vault | vault | Tresor |
+| Fakt über den Nutzer, den das Modell kennt | Erinnerung | memory | Gedächtnis |
+| Feste Anweisung an das Modell in Chat oder Vorlage | Systemprompt | system prompt | System-Anweisung |
+| Anweisungen eines Projekts | Anweisungen | instructions | Projekt-Prompt |
+| Arbeitseinheit im Code-Bereich | Sitzung | session | Chat (im Code-Bereich) |
+| Das Programm im Code-Bereich | Agent | agent | Bot, Assistent |
+
+Zwei Kurzformen gelten: **„GPU“** bleibt, wo es heute steht (Reiter im Seitenpanel, Messzeile der Leiste „GPU 62 % · 9,3 / 12 GB“, bestehende Sätze); **„Strg“** heißt im Englischen „Ctrl“.
+
+**Längengrenzen.** Englisch ist oft länger als Deutsch. In der Seitenleiste wird gekürzt, nicht umgebrochen. Die Grenzen gelten für beide Sprachen und sind in Pixeln **gemessen** (Inter, Variable Font der App), nicht an Zeichen geschätzt.
+
+| Ort | Schrift | Grenze | Prüfung |
+|---|---|---|---|
+| Seitenleiste, Zeilen und Köpfe (`RA-2` bis `RA-6`, ausgeklappt 272 px) | 14 px, Gewicht 500 | höchstens 200 px Textbreite (272 − 2 × 12 Rand − 20 Symbol − 12 Abstand = 216 px, davon 16 px Reserve für Zähler und Rundung) | gemessen, alle Zeilen, beide Sprachen (Messdaten: `.design-foundations/build/phase-5-messung.json`, lokal) |
+| Kacheln der Startseite (`SS-5`), Titel | 14 px, Gewicht 600 | höchstens 153 px (vier Kacheln in einer Reihe ab 744 px Spaltenbreite: (744 − 3 × 12) / 4 − 2 × 12 Innenrand) | alle Titel, beide Sprachen |
+| Kacheln der Startseite, Nebenzeile | 12 px, Gewicht 400 | höchstens 153 px | alle Nebenzeilen |
+| „+“-Menü, erste Ebene: Nebenzeile (`EF-7`) | 12 px, Gewicht 400 | höchstens 238 px (410 − 2 × 12 − 20 Symbol − 12 − 104 Zustandsspalte − 12) | alle Nebenzeilen |
+| „+“-Menü, Zustand rechts (`EF-7`) | 12 px, Gewicht 400 | höchstens 104 px; länger wird gekürzt (voll im Tooltip) | alle Zustände |
+| Chips (`EF-2`) | 14 px, Gewicht 500 | höchstens 220 px, dann gekürzt (voll im Tooltip) | Regel; Namen sind Nutzerdaten |
+| Eingeklappte Leiste (64 px) | – | nur Symbole; Namen als Tooltip, dort ohne Grenze | – |
+
+**Anpassungen an bestehenden Schlüsseln.** Wo ein Begriff der Tabelle von einem heutigen Wert abweicht, gilt der neue Wert; der Schlüssel bleibt. Der Code-Umbau ersetzt sie mechanisch. Außerdem sucht er `Postfach`, `Chatliste`, `Seitenbereich`, `Wissen-Knopf` und `MCP-Button` in beiden Dateien und gleicht jeden Treffer an (heute `Postfach` in 3 Werten, `Button` oder `Knopf` in 3). „Tool“, „VRAM“, „CPU“, „GPU“ und „Design“ bleiben, wie die App sie heute schreibt.
+
+| Schlüssel | Heute (DE) | Neu (DE) | Neu (EN) |
+|---|---|---|---|
+| `toolCall.allowAlwaysHint` | Gilt für dieses Tool auf diesem Server … | Gilt für dieses Tool auf diesem MCP-Server, auch in anderen Chats. Ändern unter Einstellungen → MCP-Server. | bleibt |
+| `sidePanel.button`, `sidePanel.close` | Seitenbereich … | Seitenpanel (Quellen, Projekt, Kontext) · Seitenpanel schließen | bleibt (Side panel) |
+| `access.askMail` | Das Modell möchte dein Postfach nutzen | Das Modell möchte deine Mails nutzen | The model wants to use your mail |
+| `access.pickAccount` | Postfach | Konto | Account |
+| `mailChat.button` | E-Mail: Postfach im Chat nutzen | E-Mail: Mails im Chat nutzen | E-mail: use your mail in chat |
+| `mailSettings.title` | E-Mail | E-Mail-Konto | E-mail account |
+| `mail.refresh` | Neu laden | Aktualisieren | Refresh |
+| `projects.documentsHint` | … über den Wissen-Knopf wählt. | … über das „+“-Menü im Chat wählt. | … picks with the “+” menu in the chat. |
+| `templates.collectionsHint`, `templates.mcpServersHint` | … Wissen-Knopf / MCP-Button … | … über das „+“-Menü … | … with the “+” menu. |
+| `shortcuts.toggleSidebar` | Chatliste ein-/ausklappen | Seitenleiste ein-/ausklappen | Collapse/expand sidebar |
+| `shortcuts.search` | Chats durchsuchen | Befehlspalette öffnen | Open command palette |
+| `status.offline` | Ollama offline | Ollama nicht erreichbar | Ollama not reachable |
+| `skillPicker.manage` | Skills verwalten … | Skills verwalten | Manage skills |
+| `knowledge.modelMissing` | … unter „Installierte Modelle“ herunter. | … unter „Modelle“ herunter. | … under “Models”. |
+| `code.intro`, `code.agentEmpty` | … einen Projektordner … / … in diesem Projekt tun? | … einen Ordner … / … in diesem Ordner tun? | … a folder … / … in this folder? |
+| `dialog.confirmTitle`, `dialog.deleteTitle` | Bist du sicher? / Wirklich löschen? | entfallen: Jede Rückfrage trägt ihren eigenen Titel („{{name}} löschen?“) und einen Knopf, der die Tat nennt | retired |
+| `search.noResults` | Nichts gefunden | Nichts gefunden für „{{query}}“ plus Ausweg und Aktion (Fläche 2, `PA-3`) | Nothing found for “{{query}}”. Check the spelling or search for the name of a page. [Clear input] |
+| `compact.retry` | Nochmal versuchen | Erneut versuchen | Try again (bleibt) |
+| `memories.reload`, `mail.refresh` | Neu laden | Aktualisieren | Refresh |
+| `failover.offline`, `failover.noneOnline`, `failover.manage`, `failover.backOnline`, `failover.back`, `failover.switch`, `servers.useThis`, `knowledge.modelMissing`, `gpu.remote` | „Server“ allein | „Ollama-Server“ (für jeden PC, auf dem Ollama läuft), „MCP-Server“ (für Werkzeuge); `failover.offline` bekommt die Abhilfe dazu | „Ollama server“, „MCP server“ |
+| `chat.inputNoModel` | Kein Modell verfügbar – läuft Ollama? | entfällt: zwei Platzhalter nennen die Ursache (Fläche 5, `EF-5`) | retired |
+| `status.checking` | Ollama: prüfe Verbindung … | Prüfe Verbindung … | Checking connection … |
+| `chat.error`, `chat.modelsError`, `models.error`, `models.deleteError`, `gpu.error`, `sources.error`, `chatNote.error`, `summary.error`, `skills.broken`, `obsidian.invalid`, `chat.files.tooMany`, `chat.files.tooBig`, `chat.files.unreadable`, `settings.licensesMissing`, `privacy.missing`, `mail.reauth` | nennen nur das Was | Ursache und Abhilfe nach dem Fehler-Muster; der neue Wortlaut steht bei der jeweiligen Fläche unter „Texte (Phase 5)“ | siehe dort |
+| `chat.empty`, `folders.noneYet`, `nav.collapseList`, `nav.expandList`, `appearance.railHint` | (alte Leisten und leerer Chat) | entfallen mit der neuen Gliederung | retired |
+
 ---
 
 ### 1. Rahmen (Titelleiste und Seitenleiste)
@@ -543,11 +677,11 @@ Das Zeilenmenü öffnet über einen Knopf „Mehr“, der bei Mauszeiger und bei
 
 | Zustand | Inhalt |
 |---|---|
-| Leer | **Projekte ohne Projekt:** unter dem Kopf ein Satz, wozu Projekte da sind (Chats bündeln, mit eigenen Anweisungen und Dokumenten), und die Aktion „Neues Projekt“ (öffnet das Namensfeld wie das „+“). **Letzte Chats ohne Chat:** ein Satz, dass hier die Chats nach Aktivität stehen, und die Aktion „Neuer Chat“ (Startseite, Cursor im Eingabefeld). Eingeklappt zeigen die Popover der beiden Listen dasselbe. Wortlaut: Phase 5. **Fuß ohne Modell:** Ollama erreichbar, nichts geladen → „kein Modell geladen“ (wird beim ersten Senden geladen), das Popup sagt dasselbe; Ollama erreichbar, nichts installiert → „kein Modell installiert“ mit Weg zu „Modelle“. Die Bereiche sind nie leer. |
-| Keine NVIDIA-Karte oder Server auf anderem Rechner | Kein Fehler, ein normaler Zustand: Der Fuß zeigt Modell und Größe wie sonst. Im Status-Popup sagt der Teil „Grafikkarte“ in einem Satz, warum er nichts misst, und verweist auf die geladenen Modelle darunter, die zeigen, wie viel Speicher Ollama meldet. |
+| Leer | **Projekte ohne Projekt:** unter dem Kopf ein Satz, wozu Projekte da sind (Chats bündeln, mit eigenen Anweisungen und Dokumenten), und die Aktion „Neues Projekt“ (öffnet das Namensfeld wie das „+“). **Letzte Chats ohne Chat:** ein Satz, dass hier die Chats nach Aktivität stehen, und die Aktion „Neuer Chat“ (Startseite, Cursor im Eingabefeld). Eingeklappt zeigen die Popover der beiden Listen dasselbe. Wortlaut: siehe „Texte (Phase 5)“ unten. **Fuß ohne Modell:** Ollama erreichbar, nichts geladen → „kein Modell geladen“ (wird beim ersten Senden geladen), das Popup sagt dasselbe; Ollama erreichbar, nichts installiert → „kein Modell installiert“ mit Weg zu „Modelle“. Die Bereiche sind nie leer. |
+| Keine NVIDIA-Karte oder Ollama-Server auf anderem PC | Kein Fehler, ein normaler Zustand: Der Fuß zeigt Modell und Größe wie sonst. Im Status-Popup sagt der Teil „Grafikkarte“ in einem Satz, warum er nichts misst, und verweist auf die geladenen Modelle darunter, die zeigen, wie viel Speicher Ollama meldet. |
 | Lädt | Listen: Platzhalter-Zeilen, bis die gespeicherten Chats gelesen sind. Modellstatus: „prüfe Verbindung“. |
 | Fehler | Listen lassen sich nicht lesen: Hinweis in der Listen-Zone mit Ursache; Bereiche, Suche und Fuß bleiben benutzbar. Anlegen, Umbenennen oder Verschieben scheitert: Meldung an der Zeile, der alte Stand bleibt. |
-| Ollama nicht erreichbar | Modellstatus zeigt es mit Text und Form. Das Popup nennt den Server und führt zur Status-Seite. Alles andere im Rahmen bleibt benutzbar (liest nur gespeicherte Daten). |
+| Ollama nicht erreichbar | Modellstatus zeigt es mit Text und Form. Das Popup nennt den Ollama-Server und führt zur Status-Seite. Alles andere im Rahmen bleibt benutzbar (liest nur gespeicherte Daten). |
 | Eingeklappt und Überlagerung | siehe §IA „Eingeklappter Zustand“ und „Verhalten bei 900 px“. |
 
 **Hauptaktion:** keine eigene. Am häufigsten: „Chat“ (neuer Chat) und die Suchzeile.
@@ -555,6 +689,83 @@ Das Zeilenmenü öffnet über einen Knopf „Mehr“, der bei Mauszeiger und bei
 **Ausgang:** jede Seite der Gliederung; die Palette; die Status-Seite über das Popup.
 
 **Breite:** siehe §IA (ab 1100 px gilt der gemerkte Zustand, darunter eingeklappt, Ausklappen als Überlagerung).
+
+**Texte (Phase 5)**
+
+| ID | Art | DE | EN |
+|---|---|---|---|
+| `RA-1` | Beschriftung | LocalDesk | LocalDesk |
+| `RA-1` Fenster | Beschriftung | Minimieren | Minimize |
+| `RA-1` Fenster | Beschriftung | Maximieren | Maximize |
+| `RA-1` Fenster | Beschriftung | Wiederherstellen | Restore |
+| `RA-1` Fenster | Beschriftung | Schließen | Close |
+| `RA-2` Marke | Beschriftung | LocalDesk | LocalDesk |
+| `RA-2` `nav.collapse` | Tooltip | Seitenleiste einklappen · Strg+B | Collapse sidebar · Ctrl+B |
+| `RA-2` `nav.expand` | Tooltip | Seitenleiste ausklappen · Strg+B | Expand sidebar · Ctrl+B |
+| `RA-2` Suchzeile | Beschriftung | Suchen | Search |
+| `RA-2` Kürzel in der Suchzeile | Beschriftung | Strg+K | Ctrl+K |
+| `RA-2` Lupe, eingeklappt | Tooltip | Suchen · Strg+K | Search · Ctrl+K |
+| `RA-3` `nav.chat` | Beschriftung | Chat | Chat |
+| `RA-3` Chat, eingeklappt | Tooltip | Neuer Chat · Strg+N | New chat · Ctrl+N |
+| `RA-3` `nav.templates` | Beschriftung | Vorlagen | Templates |
+| `RA-3` Vorlagen, eingeklappt | Tooltip | Vorlagen | Templates |
+| `RA-3` Code, eingeklappt | Tooltip | Code | Code |
+| `RA-3` Modelle, eingeklappt | Tooltip | Modelle | Models |
+| `RA-3` `nav.code` | Beschriftung | Code | Code |
+| `RA-3` `nav.sectionModels` | Beschriftung | Modelle | Models |
+| `RA-3` `nav.main` | Beschriftung | Bereiche | Sections |
+| `RA-4` Kopf | Beschriftung | Projekte | Projects |
+| `RA-4` Projekte, eingeklappt | Tooltip | Projekte | Projects |
+| `RA-4` „+“ im Kopf, `folders.new` | Tooltip | Neues Projekt | New project |
+| `RA-4` Namensfeld, `folders.namePlaceholder` | Platzhalter | Projektname, Enter zum Anlegen | Project name, Enter to create |
+| `RA-4` `folders.hasSetup` | Tooltip | Mit Anweisungen oder Dokumenten | Has instructions or documents |
+| `RA-4` Überlauf | Beschriftung | Alle anzeigen ({{count}}) | Show all ({{count}}) |
+| `RA-4` Zeilenmenü-Knopf | Tooltip | Mehr | More |
+| `RA-4` Zeilenmenü-Knopf, Name für Hilfstechnik | Beschriftung | Mehr zu „{{name}}“ | More for “{{name}}” |
+| `RA-4` Zeilenmenü, `chat.rename` | Beschriftung | Umbenennen | Rename |
+| `RA-4` Zeilenmenü, `chat.delete` | Beschriftung | Löschen | Delete |
+| `RA-4` | Leer | Hier bündelst du Chats mit eigenen Anweisungen und Dokumenten. [Neues Projekt] | Group chats here, with their own instructions and documents. [New project] |
+| `RA-4` | Fehler | Das Projekt wurde nicht angelegt: {{error}}. Alles ist wie vorher. Versuche es noch einmal. | The project was not created: {{error}}. Everything is as it was. Try again. |
+| `RA-5` Kopf | Beschriftung | Letzte Chats | Recent chats |
+| `RA-5` Letzte Chats, eingeklappt | Tooltip | Letzte Chats | Recent chats |
+| `RA-5` Überlauf | Beschriftung | Alle anzeigen | Show all |
+| `RA-5` Zeilenmenü, `folders.moveTo` | Beschriftung | Verschieben nach … | Move to … |
+| `RA-5` Ziel im Verschieben-Menü | Beschriftung | Ohne Projekt | No project |
+| `RA-5` | Leer | Deine Chats erscheinen hier, der zuletzt aktive oben. [Neuer Chat] | Your chats appear here, the most recent first. [New chat] |
+| `RA-5` | Fehler | Die Chats konnten nicht gelesen werden: {{error}}. Die gespeicherten Daten sind nicht lesbar. Starte LocalDesk neu; bleibt es dabei, prüfe den Datenordner unter Einstellungen → Über LocalDesk. | The chats could not be read: {{error}}. The saved data is not readable. Restart LocalDesk; if it stays that way, check the data folder under Settings → About LocalDesk. |
+| `RA-5` | Fehler | Die Änderung wurde nicht gespeichert: {{error}}. Alles ist wie vorher. Versuche es noch einmal. | The change was not saved: {{error}}. Everything is as it was. Try again. |
+| `RA-6` `status.loadedShort` | Status | {{name}} · {{size}} | {{name}} · {{size}} |
+| `RA-6` `status.loadedMore` | Status | +{{count}} weitere | +{{count}} more |
+| `RA-6` | Status | Kein Modell geladen | No model loaded |
+| `RA-6` | Status | Kein Modell installiert | No model installed |
+| `RA-6` `status.offline` | Status | Ollama nicht erreichbar | Ollama not reachable |
+| `RA-6` `status.checking` | Status | Prüfe Verbindung … | Checking connection … |
+| `RA-6` Popup, Titel | Beschriftung | Modellstatus | Model status |
+| `RA-6` Popup, `status.openPage` | Beschriftung | Ganze Seite | Full page |
+| `RA-6` Popup, kein Modell geladen | Hinweis | Ollama ist erreichbar. Ein Modell wird beim ersten Senden geladen. | Ollama is reachable. A model loads when you send your first message. |
+| `RA-6` Popup, kein Modell installiert | Leer | Auf „{{name}}“ ist kein Modell installiert. Ohne Modell kann LocalDesk nicht antworten. [Modell herunterladen] | No model is installed on “{{name}}”. Without a model LocalDesk cannot answer. [Download a model] |
+| `RA-6` Popup, Ollama nicht erreichbar | Fehler | Der Ollama-Server „{{name}}“ ist nicht erreichbar. Ollama läuft nicht, oder die Adresse stimmt nicht. Starte Ollama; LocalDesk prüft von selbst weiter. [Status ansehen] | The Ollama server “{{name}}” is not reachable. Ollama is not running, or the address is wrong. Start Ollama; LocalDesk keeps checking on its own. [Open status] |
+| `RA-6` Popup, `gpu.noNvidia` | Hinweis | Keine NVIDIA-Grafikkarte gefunden, darum gibt es keine Messung. Die geladenen Modelle zeigen, wie viel VRAM Ollama nutzt. | No NVIDIA graphics card found, so nothing is measured. The loaded models show how much VRAM Ollama uses. |
+| `RA-6` `nav.settings` | Beschriftung | Einstellungen | Settings |
+| `RA-6` Einstellungen, eingeklappt | Tooltip | Einstellungen · Strg+, | Settings · Ctrl+, |
+| `RA-6` Status, eingeklappt | Tooltip | {{name}} · {{size}}, Ollama erreichbar | {{name}} · {{size}}, Ollama reachable |
+| `RA-7` Projekt löschen, Titel | Beschriftung | Projekt „{{name}}“ löschen? | Delete project “{{name}}”? |
+| `RA-7` Projekt löschen, `folders.confirmDelete` | Hinweis | Die Chats darin bleiben erhalten und stehen danach ohne Projekt da. Anweisungen und eingelesene Dokumente werden entfernt. Deine Dateien bleiben unverändert. | The chats in it are kept and will have no project. Instructions and indexed documents are removed. Your files stay unchanged. |
+| `RA-7` Projekt löschen, Knopf | Beschriftung | Projekt löschen | Delete project |
+| `RA-7` Chat löschen, Titel | Beschriftung | Chat „{{title}}“ löschen? | Delete chat “{{title}}”? |
+| `RA-7` Chat löschen, Text | Hinweis | Der Chat und alle seine Nachrichten werden endgültig gelöscht. | The chat and all its messages are deleted for good. |
+| `RA-7` Chat löschen, Knopf | Beschriftung | Chat löschen | Delete chat |
+| `RA-7` Abbrechen, `dialog.cancel` | Beschriftung | Abbrechen | Cancel |
+| `RA-7` `shortcuts.search` | Beschriftung | Befehlspalette öffnen | Open command palette |
+| `RA-7` `shortcuts.toggleSidebar` | Beschriftung | Seitenleiste ein-/ausklappen | Collapse/expand sidebar |
+| `RA-7` Zoom | Beschriftung | Vergrößern | Zoom in |
+| `RA-7` Zoom | Beschriftung | Verkleinern | Zoom out |
+| `RA-7` Zoom | Beschriftung | Zoom zurücksetzen | Reset zoom |
+| `RA-7` Fenster | Beschriftung | Vollbild ein/aus | Toggle full screen |
+| `RA-7` Fenster | Beschriftung | Entwicklerwerkzeuge | Developer tools |
+| `RA-8` Seitenkopf | Beschriftung | Zurück zum Chat | Back to chat |
+
+**Ohne neuen Text (Schlüssel bleiben):** `RA-1` bis `RA-8` sind oben belegt; Chat-Zeilen, Tastenkürzel-Titel und -Fuß (`shortcuts.title`, `shortcuts.footer`) bleiben.
 
 ---
 
@@ -567,7 +778,7 @@ Das Zeilenmenü öffnet über einen Knopf „Mehr“, der bei Mauszeiger und bei
 **Blöcke (in Reihenfolge):**
 1. `PA-1` **Eingabezeile.** Suchfeld mit Platzhalter. Bei vorgewähltem Bereich steht davor eine Marke („Projekte“ oder „Chats“); Rücktaste im leeren Feld entfernt sie.
 2. `PA-2` **Zuletzt benutzt.** Nur bei leerer Eingabe: die fünf zuletzt ausgeführten Ziele und Befehle.
-3. `PA-3` **Ergebnisgruppen.** In der Reihenfolge aus §IA: Gehen zu, Befehle, Projekte, Chats, Chat (Kontext), Darstellung, Fenster, Hilfe. Leere Gruppen erscheinen nicht.
+3. `PA-3` **Ergebnisgruppen.** In der Reihenfolge aus §IA: Gehen zu, Befehle, Projekte, Chats, In diesem Chat, Darstellung, Fenster, Hilfe. Leere Gruppen erscheinen nicht.
 4. `PA-4` **Ergebniszeile.** Symbol, Name, bei Chats eine zweite Angabe (Projekt, Datum oder Textausschnitt mit dem Treffer), rechts das Kürzel. Genau eine Zeile ist gewählt.
 5. `PA-5` **Fußzeile.** Tastenhinweise: ↑↓ wählen, Enter ausführen, Esc schließen.
 
@@ -588,6 +799,62 @@ Inhalt und Obergrenzen der Zeilen: Befehlsliste P-01 bis P-25 in §IA. Bedienung
 
 **Breite:** 640 px, höchstens Fensterbreite minus 48 px; höchstens 8 sichtbare Zeilen, bei 600 px Fensterhöhe höchstens 6.
 
+**Texte (Phase 5)**
+
+Die Befehlszeilen tragen die IDs aus §IA (P-01 bis P-25); die Gruppen stehen im Block `PA-3`.
+
+| ID | Art | DE | EN |
+|---|---|---|---|
+| `PA-1` | Platzhalter | Seite, Befehl oder Chat suchen | Search pages, commands or chats |
+| `PA-1` Name für Hilfstechnik | Beschriftung | Befehlspalette | Command palette |
+| `PA-1` Marke bei vorgewähltem Bereich | Beschriftung | Projekte | Projects |
+| `PA-1` Marke bei vorgewähltem Bereich | Beschriftung | Chats | Chats |
+| `PA-2` | Beschriftung | Zuletzt benutzt | Recently used |
+| `PA-3` Gruppe | Beschriftung | Gehen zu | Go to |
+| `PA-3` Gruppe | Beschriftung | Befehle | Commands |
+| `PA-3` Gruppe | Beschriftung | Projekte | Projects |
+| `PA-3` Gruppe, `search.chats` | Beschriftung | Chats | Chats |
+| `PA-3` Gruppe | Beschriftung | In diesem Chat | In this chat |
+| `PA-3` Gruppe | Beschriftung | Darstellung | Appearance |
+| `PA-3` Gruppe | Beschriftung | Fenster | Window |
+| `PA-3` Gruppe | Beschriftung | Hilfe | Help |
+| `PA-3` Leer, ohne Vorwahl | Leer | Nichts gefunden für „{{query}}“. Prüfe die Schreibweise oder suche nach dem Namen einer Seite. [Eingabe leeren] | Nothing found for “{{query}}”. Check the spelling or search for the name of a page. [Clear input] |
+| `PA-3` Leer, Vorwahl Projekte | Leer | Kein Projekt für „{{query}}“. Prüfe die Schreibweise oder zeige alle Projekte. [Eingabe leeren] | No project for “{{query}}”. Check the spelling or show all projects. [Clear input] |
+| `PA-3` Leer, Vorwahl Chats | Leer | Kein Chat für „{{query}}“. Die Suche prüft Titel und Inhalt. Versuche ein anderes Wort. [Eingabe leeren] | No chat for “{{query}}”. The search checks titles and content. Try another word. [Clear input] |
+| `PA-3` Lädt | Status | Suche in Chats … | Searching chats … |
+| `PA-3` Fehler | Fehler | Die Suche in Chats ist fehlgeschlagen: {{error}}. Seiten und Befehle funktionieren weiter. Gib die Suche noch einmal ein. | The search in chats failed: {{error}}. Pages and commands still work. Enter the search again. |
+| `PA-4` Zweitzeile bei Chats | Beschriftung | {{project}} · {{date}} | {{project}} · {{date}} |
+| `PA-5` Fußzeile | Beschriftung | ↑↓ wählen · Enter ausführen · Esc schließen | ↑↓ select · Enter run · Esc close |
+| `P-01` | Befehl | Chat | Chat |
+| `P-02` | Befehl | Vorlagen | Templates |
+| `P-03` | Befehl | Code | Code |
+| `P-04` | Befehl | Modelle | Models |
+| `P-05` | Befehl | Wissen verwalten | Manage knowledge |
+| `P-06` | Befehl | Skills verwalten | Manage skills |
+| `P-07` | Befehl | E-Mail verwalten | Manage e-mail |
+| `P-08` | Befehl | Status | Status |
+| `P-09` | Befehl | Einstellungen | Settings |
+| `P-10` `shortcuts.search` | Befehl | Chats durchsuchen | Search chats |
+| `P-11` `shortcuts.newChat` | Befehl | Neuer Chat | New chat |
+| `P-12` `folders.new` | Befehl | Neues Projekt | New project |
+| `P-13` `shortcuts.toggleSidebar` | Befehl | Seitenleiste ein-/ausklappen | Collapse/expand sidebar |
+| `P-14` | Befehl | {{name}} | {{name}} |
+| `P-15` | Befehl | {{title}} | {{title}} |
+| `P-16` `shortcuts.focusInput` | Befehl | Ins Eingabefeld springen | Jump to the message box |
+| `P-17` `shortcuts.chatSettings` | Befehl | Chat-Einstellungen öffnen/schließen | Open/close chat settings |
+| `P-18` `shortcuts.stop` | Befehl | Laufende Antwort stoppen | Stop the running answer |
+| `P-19` `appearance.light` | Befehl | Design: Hell | Theme: Light |
+| `P-19` `appearance.dark` | Befehl | Design: Dunkel | Theme: Dark |
+| `P-19` `appearance.system` | Befehl | Design: Wie Windows | Theme: Like Windows |
+| `P-20` | Befehl | Tastenkürzel anzeigen | Show keyboard shortcuts |
+| `P-21` | Befehl | Vergrößern | Zoom in |
+| `P-22` | Befehl | Verkleinern | Zoom out |
+| `P-23` | Befehl | Zoom zurücksetzen | Reset zoom |
+| `P-24` | Befehl | Vollbild ein/aus | Toggle full screen |
+| `P-25` | Befehl | Entwicklerwerkzeuge | Developer tools |
+
+**Ohne neuen Text (Schlüssel bleiben):** Ollama nicht erreichbar trifft nicht zu (die Palette liest nur gespeicherte Chats und feste Befehle). `search.messages_one/_other` („{{count}} Nachricht(en)“) bleiben für Treffer im Inhalt.
+
 ---
 
 ### 3. Startseite „Dein PC“
@@ -604,9 +871,9 @@ Inhalt und Obergrenzen der Zeilen: Befehlsliste P-01 bis P-25 in §IA. Bedienung
 5. `SS-5` **Einstiege.** Vier Kacheln, jede mit Titel und einer Zeile. Sie stellen das Eingabefeld ein und setzen den Cursor hinein, sie senden nichts:
    - **Tabelle auswerten:** öffnet die Dateiauswahl für Tabellen (CSV, TSV, Excel).
    - **Recherche:** schaltet Recherche ein (Chip).
-   - **E-Mail zusammenfassen:** schaltet E-Mail ein; bei mehreren Konten öffnet sich das Untermenü.
+   - **Mail zusammenfassen:** schaltet E-Mail ein; bei mehreren Konten öffnet sich das Untermenü.
    - **Aus Wissen fragen:** schaltet Wissen ein; bei mehreren Sammlungen öffnet sich das Untermenü.
-   Fehlt die Voraussetzung (kein Konto, keine Sammlung, kein Schlüssel), öffnet die Kachel das Untermenü, das sagt, was fehlt und wohin es geht. Dasselbe gilt, wenn das gewählte Modell keine Werkzeuge kann: „E-Mail zusammenfassen“ öffnet das Untermenü E-Mail mit der Warnung und den geeigneten Modellen, statt still einzuschalten; die Kachel trägt dann ein Warnzeichen. „Aus Wissen fragen“ und „Tabelle auswerten“ brauchen keine Werkzeuge und sind nicht betroffen.
+   Fehlt die Voraussetzung (kein Konto, keine Sammlung, kein Schlüssel), öffnet die Kachel das Untermenü, das sagt, was fehlt und wohin es geht. Dasselbe gilt, wenn das gewählte Modell keine Werkzeuge kann: „Mail zusammenfassen“ öffnet das Untermenü E-Mail mit der Warnung und den geeigneten Modellen, statt still einzuschalten; die Kachel trägt dann ein Warnzeichen. „Aus Wissen fragen“ und „Tabelle auswerten“ brauchen keine Werkzeuge und sind nicht betroffen.
 6. `SS-6` **Mit Vorlage starten.** Die gespeicherten Vorlagen als Knöpfe (Name, festes Modell oder „kein festes Modell“). Ein Klick übernimmt Modell und Einstellungen und zeigt die Vorlage als Chip im Eingabefeld. Die gewählte ist markiert.
 
 **„Zuletzt“ entfällt, begründet:** Der Block aus dem Mock zeigte Chats und Projekte, die 272 px weiter links schon in der Leiste stehen (Nielsen 8). An seine Stelle tritt `SS-6`: Vorlagen zeigt die Leiste nicht einzeln, die Auswahl steht heute schon im leeren Chat und braucht ein Zuhause, und sie kommt aus vorhandenen Daten.
@@ -617,10 +884,10 @@ Inhalt und Obergrenzen der Zeilen: Befehlsliste P-01 bis P-25 in §IA. Bedienung
 
 | Zustand | Inhalt |
 |---|---|
-| Leer | Kein Modell geladen: Karte sagt das und dass es beim ersten Senden geladen wird; die Modellauswahl im Eingabefeld zeigt, welches. Kein Modell installiert: Karte führt zu „Modelle“, Eingabefeld gesperrt mit Grund. Keine Vorlagen: `SS-6` zeigt einen Satz, wozu Vorlagen gut sind, und „Neue Vorlage“. Keine NVIDIA-Karte oder Server auf anderem Rechner: Karte „Grafikspeicher“ sagt, warum sie nichts misst, und zeigt, wie viel Speicher Ollama für die geladenen Modelle meldet. |
+| Leer | Kein Modell geladen: Karte sagt das und dass es beim ersten Senden geladen wird; die Modellauswahl im Eingabefeld zeigt, welches. Kein Modell installiert: Karte führt zu „Modelle“, Eingabefeld gesperrt mit Grund. Keine Vorlagen: `SS-6` zeigt einen Satz, wozu Vorlagen gut sind, und „Neue Vorlage“. Keine NVIDIA-Karte oder Ollama-Server auf anderem PC: Karte „Grafikspeicher“ sagt, warum sie nichts misst, und zeigt, wie viel Speicher Ollama für die geladenen Modelle meldet. |
 | Lädt | Karten zeigen Platzhalter für die Werte, bis die erste Abfrage da ist. Das Eingabefeld ist sichtbar, aber gesperrt, bis die Modellliste da ist; ein gewünschter Fokus wird nachgeholt. |
 | Fehler | Modellliste lässt sich nicht laden: Meldung mit Ursache über dem Eingabefeld, Weg zur Status-Seite. Grafikkarte lässt sich nicht abfragen: Karte nennt die Ursache, der Rest der Seite bleibt. |
-| Ollama nicht erreichbar | Muster von oben: Karte „Geladenes Modell“ nennt die Ursache und führt zur Status-Seite, Banner in `SS-3`, Eingabefeld gesperrt mit Grund. `SS-5` und `SS-6` bleiben sichtbar. Die drei Kacheln, die nur einen Schalter setzen (Recherche, E-Mail zusammenfassen, Aus Wissen fragen), und die Vorlagen bleiben bedienbar, genau wie das „+“-Menü: Sie ändern nur die Einstellung des Chats und brauchen Ollama nicht; gesendet wird erst, wenn Ollama wieder da ist. Gesperrt ist allein „Tabelle auswerten“, weil es wie die Büroklammer einen Anhang lädt. |
+| Ollama nicht erreichbar | Muster von oben: Karte „Geladenes Modell“ nennt die Ursache und führt zur Status-Seite, Banner in `SS-3`, Eingabefeld gesperrt mit Grund. `SS-5` und `SS-6` bleiben sichtbar. Die drei Kacheln, die nur einen Schalter setzen (Recherche, Mail zusammenfassen, Aus Wissen fragen), und die Vorlagen bleiben bedienbar, genau wie das „+“-Menü: Sie ändern nur die Einstellung des Chats und brauchen Ollama nicht; gesendet wird erst, wenn Ollama wieder da ist. Gesperrt ist allein „Tabelle auswerten“, weil es wie die Büroklammer einen Anhang lädt. |
 
 **Hauptaktion:** Senden (im Eingabefeld).
 
@@ -632,11 +899,53 @@ Inhalt und Obergrenzen der Zeilen: Befehlsliste P-01 bis P-25 in §IA. Bedienung
 |---|---|
 | Spalte | Mittig, höchstens 800 px, mindestens 24 px Rand links und rechts. Bei 900 px Fenster: 824 − 48 = 776 px. |
 | `SS-2` | Zwei Karten nebeneinander ab 560 px Spaltenbreite, darunter untereinander. |
-| `SS-5` | Vier Kacheln in einer Reihe ab 720 px Spaltenbreite, darunter zwei mal zwei. Titel einzeilig, die zweite Zeile wird gekürzt; alle Kacheln sind gleich hoch. |
+| `SS-5` | Vier Kacheln in einer Reihe ab 744 px Spaltenbreite, darunter zwei mal zwei. Titel einzeilig, die zweite Zeile wird gekürzt; alle Kacheln sind gleich hoch. |
 | `SS-6` | Knöpfe brechen in Zeilen um; mehr als zwei Zeilen werden zu „Alle Vorlagen“ (Link zur Vorlagen-Seite). |
 | Seitenpanel offen (ab 1100 px Fenster) | Die Spalte wird schmaler; die Regeln oben greifen (zum Beispiel zwei mal zwei Kacheln). Unter 1100 px liegt das Panel als Überlagerung darüber und ändert nichts. |
 | Höhe 600 px | Die Seite scrollt senkrecht. Kopf, Karten und Eingabefeld passen ohne Scrollen (zusammen unter 400 px von 560 px); Kacheln und Vorlagen dürfen darunter liegen. |
 | Höhe ab 900 px | Der Inhalt steht im oberen Drittel, nicht senkrecht zentriert, damit das Eingabefeld beim Wechsel in den Chat möglichst wenig springt. |
+
+**Texte (Phase 5)**
+
+| ID | Art | DE | EN |
+|---|---|---|---|
+| `SS-1` | Beschriftung | Dein PC | Your PC |
+| `SS-1` Zeile, Ollama-Server auf diesem PC | Hinweis | Alles läuft auf diesem PC. | Everything runs on this PC. |
+| `SS-1` Zeile, Ollama-Server in einem Netzwerk | Hinweis | Das Modell läuft auf „{{name}}“ im Netzwerk. | The model runs on “{{name}}” on your network. |
+| `SS-1` Zeile, Ollama nicht erreichbar | Hinweis | Ollama ist nicht erreichbar. | Ollama is not reachable. |
+| `SS-1` Projekt-Marke, `projects.badge` | Beschriftung | Projekt: {{name}} | Project: {{name}} |
+| `SS-2` Karte | Beschriftung | Geladenes Modell | Loaded model |
+| `SS-2` Karte | Beschriftung | Grafikspeicher | Graphics memory |
+| `SS-2` Wert Grafikspeicher | Status | {{used}} von {{total}} belegt, {{free}} frei | {{used}} of {{total}} used, {{free}} free |
+| `SS-2` weitere Modelle, `status.loadedMore` | Status | +{{count}} weitere | +{{count}} more |
+| `SS-2` Modell, kein Modell geladen | Leer | Kein Modell geladen. Schreib eine Nachricht, dann lädt Ollama eines. [Status ansehen] | No model loaded. Write a message and Ollama loads one. [Open status] |
+| `SS-2` Modell, nichts installiert | Leer | Kein Modell installiert. Ohne Modell kann LocalDesk nicht antworten. [Modell herunterladen] | No model installed. Without a model LocalDesk cannot answer. [Download a model] |
+| `SS-2` Modell, Ollama nicht erreichbar | Fehler | Ollama ist nicht erreichbar. Ollama läuft nicht, oder die Adresse stimmt nicht. Starte Ollama; LocalDesk prüft von selbst weiter. [Status ansehen] | Ollama is not reachable. Ollama is not running, or the address is wrong. Start Ollama; LocalDesk keeps checking on its own. [Open status] |
+| `SS-2` Grafikspeicher, keine NVIDIA-Karte | Leer | Keine NVIDIA-Grafikkarte gefunden, darum gibt es keine Messung. Ollama meldet {{used}} für die geladenen Modelle. [Status ansehen] | No NVIDIA graphics card found, so nothing is measured. Ollama reports {{used}} for the loaded models. [Open status] |
+| `SS-2` Grafikspeicher, Ollama-Server auf anderem PC | Leer | Gemessen wird nur auf diesem PC. Ollama meldet {{used}} für die geladenen Modelle. [Status ansehen] | Measuring only works on this PC. Ollama reports {{used}} for the loaded models. [Open status] |
+| `SS-2` Grafikspeicher, Abfrage scheitert | Fehler | Die Grafikkarte ließ sich nicht abfragen: {{error}}. Der NVIDIA-Treiber hat nicht geantwortet. Der Rest der Seite funktioniert weiter. [Status ansehen] | The graphics card could not be read: {{error}}. The NVIDIA driver did not respond. The rest of the page still works. [Open status] |
+| `SS-2` Modellliste, `chat.modelsError` | Fehler | Die Modellliste ließ sich nicht laden: {{error}}. Ollama war nicht erreichbar. Prüfe die Verbindung auf der Statusseite. [Status ansehen] | The model list could not be loaded: {{error}}. Ollama was not reachable. Check the connection on the status page. [Open status] |
+| `SS-3` Banner, `failover.offline` | Fehler | Der Ollama-Server „{{name}}“ ist nicht erreichbar. Ollama läuft nicht, oder die Adresse stimmt nicht. Starte Ollama oder wechsle zu einem anderen Ollama-Server. | The Ollama server “{{name}}” is not reachable. Ollama is not running, or the address is wrong. Start Ollama or switch to another Ollama server. |
+| `SS-3` Banner ohne weiteren Ollama-Server, `failover.noneOnline` | Hinweis | Kein anderer eingetragener Ollama-Server ist erreichbar. Starte Ollama; LocalDesk prüft von selbst weiter. | No other saved Ollama server is reachable. Start Ollama; LocalDesk keeps checking on its own. |
+| `SS-3` Banner, `failover.manage` | Beschriftung | Ollama-Server verwalten | Manage Ollama servers |
+| `SS-3` Banner mit weiterem Ollama-Server | Hinweis | Der Ollama-Server „{{name}}“ ist erreichbar. | The Ollama server “{{name}}” is reachable. |
+| `SS-3` Banner, `failover.switch` | Beschriftung | Zu „{{name}}“ wechseln | Switch to “{{name}}” |
+| `SS-3` weitere Ollama-Server | Beschriftung | Weitere Ollama-Server ({{count}}) | More Ollama servers ({{count}}) |
+| `SS-5` Kachel | Beschriftung | Tabelle auswerten | Analyze a table |
+| `SS-5` Kachel, Zeile 2 | Beschriftung | CSV, TSV oder Excel | CSV, TSV or Excel |
+| `SS-5` Kachel | Beschriftung | Recherche | Research |
+| `SS-5` Kachel, Zeile 2 | Beschriftung | Bericht mit Quellen | Report with sources |
+| `SS-5` Kachel | Beschriftung | Mail zusammenfassen | Summarize mail |
+| `SS-5` Kachel, Zeile 2 | Beschriftung | Eine Mail aus Gmail | One mail from Gmail |
+| `SS-5` Kachel | Beschriftung | Aus Wissen fragen | Ask your knowledge |
+| `SS-5` Kachel, Zeile 2 | Beschriftung | Antwort aus Dokumenten | Answers from documents |
+| `SS-5` Warnzeichen an der Kachel | Tooltip | Das gewählte Modell kann keine Tools | The selected model can’t use tools |
+| `SS-6` Titel, `templates.pickerTitle` | Beschriftung | Mit Vorlage starten | Start with a template |
+| `SS-6` `templates.anyModel` | Beschriftung | Kein festes Modell | No fixed model |
+| `SS-6` Überlauf | Beschriftung | Alle Vorlagen | All templates |
+| `SS-6` | Leer | Vorlagen speichern Modell, Systemprompt und Parameter für Aufgaben, die wiederkehren. [Neue Vorlage] | Templates save the model, system prompt and parameters for tasks you repeat. [New template] |
+
+**Ohne neuen Text (Schlüssel bleiben):** `SS-4` (der Text des Eingabefelds steht in Fläche 5, Block `EF-5`). Zustand „Lädt“: Platzhalter ohne Wort.
 
 ---
 
@@ -653,11 +962,11 @@ Inhalt und Obergrenzen der Zeilen: Befehlsliste P-01 bis P-25 in §IA. Bedienung
    - **Antwort:** Gedanken (aufklappbar, während des Denkens als laufend markiert); Werkzeug-Zeilen (`CH-3`); Wartezeile (Modell wird geladen, Wissen wird durchsucht, arbeitet mit Werkzeugen); Text (Links öffnen im Browser, Bilder aus Antworten werden nie geladen, Quellen-Marken springen zur Quelle im Seitenpanel); Diagramm (Regeln Phase 6); Hinweise (Wissen nicht durchsucht, keine passende Stelle gefunden, Fehler, abgebrochen); Statistikzeile (Modell, Tokens, Tokens je Sekunde, Dauer). Aktionen: Kopieren, Antwort wiederholen (nur an der letzten Antwort), In Obsidian speichern, Merken.
    - **Verdichtungs-Marke:** „bis hier verdichtet“ mit Zahl der Nachrichten; „Zusammenfassung ansehen“ (aufklappbar), „Verdichtung aufheben“.
    - **Sprungziel:** Eine über die Suche geöffnete Nachricht steht in der Mitte und ist kurz hervorgehoben.
-3. `CH-3` **Werkzeug-Zeile und Rückfrage-Karte.** Zeile: Zustand (wartet auf Freigabe, läuft, fertig, Fehler, abgelehnt, abgebrochen) als Text und Symbol, Name der Aktion in Klartext, aufklappbar zu Server, Eingabe und Ergebnis. Bei „wartet auf Freigabe“ steht darunter die Rückfrage-Karte (Ablauf 3). Im Code-Bereich hat eine Änderungs-Zeile zusätzlich die Vorher/Nachher-Ansicht und „Rückgängig“.
+3. `CH-3` **Werkzeug-Zeile und Rückfrage-Karte.** Zeile: Zustand (wartet auf Freigabe, läuft, fertig, Fehler, abgelehnt, abgebrochen) als Text und Symbol, Name der Aktion in Klartext, aufklappbar zu MCP-Server, Eingabe und Ergebnis. Bei „wartet auf Freigabe“ steht darunter die Rückfrage-Karte (Ablauf 3). Im Code-Bereich hat eine Änderungs-Zeile zusätzlich die Vorher/Nachher-Ansicht und „Rückgängig“.
 4. `CH-4` **„Nach unten“.** Knopf über dem Eingabefeld, nur wenn der Nutzer hochgescrollt hat.
 5. `CH-5` **Karten über dem Eingabefeld.** Nur bei Bedarf, in dieser Reihenfolge: Zusammenfassungs-Karte (Vorschlag bei einem ruhenden Chat oder nach Klick: Zusammenfassen oder „Nein danke“; läuft mit Abbrechen; Entwurf mit Titel und Text, In Obsidian speichern, Neu erzeugen, Verwerfen; Ergebnis oder Fehler mit Erneut versuchen und Zurück zum Entwurf); Ausweich-Banner (Ablauf 5); Hinweis, dass der Chat Bilder enthält, die das gewählte Modell nicht lesen kann.
 6. `CH-6` **Eingabefeld.** Die Fläche 5, fest am unteren Rand der Spalte.
-7. `CH-7` **Dialog „Älteren Teil verdichten“.** Geöffnet aus dem Seitenpanel (`SP-4`): läuft mit Hinweis auf die Dauer; Entwurf zum Prüfen und Ändern, Zahl der ersetzten Nachrichten und gesparte Tokens, Hinweis auf den Verlust von Details; Übernehmen, Nochmal versuchen, Abbrechen.
+7. `CH-7` **Dialog „Älteren Teil verdichten“.** Geöffnet aus dem Seitenpanel (`SP-4`): läuft mit Hinweis auf die Dauer; Entwurf zum Prüfen und Ändern, Zahl der ersetzten Nachrichten und gesparte Tokens, Hinweis auf den Verlust von Details; Übernehmen, Erneut versuchen, Abbrechen.
 
 Rechts neben der Spalte: das Seitenpanel (Fläche 6).
 
@@ -673,16 +982,16 @@ Rechts neben der Spalte: das Seitenpanel (Fläche 6).
 
 | Vor welcher Aktion | Karte zeigt | Wahl |
 |---|---|---|
-| Werkzeug eines MCP-Servers mit Freigabe „Fragen“ (Standard bei verändernden Werkzeugen) | Werkzeug, Server, Warnung bei Überschreiben, Eingabe | Einmal erlauben · Immer erlauben · Ablehnen |
+| Werkzeug eines MCP-Servers mit Freigabe „Fragen“ (Standard bei verändernden Werkzeugen) | Werkzeug, MCP-Server, Warnung bei Überschreiben, Eingabe | Einmal erlauben · Immer erlauben · Ablehnen |
 | Webseite lesen, deren Adresse der Nutzer nicht selbst geschrieben hat | ganze Adresse, was die Seite dabei sieht | Erlauben · Ablehnen |
 | Im Web suchen, wo die App heute nachfragt | Suchanfrage, wohin sie geht | Erlauben · Ablehnen |
-| Änderung im Postfach (Label, Stern, Label anlegen oder umbenennen) | die Änderung | Übernehmen · Ablehnen |
+| Änderung an einer Mail in Gmail (Label, Stern, Label anlegen oder umbenennen) | die Änderung | Übernehmen · Ablehnen |
 | Etwas über den Nutzer merken | Text (änderbar), Geltung (alle Chats oder Projekt) | Speichern · Ablehnen |
-| Zugriff auf Postfach oder Dateien, der im Chat nicht eingeschaltet ist | Begründung des Modells, Auswahl von Konto oder Server | Für diesen Chat erlauben · Nur diese Antwort · Ablehnen |
+| Zugriff auf E-Mail oder Dateien, der im Chat nicht eingeschaltet ist | Begründung des Modells, Auswahl von Konto oder MCP-Server | Für diesen Chat erlauben · Nur diese Antwort · Ablehnen |
 | Code: Datei ändern, anlegen, löschen; Befehl ausführen; Commit | Vorher/Nachher oder Befehl | Erlauben (je nach Art benannt) · Ablehnen; danach Rückgängig |
 | Recherche starten | Stufe, was den PC verlässt | Starten · Abbrechen |
 | Verdichtung und Zusammenfassung | Entwurf zum Prüfen und Ändern | Übernehmen oder Speichern · Neu erzeugen · Verwerfen |
-| Jedes Werkzeug, wenn der Ollama-Server auf einem anderen Rechner läuft | wie oben | wie oben, ohne „Immer“ |
+| Jedes Werkzeug, wenn der Ollama-Server auf einem anderen PC läuft | wie oben | wie oben, ohne „Immer“ |
 
 **Kanon-Hinweis.** Die Aussagen zu festen Ankern, zu einsehbaren Zwischenschritten und zu Bestätigungspunkten sind **aus Prinzipien abgeleitet, kein gesicherter Kanon**. Für die Gestaltung von KI- und Agenten-Oberflächen gibt es kein Standardwerk; die Quellen sind Praxis-Essays (Dibia, Prinzipien für Agenten-UX; Wilson, *Age of Invisible Machines*, 2022; Smashing Magazine, „Designing for AI Beyond Conversational“, 2024). Der heutige Stand des Denkens: Rückgängig ist besser als Bestätigen, Bestätigen besser als stilles Handeln; Zwischenschritte sollen einsehbar sein. Ungeklärt ist unter anderem, ab wie vielen Rückfragen Nutzer sie ungelesen bestätigen; „Immer erlauben“ je Werkzeug ist dafür die heutige Antwort, kein Beweis. Für die festen Teile gilt dagegen gesicherte Bedienbarkeit: Fehlervermeidung (Nielsen 5), Kontrolle und Freiheit (Nielsen 3), Konsistenz (Nielsen 4), Wiedererkennen statt Erinnern (Nielsen 6). Diese Spec ist bei jedem neuen Design-Plan gegen die Erfahrung des Nutzers zu lesen.
 
@@ -702,6 +1011,22 @@ Rechts neben der Spalte: das Seitenpanel (Fläche 6).
 
 **Breite:** Die Lesespalte bleibt mittig im Platz neben dem Seitenpanel. Ab 1100 px Fenster schiebt das Panel (310 px) die Spalte; sie hat dann mindestens 506 px. Unter 1100 px liegt das Panel als Überlagerung darüber. Die Aktionen im Seitenkopf bleiben bei jeder Breite sichtbar; der Titel wird gekürzt (voll im Tooltip).
 
+**Texte (Phase 5)**
+
+| ID | Art | DE | EN |
+|---|---|---|---|
+| `CH-1` Chat-Einstellungen | Tooltip | Chat-Einstellungen · Strg+J | Chat settings · Ctrl+J |
+| `CH-1` Seitenpanel, `sidePanel.button` | Tooltip | Seitenpanel (Quellen, Projekt, Kontext) | Side panel (sources, project, context) |
+| `CH-1` Menü | Tooltip | Mehr | More |
+| `CH-1` Obsidian, Fehler, `chatNote.error` | Fehler | Nicht in Obsidian gespeichert: {{error}}. Der Chat bleibt unverändert. Prüfe unter Einstellungen → Obsidian, ob der Vault noch da ist. | Not saved to Obsidian: {{error}}. The chat is unchanged. Check under Settings → Obsidian that the vault still exists. |
+| `CH-5` Zusammenfassen scheitert, `summary.error` | Fehler | Die Zusammenfassung ist fehlgeschlagen: {{error}}. Dein Chat bleibt unverändert. Versuche es noch einmal. [Erneut versuchen] | The summary failed: {{error}}. Your chat is unchanged. Try again. [Try again] |
+| `CH-2` Antwort, Fehler, `chat.error` | Fehler | Die Antwort ist abgebrochen: {{error}}. Dein Text und der Chat bleiben erhalten. Versuche es mit „Antwort wiederholen“ noch einmal. | The answer stopped: {{error}}. Your text and the chat are kept. Try “Regenerate response” again. |
+| `CH-2` Wissen, Fehler, `sources.error` | Fehler | Das Wissen wurde nicht durchsucht: {{error}}. Die Antwort kommt nur aus dem Modell. Prüfe unter Modelle, ob das Embedding-Modell installiert ist. | Knowledge was not searched: {{error}}. The answer comes from the model alone. Check under Models that the embedding model is installed. |
+| `CH-2` Chat gelöscht | Fehler | Dieser Chat ist nicht mehr da. Er wurde gelöscht oder lässt sich nicht lesen. Hier ist ein neuer Chat. | This chat is gone. It was deleted or cannot be read. Here is a new chat. |
+| `CH-3` Zeile bei laufender Antwort, `chat.toolWorking` | Status | Arbeitet mit Tools … | Working with tools … |
+
+**Ohne neuen Text (Schlüssel bleiben):** `CH-4` (`chat.jumpToBottom`), `CH-5` (Ausweich-Banner: Texte in `SS-3`; Zusammenfassungs-Karte `summary.*`; Hinweis zu Bildern `chat.images.hintNoVision`), `CH-6` (Text in `EF-5` und `EF-6`), `CH-7` (`compact.*`). Aktionen, Werkzeug-Stände (`toolCall.status.*`), Rückfrage-Karten, Statistikzeile und Verdichtungs-Marke behalten ihre Schlüssel. Die Texte „Modell ohne Werkzeuge“ stehen in `EF-8`.
+
 ---
 
 ### 5. Eingabefeld mit „+“-Menü
@@ -717,12 +1042,12 @@ Rechts neben der Spalte: das Seitenpanel (Fläche 6).
 4. `EF-4` **Hinweis-Zone.** Bei Bedarf: Warnung „Kontext zu knapp“ mit Knopf zum Erhöhen; Recherche-Startkarte (Stufe wählen, Hinweis, Warnungen, Starten, Abbrechen); Meldung zu einem Anhang-Problem.
 5. `EF-5` **Textfeld.** Wächst mit dem Text bis zu einer Höchsthöhe, dann scrollt es. Enter sendet, Umschalt+Enter macht eine neue Zeile, Strg+V hängt eine Datei aus der Zwischenablage an.
 6. `EF-6` **Werkzeugzeile.** Links: Büroklammer (Dateiauswahl), „+“ (Menü, zeigt offen oder zu). Rechts: Modellauswahl (zugänglicher Name beginnt mit „Modell“ und nennt das gewählte Modell), dann Senden (zugänglicher Name „Senden“) oder, solange eine Antwort läuft, Stopp an derselben Stelle.
-7. `EF-7` **„+“-Menü, erste Ebene.** Sechs Zeilen in fester Reihenfolge: Wissen, Werkzeuge, Skills, E-Mail, Recherche, Internet. Jede Zeile: Symbol, Name, eine erklärende Zeile, rechts der Zustand in Worten (zum Beispiel der Name der Sammlung, „2 Server“, „aus“).
+7. `EF-7` **„+“-Menü, erste Ebene.** Sechs Zeilen in fester Reihenfolge: Wissen, Werkzeuge, Skills, E-Mail, Recherche, Internet. Jede Zeile: Symbol, Name, eine erklärende Zeile, rechts der Zustand in Worten (zum Beispiel der Name der Sammlung, „2 MCP-Server“, „aus“).
 8. `EF-8` **Untermenüs.** Je Zeile außer Recherche:
-   - **Wissen:** Sammlungen mit Haken (je mit Dateien und Abschnitten oder „noch nicht eingelesen“); Haken „Treffer vom Modell neu sortieren“; Trennlinie; „Verwalten …“.
+   - **Wissen:** Sammlungen mit Haken (je mit Dateien und Abschnitten oder „noch nicht eingelesen“); Haken „Treffer vom Modell neu sortieren“; Abstand (Gruppe); „Verwalten …“.
    - **Werkzeuge:** MCP-Server mit Haken (je mit Zahl der nutzbaren Werkzeuge oder „ausgeschaltet“); Weg zu Einstellungen → MCP-Server.
-   - **Skills:** Skills mit Haken (je mit Beschreibung); Hinweis, wenn das Modell nicht alle sieht; Trennlinie; „Verwalten …“.
-   - **E-Mail:** Konten mit Haken; Trennlinie; „Verwalten …“ (Postfach). Ohne Konto: Weg zu Einstellungen → E-Mail.
+   - **Skills:** Skills mit Haken (je mit Beschreibung); Hinweis, wenn das Modell nicht alle sieht; Abstand (Gruppe); „Verwalten …“.
+   - **E-Mail:** Konten mit Haken; Abstand (Gruppe); „Verwalten …“ (Seite E-Mail). Ohne Konto: Weg zu Einstellungen → E-Mail.
    - **Internet:** Haken „Webseiten lesen“ und „Im Web suchen“, je mit einer Zeile, was dabei den PC verlässt; ohne Schlüssel Weg zu Einstellungen → Internet-Suche.
 9. `EF-9` **Hinweiszeile.** Unter dem Feld, leise: Enter sendet, Umschalt+Enter neue Zeile, Strg+/ zeigt alle Kürzel.
 
@@ -735,7 +1060,7 @@ Rechts neben der Spalte: das Seitenpanel (Fläche 6).
 | Zeile „Recherche“ | **ankreuzbarer Menüpunkt** (an oder aus) | Enter oder Leertaste schaltet um; das Menü bleibt offen |
 | Übrige fünf Zeilen | Menüpunkt, der ein Untermenü öffnet; der Zustand steht im zugänglichen Namen | Enter, → oder Klick öffnet; ← oder Esc kehrt zur Zeile zurück |
 | Einträge im Untermenü | **ankreuzbare Menüpunkte** | Enter oder Leertaste schaltet um; das Untermenü bleibt offen, damit mehrere Haken in einem Zug gehen |
-| „Verwalten …“ | **ein eigener, letzter Menüpunkt des Untermenüs**, nach einer Trennlinie, als Link zur Seite | nie ein zweiter Punkt in derselben Zeile; in der Reihenfolge der Pfeiltasten erreichbar |
+| „Verwalten …“ | **ein eigener, letzter Menüpunkt des Untermenüs**, nach einem Abstand (Gruppe, für Hilfstechnik als Trenner gekennzeichnet), als Link zur Seite | nie ein zweiter Punkt in derselben Zeile; in der Reihenfolge der Pfeiltasten erreichbar |
 | Warnungen und Hinweise | Text, der zum betroffenen Punkt gehört | wird mit dem Punkt vorgelesen |
 
 In jeder Zeile gibt es damit genau ein Ziel. Der Preis: „Verwalten …“ liegt einen Schritt tiefer als im Mock (dort neben dem Eintrag). Dagegen stehen die zwei weiteren Einstiege aus §IA (Einstellungen, Palette P-05 bis P-07). Esc im Menü stoppt keine laufende Antwort (heutiges Verhalten).
@@ -746,10 +1071,10 @@ In jeder Zeile gibt es damit genau ein Ziel. Der Preis: „Verwalten …“ lieg
 
 | Zustand | Inhalt |
 |---|---|
-| Leer | Kein Text und kein Anhang: Platzhalter im Textfeld, „Senden“ gesperrt. Untermenü ohne Einträge (keine Sammlung, kein Server, kein Skill, kein Konto): ein Satz, was hier stünde, und der Weg zur Verwaltung. |
+| Leer | Kein Text und kein Anhang: Platzhalter im Textfeld, „Senden“ gesperrt. Untermenü ohne Einträge (keine Sammlung, kein MCP-Server, kein Skill, kein Konto): ein Satz, was hier stünde, und der Weg zur Verwaltung. |
 | Lädt | Anhang wird gelesen: „Wird gelesen“, „Senden“ gesperrt. Untermenü fragt seine Liste ab: Platzhalter-Zeile. Antwort läuft: „Stopp“ statt „Senden“, Tippen bleibt möglich. |
 | Fehler | Anhang-Problem: Meldung in `EF-4` mit Grund und Ausweg. Heute verschwindet sie nach 8 Sekunden; Empfehlung für den Umbau: Sie bleibt bis zur nächsten Eingabe, damit niemand sie verpasst (WCAG 2.2.1). Kontext zu knapp: Warnung mit Knopf oder Ausweg. |
-| Ollama nicht erreichbar | Textfeld, Büroklammer und Senden gesperrt; der Platzhalter nennt den Grund. Die Modellauswahl zeigt „keine Modelle“. Chips bleiben sichtbar. „+“ bleibt bedienbar, damit „Verwalten …“ erreichbar bleibt. |
+| Ollama nicht erreichbar | Textfeld, Büroklammer und Senden gesperrt; der Platzhalter nennt den Grund. Die Modellauswahl zeigt „Ollama nicht erreichbar“ („Keine Modelle“ nur, wenn nichts installiert ist). Chips bleiben sichtbar. „+“ bleibt bedienbar, damit „Verwalten …“ erreichbar bleibt. |
 | Kein Modell installiert | wie oben, mit Weg zu „Modelle“ statt zur Status-Seite. |
 | Modell ohne Werkzeuge | Warnzeichen an Werkzeuge, E-Mail und Internet in `EF-7` und an ihren Chips; das Untermenü erklärt es und nennt geeignete Modelle. Skills: Hinweis, dass nur eingeschaltete Skills gelten. |
 | Modell ohne Bild-Fähigkeit | Bilder werden abgelehnt, mit Vorschlag eines installierten Modells, das Bilder kann. |
@@ -759,6 +1084,84 @@ In jeder Zeile gibt es damit genau ein Ziel. Der Preis: „Verwalten …“ lieg
 **Ausgang:** laufender Chat; Verwaltungsseiten über „Verwalten …“; Einstellungen über die Hinweise.
 
 **Breite:** so breit wie die Lesespalte. Das „+“-Menü ist 410 px breit und öffnet nach oben; das Untermenü öffnet rechts daneben, bei zu wenig Platz ersetzt es die erste Ebene (mit „Zurück“ als erstem Punkt). Mehr Chips als eine Zeile brechen um.
+
+**Texte (Phase 5)**
+
+| ID | Art | DE | EN |
+|---|---|---|---|
+| `EF-2` Chip | Beschriftung | Wissen: {{name}} | Knowledge: {{name}} |
+| `EF-2` Chip, mehrere | Beschriftung | Wissen: {{count}} Sammlungen | Knowledge: {{count}} collections |
+| `EF-2` Chip | Beschriftung | Werkzeuge: {{count}} | Tools: {{count}} |
+| `EF-2` Chip | Beschriftung | Skills: {{count}} | Skills: {{count}} |
+| `EF-2` Chip | Beschriftung | E-Mail: {{name}} | E-mail: {{name}} |
+| `EF-2` Chip | Beschriftung | Recherche | Research |
+| `EF-2` Chip | Beschriftung | Internet: lesen | Internet: read |
+| `EF-2` Chip | Beschriftung | Internet: lesen und suchen | Internet: read and search |
+| `EF-2` Chip, Vorlage, `templates.active` | Beschriftung | Vorlage: {{name}} | Template: {{name}} |
+| `EF-2` × am Chip | Beschriftung | {{name}} entfernen | Remove {{name}} |
+| `EF-2` Chip-Name | Tooltip | Auswahl ändern | Change selection |
+| `EF-2` Warnzeichen am Chip | Tooltip | Das gewählte Modell kann keine Tools | The selected model can’t use tools |
+| `EF-4` `chat.files.tooMany` | Fehler | Höchstens {{max}} Dateien pro Nachricht. Die übrigen wurden nicht angehängt. Sende sie in einer zweiten Nachricht. | At most {{max}} files per message. The rest were not attached. Send them in a second message. |
+| `EF-4` `chat.files.tooBig` | Fehler | „{{name}}“ ist zu groß (höchstens {{max}} MB). Die Datei wurde nicht angehängt. Nimm eine kleinere Datei oder teile sie auf. | “{{name}}” is too large (at most {{max}} MB). The file was not attached. Use a smaller file or split it. |
+| `EF-4` `chat.files.unreadable` | Fehler | „{{name}}“ kann nicht gelesen werden. Das Format wird nicht unterstützt, oder die Datei ist beschädigt. Speichere sie als PDF, Word oder Text und hänge sie noch einmal an. | “{{name}}” cannot be read. The format is not supported, or the file is damaged. Save it as PDF, Word or text and attach it again. |
+| `EF-5` Normal, `chat.inputPlaceholder` | Platzhalter | Nachricht schreiben | Write a message |
+| `EF-5` Ollama nicht erreichbar | Platzhalter | Gesperrt: Ollama ist nicht erreichbar | Locked: Ollama is not reachable |
+| `EF-5` Kein Modell installiert | Platzhalter | Gesperrt: kein Modell installiert | Locked: no model installed |
+| `EF-5` Modelle laden | Platzhalter | Modellliste wird geladen | Model list is loading |
+| `EF-6` Büroklammer, `chat.attach.button` | Tooltip | Datei, Tabelle oder Bild anhängen | Attach a file, table or image |
+| `EF-6` „+“, aria-label | Tooltip | Mehr hinzufügen | Add more |
+| `EF-6` Modellauswahl, aria-label | Beschriftung | Modell: {{name}} | Model: {{name}} |
+| `EF-6` Modellauswahl, nichts installiert, `chat.noModels` | Beschriftung | Keine Modelle | No models |
+| `EF-6` Modellauswahl, Ollama nicht erreichbar | Beschriftung | Ollama nicht erreichbar | Ollama not reachable |
+| `EF-6` Modellauswahl geöffnet, Ollama nicht erreichbar | Hinweis | Es gibt keine Liste, weil Ollama nicht erreichbar ist. Starte Ollama; LocalDesk prüft von selbst weiter. | There is no list because Ollama is not reachable. Start Ollama; LocalDesk keeps checking on its own. |
+| `EF-6` Senden, aria-label `chat.send` | Beschriftung | Senden | Send |
+| `EF-6` Senden | Tooltip | Senden · Enter | Send · Enter |
+| `EF-6` Stopp, `chat.stop` | Tooltip | Stopp · Esc | Stop · Esc |
+| `EF-7` Zeile | Beschriftung | Wissen | Knowledge |
+| `EF-7` Zeile 2 | Beschriftung | Antwort aus deinen Dokumenten | Answers from your documents |
+| `EF-7` Zeile | Beschriftung | Werkzeuge | Tools |
+| `EF-7` Zeile 2 | Beschriftung | Dateien und mehr über MCP-Server | Files and more through MCP servers |
+| `EF-7` Zeile | Beschriftung | Skills | Skills |
+| `EF-7` Zeile 2 | Beschriftung | Anleitungen für Routineaufgaben | Instructions for recurring tasks |
+| `EF-7` Zeile | Beschriftung | E-Mail | E-mail |
+| `EF-7` Zeile 2 | Beschriftung | Das Modell liest deine Mails | The model reads your mail |
+| `EF-7` Zeile | Beschriftung | Recherche | Research |
+| `EF-7` Zeile 2 | Beschriftung | Bericht mit Quellen · einmalig | Report with sources · one time |
+| `EF-7` Zeile | Beschriftung | Internet | Internet |
+| `EF-7` Zeile 2 | Beschriftung | Webseiten lesen, im Web suchen | Read pages, search the web |
+| `EF-7` Zustand | Status | aus | off |
+| `EF-7` Zustand | Status | an | on |
+| `EF-7` Zustand, eine Sammlung | Status | {{name}} | {{name}} |
+| `EF-7` Zustand, mehrere | Status | {{count}} Sammlungen | {{count}} collections |
+| `EF-7` Zustand | Status | {{count}} MCP-Server | {{count}} MCP servers |
+| `EF-7` Zustand | Status | {{count}} an | {{count}} on |
+| `EF-7` Zustand | Status | lesen | read |
+| `EF-7` Zustand | Status | lesen und suchen | read and search |
+| `EF-8` Link im Untermenü Wissen | Beschriftung | Wissen verwalten | Manage knowledge |
+| `EF-8` Link im Untermenü Skills, `skillPicker.manage` | Beschriftung | Skills verwalten | Manage skills |
+| `EF-8` Link im Untermenü E-Mail | Beschriftung | E-Mail verwalten | Manage e-mail |
+| `EF-8` Link im Untermenü Werkzeuge | Beschriftung | MCP-Server verwalten | Manage MCP servers |
+| `EF-8` Rückweg bei schmalem Fenster | Beschriftung | Zurück | Back |
+| `EF-8` Wissen, Sammlung | Beschriftung | {{files}} Dateien · {{chunks}} Abschnitte | {{files}} files · {{chunks}} passages |
+| `EF-8` Wissen, `knowledgePicker.empty` | Beschriftung | noch nicht eingelesen | not indexed yet |
+| `EF-8` Wissen, `knowledgePicker.rerank` | Beschriftung | Treffer vom Modell neu sortieren | Re-rank results with the model |
+| `EF-8` Wissen | Leer | Du hast noch keine Sammlung. Eine Sammlung macht deine Dokumente im Chat durchsuchbar. [Wissen verwalten] | You have no collection yet. A collection makes your documents searchable in chat. [Manage knowledge] |
+| `EF-8` Werkzeuge | Leer | Es ist noch kein MCP-Server eingerichtet. Ein MCP-Server gibt dem Modell Tools, etwa zum Lesen von Dateien. [MCP-Server verwalten] | No MCP server is set up yet. An MCP server gives the model tools, for example to read files. [Manage MCP servers] |
+| `EF-8` Werkzeuge, `mcpPicker.disabled` | Beschriftung | ausgeschaltet · in den Einstellungen einschalten | off · turn on in Settings |
+| `EF-8` Skills | Leer | Du hast noch keine Skills. Ein Skill ist eine Anleitung für das Modell und besteht nur aus Text. [Skills verwalten] | You have no skills yet. A skill is an instruction for the model and consists of text only. [Manage skills] |
+| `EF-8` E-Mail | Leer | Es ist noch kein Konto angemeldet. Melde dich mit Google an, damit das Modell Mails lesen kann. [E-Mail verwalten] | No account is signed in yet. Sign in with Google so the model can read mail. [Manage e-mail] |
+| `EF-8` Internet | Beschriftung | Webseiten lesen | Read web pages |
+| `EF-8` Internet, Zeile 2 | Beschriftung | Die Seite sieht deine IP-Adresse | The site sees your IP address |
+| `EF-8` Internet | Beschriftung | Im Web suchen | Search the web |
+| `EF-8` Internet, Zeile 2 | Beschriftung | Suchanfrage geht an ollama.com | The search request goes to ollama.com |
+| `EF-8` Internet, kein Schlüssel | Leer | Für die Suche fehlt der Ollama-Schlüssel. Ohne ihn kann das Modell nicht im Web suchen. [Internet-Suche einrichten] | The Ollama key is missing for search. Without it the model cannot search the web. [Set up internet search] |
+| `EF-8` Modell ohne Werkzeuge | Hinweis | Das gewählte Modell kann keine Tools nutzen. Wähle zum Beispiel qwen3, gpt-oss oder gemma4. | The selected model can’t use tools. Choose qwen3, gpt-oss or gemma4, for example. |
+| `EF-8` Skills, `skillPicker.noTools` | Hinweis | Dieses Modell kann keine Werkzeuge und lädt Skills deshalb nicht selbst. Es gelten nur die Skills, die du hier einschaltest. | This model can’t use tools and so does not load skills itself. Only the skills you turn on here apply. |
+| `EF-9` Hinweiszeile, `chat.hint` | Beschriftung | Enter senden · Umschalt+Enter neue Zeile · Strg+/ alle Tastenkürzel | Enter to send · Shift+Enter new line · Ctrl+/ all shortcuts |
+
+**Sammlung und „Verwalten“ unterscheiden (offener Punkt aus dem Mock-Review).** Im Untermenü „Wissen“ sind beide Arten von Zeilen schon an den Wörtern zu trennen: Eine **Sammlung** ist ein Name („Studium“) mit Haken links und einer Zeile darunter („12 Dateien · 340 Abschnitte“). Der **Link** ist ein Verb mit Objekt („Wissen verwalten“), steht nach dem Abstand als letzter Punkt, hat keine Haken-Spalte und trägt rechts ein Pfeil-Symbol; er heißt in der Palette (P-05) und in den Einstellungen („Verwalten“-Gruppe) genauso. Auf der ersten Ebene steht rechts bei „Wissen“ der Name der gewählten Sammlung („Studium“), nie das Wort „verwalten“. Die Optik dazu steht in `DESIGN.md` §9 Menü und ist unverändert. In dieser Spec steht „Verwalten …“ weiter als Kurzname für diese drei Links.
+
+**Ohne neuen Text (Schlüssel bleiben):** `EF-1` (`chat.attach.drop`), `EF-3` („Wird gelesen …“ `chat.attach.preparing`, Entfernen-Namen `chat.files.remove`, `chat.images.remove`). Die übrigen Anhang-Meldungen und die Recherche-Startkarte (`research.*`) behalten ihre Texte; sie nennen schon Grund und Ausweg.
 
 ---
 
@@ -772,8 +1175,8 @@ In jeder Zeile gibt es damit genau ein Ziel. Der Preis: „Verwalten …“ lieg
 1. `SP-1` **Kopf.** Vier Reiter: Quellen, Projekt, Kontext, GPU. Der Reiter „Kontext“ trägt den Füllstand als Punkt mit Text für Hilfstechnik. Rechts „Schließen“.
 2. `SP-2` **Quellen.** Eine Zeile, worauf sich die Liste bezieht (die letzte Antwort mit Wissen). Liste der Textstellen: Nummer, Datei, aufklappbar zum Text, Ähnlichkeit, „Datei öffnen“. Hinweis, wenn das Modell die Reihenfolge geprüft hat.
 3. `SP-3` **Projekt.** Link „Projekt bearbeiten“, die Anweisungen (nur lesen), Projekt-Dokumente mit „Einlesen“, Fortschritt und Dateiliste (Filter „nur Probleme“).
-4. `SP-4` **Kontext.** Füllstand: belegt von gesamt, aufgeteilt nach Teilen (Zusammenfassung, Erinnerungen, Anweisungen, Verlauf, Bilder, Dateien, Wissen, Werkzeuge, Skills), mit dem Hinweis, dass es eine Schätzung ist. Bei knappem oder vollem Kontext: Warnung, Knopf „Kontextlänge auf N erhöhen“ mit Schätzung des zusätzlichen Grafikspeichers, oder der Hinweis, dass das Modell nicht mehr kann. „Älteren Teil verdichten“ (öffnet `CH-7`). Bei aktiver Verdichtung: was sie spart und „Verdichtung aufheben“. Darunter die gemessenen Werte der letzten Antwort. Lässt sich der zusätzliche Grafikspeicher nicht schätzen (keine NVIDIA-Karte, Server auf anderem Rechner oder das Modell erlaubt keine Schätzung), bleibt „Erhöhen“ benutzbar und sagt in einem Satz, dass der Mehrbedarf nicht vorab bekannt ist. Ist kein Modell gewählt, weil keines installiert ist, steht statt des Füllstands ein Satz mit Weg zu „Modelle“; Erhöhen und Verdichten sind gesperrt. Darstellung des Füllstands: Phase 6.
-5. `SP-5` **GPU.** Grafikkarte und geladene Modelle in Kurzform (dieselben Inhalte wie die Status-Seite). Ohne NVIDIA-Karte oder bei einem Server auf anderem Rechner steht statt der Messwerte der Grund; das ist ein normaler Zustand, kein Fehler.
+4. `SP-4` **Kontext.** Füllstand: belegt von gesamt, aufgeteilt nach Teilen (Zusammenfassung, Erinnerungen, Anweisungen, Verlauf, Bilder, Dateien, Wissen, Werkzeuge, Skills), mit dem Hinweis, dass es eine Schätzung ist. Bei knappem oder vollem Kontext: Warnung, Knopf „Kontextlänge auf N erhöhen“ mit Schätzung des zusätzlichen Grafikspeichers, oder der Hinweis, dass das Modell nicht mehr kann. „Älteren Teil verdichten“ (öffnet `CH-7`). Bei aktiver Verdichtung: was sie spart und „Verdichtung aufheben“. Darunter die gemessenen Werte der letzten Antwort. Lässt sich der zusätzliche Grafikspeicher nicht schätzen (keine NVIDIA-Karte, Ollama-Server auf anderem PC oder das Modell erlaubt keine Schätzung), bleibt „Erhöhen“ benutzbar und sagt in einem Satz, dass der Mehrbedarf nicht vorab bekannt ist. Ist kein Modell gewählt, weil keines installiert ist, steht statt des Füllstands ein Satz mit Weg zu „Modelle“; Erhöhen und Verdichten sind gesperrt. Darstellung des Füllstands: Phase 6.
+5. `SP-5` **GPU.** Grafikkarte und geladene Modelle in Kurzform (dieselben Inhalte wie die Status-Seite). Ohne NVIDIA-Karte oder bei einem Ollama-Server auf anderem PC steht statt der Messwerte der Grund; das ist ein normaler Zustand, kein Fehler.
 6. `SP-6` **Zweite Ansicht: Chat-Einstellungen.** Kopf mit Titel und „Schließen“. Felder: Systemprompt; Kontextlänge (Auswahl, Standard von Ollama); Temperatur (Regler, „Auf Standard zurücksetzen“); Seed; Denken (An, Aus oder Stufen, je nach Modell). „Als Vorlage speichern“ (Name, Speichern, Rückmeldung). Fußzeile: gilt ab der nächsten Nachricht und wird mit dem Chat gespeichert.
 
 **Zustände:**
@@ -781,7 +1184,7 @@ In jeder Zeile gibt es damit genau ein Ziel. Der Preis: „Verwalten …“ lieg
 | Zustand | Inhalt |
 |---|---|
 | Leer | Quellen: Satz, dass sie erscheinen, sobald eine Antwort Wissen benutzt hat, mit Weg zum „+“-Menü. Projekt: Satz, dass der Chat zu keinem Projekt gehört und wie er in eines kommt. Projekt ohne Anweisungen oder Dokumente: je ein Satz. Kontext: bei neuem Chat der Grundbedarf; ohne installiertes Modell der Satz mit Weg zu „Modelle“ (`SP-4`). GPU, kein Modell geladen: Satz, dass es beim nächsten Senden geladen wird und dann hier steht, mit Link zur Status-Seite. |
-| Keine NVIDIA-Karte oder Server auf anderem Rechner | Normaler Zustand, kein Fehler (wie Ablauf 5 und `ST-3`). GPU (`SP-5`): ein Satz, warum hier nichts gemessen wird; die geladenen Modelle darunter zeigen weiter, wie viel Speicher Ollama meldet. Kontext (`SP-4`): „Erhöhen“ ohne Speicherschätzung, mit dem Satz dazu. |
+| Keine NVIDIA-Karte oder Ollama-Server auf anderem PC | Normaler Zustand, kein Fehler (wie Ablauf 5 und `ST-3`). GPU (`SP-5`): ein Satz, warum hier nichts gemessen wird; die geladenen Modelle darunter zeigen weiter, wie viel Speicher Ollama meldet. Kontext (`SP-4`): „Erhöhen“ ohne Speicherschätzung, mit dem Satz dazu. |
 | Lädt | Projekt-Dokumente und GPU: Platzhalter, bis die Abfrage da ist. Einlesen läuft: Fortschritt mit Abbrechen. |
 | Fehler | Datei lässt sich nicht öffnen oder Einlesen scheitert: Meldung im Reiter mit Ursache. Grafikkarte vorhanden, aber die Abfrage scheitert: Ursache im Reiter GPU (eine fehlende NVIDIA-Karte ist kein Fehler, siehe eigene Zeile). |
 | Ollama nicht erreichbar | Kontext: Die Schätzung bleibt (sie wird in der App gerechnet); Erhöhen und Verdichten sind gesperrt mit Grund. GPU: nennt die Ursache und führt zur Status-Seite. Quellen und Projekt bleiben lesbar. Chat-Einstellungen bleiben änderbar. |
@@ -791,6 +1194,30 @@ In jeder Zeile gibt es damit genau ein Ziel. Der Preis: „Verwalten …“ lieg
 **Ausgang:** zurück in den Chat (Schließen, Esc in der Überlagerung); Projektseite; Status-Seite; die geöffnete Datei im zugehörigen Programm.
 
 **Breite:** 310 px. Ab 1100 px Fenster neben dem Chat, darunter als Überlagerung mit Abdunkelung (§IA): Fokus bleibt im Panel, Esc und Klick daneben schließen, der Fokus kehrt auf den öffnenden Knopf zurück.
+
+**Texte (Phase 5)**
+
+| ID | Art | DE | EN |
+|---|---|---|---|
+| `SP-1` Reiter, `sidePanel.tab.sources` | Beschriftung | Quellen | Sources |
+| `SP-1` Reiter, `sidePanel.tab.project` | Beschriftung | Projekt | Project |
+| `SP-1` Reiter, `sidePanel.tab.context` | Beschriftung | Kontext | Context |
+| `SP-1` Reiter, `sidePanel.tab.gpu` | Beschriftung | GPU | GPU |
+| `SP-1` Schließen, `sidePanel.close` | Beschriftung | Seitenpanel schließen | Close side panel |
+| `SP-2` | Leer | Noch keine Quellen. Sie erscheinen hier, sobald eine Antwort Wissen benutzt hat. [Wissen verwalten] | No sources yet. They appear here as soon as an answer has used knowledge. [Manage knowledge] |
+| `SP-2` Datei öffnen scheitert | Fehler | „{{name}}“ ließ sich nicht öffnen: {{error}}. Die Datei wurde womöglich verschoben oder gelöscht. Füge den Ordner unter Wissen neu hinzu. | “{{name}}” could not be opened: {{error}}. The file was possibly moved or deleted. Add the folder again under Knowledge. |
+| `SP-3` Chat ohne Projekt | Leer | Dieser Chat gehört zu keinem Projekt. Ziehe ihn in der Seitenleiste auf ein Projekt, dann gelten dessen Anweisungen und Dokumente. [Verschieben nach …] | This chat is not in a project. Drag it onto a project in the sidebar and that project’s instructions and documents apply. [Move to …] |
+| `SP-3` Projekt ohne Anweisungen | Leer | Dieses Projekt hat keine Anweisungen. Sie gelten für jeden Chat im Projekt. [Projekt bearbeiten] | This project has no instructions. They apply to every chat in the project. [Edit project] |
+| `SP-3` Projekt ohne Dokumente | Leer | Dieses Projekt hat keine Dokumente. Sie werden in jedem Chat des Projekts durchsucht. [Projekt bearbeiten] | This project has no documents. They are searched in every chat of the project. [Edit project] |
+| `SP-4` Kein Modell installiert | Leer | Kein Modell installiert, darum gibt es keinen Füllstand. Lade zuerst ein Modell. [Modell herunterladen] | No model installed, so there is no fill level. Download a model first. [Download a model] |
+| `SP-4` Ollama nicht erreichbar | Hinweis | Erhöhen und Verdichten sind gesperrt, weil Ollama nicht erreichbar ist. Die Schätzung bleibt. | Increasing and compacting are locked because Ollama is not reachable. The estimate stays. |
+| `SP-4` Teil, `sidePanel.part.tools` | Beschriftung | Tools | Tools |
+| `SP-5` Kein Modell geladen | Leer | Kein Modell geladen. Es wird beim nächsten Senden geladen und erscheint dann hier. [Status ansehen] | No model loaded. It loads when you send the next message and then appears here. [Open status] |
+| `SP-5` Ollama nicht erreichbar | Fehler | Ollama ist nicht erreichbar, darum gibt es keine Werte. Ollama läuft nicht, oder die Adresse stimmt nicht. Starte Ollama; LocalDesk prüft von selbst weiter. [Status ansehen] | Ollama is not reachable, so there are no values. Ollama is not running, or the address is wrong. Start Ollama; LocalDesk keeps checking on its own. [Open status] |
+| `SP-5` Abfrage scheitert, `gpu.error` | Fehler | Die Grafikkarte ließ sich nicht abfragen: {{error}}. Der NVIDIA-Treiber hat nicht geantwortet. Prüfe den Treiber; die übrigen Reiter sind nicht betroffen. | The graphics card could not be read: {{error}}. The NVIDIA driver did not respond. Check the driver; the other tabs are not affected. |
+| `SP-6` Titel, `settingsPanel.title` | Beschriftung | Chat-Einstellungen | Chat settings |
+
+**Ohne neuen Text (Schlüssel bleiben):** `SP-6` (Felder und Hinweise `settingsPanel.*`; `contextHint` und `contextHintMax` bleiben), Kontext-Hinweise `sidePanel.level.*`, `sidePanel.vramEstimate`, `sidePanel.vramFree`, `sidePanel.vramUnknown`, `sidePanel.atMaximum`, `sidePanel.measured`, `sources.*` (Ähnlichkeit, „Datei öffnen“).
 
 ---
 
@@ -810,7 +1237,7 @@ In jeder Zeile gibt es damit genau ein Ziel. Der Preis: „Verwalten …“ lieg
 
 | Zustand | Inhalt |
 |---|---|
-| Leer | Keine Vorlage: Liste zeigt nur „Neue Vorlage“, rechts `VO-4`. Auswahlfelder ohne Einträge (keine Sammlung, kein Server, kein Skill): je ein Satz mit Weg zur Verwaltung. Kein Modell installiert: Die Modellauswahl bietet nur „kein festes Modell“ und sagt das in einem Satz mit Weg zu „Modelle“; Anlegen und Speichern bleiben möglich, „Chat damit starten“ führt auf die Startseite mit gesperrtem Eingabefeld und Grund. |
+| Leer | Keine Vorlage: Liste zeigt nur „Neue Vorlage“, rechts `VO-4`. Auswahlfelder ohne Einträge (keine Sammlung, kein MCP-Server, kein Skill): je ein Satz mit Weg zur Verwaltung. Kein Modell installiert: Die Modellauswahl bietet nur „kein festes Modell“ und sagt das in einem Satz mit Weg zu „Modelle“; Anlegen und Speichern bleiben möglich, „Chat damit starten“ führt auf die Startseite mit gesperrtem Eingabefeld und Grund. |
 | Lädt | Liste: Platzhalter-Zeilen. Modellauswahl: gesperrt, bis die Modelle da sind. |
 | Fehler | Speichern oder Löschen scheitert: Meldung am Formular mit Ursache, Eingaben bleiben. Ungespeicherte Änderungen beim Verlassen: Die App fragt nicht nach (heutiges Verhalten); Empfehlung für den Umbau: nachfragen. |
 | Ollama nicht erreichbar | Vorlagen sind gespeichert und bleiben lesbar und änderbar. Die Modellauswahl zeigt nur das gespeicherte Modell und nennt den Grund. „Chat damit starten“ bleibt möglich und führt in den gesperrten Chat mit Banner. |
@@ -820,6 +1247,27 @@ In jeder Zeile gibt es damit genau ein Ziel. Der Preis: „Verwalten …“ lieg
 **Ausgang:** Startseite mit Vorlagen-Chip; bleibt auf der Seite nach dem Speichern.
 
 **Breite:** Liste 270 px, Formular im Rest (mindestens 546 px), höchstens 720 px breit. Bei jeder Stufe zweispaltig.
+
+**Texte (Phase 5)**
+
+| ID | Art | DE | EN |
+|---|---|---|---|
+| `VO-1` `templates.new` | Beschriftung | Neue Vorlage | New template |
+| `VO-1` `templates.anyModel` | Beschriftung | Kein festes Modell | No fixed model |
+| `VO-1` Liste ohne Vorlage | Leer | Du hast noch keine Vorlagen. Lege die erste an. [Neue Vorlage] | You have no templates yet. Create your first one. [New template] |
+| `VO-2` `templates.startChat` | Beschriftung | Chat damit starten | Start a chat with it |
+| `VO-2` gesperrt, `templates.saveFirst` | Tooltip | Erst speichern | Save first |
+| `VO-3` Auswahl ohne Sammlung | Leer | Noch keine Sammlung. Eine Sammlung macht Dokumente im Chat durchsuchbar. [Wissen verwalten] | No collection yet. A collection makes documents searchable in chat. [Manage knowledge] |
+| `VO-3` Auswahl ohne MCP-Server | Leer | Noch kein MCP-Server. Ein MCP-Server gibt dem Modell Tools, etwa zum Lesen von Dateien. [MCP-Server einrichten] | No MCP server yet. An MCP server gives the model tools, for example to read files. [Set up an MCP server] |
+| `VO-3` Auswahl ohne Skill | Leer | Noch keine Skills. Ein Skill ist eine Anleitung für das Modell. [Skills verwalten] | No skills yet. A skill is an instruction for the model. [Manage skills] |
+| `VO-3` Kein Modell installiert | Leer | Kein Modell installiert. Du kannst die Vorlage trotzdem speichern und später ein Modell wählen. [Modell herunterladen] | No model installed. You can still save the template and choose a model later. [Download a model] |
+| `VO-3` Modell ohne Werkzeuge | Hinweis | Dieses Modell kann keine Tools. MCP-Server wirken damit nicht, und Skills gelten nur, soweit du sie hier anhakst. Geeignet sind zum Beispiel qwen3, gpt-oss oder gemma4. | This model can’t use tools. MCP servers have no effect with it, and skills apply only where you tick them here. Suitable models are qwen3, gpt-oss or gemma4, for example. |
+| `VO-3` Ollama nicht erreichbar | Hinweis | Die Auswahl zeigt nur das gespeicherte Modell, weil Ollama nicht erreichbar ist. | The list shows only the saved model because Ollama is not reachable. |
+| `VO-3` Speichern scheitert | Fehler | Die Vorlage wurde nicht gespeichert: {{error}}. Deine Eingaben bleiben stehen. Versuche es noch einmal. | The template was not saved: {{error}}. Your input is kept. Try again. |
+| `VO-3` Löschen scheitert | Fehler | Die Vorlage wurde nicht gelöscht: {{error}}. Sie ist noch da. Versuche es noch einmal. | The template was not deleted: {{error}}. It is still there. Try again. |
+| `VO-4` `templates.intro` | Leer | Vorlagen speichern Modell, Systemprompt und Parameter für wiederkehrende Aufgaben, zum Beispiel „Python-Tutor“. Wähle links eine aus oder lege eine neue an. [Neue Vorlage] | Templates save the model, system prompt and parameters for recurring tasks, for example “Python tutor”. Pick one on the left or create a new one. [New template] |
+
+**Ohne neuen Text (Schlüssel bleiben):** `VO-2` übrige Knöpfe (`templates.save`, `templates.delete`), `VO-3` Felder (`templates.name`, `templates.model`, `templates.modelMissing`, `settingsPanel.*`). Bestätigung „Vorlage löschen“: `templates.confirmDelete` mit dem Muster aus „Rückfrage vor Folgenreichem“.
 
 ---
 
@@ -855,16 +1303,35 @@ In jeder Zeile gibt es damit genau ein Ziel. Der Preis: „Verwalten …“ lieg
 
 **Breite:** Liste 270 px, Detail im Rest, höchstens 720 px. Bei jeder Stufe zweispaltig.
 
+**Texte (Phase 5)**
+
+| ID | Art | DE | EN |
+|---|---|---|---|
+| `WI-1` `knowledge.new` | Beschriftung | Neue Sammlung | New collection |
+| `WI-1` Liste ohne Sammlung | Leer | Du hast noch keine Sammlung. Lege die erste an. [Neue Sammlung] | You have no collection yet. Create your first one. [New collection] |
+| `WI-2` `knowledge.index` | Beschriftung | Einlesen | Index |
+| `WI-2` `knowledge.reindex` | Beschriftung | Neu einlesen | Re-index |
+| `WI-2` Ollama nicht erreichbar | Hinweis | Einlesen ist gesperrt, weil Ollama nicht erreichbar ist. Ollama rechnet die Fingerabdrücke auf diesem PC. Starte Ollama; LocalDesk prüft von selbst weiter. | Indexing is locked because Ollama is not reachable. Ollama computes the fingerprints on this PC. Start Ollama; LocalDesk keeps checking on its own. |
+| `WI-3` Embedding-Modell fehlt, `knowledge.modelMissing` | Hinweis | Das Embedding-Modell {{model}} ist auf dem aktiven Ollama-Server nicht installiert. Lade es unter „Modelle“ herunter. | The embedding model {{model}} is not installed on the active Ollama server. Download it under “Models”. |
+| `WI-3` Embedding-Modell fehlt, Knopf | Beschriftung | Modell herunterladen | Download a model |
+| `WI-5` Überschrift | Beschriftung | Ordner und Dateien | Folders and files |
+| `WI-5` Sammlung ohne Ordner und Dateien | Leer | Diese Sammlung hat noch keine Ordner oder Dateien. Füge einen Ordner hinzu, dann kannst du einlesen. [Ordner hinzufügen] | This collection has no folders or files yet. Add a folder, then you can index. [Add folder] |
+| `WI-7` Noch nicht eingelesen | Leer | Die Sammlung ist noch nicht eingelesen. Erst danach findet das Modell Treffer darin. [Einlesen] | The collection is not indexed yet. Only then can the model find results in it. [Index] |
+| `WI-7` Einlesen bricht ab | Fehler | Das Einlesen ist abgebrochen: {{error}}. Was fertig war, bleibt erhalten. Klicke auf „Neu einlesen“, dann kommt der Rest dazu. [Neu einlesen] | Indexing stopped: {{error}}. What was finished is kept. Choose “Re-index” and the rest is added. [Re-index] |
+| `WI-9` `knowledge.intro` | Leer | Eine Sammlung macht deine Dokumente im Chat durchsuchbar. Die Dateien bleiben, wo sie sind; LocalDesk merkt sich nur Abschnitte und ihre Fingerabdrücke. [Neue Sammlung] | A collection makes your documents searchable in chat. Your files stay where they are; LocalDesk only keeps passages and their fingerprints. [New collection] |
+
+**Ohne neuen Text (Schlüssel bleiben):** `WI-2` „Sammlung löschen“ und Bestätigung (`knowledge.delete`, `knowledge.confirmDelete`), `WI-4` (`knowledge.name`), `WI-6` (`knowledge.indexing`, `knowledge.result`, `knowledge.aborted`), `WI-7` Dateizustände und Zähler (`knowledge.status.*`, `knowledge.onlyProblems`, `knowledge.moreFiles`), `WI-8` (`knowledge.modelInfo`), Hinweis Obsidian (`knowledge.obsidianManaged`).
+
 ---
 
 ### 9. E-Mail
 
-**Zweck:** Das eigene Postfach lesen, eine Mail zusammenfassen lassen und Vorschläge zum Sortieren prüfen; nichts wird gesendet oder gelöscht.
+**Zweck:** Die eigenen Mails lesen, eine Mail zusammenfassen lassen und Vorschläge zum Sortieren prüfen; nichts wird gesendet oder gelöscht.
 
-**Einstiege:** „+“-Menü → E-Mail → „Verwalten …“; Einstellungen → Eintrag zum Postfach; Palette P-07. Kein Eintrag in der Seitenleiste; „Zurück zum Chat“ im Seitenkopf wie bei Wissen.
+**Einstiege:** „+“-Menü → E-Mail → „Verwalten …“; Einstellungen → „E-Mail verwalten“; Palette P-07. Kein Eintrag in der Seitenleiste; „Zurück zum Chat“ im Seitenkopf wie bei Wissen.
 
 **Blöcke (in Reihenfolge):**
-1. `EM-1` **Listenkopf.** Konto-Auswahl (nur bei mehreren Konten). Suchfeld (Enter sucht, leer zeigt den Posteingang). „Sortieren vorschlagen“. „Neu laden“.
+1. `EM-1` **Listenkopf.** Konto-Auswahl (nur bei mehreren Konten). Suchfeld (Enter sucht, leer zeigt den Posteingang). „Sortieren vorschlagen“. „Aktualisieren“.
 2. `EM-2` **Liste.** Überschrift „Posteingang“ oder „Suchergebnis“. Zeilen: Marke „ungelesen“, Stern, Absender, Betreff, Datum. Am Ende „Mehr laden“.
 3. `EM-3` **Leser.** Betreff als Überschrift. Aktion „Zusammenfassen“ (während des Laufens „Abbrechen“). Von, An, Cc, Datum. Liste der Anhänge (werden nicht geladen). Text der Mail, nur als Text. Hinweis, wenn nur der Anfang gezeigt wird.
 4. `EM-4` **Zusammenfassung.** Karte über dem Text: Zusammenfassung, Hinweis, welches Modell sie auf diesem PC erstellt hat und dass sie Fehler enthalten kann, „Schließen“.
@@ -876,15 +1343,34 @@ In jeder Zeile gibt es damit genau ein Ziel. Der Preis: „Verwalten …“ lieg
 | Zustand | Inhalt |
 |---|---|
 | Leer | Kein Konto: `EM-6` mit Weg zu den Einstellungen. Keine Mails oder kein Suchtreffer: Satz in der Liste, bei einer Suche mit dem Suchwort und „Posteingang zeigen“. Keine Vorschläge: Satz, dass nichts klar passt, und die Aktion „Labels verwalten“ (mehr passende Labels führen zu mehr Vorschlägen). Keine eigenen Labels: Hinweis, dass das Modell neue vorschlagen darf, und die Aktion „Label anlegen“ (öffnet „Labels verwalten“ mit dem Feld für ein neues Label). |
-| Lädt | Liste und Mail: Platzhalter; „Neu laden“ zeigt die Bewegung. Zusammenfassen und Vorschläge: laufend markiert, mit „Abbrechen“. |
-| Fehler | Postfach antwortet nicht oder die Anmeldung ist abgelaufen: Meldung in der Liste mit Ursache und „Zu den Einstellungen und neu anmelden“. Zusammenfassung oder Vorschläge scheitern: Meldung an der Karte, erneut versuchen. |
-| Ollama nicht erreichbar | Lesen und Suchen gehen weiter (das Postfach kommt von Google, nicht von Ollama). „Zusammenfassen“ und „Vorschläge holen“ sind gesperrt und nennen den Grund. |
+| Lädt | Liste und Mail: Platzhalter; „Aktualisieren“ zeigt die Bewegung. Zusammenfassen und Vorschläge: laufend markiert, mit „Abbrechen“. |
+| Fehler | Gmail ist nicht erreichbar oder die Anmeldung ist abgelaufen: Meldung in der Liste mit Ursache und „Zu den Einstellungen und neu anmelden“. Zusammenfassung oder Vorschläge scheitern: Meldung an der Karte, erneut versuchen. |
+| Ollama nicht erreichbar | Lesen und Suchen gehen weiter (die Mails kommen von Google, nicht von Ollama). „Zusammenfassen“ und „Vorschläge holen“ sind gesperrt und nennen den Grund. |
 
 **Hauptaktion:** im Leser „Zusammenfassen“; in der Sortier-Ansicht „Änderungen übernehmen“.
 
 **Ausgang:** „Zurück zum Chat“; Einstellungen (Konto).
 
 **Breite:** Liste 320 px, Leser im Rest (mindestens 496 px). Bei jeder Stufe zweispaltig.
+
+**Texte (Phase 5)**
+
+| ID | Art | DE | EN |
+|---|---|---|---|
+| `EM-1` `mail.refresh` | Beschriftung | Aktualisieren | Refresh |
+| `EM-1` `mail.search` | Platzhalter | In Gmail suchen | Search Gmail |
+| `EM-2` Posteingang leer, ohne Suche | Leer | Dein Posteingang ist leer. Neue Mails erscheinen hier, sobald sie bei Gmail ankommen. [Aktualisieren] | Your inbox is empty. New mail appears here as soon as it reaches Gmail. [Refresh] |
+| `EM-2` Suche ohne Treffer | Leer | Keine Mails für „{{query}}“. Prüfe die Schreibweise oder suche mit anderen Wörtern. [Posteingang zeigen] | No mail for “{{query}}”. Check the spelling or search with other words. [Show inbox] |
+| `EM-2` Anmeldung abgelaufen, `mail.reauth` | Fehler | Gmail ist nicht erreichbar: {{error}}. Die Anmeldung ist abgelaufen, oder die Verbindung fehlt. Prüfe die Verbindung; sonst melde dich in den Einstellungen neu an. [Zu den Einstellungen und neu anmelden] | Gmail is not reachable: {{error}}. The sign-in has expired, or the connection is missing. Check the connection; otherwise sign in again in Settings. [Go to Settings and sign in again] |
+| `EM-3` Zusammenfassen scheitert | Fehler | Die Zusammenfassung ist fehlgeschlagen: {{error}}. Das Modell hat die Mail nicht verarbeitet. Versuche es noch einmal. [Erneut versuchen] | The summary failed: {{error}}. The model did not process the mail. Try again. [Try again] |
+| `EM-3` Ollama nicht erreichbar | Hinweis | Zusammenfassen ist gesperrt, weil Ollama nicht erreichbar ist. Lesen und Suchen gehen weiter. | Summarizing is locked because Ollama is not reachable. Reading and searching still work. |
+| `EM-5` Ollama nicht erreichbar | Hinweis | Vorschläge holen ist gesperrt, weil Ollama nicht erreichbar ist. Starte Ollama; LocalDesk prüft von selbst weiter. | Getting suggestions is locked because Ollama is not reachable. Start Ollama; LocalDesk keeps checking on its own. |
+| `EM-5` Keine Vorschläge | Leer | Das Modell sieht nichts, das klar zu einem Label oder Stern passt. Mit mehr eigenen Labels fallen die Vorschläge besser aus. [Labels verwalten] | The model sees nothing that clearly fits a label or a star. With more labels of your own the suggestions get better. [Manage labels] |
+| `EM-5` Keine eigenen Labels, `mailSort.noLabels` | Leer | Du hast in Gmail noch keine eigenen Labels. Das Modell darf neue vorschlagen; du bestätigst sie. Oder lege selbst eines an. [Label anlegen] | You have no labels of your own in Gmail yet. The model may suggest new ones; you confirm them. Or create one yourself. [Create label] |
+| `EM-6` Ohne Konto | Leer | Es ist noch kein Konto angemeldet. Melde dich in den Einstellungen mit deinem Google-Konto an. [Zu den Einstellungen] | No account is signed in yet. Sign in with your Google account in Settings. [Go to Settings] |
+| `EM-6` Mit Konto, ohne Auswahl, `mail.noSelection` | Hinweis | Wähle links eine Mail aus. | Pick a mail on the left. |
+
+**Ohne neuen Text (Schlüssel bleiben):** `EM-1` Konto-Auswahl und „Sortieren vorschlagen“ (`mailSort.open`), `EM-2` Überschriften und „Mehr laden“ (`mail.inbox`, `mail.results`, `mail.more`), `EM-3` Leser (`mail.from`, `mail.to`, `mail.attachments`, `mail.truncated`), `EM-4` (`mail.summary`, `mail.summaryHint`), `EM-5` Erklärung, Haken, „Änderungen übernehmen“ (`mailSort.*`, `mailLabels.*`).
 
 ---
 
@@ -924,6 +1410,21 @@ Die festen Anker und die Bestätigungspunkte der Chat-Spec (Fläche 4) gelten hi
 | breit (Inhalt ab 1000 px) | drei Spalten: Sitzungen 270 px, Dateibaum 240 px, Agent im Rest (mindestens 490 px) |
 | schmal (Inhalt unter 1000 px) | zwei Spalten: Dateibaum 240 px, Agent im Rest (mindestens 576 px). Die Sitzungen wandern als Auswahl in den Seitenkopf (aktuelle Sitzung, Liste, „Neue Sitzung“, „Sitzung löschen“ im Menü). |
 
+**Texte (Phase 5)**
+
+| ID | Art | DE | EN |
+|---|---|---|---|
+| `CO-1` `code.new` | Beschriftung | Neue Sitzung | New session |
+| `CO-1` Liste ohne Sitzung | Leer | Du hast noch keine Code-Sitzung. Wähle einen Ordner, in dem der Agent arbeitet. [Neue Sitzung] | You have no code session yet. Pick a folder for the agent to work in. [New session] |
+| `CO-1` Ordner lässt sich nicht öffnen | Fehler | Der Ordner ließ sich nicht öffnen: {{error}}. Er wurde verschoben oder gelöscht, oder LocalDesk darf ihn nicht lesen. Wähle einen anderen Ordner. | The folder could not be opened: {{error}}. It was moved or deleted, or LocalDesk may not read it. Pick another folder. |
+| `CO-2` Leerer Ordner | Leer | Der Ordner ist leer. Der Agent kann hier Dateien anlegen. [Anderen Ordner wählen] | The folder is empty. The agent can create files here. [Pick another folder] |
+| `CO-4` Sitzung ohne Nachricht, `code.agentEmpty` | Hinweis | Was soll der Agent in diesem Ordner tun? | What should the agent do in this folder? |
+| `CO-4` Kein Modell mit Werkzeugen, `code.noToolModels` | Leer | Kein installiertes Modell kann Werkzeuge nutzen, der Agent braucht aber eines, zum Beispiel qwen3 oder gpt-oss. [Modell herunterladen] | No installed model can use tools, but the agent needs one, for example qwen3 or gpt-oss. [Download a model] |
+| `CO-4` Ollama nicht erreichbar | Platzhalter | Gesperrt: Ollama ist nicht erreichbar | Locked: Ollama is not reachable |
+| `CO-5` `code.intro` und `code.introSafe` | Leer | Wähle mit „Neue Sitzung“ einen Ordner. Der Agent arbeitet nur darin. Lesen geht ohne Rückfrage. Dateien ändern, Befehle ausführen und Commits gibt es nur nach deiner Freigabe, mit Vorher/Nachher-Ansicht und „Rückgängig“. Push gibt es nicht. [Neue Sitzung] | Pick a folder with “New session”. The agent works only in it. Reading needs no confirmation. Changing files, running commands and commits happen only after your approval, with a before/after view and “Undo”. There is no push. [New session] |
+
+**Ohne neuen Text (Schlüssel bleiben):** `CO-2` Dateibaum (`code.loading`), `CO-3` (`code.closeFile`, `code.tooLarge`, `code.binary`), `CO-4` Arbeitsweise (`code.mode.*`), Plan-Karte (`code.plan.*`), Rückfragen und Rückgängig (`code.ask.*`, `code.undo*`, `code.confirm.*`). Bestätigung „Sitzung löschen“: `code.confirmDelete`.
+
 ---
 
 ### 11. Skills
@@ -955,6 +1456,27 @@ Die festen Anker und die Bestätigungspunkte der Chat-Spec (Fläche 4) gelten hi
 
 **Breite:** Liste 270 px, Formular im Rest, höchstens 720 px. Dialoge höchstens 720 px breit und höchstens Fensterhöhe minus 48 px, der Inhalt scrollt, die Knöpfe bleiben unten stehen.
 
+**Texte (Phase 5)**
+
+| ID | Art | DE | EN |
+|---|---|---|---|
+| `SK-1` `skills.new` | Beschriftung | Neuer Skill | New skill |
+| `SK-1` Menü | Beschriftung | Hinzufügen und mehr | Add and more |
+| `SK-1` Menü | Beschriftung | Von GitHub | From GitHub |
+| `SK-1` Menü | Beschriftung | Skill-Dateien hinzufügen | Add skill files |
+| `SK-1` Menü | Beschriftung | Alle neu laden | Reload all |
+| `SK-1` Menü | Beschriftung | Skill-Ordner öffnen | Open skills folder |
+| `SK-2` Menü | Beschriftung | Neu von der Festplatte laden | Reload from disk |
+| `SK-2` Menü | Beschriftung | Ordner öffnen | Open folder |
+| `SK-3` Datei unbrauchbar, `skills.broken` | Fehler | Diese SKILL.md kann nicht benutzt werden: {{error}}. Der Skill bleibt in der Liste, wird aber nicht geladen. Behebe den Fehler in der Datei und lade den Skill neu. [Neu von der Festplatte laden] | This SKILL.md can’t be used: {{error}}. The skill stays in the list but is not loaded. Fix the error in the file and reload the skill. [Reload from disk] |
+| `SK-2` Speichern scheitert | Fehler | Der Skill wurde nicht gespeichert: {{error}}. Deine Eingaben bleiben stehen. Prüfe, ob der Skill-Ordner beschreibbar ist, und speichere noch einmal. | The skill was not saved: {{error}}. Your input is kept. Check that the skill folder is writable and save again. |
+| `SK-4` Keine Skills in den Dateien, `skills.import.none` | Leer | In diesen Dateien wurde kein Skill gefunden. Ein Skill ist eine .md-Datei mit Name und Beschreibung im Kopf oder eine .zip mit einer SKILL.md. [Andere Dateien] | No skill was found in these files. A skill is an .md file with a name and description at the top, or a .zip containing a SKILL.md. [Other files] |
+| `SK-5` GitHub nicht erreichbar | Fehler | GitHub ist nicht erreichbar: {{error}}. Die Verbindung fehlt, oder der Link ist ungültig. Prüfe beides oder füge Dateien direkt hinzu. [Skill-Dateien hinzufügen] | GitHub is not reachable: {{error}}. The connection is missing, or the link is invalid. Check both or add files directly. [Add skill files] |
+| `SK-5` Kein Treffer, `skills.github.noHits` | Hinweis | Kein Projekt gefunden. Versuche einen anderen oder allgemeineren Suchbegriff. | No project found. Try another or more general search term. |
+| `SK-6` `skills.intro` und `skills.introSafe` | Leer | Skills sind Anleitungen für wiederkehrende Aufgaben, zum Beispiel wie das Modell zusammenfassen oder Code prüfen soll. Ein Skill ist nur Text: Er führt nichts aus und gibt keine Werkzeug-Rechte. Du kannst Dateien auf die Liste ziehen. [Neuer Skill] | Skills are instructions for recurring tasks, for example how the model should summarize or review code. A skill is text only: it runs nothing and grants no tool rights. You can drag files onto the list. [New skill] |
+
+**Ohne neuen Text (Schlüssel bleiben):** `SK-3` Formular (`skills.name`, `skills.description`, `skills.body`, `skills.scan.*`, `skills.descMissing`), `SK-4` Vorschau (`skills.import.*`), `SK-5` Suche (`skills.github.*`). Ollama nicht erreichbar trifft nicht zu.
+
 ---
 
 ### 12. Modelle
@@ -984,6 +1506,27 @@ Die festen Anker und die Bestätigungspunkte der Chat-Spec (Fläche 4) gelten hi
 
 **Breite:** eine Spalte in voller Inhaltsbreite. Auf der Stufe schmal rücken Spalten zusammen (welche, legt Phase 6 fest); jeder Wert bleibt erreichbar, nichts scrollt waagerecht.
 
+**Texte (Phase 5)**
+
+| ID | Art | DE | EN |
+|---|---|---|---|
+| `MO-1` `models.title` | Beschriftung | Installierte Modelle | Installed models |
+| `MO-1` `models.refresh` | Beschriftung | Aktualisieren | Refresh |
+| `MO-2` Modellname, `downloads.placeholder` | Platzhalter | Modellname, z. B. qwen3:8b | Model name, e.g. qwen3:8b |
+| `MO-2` Ollama nicht erreichbar | Platzhalter | Gesperrt: Ollama ist nicht erreichbar | Locked: Ollama is not reachable |
+| `MO-2` `downloads.start` | Beschriftung | Herunterladen | Download |
+| `MO-3` Download scheitert | Fehler | Der Download ist fehlgeschlagen: {{error}}. Der Modellname ist falsch, oder die Verbindung ist unterbrochen. Prüfe beides und starte den Download noch einmal. [Aus der Liste entfernen] | The download failed: {{error}}. The model name is wrong, or the connection was interrupted. Check both and start the download again. [Remove from list] |
+| `MO-4` Kein Modell installiert, `models.empty` | Leer | Es ist noch kein Modell installiert. Gib oben einen Modellnamen ein, zum Beispiel „qwen3:8b“, und lade es herunter. [Modellnamen eingeben] | No model is installed yet. Enter a model name above, for example “qwen3:8b”, and download it. [Enter a model name] |
+| `MO-4` Liste lädt nicht, `models.error` | Fehler | Die Modellliste ließ sich nicht laden: {{error}}. Ollama war nicht erreichbar. Prüfe die Verbindung und aktualisiere. [Aktualisieren] | The model list could not be loaded: {{error}}. Ollama was not reachable. Check the connection and refresh. [Refresh] |
+| `MO-4` Ollama nicht erreichbar | Fehler | Ollama ist nicht erreichbar, darum gibt es keine Liste. Ollama läuft nicht, oder die Adresse stimmt nicht. Starte Ollama; LocalDesk prüft von selbst weiter. [Aktualisieren] | Ollama is not reachable, so there is no list. Ollama is not running, or the address is wrong. Start Ollama; LocalDesk keeps checking on its own. [Refresh] |
+| `MO-4` Löschen scheitert, `models.deleteError` | Fehler | „{{name}}“ konnte nicht gelöscht werden: {{error}}. Das Modell bleibt installiert. Ist das Modell gerade geladen, warte, bis Ollama es entlädt, und versuche es noch einmal. | “{{name}}” could not be deleted: {{error}}. The model stays installed. If the model is loaded right now, wait until Ollama unloads it and try again. |
+| `MO-4` Fähigkeit, `models.capability.tools` | Beschriftung | Tools | Tools |
+| `MO-4` Löschen, Titel | Beschriftung | Modell „{{name}}“ löschen? | Delete model “{{name}}”? |
+| `MO-4` Löschen, Text, `models.confirmDelete` | Hinweis | Das Modell ({{size}}) wird von der Festplatte gelöscht. Für eine spätere Nutzung musst du es erneut herunterladen. Deine Chats mit diesem Modell bleiben erhalten. | The model ({{size}}) is deleted from the disk. To use it later you have to download it again. Your chats with this model are kept. |
+| `MO-4` Löschen, Knopf | Beschriftung | Modell löschen | Delete model |
+
+**Ohne neuen Text (Schlüssel bleiben):** `MO-2` Hinweis auf die Bibliothek (`downloads.hint`, `downloads.invalidName`), `MO-3` Phasen und Knöpfe (`downloads.phase.*`, `downloads.cancel`, `downloads.dismiss`), `MO-4` Spaltenköpfe (`models.columns.*`).
+
 ---
 
 ### 13. Status
@@ -994,7 +1537,7 @@ Die festen Anker und die Bestätigungspunkte der Chat-Spec (Fläche 4) gelten hi
 
 **Blöcke (in Reihenfolge):**
 1. `ST-1` **Seitenkopf.** Überschrift.
-2. `ST-2` **Verbindung.** Zustand (erreichbar mit Version, wird geprüft, nicht erreichbar), aktiver Server, Link zu Einstellungen → Ollama-Server. Bei „nicht erreichbar“: Ursache und was zu tun ist. Nutzt die vorhandene Abfrage; heute steht dieser Wert nur im Tooltip der Leiste.
+2. `ST-2` **Verbindung.** Zustand (erreichbar mit Version, wird geprüft, nicht erreichbar), aktiver Ollama-Server, Link zu Einstellungen → Ollama-Server. Bei „nicht erreichbar“: Ursache und was zu tun ist. Nutzt die vorhandene Abfrage; heute steht dieser Wert nur im Tooltip der Leiste.
 3. `ST-3` **Grafikkarte.** Name, Auslastung, Grafikspeicher (belegt von gesamt, aufgeteilt in Ollama, andere Programme, frei), Temperatur, Stromverbrauch. Darstellung: Phase 6.
 4. `ST-4` **Geladene Modelle.** Erklärung, wann Ollama lädt und entlädt. Zusammenfassung (Zahl, belegter Speicher). Je Modell: Name, Speicher und Aufteilung Grafikkarte und Prozessor, Kontextlänge, Zeit bis zum Entladen; Warnung, wenn ein Teil auf dem Prozessor läuft, mit Abhilfe.
 
@@ -1004,7 +1547,7 @@ Die Seite frischt sich von selbst auf; es gibt keinen Knopf dafür.
 
 | Zustand | Inhalt |
 |---|---|
-| Leer | Kein Modell geladen: Satz in `ST-4`, dass es beim nächsten Chat erscheint. Keine NVIDIA-Karte: `ST-3` nennt das und verweist auf `ST-4`, das trotzdem zeigt, wie viel Speicher Ollama nutzt. Server auf anderem Rechner: `ST-3` sagt, dass nur auf diesem PC gemessen werden kann. |
+| Leer | Kein Modell geladen: Satz in `ST-4`, dass es beim nächsten Chat erscheint. Keine NVIDIA-Karte: `ST-3` nennt das und verweist auf `ST-4`, das trotzdem zeigt, wie viel Speicher Ollama nutzt. Ollama-Server auf anderem PC: `ST-3` sagt, dass nur auf diesem PC gemessen werden kann. |
 | Lädt | Jeder Block zeigt Platzhalter, bis seine erste Abfrage da ist; danach wechseln nur noch die Werte, nichts springt. |
 | Fehler | Grafikkarte nicht abfragbar: Ursache in `ST-3`, die anderen Blöcke bleiben. |
 | Ollama nicht erreichbar | `ST-2` zeigt es als Erstes, mit Ursache und nächstem Schritt. `ST-4` zeigt statt Modellen den Verweis auf `ST-2`. `ST-3` misst weiter, wenn die Karte lokal ist. Sobald Ollama antwortet, kehren die Werte von selbst zurück. |
@@ -1015,22 +1558,48 @@ Die Seite frischt sich von selbst auf; es gibt keinen Knopf dafür.
 
 **Breite:** unter 1000 px Inhaltsbreite eine Spalte, höchstens 800 px. Ab 1000 px stehen `ST-3` und `ST-4` nebeneinander.
 
+**Texte (Phase 5)**
+
+| ID | Art | DE | EN |
+|---|---|---|---|
+| `ST-1` `status.pageTitle` | Beschriftung | Status | Status |
+| `ST-2` Verbindung | Beschriftung | Verbindung | Connection |
+| `ST-2` Zustand | Status | Erreichbar · Ollama {{version}} | Reachable · Ollama {{version}} |
+| `ST-2` Zustand | Status | Wird geprüft … | Checking … |
+| `ST-2` Zustand | Status | Nicht erreichbar | Not reachable |
+| `ST-2` Aktiver Ollama-Server | Beschriftung | Aktiver Ollama-Server | Active Ollama server |
+| `ST-2` Ollama nicht erreichbar | Fehler | Der Ollama-Server unter „{{address}}“ ist nicht erreichbar. Ollama läuft nicht, oder die Adresse stimmt nicht. Starte Ollama auf diesem PC oder prüfe die Adresse unter Einstellungen → Ollama-Server. [Ollama-Server öffnen] | The Ollama server at “{{address}}” is not reachable. Ollama is not running, or the address is wrong. Start Ollama on this PC or check the address under Settings → Ollama servers. [Open Ollama servers] |
+| `ST-3` Überschrift, `gpu.title` | Beschriftung | Grafikkarte | Graphics card |
+| `ST-3` Keine NVIDIA-Karte, `gpu.noNvidia` | Leer | Keine NVIDIA-Grafikkarte gefunden, darum gibt es keine Messung. Die geladenen Modelle zeigen trotzdem, wie viel VRAM Ollama nutzt. [Geladene Modelle ansehen] | No NVIDIA graphics card found, so nothing is measured. The loaded models still show how much VRAM Ollama uses. [View loaded models] |
+| `ST-3` Ollama-Server auf anderem PC, `gpu.remote` | Hinweis | Die Grafikkarte kann LocalDesk nur messen, wenn der aktive Ollama-Server auf diesem PC läuft. Für einen Ollama-Server im Netzwerk siehst du unten, was Ollama selbst meldet. | LocalDesk can only measure the graphics card if the active Ollama server runs on this PC. For an Ollama server on your network, see below what Ollama itself reports. |
+| `ST-3` Abfrage scheitert, `gpu.error` | Fehler | Die Grafikkarte ließ sich nicht abfragen: {{error}}. Der NVIDIA-Treiber hat nicht geantwortet. Prüfe den Treiber; die übrigen Werte auf dieser Seite stimmen weiter. | The graphics card could not be read: {{error}}. The NVIDIA driver did not respond. Check the driver; the other values on this page are still correct. |
+| `ST-3` Messwerte | Beschriftung | Auslastung | Utilization |
+| `ST-3` Messwerte | Beschriftung | Temperatur | Temperature |
+| `ST-3` Messwerte | Beschriftung | Stromverbrauch | Power draw |
+| `ST-4` Überschrift, `status.loadedTitle` | Beschriftung | Geladene Modelle | Loaded models |
+| `ST-4` Kein Modell geladen, `status.noneLoaded` | Leer | Gerade ist kein Modell geladen. Sobald du chattest, erscheint es hier. [Neuer Chat] | No model is loaded right now. It appears here as soon as you chat. [New chat] |
+| `ST-4` Ollama nicht erreichbar | Hinweis | Die geladenen Modelle sind nicht abrufbar, weil Ollama nicht erreichbar ist. Die Ursache steht oben unter „Verbindung“. | The loaded models cannot be fetched because Ollama is not reachable. The cause is above under “Connection”. |
+| `ST-4` Zusammenfassung, `status.summary_other` | Status | {{count}} Modelle geladen · {{vram}} VRAM belegt | {{count}} models loaded · {{vram}} VRAM used |
+| `ST-4` Teil auf dem Prozessor, `status.cpuWarning` | Hinweis | Ein Teil des Modells passt nicht in den Grafikspeicher und läuft auf dem Prozessor. Antworten werden dadurch deutlich langsamer. Abhilfe: kleinere Kontextlänge, kleineres Modell oder andere geladene Modelle entladen lassen. | Part of the model doesn’t fit into graphics memory and runs on the processor. Answers become much slower. Fixes: a smaller context length, a smaller model, or let other loaded models unload. |
+
+**Ohne neuen Text (Schlüssel bleiben):** `ST-4` Erklärung und Felder (`status.loadedIntro`, `status.context`, `status.unloadIn`, `status.vramOf`).
+
 ---
 
 ### 14. Einstellungen
 
-**Zweck:** Alles einrichten, was selten geändert wird: Darstellung, Server, Werkzeuge, Vault, Konto, Suche; dazu die sichtbaren Einstiege zu Wissen, Skills und Postfach.
+**Zweck:** Alles einrichten, was selten geändert wird: Darstellung, Ollama-Server, MCP-Server, Vault, Konto, Suche; dazu die sichtbaren Einstiege zu Wissen, Skills und E-Mail.
 
 **Einstiege:** Fuß der Seitenleiste, Strg+,, Palette P-09; Hinweise auf anderen Flächen führen direkt zum passenden Abschnitt.
 
 **Blöcke (in Reihenfolge):**
 1. `ES-1` **Sprungliste.** Links, bleibt beim Scrollen stehen, markiert den Abschnitt, der gerade oben steht. Einträge in der Reihenfolge der Blöcke.
-2. `ES-2` **Verwalten.** Drei Zeilen, die auf eine Seite führen: „Wissen verwalten“, „Skills verwalten“, Postfach (E-Mail). Je mit einer Zeile, was dort geschieht. Neu, aus §IA.
+2. `ES-2` **Verwalten.** Drei Zeilen, die auf eine Seite führen: „Wissen verwalten“, „Skills verwalten“, „E-Mail verwalten“. Je mit einer Zeile, was dort geschieht. Neu, aus §IA.
 3. `ES-3` **Darstellung.** Design: Hell, Dunkel, Wie Windows (eine Wahl aus drei). Sprache: Wie Windows, Deutsch, English.
-4. `ES-4` **Ollama-Server.** Liste der Server mit Wahl des aktiven, Marke „aktiv“, „Testen“ (mit Ergebnis), Bearbeiten, Löschen. „Server hinzufügen“ öffnet Name und Adresse mit Speichern und Abbrechen. Aufklappbare Hilfe, was auf dem anderen Rechner einzustellen ist.
-5. `ES-5` **MCP-Server.** „Dateisystem-Server hinzufügen“ (Name, freigegebene Ordner hinzufügen und entfernen, Speichern, Abbrechen). Je Server: Zustand (aus, startet, läuft, Fehler), Haken „eingeschaltet“, Neu starten, Bearbeiten, Löschen; aufklappbar: Meldungen des Servers; aufklappbar: Werkzeuge mit Freigabe je Werkzeug (Immer, Fragen, Aus; „Zurück auf Standard“), Marke bei Werkzeugen, die überschreiben können. „Immer“ bei einem solchen Werkzeug fragt über den Bestätigungsdialog nach.
-6. `ES-6` **Obsidian.** Ohne Vault: „Vault einrichten“ (Ordner eintragen oder „Ordner wählen“, eigener Unterordner, Speichern, Abbrechen). Mit Vault: erkannt oder nicht, wohin geschrieben wird, Ändern, Entfernen, Stand als Wissen mit Link „Zur Sammlung“. Darunter **Erinnerungen**: Zahl, „Neu laden“, Liste nach Geltung (alle Chats, je Projekt) mit „Notiz öffnen“ und „Erinnerung löschen“; neue Erinnerung (Text, Geltung, „Merken“).
-7. `ES-7` **E-Mail-Konto.** Ohne eigene Google-App: „Gmail einrichten“ (Client-ID, Clientschlüssel, Speichern, Abbrechen). Mit App: Ändern, Entfernen (erst wenn alle Konten abgemeldet sind). Angemeldete Konten mit „Abmelden“. „Mit Google anmelden“ oder „Weiteres Konto anmelden“; während der Anmeldung im Browser ein Wartehinweis mit „Abbrechen“. Link zum Postfach.
+4. `ES-4` **Ollama-Server.** Liste der Ollama-Server mit Wahl des aktiven, Marke „aktiv“, „Testen“ (mit Ergebnis), Bearbeiten, Löschen. „Ollama-Server hinzufügen“ öffnet Name und Adresse mit Speichern und Abbrechen. Aufklappbare Hilfe, was auf dem anderen PC einzustellen ist.
+5. `ES-5` **MCP-Server.** „Dateisystem-Server hinzufügen“ (Name, freigegebene Ordner hinzufügen und entfernen, Speichern, Abbrechen). Je MCP-Server: Zustand (aus, startet, läuft, Fehler), Haken „eingeschaltet“, Neu starten, Bearbeiten, Löschen; aufklappbar: Meldungen des MCP-Servers; aufklappbar: Werkzeuge mit Freigabe je Werkzeug (Immer, Fragen, Aus; „Zurück auf Standard“), Marke bei Werkzeugen, die überschreiben können. „Immer“ bei einem solchen Werkzeug fragt über den Bestätigungsdialog nach.
+6. `ES-6` **Obsidian.** Ohne Vault: „Vault einrichten“ (Ordner eintragen oder „Ordner wählen“, eigener Unterordner, Speichern, Abbrechen). Mit Vault: erkannt oder nicht, wohin geschrieben wird, Ändern, Entfernen, Stand als Wissen mit Link „Zur Sammlung“. Darunter **Erinnerungen**: Zahl, „Aktualisieren“, Liste nach Geltung (alle Chats, je Projekt) mit „Notiz öffnen“ und „Erinnerung löschen“; neue Erinnerung (Text, Geltung, „Merken“).
+7. `ES-7` **E-Mail-Konto.** Ohne eigene Google-App: „Gmail einrichten“ (Client-ID, Clientschlüssel, Speichern, Abbrechen). Mit App: Ändern, Entfernen (erst wenn alle Konten abgemeldet sind). Angemeldete Konten mit „Abmelden“. „Mit Google anmelden“ oder „Weiteres Konto anmelden“; während der Anmeldung im Browser ein Wartehinweis mit „Abbrechen“. Link zur Seite E-Mail.
 8. `ES-8` **Internet-Suche.** Erklärung und was dabei den PC verlässt. Ohne Schlüssel: Feld, Speichern, Abbrechen. Mit Schlüssel: „Testen“ (mit Ergebnis), „Ersetzen“, „Entfernen“.
 9. `ES-9` **Datenschutz.** Kurzfassung, „Datenschutzerklärung anzeigen“ oder „ausblenden“.
 10. `ES-10` **Über LocalDesk.** Version, Datenordner. Update: „Nach Updates suchen“, Ergebnis, „Herunterladen und installieren“ mit Fortschritt und „Abbrechen“, „Jetzt neu starten und installieren“. Lizenzen anzeigen oder ausblenden.
@@ -1040,15 +1609,52 @@ Die Seite frischt sich von selbst auf; es gibt keinen Knopf dafür.
 | Zustand | Inhalt |
 |---|---|
 | Leer | Je Abschnitt ein Satz und die erste Aktion: kein MCP-Server, kein Vault, keine Erinnerung, keine Google-App, kein Konto, kein Schlüssel. |
-| Lädt | Abschnitte zeigen Platzhalter, bis ihr Stand da ist. Laufende Vorgänge sind benannt: Server startet, Test läuft, Anmeldung wartet auf den Browser, Update lädt. |
-| Fehler | Jeder Abschnitt meldet an Ort und Stelle mit Ursache: Server-Test scheitert, MCP-Server im Zustand Fehler (Meldungen aufklappbar), Ordner nicht verwendbar, Schlüssel-Test scheitert, Abmelden nur lokal gelungen, Datei für Datenschutz oder Lizenzen fehlt. |
-| Ollama nicht erreichbar | `ES-4` ist der Ort, das zu beheben: Der aktive Server zeigt „nicht erreichbar“, „Testen“ und das Umschalten bleiben benutzbar. Alle anderen Abschnitte bleiben benutzbar; sie hängen nicht an Ollama. |
+| Lädt | Abschnitte zeigen Platzhalter, bis ihr Stand da ist. Laufende Vorgänge sind benannt: MCP-Server startet, Test läuft, Anmeldung wartet auf den Browser, Update lädt. |
+| Fehler | Jeder Abschnitt meldet an Ort und Stelle mit Ursache: Test des Ollama-Servers scheitert, MCP-Server im Zustand Fehler (Meldungen aufklappbar), Ordner nicht verwendbar, Schlüssel-Test scheitert, Abmelden nur lokal gelungen, Datei für Datenschutz oder Lizenzen fehlt. |
+| Ollama nicht erreichbar | `ES-4` ist der Ort, das zu beheben: Der aktive Ollama-Server zeigt „nicht erreichbar“, „Testen“ und das Umschalten bleiben benutzbar. Alle anderen Abschnitte bleiben benutzbar; sie hängen nicht an Ollama. |
 
 **Hauptaktion:** keine für die ganze Seite; je Abschnitt höchstens eine hervorgehobene Aktion.
 
-**Ausgang:** Wissen, Skills, Postfach (`ES-2`); Browser (Google-Anmeldung); Neustart (Update).
+**Ausgang:** Wissen, Skills, E-Mail (`ES-2`); Browser (Google-Anmeldung); Neustart (Update).
 
 **Breite:** Sprungliste 176 px, Abschnitte im Rest, höchstens 720 px. Die Sprungliste bleibt bei jeder Stufe sichtbar (bei 824 px Inhalt: 824 − 176 = 648 px, abzüglich 40 px Abstand zwischen Sprungliste und Abschnitten bleiben 608 px); heute verschwindet sie bei schmalem Fenster.
+
+**Texte (Phase 5)**
+
+| ID | Art | DE | EN |
+|---|---|---|---|
+| `ES-1` Sprungliste | Beschriftung | Verwalten | Manage |
+| `ES-1` Sprungliste, `appearance.title` | Beschriftung | Darstellung | Appearance |
+| `ES-1` Sprungliste, `servers.title` | Beschriftung | Ollama-Server | Ollama servers |
+| `ES-1` Sprungliste, `mcp.title` | Beschriftung | MCP-Server | MCP servers |
+| `ES-1` Sprungliste, `obsidian.title` | Beschriftung | Obsidian | Obsidian |
+| `ES-1` Sprungliste, `mailSettings.title` | Beschriftung | E-Mail-Konto | E-mail account |
+| `ES-1` Sprungliste, `webSearchSettings.title` | Beschriftung | Internet-Suche | Internet search |
+| `ES-1` Sprungliste, `privacy.title` | Beschriftung | Datenschutz | Privacy |
+| `ES-1` Sprungliste, `settings.about` | Beschriftung | Über LocalDesk | About LocalDesk |
+| `ES-2` Zeile | Beschriftung | Wissen verwalten | Manage knowledge |
+| `ES-2` Zeile, Zeile 2 | Beschriftung | Sammlungen deiner Dokumente anlegen und einlesen | Create and index collections of your documents |
+| `ES-2` Zeile | Beschriftung | Skills verwalten | Manage skills |
+| `ES-2` Zeile, Zeile 2 | Beschriftung | Anleitungen für wiederkehrende Aufgaben schreiben und prüfen | Write and check instructions for recurring tasks |
+| `ES-2` Zeile | Beschriftung | E-Mail verwalten | Manage e-mail |
+| `ES-2` Zeile, Zeile 2 | Beschriftung | Mails lesen, zusammenfassen und sortieren lassen | Read, summarize and sort mail |
+| `ES-3` Umschalter | Beschriftung | Design | Theme |
+| `ES-3` `appearance.system` | Beschriftung | Wie Windows | Like Windows |
+| `ES-4` Test scheitert | Fehler | Keine Antwort von „{{address}}“. Ollama läuft dort nicht, oder die Adresse oder die Firewall blockiert die Verbindung. Prüfe die Adresse und lies die Hilfe unten. [Testen] | No answer from “{{address}}”. Ollama is not running there, or the address or the firewall blocks the connection. Check the address and read the help below. [Test] |
+| `ES-5` Kein MCP-Server | Leer | Noch kein MCP-Server. Ein MCP-Server gibt dem Modell Tools, etwa zum Lesen von Dateien. [Dateisystem-Server hinzufügen] | No MCP server yet. An MCP server gives the model tools, for example to read files. [Add a filesystem server] |
+| `ES-5` MCP-Server im Zustand Fehler | Fehler | Der MCP-Server „{{name}}“ ist beendet: {{error}}. Die Meldungen des MCP-Servers unten nennen den Grund. Starte ihn neu, wenn der Grund behoben ist. [Neu starten] | The MCP server “{{name}}” has stopped: {{error}}. The MCP server’s messages below give the reason. Restart it once the cause is fixed. [Restart] |
+| `ES-6` Kein Vault | Leer | Noch kein Vault eingerichtet. Mit einem Vault speichert LocalDesk Erinnerungen, Chats und Zusammenfassungen als Notizen. [Vault einrichten] | No vault set up yet. With a vault LocalDesk saves memories, chats and summaries as notes. [Set up vault] |
+| `ES-6` Ordner nicht verwendbar, `obsidian.invalid` | Fehler | Dieser Ordner lässt sich nicht verwenden: {{error}}. LocalDesk braucht einen vorhandenen Ordner mit Schreibrechten. Wähle einen anderen Ordner. [Ordner wählen] | This folder can’t be used: {{error}}. LocalDesk needs an existing folder it may write to. Pick another folder. [Choose folder] |
+| `ES-6` Erinnerungen, `memories.reload` | Beschriftung | Aktualisieren | Refresh |
+| `ES-6` Keine Erinnerungen | Leer | Noch keine Erinnerungen. Erinnerungen sind Fakten über dich, die jedes Modell kennt. [Erste Erinnerung schreiben] | No memories yet. Memories are facts about you that every model knows. [Write your first memory] |
+| `ES-7` Keine Google-App | Leer | Noch keine eigene Google-App eingetragen. LocalDesk braucht sie, um deine Mails zu lesen. [Gmail einrichten] | No Google app of your own entered yet. LocalDesk needs it to read your mail. [Set up Gmail] |
+| `ES-7` Kein Konto, `mailSettings.noAccounts` | Leer | Noch kein Konto angemeldet. Melde dich mit Google an, damit das Modell Mails lesen kann. [Mit Google anmelden] | No account signed in yet. Sign in with Google so the model can read mail. [Sign in with Google] |
+| `ES-8` Kein Schlüssel | Leer | Noch kein Ollama-Schlüssel gespeichert. Ohne ihn kann das Modell nicht im Web suchen. [Schlüssel eintragen] | No Ollama key saved yet. Without it the model cannot search the web. [Enter key] |
+| `ES-8` Schlüssel-Test scheitert | Fehler | Der Schlüssel funktioniert nicht: {{error}}. Ollama hat ihn abgelehnt, oder die Verbindung fehlt. Prüfe ihn unter ollama.com/settings/keys. [Testen] | The key does not work: {{error}}. Ollama rejected it, or the connection is missing. Check it at ollama.com/settings/keys. [Test] |
+| `ES-9` Datei fehlt, `privacy.missing` | Fehler | Die Datenschutzerklärung wurde nicht gefunden. Die Installation ist unvollständig. Installiere LocalDesk neu. | The privacy policy was not found. The installation is incomplete. Reinstall LocalDesk. |
+| `ES-10` Datei fehlt, `settings.licensesMissing` | Fehler | Die Lizenzdateien wurden nicht gefunden. Die Installation ist unvollständig. Installiere LocalDesk neu. | The license files were not found. The installation is incomplete. Reinstall LocalDesk. |
+
+**Ohne neuen Text (Schlüssel bleiben):** `ES-3` Sprache (`appearance.language*`), `ES-4` Liste, Test und Hilfe (`servers.*`), `ES-5` Felder und Freigaben (`mcp.*`), `ES-6` Felder (`obsidian.*`, `memories.*`), `ES-7` Felder und Anmeldung (`mailSettings.*` außer Titel), `ES-8` Felder (`webSearchSettings.*`), `ES-9` (`privacy.*` ohne `missing`), `ES-10` Update (`update.*`), Version und Datenordner (`settings.version`, `settings.dataPath`).
 
 ---
 
@@ -1080,6 +1686,25 @@ Die Seite frischt sich von selbst auf; es gibt keinen Knopf dafür.
 **Ausgang:** Startseite mit Projekt-Marke; ein Chat des Projekts; nach dem Löschen die Startseite (die Chats bleiben und stehen dann ohne Projekt da).
 
 **Breite:** eine Spalte, höchstens 720 px. Ab 1000 px Inhaltsbreite steht `PR-6` als zweite Spalte rechts daneben.
+
+**Texte (Phase 5)**
+
+| ID | Art | DE | EN |
+|---|---|---|---|
+| `PR-1` `projects.newChat` | Beschriftung | Neuer Chat im Projekt | New chat in project |
+| `PR-1` Projekt löschen, `projects.delete` | Beschriftung | Projekt löschen | Delete project |
+| `PR-2` `projects.name` | Beschriftung | Name | Name |
+| `PR-3` Neues Projekt | Leer | Hier stehen die Anweisungen für jeden Chat im Projekt, zum Beispiel wie das Modell antworten soll. [Anweisungen schreiben] | The instructions for every chat in the project go here, for example how the model should answer. [Write instructions] |
+| `PR-3` Platzhalter, `projects.instructionsPlaceholder` | Platzhalter | z. B. Du bist mein Tutor für Statistik | e.g. You are my statistics tutor |
+| `PR-3` Speichern scheitert | Fehler | Die Anweisungen wurden nicht gespeichert: {{error}}. Dein Text bleibt im Feld. Verlasse das Feld noch einmal, um erneut zu speichern. | The instructions were not saved: {{error}}. Your text stays in the field. Leave the field again to save again. |
+| `PR-4` Keine Skills angelegt | Leer | Du hast noch keine Skills. Mit Skills bekommt jeder Chat im Projekt zusätzliche Anleitungen. [Skills verwalten] | You have no skills yet. With skills every chat in the project gets extra instructions. [Manage skills] |
+| `PR-5` Keine Dokumente | Leer | Dieses Projekt hat noch keine Dokumente. Sie werden in jedem Chat des Projekts durchsucht. [Ordner hinzufügen] | This project has no documents yet. They are searched in every chat of the project. [Add folder] |
+| `PR-5` Ollama nicht erreichbar | Hinweis | Einlesen ist gesperrt, weil Ollama nicht erreichbar ist. Starte Ollama; LocalDesk prüft von selbst weiter. | Indexing is locked because Ollama is not reachable. Start Ollama; LocalDesk keeps checking on its own. |
+| `PR-6` Keine Chats, `projects.noChats` | Leer | Noch keine Chats in diesem Projekt. Neue Chats erscheinen hier. [Neuer Chat im Projekt] | No chats in this project yet. New chats appear here. [New chat in project] |
+| `PR-6` Zahl, `projects.chats_other` | Beschriftung | {{count}} Chats | {{count}} chats |
+| `PR-1` Projekt gelöscht oder fehlt | Fehler | Dieses Projekt gibt es nicht mehr. Es wurde gelöscht. Die Chats darin bleiben erhalten. [Zur Startseite] | This project no longer exists. It was deleted. The chats in it are kept. [Go to home] |
+
+**Ohne neuen Text (Schlüssel bleiben):** `PR-4` Titel und Hinweis (`projects.skills`, `projects.skillsHint`), `PR-5` Titel und Fortschritt (`projects.documents`, `projects.documentsHint` mit „+“-Menü), `PR-6` Zeilen (Titel, Datum).
 
 ---
 
@@ -1137,18 +1762,18 @@ Bestand aus dem Code (Stand des Zweigs, nur gelesen). Jede Zeile nennt die heuti
 | C-16 | „Merken“ mit Editor (Text, Geltung, Speichern, Abbrechen) | `CH-2` |
 | C-17 | Anhänge in der Nachricht, Bild vergrößern, Schließen | `CH-2` |
 | C-18 | Gedanken aufklappen | `CH-2` |
-| C-19 | Werkzeug-Zeile aufklappen (Server, Eingabe, Ergebnis) | `CH-3` |
+| C-19 | Werkzeug-Zeile aufklappen (MCP-Server, Eingabe, Ergebnis) | `CH-3` |
 | C-20 | Rückfrage-Karte: Einmal erlauben (auch als Erlauben, Übernehmen, Ausführen, Committen), Immer erlauben, Ablehnen | `CH-3` |
 | C-21 | Rückfrage „Erinnerung speichern“ (Text, Geltung, Speichern, Ablehnen) | `CH-3` |
-| C-22 | Zugriffs-Karte: Konto wählen, Server ankreuzen, „Für diesen Chat erlauben“, „Nur diese Antwort“, Ablehnen | `CH-3` |
+| C-22 | Zugriffs-Karte: Konto wählen, MCP-Server ankreuzen, „Für diesen Chat erlauben“, „Nur diese Antwort“, Ablehnen | `CH-3` |
 | C-23 | Links im Text, Quellen-Marken | `CH-2` |
 | C-24 | Diagramm in der Antwort | `CH-2` |
 | C-25 | Antwort: Kopieren, Antwort wiederholen, In Obsidian speichern, Merken | `CH-2` |
 | C-26 | Verdichtungs-Marke: „Zusammenfassung ansehen“, „Verdichtung aufheben“ | `CH-2` |
 | C-27 | Zusammenfassungs-Karte: Zusammenfassen, Nein danke, Abbrechen, Titel, Text, In Obsidian speichern, Neu erzeugen, Verwerfen, Zurück zum Entwurf, Erneut versuchen, Schließen | `CH-5` |
-| C-28 | Ausweich-Banner: „Zu … wechseln“, „Zurück zu …“, „Hier bleiben“, „Server verwalten“ | `CH-5`, `SS-3` |
+| C-28 | Ausweich-Banner: „Zu … wechseln“, „Zurück zu …“, „Hier bleiben“, „Ollama-Server verwalten“ (heute „Server verwalten“) | `CH-5`, `SS-3` |
 | C-29 | Hinweis „Chat enthält Bilder, Modell kann keine“ | `CH-5` |
-| C-30 | Dialog „Älteren Teil verdichten“: Text, Nochmal versuchen, Abbrechen, Übernehmen | `CH-7` |
+| C-30 | Dialog „Älteren Teil verdichten“: Text, Erneut versuchen, Abbrechen, Übernehmen | `CH-7` |
 | C-31 | Code: Änderungs-Zeile aufklappen, „Rückgängig“ | `CH-3`, `CO-4` |
 
 **Seitenbereich und Chat-Einstellungen** (`SidePanel.tsx`, `SourceList.tsx`, `ChatSettingsPanel.tsx`, `SettingsFields.tsx`)
@@ -1247,7 +1872,7 @@ Bestand aus dem Code (Stand des Zweigs, nur gelesen). Jede Zeile nennt die heuti
 | M-02 | Konto-Auswahl | `EM-1` |
 | M-03 | Suchfeld | `EM-1` |
 | M-04 | „Sortieren vorschlagen“ | `EM-1` |
-| M-05 | „Neu laden“ | `EM-1` |
+| M-05 | „Aktualisieren“ (heute „Neu laden“) | `EM-1` |
 | M-06 | Zeile der Liste | `EM-2` |
 | M-07 | „Mehr laden“ | `EM-2` |
 | M-08 | „Zu den Einstellungen und neu anmelden“ | Zustand Fehler, `EM-2` |
@@ -1307,12 +1932,12 @@ Bestand aus dem Code (Stand des Zweigs, nur gelesen). Jede Zeile nennt die heuti
 | G-01 | Sprungliste (acht Einträge) | `ES-1` |
 | G-02 | Farbschema (drei), Sprache (drei) | `ES-3` |
 | G-03 | Ollama-Server: aktiven wählen, Testen, Bearbeiten, Löschen | `ES-4` |
-| G-04 | Ollama-Server: „Server hinzufügen“, Name, Adresse, Speichern, Abbrechen, Hilfe aufklappen | `ES-4` |
+| G-04 | Ollama-Server: „Ollama-Server hinzufügen“ (heute „Server hinzufügen“), Name, Adresse, Speichern, Abbrechen, Hilfe aufklappen | `ES-4` |
 | G-05 | MCP: „Dateisystem-Server hinzufügen“, Name, Ordner hinzufügen und entfernen, Speichern, Abbrechen | `ES-5` |
-| G-06 | MCP je Server: Haken „eingeschaltet“, Neu starten, Bearbeiten, Löschen, Meldungen aufklappen | `ES-5` |
+| G-06 | MCP, je MCP-Server: Haken „eingeschaltet“, Neu starten, Bearbeiten, Löschen, Meldungen aufklappen | `ES-5` |
 | G-07 | MCP je Werkzeug: Freigabe Immer, Fragen, Aus; „Zurück auf Standard“; Werkzeuge aufklappen | `ES-5` |
 | G-08 | Obsidian: „Vault einrichten“, Vault-Ordner, „Ordner wählen“, Unterordner, Speichern, Abbrechen, Ändern, Entfernen, „Zur Sammlung“ | `ES-6` |
-| G-09 | Erinnerungen: „Neu laden“, „Notiz öffnen“, „Erinnerung löschen“, neues Textfeld, Geltung, „Merken“ | `ES-6` |
+| G-09 | Erinnerungen: „Aktualisieren“ (heute „Neu laden“), „Notiz öffnen“, „Erinnerung löschen“, neues Textfeld, Geltung, „Merken“ | `ES-6` |
 | G-10 | E-Mail: „Gmail einrichten“, Client-ID, Clientschlüssel, Speichern, Abbrechen, Ändern, Entfernen | `ES-7` |
 | G-11 | E-Mail: „Mit Google anmelden“ oder „Weiteres Konto anmelden“, Abbrechen (Warten), „Abmelden“ | `ES-7` |
 | G-12 | Internet-Suche: Schlüssel-Feld, Speichern, Abbrechen, Testen, Ersetzen, Entfernen | `ES-8` |
@@ -1355,7 +1980,7 @@ Bestand aus dem Code (Stand des Zweigs, nur gelesen). Jede Zeile nennt die heuti
 5. Chat umbenennen, verschieben, löschen über das Menü „Mehr“ im Chat-Kopf und das Zeilenmenü; in der Leiste keine Tagesgruppen mehr, Projekte klappen nicht mehr auf.
 6. Modellauswahl im Eingabefeld statt im Seitenkopf (wie im Mock).
 7. Code bei schmaler Inhaltsfläche: Die Sitzungsliste wird zur Auswahl im Seitenkopf.
-8. Einstellungen: neue Gruppe „Verwalten“ ganz oben (Wissen, Skills, Postfach); der bestehende Abschnitt heißt dann „E-Mail-Konto“, damit „E-Mail“ nicht zweimal vorkommt (Name endgültig in Phase 5).
+8. Einstellungen: neue Gruppe „Verwalten“ ganz oben (Wissen, Skills, E-Mail); der bestehende Abschnitt heißt dann „E-Mail-Konto“, damit „E-Mail“ nicht zweimal vorkommt (Name in Phase 5 festgelegt).
 
 **Hinweise für den späteren Code-Umbau (keine Entscheidung nötig):** Entwurf im Eingabefeld je Chat behalten; Anhang-Meldung nicht nach 8 Sekunden ausblenden; bei ungespeicherten Änderungen in Vorlagen und Skills vor dem Verlassen fragen.
 
