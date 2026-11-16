@@ -9,7 +9,7 @@
 **Pins:** Schrift Inter (Vorgabe) · Fließtext mindestens 15 px (Vorgabe) · Dunkel zuerst, Hell vollwertig (Vorgabe) · Synthese des Nutzers vom 2026-11-15 aus Kandidat 5 „Späte Lampe“ und Kandidat 1 „Blaue Stunde“: Bernstein führt, blaue Tiefe; kein Kasten um den Inhalt; versetzte Flächen und Licht; Quellen als Fußnoten; schräger Ton-Schnitt · Getauscht gegenüber Hand 5: Signatur (jetzt der Ton-Schnitt aus 1), zweiter Farbton 230° nur für Tiefe und Schatten
 **Entscheidungen des Nutzers bei der Sperre (2026-11-15):** Die Farbe gilt so, wie sie im Vorschau-Blatt zu sehen war: Bernstein `#e69a58` in Dunkel trotz der Nähe zum früheren „Werkbank“-Orange, dunkler Bernstein `#825936` als Vollton in Hell. Die eine feine Kante am Eingabefeld ist angenommen („Ja, passt“). Sperre: „Ja, sperren“.
 
-<!-- Gehört zu JOURNEY.md (Aufbau, Abläufe, Seiten). Dieses Dokument regelt das Aussehen. Bausteine stehen unten (Phase 4), die Stimme gleich nach „Nie“ (Phase 5); die Daten-Palette folgt in Phase 6. -->
+<!-- Gehört zu JOURNEY.md (Aufbau, Abläufe, Seiten). Dieses Dokument regelt das Aussehen. Bausteine stehen unten (Phase 4), die Stimme gleich nach „Nie“ (Phase 5); die Daten-Palette steht unten (Phase 6). -->
 
 ## Richtung
 
@@ -1529,6 +1529,128 @@ Der Vollton (`--accent-solid`) steht **nicht** in der Tabelle, weil nichts, was 
 | `--control-edge` auf `--surface-active` | 2,73 | 2,57 | 3,00 : 1 |
 | `--focus-ring` auf `--accent-solid` | 1,13 | 1,00 | 3,00 : 1 |
 
+## Daten
+
+**Stand Phase 6 (Fassung 2 nach der Prüfung), vom Nutzer noch nicht bestätigt.** Dieser Abschnitt **erweitert** die gesperrten Werte; er ändert keinen. **Es gibt keinen neuen Farbton, keinen neuen Farbwert und keinen neuen Lauf von `palette.mjs`:** Die Daten-Palette benutzt nur `--text` und `--accent-solid`, beide gesperrt, dazu Schraffur, Lücke, Nummer und Reihenfolge. Die Specs der Diagramme, Messbalken und Tabellen stehen in `JOURNEY.md` §Page specs, Abschnitt „Zahlen und Diagramme (Phase 6)“ (`DA-0` bis `DA-10`).
+
+### Was die gesperrten Regeln hergeben
+
+Blau ist kein Akzent (also kein blauer Balken), die Meldefarben bedeuten Zustände (also keine Kategorien). Bleiben die Stufen des Bernsteins und des warmen Neutrals. Gegen die sechs Gründe, auf denen Daten stehen (`--background`, `--background-deep`, `--glow`, `--surface`, `--surface-raised`, `--surface-hover`), halten in Hell nur vier der 24 Stufen 3 : 1, in Dunkel acht; sie liegen in nur zwei bis drei Helligkeitsstufen. **Zwölf in der Helligkeit unterscheidbare Farben gibt es also nicht**, und ein neuer Lauf änderte daran nichts (zwischen 3 : 1 und dem Text ist in Hell Platz für etwa drei Stufen). Jenseits von acht Kategorien trägt Farbe in keiner Palette mehr die Identität (Knaflic 2015; Wong 2011).
+
+Darum gilt: **Die Farbe trennt Nachbarn nur zum Teil; sie benennt nie.** Es gibt **zwei Farben** (Pol = `--text`, Akzent = `--accent-solid`) und eine **Schraffur** des Akzents. Daraus entstehen **drei Aussehen**: Pol voll, Akzent voll, Akzent schraffiert. Der Rest ist Beschriftung und Nummer: jede Kategorie trägt ihren Namen und ihren Platz (Reihenfolge, im Kreis zusätzlich eine Nummer am Stück).
+
+### Tokens
+
+Alles Alias-Stufe: Die Werte verweisen nur auf Aliase, nie auf Palettenstufen und nie auf einen Farbwert.
+
+```css
+:root {
+  /* Zwei Farben. Pol = der Text-Ton (in Hell der dunkelste, in Dunkel der hellste); Akzent = der Vollton. */
+  --data-pole: var(--text);
+  --data-accent: var(--accent-solid);
+
+  /* Schraffur: senkrechte Streifen des Akzents, halb Streifen, halb Grund (kein Winkel: „Keine zweite Schräge“). */
+  --data-hatch-on: 3px;
+  --data-hatch-off: 3px;
+  --data-hatch: repeating-linear-gradient(90deg, var(--accent-solid) 0 var(--data-hatch-on), transparent var(--data-hatch-on) calc(var(--data-hatch-on) + var(--data-hatch-off)));
+
+  /* Zwölf Plätze: Folge Pol voll, Akzent voll, Akzent schraffiert, wiederholt. Schluss eines Rings: Regel unten. */
+  --data-1: var(--data-pole);   --data-2: var(--data-accent);   --data-3: var(--data-hatch);
+  --data-4: var(--data-pole);   --data-5: var(--data-accent);   --data-6: var(--data-hatch);
+  --data-7: var(--data-pole);   --data-8: var(--data-accent);   --data-9: var(--data-hatch);
+  --data-10: var(--data-pole);  --data-11: var(--data-accent);  --data-12: var(--data-hatch);
+
+  /* Rollen */
+  --data-bar: var(--data-accent);          /* Balken, Linie, Punkte: eine Reihe, ein Ton */
+  --data-line: var(--data-accent);
+  --data-primary: var(--data-accent);      /* erster Teil einer Zweiteilung (Ollama, Grafikkarte) */
+  --data-secondary: var(--data-hatch);     /* zweiter Teil (andere Programme, CPU), auch die Teile des Kontexts */
+  --data-outline: var(--accent-solid);     /* Umriss eines schraffierten Stücks */
+  --data-fill: var(--accent-solid);        /* Füllung eines Messbalkens, gleich --progress-fill */
+  --data-track: var(--surface-active);     /* Spur, gleich --progress-track */
+  --data-zero: var(--text-secondary);      /* Nulllinie, Reservemarke, Leitlinie */
+  --data-label: var(--text);
+  --data-label-quiet: var(--text-secondary);
+
+  /* Maße */
+  --data-gap: 2px;                         /* Lücke zwischen Teilen; der Grund scheint durch */
+  --data-outline-w: 1.5px;
+  --data-meter-h: var(--space-2);          /* Messbalken, gleich --progress-h */
+  --data-bar-h: 18px;                      /* Balkendicke bei bis zu 12 Werten */
+  --data-bar-h-dense: 14px;                /* ab 13 Werten */
+  --data-row-pitch: 32px;                  /* Zeilenabstand der Balken bis 12 Werten */
+  --data-row-pitch-dense: 24px;            /* ab 13 Werten */
+  --data-row-pitch-wrapped: 36px;          /* Zeile, deren Name auf zwei Zeilen umbricht */
+  --data-line-w: 2px;
+  --data-point-r: 4px;
+  --data-estimate-edge: 6px;               /* gestricheltes Ende eines geschätzten Balkens, innerhalb seiner Länge */
+}
+```
+
+### Regeln der Palette
+
+1. **Platz, Aussehen, zweiter Träger.** Platz k hat das Aussehen k mod 3 der Folge Pol voll, Akzent voll, Akzent schraffiert. Der erste Träger ist die Beschriftung (der Name steht an oder neben dem Stück), der zweite die Reihenfolge: im Kreis im Uhrzeigersinn ab 12 Uhr mit Nummer am Stück und in der Liste, in Balken von oben nach unten, in Teilen einer Leiste von links nach rechts.
+2. **Wenn dieselbe Farbe aneinanderstößt.** Es gibt nur zwei Farben; Nachbarn mit derselben Farbe (Akzent voll neben Akzent schraffiert) trennen **Lücke** (`--data-gap`), **Schraffur** (andere mittlere Helligkeit, siehe Tabelle), **Umriss** des schraffierten Stücks und die **Nummer**. Voll neben schraffiert unterscheidet sich in der mittleren Helligkeit; das ist der Beitrag der Schraffur.
+3. **Der Schluss eines Rings.** Beim Kreis grenzt das letzte Stück an das erste. Hätte das letzte Stück dasselbe Aussehen wie das erste (bei 4, 7 und 10 Stücken: Pol voll), nimmt es das Aussehen, das keinem seiner beiden Nachbarn gehört: Akzent voll. Gerechnet für 2 bis 12 Stücke (Tabelle unten).
+4. **Nachbarn unterscheiden sich in der mittleren Leuchtdichte um mindestens 1,3 : 1** (eigenes Maß dieser DNA; WCAG kennt dafür keinen Wert). Die mittlere Leuchtdichte einer Schraffur ist der Mittelwert aus Streifenfarbe und dem, was durch die Lücken scheint (Grund oder Spur); gerechnet gegen jeden dieser sieben Untergründe, der schlechteste Wert zählt.
+5. **Jede Tinte hält ≥ 3 : 1 gegen jeden der sechs Gründe**, in beiden Schemata (WCAG 1.4.11): Pol, Akzent, die Streifen und der Umriss. Text im Diagramm nimmt `--data-label` oder `--data-label-quiet` (≥ 4,5 : 1).
+6. **Ehrliche Grenze der Schraffur.** In Hell ist die *mittlere* Leuchtdichte eines schraffierten Stücks hoch (der Grund scheint durch); gegen den Grund hält es nur über Streifen und Umriss, nicht über die Fläche. Darum trägt jedes schraffierte Stück einen Umriss von `--data-outline-w` in `--data-outline` und eine Lücke.
+7. **Mengen sind nie nur Farbe.** Größe liegt in Länge oder Lage (Munzner 2014), nie im Ton. Negativ ist kein eigenes Aussehen: Es zeigt sich durch die Lage unter der Nulllinie und das Minuszeichen.
+8. **Eine Hervorhebung je Bild** (Knaflic 2015): In einem Diagramm trägt höchstens ein Ding den Akzent mehr als die anderen.
+9. **Fehlend erzeugt nichts, Schätzung bleibt Schätzung.** Siehe `JOURNEY.md` `DA-0` Regel 8. Das Kennzeichen eines ganz geschätzten Balkens ist ein gestrichelter Rand (`--data-estimate-edge`, innerhalb seiner Länge, nie darüber hinaus) **oder** die Schraffur (Entscheidung des Nutzers vom 2026-11-16); „ca.“ vor jeder Zahl und das Wort „geschätzt“ am Kopf stehen immer. Der Messbalken des Kontexts trägt den gestrichelten Rand, seine Teil-Balken die Schraffur. Die Schraffur sind senkrechte Streifen (entschieden: keine Punkte).
+10. **Linien.** Es gibt keine Rasterlinien und keine Achsenlinien. Ausnahmen, alle 1 px in `--data-zero`: die Nulllinie, wenn Werte darunter liegen oder die Achse bei null beginnt; die Reservemarke des Kontexts; die kurze Leitlinie von der Nummer eines Kreisstücks unter 2 %. Sie trennen keinen Inhalt; sie sind Bezugsmarken der Daten (Tufte 1983) und damit keine „Trennlinien“ im Sinn von „Nie“.
+11. **Erzwungene Farben** (`forced-colors: active`): Marken nehmen `CanvasText`, Spuren `GrayText`, Schraffur wird zu Streifen in `CanvasText`; Beschriftung und Reihenfolge tragen weiter.
+12. **Bewegung.** Balken und Füllungen wachsen einmal von null (`transform: scale`), wie unter „Bewegung“; unter `prefers-reduced-motion` stehen sie sofort.
+
+### Kontrast der Daten-Palette
+
+Gerechnet von `.design-foundations/previews/_src/daten-check.mjs` (liest die Token-Blöcke dieser Datei, löst jede `var()`-Kette auf, WCAG-2.x-Kontrast; prüft außerdem, dass §Daten keinen Farbwert, keine Mischung und keine Palettenstufe enthält). **83 Paare, hell und dunkel; 0 unter dem Ziel.** Sechs Gründe: `--background`, `--background-deep`, `--glow`, `--surface`, `--surface-raised`, `--surface-hover`; als siebter Untergrund der Schraffur die Spur `--data-track`.
+
+| Art | Ziel | Paare | schlechtester Wert Dunkel | schlechtester Wert Hell |
+|---|---|---|---|---|
+| Tinte gegen Grund | 3,0 : 1 | 12 | 6,32 (Akzent auf glow) | 5,37 (Akzent auf glow) |
+| Rolle gegen Grund | 3,0 : 1 | 36 | 6,32 (--data-bar auf glow) | 5,28 (--data-zero auf glow) |
+| Beschriftung gegen Grund | 4,5 : 1 | 12 | 7,27 (--data-label-quiet auf glow) | 5,28 (--data-label-quiet auf glow) |
+| Füllung gegen Spur | 3,0 : 1 | 1 | 5,65 (--data-fill auf --data-track) | 4,49 (--data-fill auf --data-track) |
+| Streifen gegen Spur | 3,0 : 1 | 1 | 5,65 (--data-accent auf --data-track) | 4,49 (--data-accent auf --data-track) |
+| Nachbarn (Paar) | 1,3 : 1 | 3 | 1,69 (Akzent voll – Akzent schraffiert auf data-track) | 2,23 (Pol voll – Akzent voll auf background) |
+| Zweiteilung (primary / secondary) | 1,3 : 1 | 7 | 1,69 (A–H auf data-track) | 2,75 (A–H auf data-track) |
+| Nachbarn im Ring | 1,3 : 1 | 11 | 1,69 (n=3 auf 2-3 auf data-track) | 2,23 (n=2 auf 1-2 auf background) |
+
+**Die zwei Farben** (relative Leuchtdichte; Kontrast gegen den schwächsten der sechs Gründe):
+
+| Farbe | Hell: Leuchtdichte | Hell: schwächster Grund | Dunkel: Leuchtdichte | Dunkel: schwächster Grund |
+|---|---|---|---|---|
+| Pol (`--data-pole`) | 0,027 | 12,00 : 1 | 0,804 | 11,83 : 1 |
+| Akzent (`--data-accent`) | 0,122 | 5,37 : 1 | 0,406 | 6,32 : 1 |
+
+**Nachbarn nach mittlerer Leuchtdichte** (Verhältnis; bei der Schraffur der Mittelwert aus Streifen und Untergrund, der schlechteste der sieben Untergründe; Ziel ≥ 1,3 : 1):
+
+| Paar | Hell | Dunkel |
+|---|---|---|
+| Pol voll – Akzent voll | 2,23 : 1 | 1,87 : 1 |
+| Akzent voll – Akzent schraffiert | 2,75 : 1 | 1,69 : 1 |
+| Akzent schraffiert – Pol voll | 6,14 : 1 | 3,17 : 1 |
+
+**Ehrliche Grenze der Schraffur** (Regel 6): Ihre *mittlere* Leuchtdichte hebt sich in Hell nur um 1,69 : 1 vom Grund ab (Dunkel 3,68 : 1). Die Fläche allein trägt das nicht; Streifen und Umriss (≥ 5,37 : 1) tragen es.
+
+**Ringe mit 2 bis 12 Stücken.** Aussehen des letzten Stücks nach Regel 3: 2: Akzent voll, 3: Akzent schraffiert, 4: Akzent voll, 5: Akzent voll, 6: Akzent schraffiert, 7: Akzent voll, 8: Akzent voll, 9: Akzent schraffiert, 10: Akzent voll, 11: Akzent voll, 12: Akzent schraffiert. Alle Nachbarpaare, auch das Paar letztes und erstes, halten ≥ 1,3 : 1 (schlechtester Wert Dunkel 1,69, Hell 2,23).
+
+**Sehschwäche-Simulation** (Machado, Oliveira und Fernandes 2009, Schweregrad 1,0). Abstand der Nachbarn in OKLab × 100, bei der Schraffur die mittlere Farbe auf `--surface`; ab etwa 2 ist ein Unterschied sichtbar:
+
+| Schema | Sicht | Pol – Akzent | Akzent – schraffiert | schraffiert – Pol |
+|---|---|---|---|---|
+| Hell | normal | 21,2 | 32,6 | 52,2 |
+| Hell | Protanopie | 18,6 | 34,4 | 51,7 |
+| Hell | Deuteranopie | 21,3 | 32,2 | 52,2 |
+| Hell | Tritanopie | 21,8 | 32,2 | 52,0 |
+| Dunkel | normal | 21,6 | 15,3 | 34,4 |
+| Dunkel | Protanopie | 24,2 | 14,4 | 37,2 |
+| Dunkel | Deuteranopie | 20,1 | 15,4 | 33,4 |
+| Dunkel | Tritanopie | 21,8 | 15,5 | 34,3 |
+
+Kleinster Nachbarabstand in allen Sichten: 14,4. Die Nachbarn bleiben in jeder Sicht unterscheidbar; die Identität trägt trotzdem nie die Farbe (Regel 1).
+
 ## Offene Fragen
 
 Geschlossen am 2026-11-15 in Phase 4 (vom Nutzer bestätigt): Wiederholung der Marke in Titelleiste und Leiste (nur der leise Name in der Titelleiste, die farbige Marke im Kopf der Leiste).
@@ -1538,5 +1660,5 @@ Geschlossen mit der Sperre am 2026-11-15 (vom Nutzer angenommen, siehe Kopf): Ab
 Noch offen:
 
 2. **App-Symbol.** Es folgt der Farbe; der Bernstein liegt nahe am heutigen Orange. Anpassung erst nach der Sperre, im Code-Plan.
-3. **Daten-Palette** (bis zu zwölf Kategorien) kommt in Phase 6. Braucht sie neue Farbtöne, gibt es einen neuen Lauf von `palette.mjs` und eine neue Sperre.
+3. **Daten-Palette** (bis zu zwölf Kategorien): beantwortet in Phase 6 (§Daten), ohne neuen Farbton und ohne neuen Lauf von `palette.mjs`; nur `--text` und `--accent-solid`, dazu Schraffur, Lücke und Nummer. Wartet auf die Bestätigung des Nutzers.
 4. **Design „wie Windows“** folgt dem System zwischen den zwei Schemata hier; ein drittes Schema gibt es nicht.

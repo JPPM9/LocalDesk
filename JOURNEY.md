@@ -493,7 +493,7 @@ Alle Kürzel kommen in die zentrale Kürzel-Verwaltung (`keymap.ts`) und die Üb
 
 ## Page specs
 
-**Stand:** Phase 2, geschrieben am 2026-11-12, **vom Nutzer noch nicht bestätigt**. 15 Flächen. Farben und Schrift stehen in `DESIGN.md` (Phase 3). Die Texte stehen am Ende jeder Fläche unter „Texte (Phase 5)“, davor Begriffstabelle, Muster und Längengrenzen. Diagramm- und Tabellen-Regeln fehlen hier mit Absicht (Phase 6). Jeder Block hat eine Kennung (`RA-1`, `EF-7` …); die Abgleich-Tabelle am Ende ordnet jedes heutige Bedienelement einem Block zu.
+**Stand:** Phase 2, geschrieben am 2026-11-12, **vom Nutzer noch nicht bestätigt**. 15 Flächen. Farben und Schrift stehen in `DESIGN.md` (Phase 3). Die Texte stehen am Ende jeder Fläche unter „Texte (Phase 5)“, davor Begriffstabelle, Muster und Längengrenzen. Diagramm-, Messbalken- und Tabellen-Regeln stehen im Abschnitt „Zahlen und Diagramme (Phase 6)“ (`DA-0` bis `DA-10`). Jeder Block hat eine Kennung (`RA-1`, `EF-7` …); die Abgleich-Tabelle am Ende ordnet jedes heutige Bedienelement einem Block zu.
 
 ### Gemeinsame Regeln für alle Flächen
 
@@ -652,6 +652,238 @@ Zwei Kurzformen gelten: **„GPU“** bleibt, wo es heute steht (Reiter im Seite
 | `status.checking` | Ollama: prüfe Verbindung … | Prüfe Verbindung … | Checking connection … |
 | `chat.error`, `chat.modelsError`, `models.error`, `models.deleteError`, `gpu.error`, `sources.error`, `chatNote.error`, `summary.error`, `skills.broken`, `obsidian.invalid`, `chat.files.tooMany`, `chat.files.tooBig`, `chat.files.unreadable`, `settings.licensesMissing`, `privacy.missing`, `mail.reauth` | nennen nur das Was | Ursache und Abhilfe nach dem Fehler-Muster; der neue Wortlaut steht bei der jeweiligen Fläche unter „Texte (Phase 5)“ | siehe dort |
 | `chat.empty`, `folders.noneYet`, `nav.collapseList`, `nav.expandList`, `appearance.railHint` | (alte Leisten und leerer Chat) | entfallen mit der neuen Gliederung | retired |
+
+---
+
+### Zahlen und Diagramme (Phase 6)
+
+**Stand:** Phase 6, geschrieben am 2026-11-16, Fassung 2 nach der Prüfung (Entscheidungen des Nutzers vom 2026-11-16: Der Füllstand bleibt als Balken, klar als Schätzung; die Palette hat zwei Farben, der Rest geht über Muster und Zahl), **vom Nutzer noch nicht bestätigt**. Sie regelt alles, was Daten zeigt, und ersetzt die Vermerke „Regeln Phase 6“ in den Flächen. Farben, Aussehen und Maße stehen in `DESIGN.md` §Daten; hier stehen die Entscheidungen, was welche Daten zeigt und wie. Die Blöcke heißen `DA-0` bis `DA-10`; die Flächen verweisen darauf (`CH-2`, `SP-4`, `SS-2`, `ST-3`, `ST-4`, `MO-3`, `MO-4`). Die Datenformen sind im Code fest (`shared/table-chart.ts`: zwei Spalten, höchstens 50 Werte, Kreis höchstens 12 und nicht negativ); die Specs ändern sie nicht und führen keine neue Diagrammart ein.
+
+**Datenflächen auf einen Blick (DW-6.1).** Die Art folgt der Datenbeziehung, nicht dem Datenformat (Doctrine `data-viz`, Entscheidungstabelle).
+
+| ID | Fläche (Block) | Datenbeziehung | Art | Was trägt welchen Wert | Quelle des Prinzips |
+|---|---|---|---|---|---|
+| `DA-1` | Diagramm im Chat (`CH-2`) | Vergleich und Rangfolge einer Größe über Kategorien | Balkendiagramm, waagerecht oder senkrecht | Länge ab null = Wert; Zahl am Balkenende; Name = Beschriftung; Platz = Reihenfolge der Abfrage | Cleveland und McGill 1984 (Länge auf gemeinsamer Skala); Few 2004 (waagerecht bei langen Namen); Tufte 1983 (Zahl statt Achse) |
+| `DA-2` | Diagramm im Chat (`CH-2`) | Verlauf einer Größe über eine geordnete Folge | Liniendiagramm | Höhe = Wert; links nach rechts = Folge; erster, letzter, kleinster, größter Wert direkt beschriftet | Cairo 2019 (Achse); Few 2004 (Direktbeschriftung); Cleveland und McGill 1984 |
+| `DA-3` | Diagramm im Chat (`CH-2`) | Anteile am Ganzen, höchstens 12 | Kreisdiagramm mit Liste | Winkel = Anteil (ungenau); Liste trägt Name, Wert, Anteil; Nummer und Reihenfolge = Identität; Farbe und Schraffur trennen nur Nachbarn | Cleveland und McGill 1984 (Winkel ungenau); Knaflic 2015; WCAG 1.4.1 |
+| `DA-4` | Auslastung der Grafikkarte (`ST-3`, `SP-5`) | Anteil an einer festen Kapazität (0 bis 100 %) | Zahl und Messbalken | Zahl trägt den Wert; Füllungslänge bestätigt; Skala fest 0 bis 100 | Few 2006 (Zahl statt Zeigerinstrument); Cleveland und McGill 1984 |
+| `DA-5` | Grafikspeicher (`SS-2`, `ST-3`, `SP-5`, Popup der Leiste) | Aufteilung einer Kapazität in Teile (Ollama, andere Programme, frei) | geteilter Messbalken mit Schlüssel | Teillänge = Bytes; Schraffur und Lücke trennen die Teile; Name und Zahl im Schlüssel tragen | Cleveland und McGill 1984; Munzner 2014; WCAG 1.4.1 |
+| `DA-6` | Kontext-Füllstand (`SP-4`) | Anteil an einer Kapazität und seine Zusammensetzung | Zahl, Messbalken, Teile als Zeilen | Messbalken = belegt von gesamt, ganz als Schätzung gekennzeichnet („ca.“, „geschätzt“, gestricheltes Ende); je Teil eine Zeile mit eigenem Balken auf derselben Skala; Name am Balken | Cleveland und McGill 1984 (gemeinsame Skala statt Stapel); Few 2004 |
+| `DA-7` | Geladenes Modell (`ST-4`) | Aufteilung eines Modells auf Grafikkarte und CPU | zweigeteilter Messbalken | Länge = Anteil; Wort und Prozent an jedem Teil | Cleveland und McGill 1984; WCAG 1.4.1 |
+| `DA-8` | Download, Einlesen, Update (`MO-3`, `WI-6`, `SP-3`, `PR-5`, `ES-10`) | Fortschritt auf ein Ziel | Messbalken mit Zahl (Baustein 17) | Füllung = Anteil (abgerundet); Zahl und Wort tragen | Nielsen 1 (Sichtbarkeit des Zustands); Cairo 2019 (kein Aufrunden) |
+| `DA-9` | Installierte Modelle (`MO-4`) | Vergleich mehrerer Eigenschaften je Modell | Tabelle | Zahl rechtsbündig mit Tabellenziffern; Sortierung über die Kopfzeile | Few 2004 (Tabelle, wenn genaue Werte gefragt sind); Tufte 1983 |
+| `DA-10` | Statistikzeile einer Antwort (`CH-2`) | Einzelmessungen einer Antwort | Text mit Zahlen | Zahl und Einheit; keine Grafik | Few 2006 (eine Zahl braucht kein Bild) |
+
+#### DA-0 Gemeinsame Regeln
+
+1. **Farbe ist nie der einzige Träger.** Jede Marke hat einen zweiten Träger: Beschriftung am Stück oder Reihenfolge (Kreis: zusätzlich Nummer). Es gibt nur zwei Farben (`--text`, `--accent-solid`, beide gesperrt); was darüber hinaus trennt, sind Schraffur, Lücke, Nummer und Reihenfolge. Die Aussehen selbst und ihr Nachweis stehen in `DESIGN.md` §Daten. (WCAG 1.4.1)
+2. **Beschriftung direkt am Wert, keine Legende, wo es geht** (Few 2004; Tufte 1983). Ein Schlüssel steht nur beim Kreis und bei geteilten Balken, immer in der Reihenfolge der Teile.
+3. **Schrift im Diagramm ist nie kleiner als 12 px auf dem Bildschirm.** Gezeichnet wird in echten Pixeln für die gemessene Breite, nicht mit einem auf die Breite gestreckten Bild (heute wird die Schrift dadurch bei schmaler Spalte zu klein). Beschriftungen stehen immer waagerecht, nie gedreht.
+4. **Inter mit Tabellenziffern**, keine Mono-Schrift (`DESIGN.md` §Schrift). Titel `--text-sm` Gewicht 600 in `--text`; Wertzeile (Name der Wertspalte mit Einheit) `--text-xs` in `--text-secondary`.
+5. **Kein Kasten im Kasten.** Das Diagramm im Chat ist selbst die schwebende Fläche (Ebene 2, `--surface`, `--radius-lg`, `--shadow-2`, Innenabstand `--space-5`); innen gibt es weder Rahmen noch eigene Fläche. Messbalken in Seitenpanel, Status und Tabelle liegen auf dem Grund oder in der Karte, die schon da ist.
+6. **Keine Rasterlinien, keine Achsenlinien.** Einzige Linien, jeweils 1 px in `--data-zero`: die Nulllinie (wenn Werte darunter liegen oder die Achse bei null beginnt), die Reservemarke des Kontexts und die kurze Leitlinie von der Nummer eines Kreisstücks unter 2 %. Begründung gegen „keine Linien zwischen Inhalten“ (`DESIGN.md` §Nie): Sie trennen keinen Inhalt, sie sind Bezugsmarken der Daten (Tufte 1983).
+7. **Reihenfolge der Abfrage bleibt.** Die App sortiert nie um; ob Rangliste oder Zeitfolge, entscheidet die Abfrage. (Der Auftrag an das Modell, Ranglisten absteigend zu sortieren, gehört in die Beschreibung des Werkzeugs, nicht in die Oberfläche.)
+8. **Fehlend erzeugt nichts; eine Schätzung bleibt sichtbar eine Schätzung.** (a) Fehlende oder nicht gemessene Daten verlängern nie einen Balken und erzeugen keinen: An der Stelle steht Text („keine Daten“, „nicht gemessen“); die Rangfolge entscheiden allein gemessene Balken. (b) **Ein Balken ist ganz gemessen oder ganz geschätzt, er mischt nie beides.** Wo Gemessenes und Geschätztes zusammenkämen, zeichnet der Balken nur das Gemessene; das Geschätzte steht als Zahl mit „ca.“ daneben (Beispiel: der zusätzliche Grafikspeicher bei „Kontextlänge erhöhen“, `SP-4`: nur Text, nie ein Stück am Balken `DA-5`). (c) **Ist ein ganzer Balken eine Schätzung** (der Kontext-Füllstand `DA-6`), wird er ehrlich als Schätzung gezeichnet. Drei Dinge stehen immer: das Wort „geschätzt“ am Kopf des Balkens und „ca.“ vor jeder Zahl. Das **Kennzeichen am Balken** ist ein gestricheltes Ende **oder** die Schraffur (Entscheidung des Nutzers vom 2026-11-16: „Schraffur zählt als Kennzeichen“): Der Messbalken mit Füllung trägt das gestrichelte Ende (die letzten `--data-estimate-edge` der Füllung sind in Streifen aufgelöst, innerhalb seiner Länge, nie darüber hinaus); Balken, deren Füllung schon schraffiert ist (die Teile des Kontexts), tragen die Schraffur. Ein geschätzter Balken steht nie auf derselben Skala neben einem gemessenen; die Messung der letzten Antwort bleibt Text. (d) Abgeleitetes aus zwei Messungen (der Rest „andere Programme“ im Grafikspeicher) ist gemessen und trägt kein „ca.“. (Befund MAJOR aus der Prüfung des Drahtgitters; Entscheidung des Nutzers vom 2026-11-16 zu (c).)
+9. **Prozente werden abgerundet,** „100 %“ steht nur bei vollem Wert (Cairo 2019). Ausnahme sind Anteile im Kreis (siehe `DA-3`).
+10. **Bewegung:** Balken und Füllungen wachsen einmal von null (`DESIGN.md` §Bewegung); ändert sich ein Wert, gleitet die Marke in 320 ms. Unter `prefers-reduced-motion` springt sie.
+11. **Zugänglichkeit:** Jedes Diagramm ist eine `figure` mit `figcaption` und einem Namen, der Art, Titel, Anzahl, kleinsten und größten Wert nennt. Die Zeichnung ist für Hilfstechnik verborgen (`aria-hidden`); stattdessen steht in der Figur (für das Auge unsichtbar, im Datenblatt sichtbar gemacht) eine `table` mit `caption` „Werte zum Diagramm“ und je Zeile Name und Wert, bei der Linie in der Reihenfolge der Folge, beim Kreis mit Anteil. **Messbalken** (Auslastung, Speicher, Füllstand, Aufteilung) haben `role="meter"` mit `aria-valuenow`, `aria-valuemin`, `aria-valuemax` und einem Namen mit Zahl und Einheit. **Fortschritt** (Download, Einlesen, Update) hat `role="progressbar"` mit denselben drei Werten; im unbestimmten Zustand fehlt `aria-valuenow` und `aria-busy="true"` steht. Fokus: Nur Knöpfe und Zeilen der Tabelle nehmen Fokus; die Zeichnung selbst nicht.
+12. **Maus drüber** zeigt den vollen Namen und den genauen Wert in einem Tooltip (Baustein 12), wo der Name gekürzt ist oder der Wert abgekürzt steht. Nichts hängt allein vom Zeiger ab: Alle Werte stehen auch in der unsichtbaren Tabelle.
+
+#### Achsen-Regel (DW-6.2)
+
+| Art | Beginn der Wertachse | Wertachse sichtbar | Einheit | Begründung |
+|---|---|---|---|---|
+| Balken | **immer null.** Balken beginnen am Nullpunkt; er ist bei waagerechten Balken die gemeinsame linke Kante, bei Negativwerten die Nulllinie | nein (die Zahl steht am Balken) | Wertzeile unter dem Titel („Umsatz (€)“); die Zahl am Balken trägt die Einheit mit, wo sie kurz ist („12,4 %“) | Länge bedeutet Betrag; abgeschnitten wäre sie gelogen (Cairo 2019, Lüge 1). Keine Achse, weil jede Zahl direkt steht (Tufte 1983, redundante Tinte) |
+| Linie | **null ist dabei,** wenn der kleinste Wert ≥ 0 und höchstens halb so groß wie der größte ist oder wenn die Werte das Vorzeichen wechseln. **Sonst** beginnt die Achse beim runden Wert unter dem kleinsten Wert. | ja: vier bis fünf runde Werte links, `--text-xs`, `--text-secondary`, ohne Linie | Achsentitel waagerecht oben links **im Bild am Achsenrand**, über den Ticks = Name der Wertspalte mit Einheit (steht nicht nur in der Bildunterschrift); Beschriftung der Ticks kompakt ohne Einheit (`1,2 Mio.`) | Die Linie zeigt Veränderung, nicht Betrag; abgeschnitten ist erlaubt, **aber nie unausgesprochen** (Cairo 2019). |
+| Linie, Achse abgeschnitten | beginnt nicht bei null | zusätzlich der Text „Achse beginnt bei {{value}}“ unter dem Achsentitel, `--text-xs`, `--text-secondary` | wie oben | Die Abkürzung ist sichtbar, nicht versteckt |
+| Kreis | Kein Achsenbeginn; Winkel ab 12 Uhr, im Uhrzeigersinn | nein | Prozent in der Liste | Anteile, keine Beträge |
+| Messbalken | Skala fest: 0 bis zur Kapazität (100 %, Gesamtspeicher, Kontextlänge); nie automatisch skaliert | nein | Einheit steht an der Zahl | Eine feste Skala macht Werte vergleichbar (Few 2006) |
+
+Zwei Achsen in einem Bild gibt es nicht (keine Doppelachse; Cairo 2019, Lüge 2). Der Abstand der Punkte einer Linie ist gleichmäßig, auch wenn die Beschriftungen Zeitpunkte sind (die App kennt die Art der Beschriftung nicht): ungleiche Zeitabstände erscheinen also gleich (offener Punkt unten).
+
+#### Zahlenformate (DW-6.4)
+
+Eine Quelle für die Sprache: die Sprache der Oberfläche (`messageLocale()`), nie das Gebiet von Windows. Alle Zahlen stehen in Inter mit **Tabellenziffern** (`font-variant-numeric: tabular-nums`); in Spalten und untereinander **rechtsbündig**. Zwischen Zahl und Einheit steht ein geschütztes Leerzeichen. Beispiele wurden mit `Intl.NumberFormat` erzeugt.
+
+| Größe | Deutsch | Englisch | Regel | Rundung |
+|---|---|---|---|---|
+| Ganze Zahl (Tokens, Anzahl) | 12.480 | 12,480 | Tausendertrennung der Sprache ab 1.000 | ganz |
+| Dezimalzahl (Tokens/s, Dauer in s) | 42,3 | 42.3 | Dezimalzeichen der Sprache | eine Stelle |
+| Prozent (Auslastung, Füllstand, Fortschritt) | 63 % | 63% | Deutsch mit geschütztem Leerzeichen, Englisch ohne | abrunden (DA-0 Regel 9) |
+| Anteil im Kreis | 38 %, 4,2 %, < 1 % | 38%, 4.2%, <1% | ab 10 % ganz, darunter eine Stelle, unter 1 % „< 1 %“; die Summe kann um 1 abweichen | runden |
+| Dateigröße (Modell, Download) | 4,7 GB, 512 MB | 4.7 GB, 512 MB | **dezimal** (1 GB = 1.000.000.000 Byte, wie `ollama list`); B, KB, MB ohne Stelle, GB und TB eine | `formatBytes` |
+| Speicher (Grafikspeicher, Arbeitsspeicher) | 9,3 von 12,0 GB | 9.3 of 12.0 GB | **binär** (1 GB = 1024³ Byte, wie der Task-Manager); ein Wertepaar hat gleich viele Stellen; unter 1 GB in MB | `formatMemory` |
+| Kontextlänge | 128K | 128K | Modelle zählen in 1024ern; bleibt wie heute | `formatContext` |
+| Tempo (Download) | 38 MB/s | 38 MB/s | dezimal wie Dateigröße | ganz |
+| Temperatur, Leistung | 62 °C, 142 W von 285 W | 62 °C, 142 W of 285 W | Einheit ohne Punkt | ganz |
+| Dauer | 12,4 s · 2 Min. 5 s · 1 Std. 3 Min. | 12.4 s · 2 min 5 s · 1 h 3 min | unter 60 s mit einer Stelle; ab 60 s ganze Einheiten; ab 1 h ohne Sekunden | `s` einstellig, sonst ganz |
+| Restzeit | noch etwa 2 Min. | about 2 min left | immer mit „etwa“ (Schätzung); erst nach 1 s Messung | ganz |
+| Datum | 15.11.2026 | 11/15/2026 | Zahl-Datum der Sprache | `formatDate` |
+| Achsenwert | 1.000 · 2.500 · 1,2 Mio. | 1,000 · 2,500 · 1.2M | bis unter eine Million die volle Zahl mit Tausendertrennung der Sprache, ab einer Million kompakt; im Fließtext immer die volle Zahl | zwei Stellen |
+| Negative Zahl | −12 | −12 | echtes Minuszeichen (U+2212), nicht der Bindestrich | – |
+| Fehlt der Wert | – (und das Wort, wo Platz ist) | – | der Strich allein heißt „unbekannt“, null heißt „0“; mit Hilfstechnik: „unbekannt“ | – |
+
+**Zwei Konventionen, ein Kürzel.** Modellgröße (dezimal) und Speicher (binär) heißen beide „GB“. Beide bleiben, weil jede an ihrer Quelle (`ollama list`, Task-Manager) abgeglichen wird; ein Vergleich „Modell gegen freien Grafikspeicher“ stimmt damit auf etwa 7 % genau. Entscheidung für den Nutzer (siehe „Offene Punkte“).
+
+#### DA-1 Balkendiagramm
+
+**Zweck:** Zeigen, welche Kategorie wie groß ist, und die Rangfolge auf einen Blick. **Gilt für** `CH-2`.
+
+**Aufbau:**
+1. Titel (`figcaption`), Wertzeile mit Name und Einheit der Wertspalte.
+2. **Lage:** **Waagerecht** (Name links, Balken rechts, Zahl am Balkenende) ist der Standard. **Senkrecht** nur bei höchstens 8 Werten, wenn jeder Name (gemessen, 12 px) waagerecht in sein Band passt (Band = Breite ÷ Anzahl − 8 px); sonst waagerecht. Beschriftung nie gedreht.
+3. **Balken:** ab null, flache Kante am Nullpunkt, Ende mit `--radius-sm` ÷ 2; Ton `--data-bar`; Dicke `--data-bar-h` (bis 12 Werte, Zeilenabstand `--data-row-pitch`), ab 13 Werten `--data-bar-h-dense` mit `--data-row-pitch-dense`. 50 Werte sind damit 1.200 px hoch; das Diagramm wächst, der Chat scrollt. Länge ÷ Wert ist für alle Balken gleich, ohne Mindestbreite: **kein Balken ist länger als sein wahrer Anteil.** Wäre ein Balken schmaler als 1 px, entfällt er, und seine Zahl steht an der Nulllinie.
+4. **Namen** `--text-sm` in `--data-label`, höchstens 38 % der Breite. **Eine Regel, zwei Stufen:** Der Code kürzt Namen schon vorab auf 40 Zeichen (`CHART_LABEL_MAX` in `shared/table-chart.ts`, bleibt); die Oberfläche bricht den Namen an Wortgrenzen auf **bis zu zwei Zeilen** um (die Zeile ist dann `--data-row-pitch-wrapped` hoch, die Zahl steht mittig am Balken); was auch dann nicht passt, endet mit „…“. Der volle Name steht im Tooltip und in der unsichtbaren Tabelle. **Zahl** `--text-sm`, Tabellenziffern, am Balkenende, außerhalb.
+5. **Negative Werte:** gleicher Ton; die Balken wachsen vom Nullpunkt nach links, die Zahl steht jenseits des Balkenendes mit Minuszeichen; die Nulllinie steht in `--data-zero`.
+6. **Hervorhebung:** keine. Eine Reihe, ein Ton (Knaflic 2015: Hervorhebung nur, wo sie etwas sagt).
+
+**Zustände:** siehe Tabelle „Zustände“ (ein Wert: ein einzelner Balken ohne Vergleich, waagerecht; nur Nullen: Namen und „0“, keine Balken; 50 Werte auf 824 px: waagerecht, 14 px Balken).
+
+#### DA-2 Liniendiagramm
+
+**Zweck:** Zeigen, wie sich eine Größe über eine geordnete Folge verändert. **Gilt für** `CH-2`.
+
+**Aufbau:** Höhe der Zeichenfläche 240 px; Breite = Spalte. Linie `--data-line`, Dicke `--data-line-w`, runde Ecken; **Punkte** (Radius `--data-point-r`) nur bei höchstens 12 Werten, darüber nur die vier beschrifteten Punkte. **Direkt beschriftet** werden erster, letzter, kleinster und größter Wert (Zahl `--text-sm`, `--data-label`, über oder unter dem Punkt, ohne Überlappung; fallen Punkte zusammen, steht eine Beschriftung). Wertachse und Achsentitel nach der Achsen-Regel (Titel im Bild, oben links über der Achse; „Achse beginnt bei …“ direkt darunter). **x-Beschriftung:** waagerecht, `--text-xs`, `--text-secondary`; erste und letzte immer, dazwischen so viele, wie ohne Überlappung (mindestens 12 px Lücke) gleichmäßig passen; die übrigen stehen im Tooltip und in der unsichtbaren Tabelle. Ein Wert: nur ein Punkt mit Zahl und Name, keine Linie; die Achse läuft von null bis zum runden Wert darüber.
+
+**Quelle:** Cairo 2019 (Achse beschriften), Few 2004 (Direktbeschriftung statt Raster), Tufte 1983.
+
+#### DA-3 Kreisdiagramm
+
+**Zweck:** Zeigen, wie ein Ganzes in bis zu zwölf Teile zerfällt. **Gilt für** `CH-2`.
+
+**Aufbau:**
+1. **Kreis** (Durchmesser 220 px), Beginn bei 12 Uhr, im Uhrzeigersinn, **in der Reihenfolge der Abfrage**. Stücke im echten Winkel, durch `--data-gap` getrennt (als Lücke, nicht als Strich in der Grundfarbe, weil der Grund einen Verlauf trägt).
+2. **Aussehen je Stück** nach Platz: Pol voll, Akzent voll, Akzent schraffiert, wiederholt; das letzte Stück nimmt das Aussehen, das keinem Nachbarn gehört, wenn es sonst das des ersten hätte (`DESIGN.md` §Daten, Regel 3). **Schraffiert** heißt senkrechte Streifen (3 px Streifen, 3 px Grund, kein Winkel) mit Umriss `--data-outline-w` in `--data-outline`. **Nummer** je Stück außen am Kreis (`--text-xs`, `--data-label-quiet`); Stücke unter 2 % tragen ihre Nummer an einer **kurzen Leitlinie** (1 px, `--data-zero`) nach außen, versetzt, damit sich Nummern nicht überdecken; die Reihenfolge der Nummern bleibt.
+3. **Liste** (rechts neben dem Kreis ab 560 px Breite, sonst darunter): je Zeile Nummer, Name (bis zu zwei Zeilen), Wert (`--data-label`), Anteil (`--data-label-quiet`), alle in Tabellenziffern, rechtsbündig. Dieselbe Reihenfolge wie im Kreis.
+4. **Nullwerte** bleiben in der Liste („0 %“) und haben kein Stück (heute verschwinden sie, Befund G3). Die App fasst nie Stücke zu „Sonstige“ zusammen; das tut die Abfrage.
+5. **Maus drüber und Tastatur:** Eine Listenzeile unter dem Zeiger schiebt ihr Stück um 6 px nach außen (nur `transform`); umgekehrt hebt ein Stück seine Zeile mit `--surface-hover` hervor. Kein Ton ändert sich.
+6. **Anteile:** nach der Formattabelle; sie werden gerundet, die Summe kann um 1 abweichen.
+
+**Quelle:** Cleveland und McGill 1984: Der Winkel ist ungenauer als die Länge; darum steht der Wert als Zahl in der Liste und jedes Stück hat Name, Nummer und Platz. Doctrine: ab fünf Stücken ist ein Balken die bessere Wahl (offener Punkt unten).
+
+#### DA-4 Auslastung der Grafikkarte
+
+**Zweck:** Zeigen, wie stark die Grafikkarte gerade arbeitet. **Gilt für** `ST-3`, `SP-5`.
+
+Beschriftung „Auslastung“ (`--text-sm`, `--text-secondary`), darunter die Zahl in `--text-3xl`, Inter, Gewicht 600, Tabellenziffern („62 %“), darunter der Messbalken: Spur `--data-track`, Füllung `--data-fill`, Höhe `--data-meter-h`, Radius `--radius-full`, Skala fest 0 bis 100. **Keine Warnfarbe:** 100 % Auslastung ist kein Fehler. Temperatur und Leistung sind Zahlen mit Einheit in `--text-base`, ohne Balken (eine Zahl braucht kein Instrument; Few 2006). Hat die Karte keinen Messwert: Strich und das Wort „nicht gemessen“, **keine Spur und keine Füllung** (eine leere Spur läse sich als „0 %“).
+
+#### DA-5 Grafikspeicher
+
+**Zweck:** Zeigen, wie viel Grafikspeicher belegt ist, von wem und wie viel frei ist. **Gilt für** `SS-2` (Karte), `ST-3`, `SP-5`, Popup der Leiste.
+
+Große Zahl „9,3 GB“ (`--text-3xl`), Nebenzeile „9,3 von 12,0 GB belegt · 2,7 GB frei“ (`--text-sm`, `--text-secondary`). Darunter **ein geteilter Messbalken** über die ganze Breite: Teil 1 **Ollama** (`--data-primary`), Teil 2 **andere Programme** (`--data-secondary`, schraffiert), der Rest die Spur **frei** (`--data-track`); Teile durch `--data-gap` getrennt, Länge ∝ Bytes ÷ Gesamt, Skala 0 bis Gesamt, nie mehr als 100 %. **Schlüssel** unter dem Balken in der Reihenfolge der Teile, je Eintrag ein Quadrat (8 px) im Aussehen des Teils (voll oder schraffiert), Name und Zahl; „frei“ trägt ein Quadrat mit der Spur. Der Name ist der erste Träger, die Reihenfolge der zweite. Die Zahl „andere Programme“ ist die Differenz aus belegtem Speicher und dem, was Ollama meldet (zwei Messungen zu leicht verschiedenen Zeiten); sie steht nie vor dem Ollama-Teil.
+
+**Kein Gesamtwert** (keine NVIDIA-Karte, Ollama-Server auf einem anderen PC): **kein Balken.** Die Karte zeigt „Ollama belegt 9,3 GB“ aus dem, was Ollama selbst meldet, und „Gesamt nicht gemessen“. Fehlt nur der belegte Wert, steht „nicht gemessen“, keine Teile.
+
+#### DA-6 Kontext-Füllstand
+
+**Zweck:** Zeigen, wie viel vom Platz des Modells für den Verlauf belegt ist und was ihn belegt. **Gilt für** `SP-4`.
+
+1. **Kopf:** Über dem Balken steht das Wort „Füllstand, geschätzt“ (`--text-xs`, `--text-secondary`); darunter „ca. 3.420 von 8K Tokens“ (`--text-sm`, `--data-label`) und rechts „ca. 42 %“ (Prozent abgerundet, Tabellenziffern, immer `--data-label`). **„ca.“ steht vor jeder Zahl der Schätzung**, das Wort „geschätzt“ steht am Balken, nicht nur im Hinweis darunter. Der Zustand „wenig Platz“ und „voll“ steht mit Symbol und Wort in der Zeile darunter (Texte `sidePanel.level.*`), nie als Farbe der Zahl.
+2. **Messbalken (ganz eine Schätzung):** Spur `--data-track`, Füllung `--data-fill` (bei „voll“ die ganze Spur, kein Überstand), Höhe `--data-meter-h`. **Gestricheltes Ende:** Die letzten `--data-estimate-edge` der Füllung sind in senkrechte Streifen aufgelöst (innerhalb der Länge, nie darüber hinaus); so liest sich das Ende als „ungefähr“. **Reservemarke:** eine 1-px-Marke in `--data-zero` an der Stelle, ab der weniger als die Reserve für die Antwort bleibt (1.024 Tokens vor dem Ende); Tooltip nennt sie. Der Balken zeigt **nur** die Schätzung; nichts Gemessenes wird zu ihm addiert oder neben ihn auf dieselbe Skala gezeichnet (Regel 8 (b), (c)).
+3. **Teile als Zeilen, absteigend nach Tokens** (Teile mit 0 entfallen): Name links (`--text-sm`), „ca. 2.410“ rechts (Tabellenziffern), darunter ein Balken 6 px, Spur `--data-track`, Füllung `--data-secondary` (schraffiert; Streifen halten ≥ 3 : 1 gegen die Spur), **auf derselben Skala wie der Messbalken** (Anteil an der Kontextlänge). Auch die Teile sind Schätzungen und tragen „ca.“; ihre Enden sind nicht eigens gestrichelt, **die Schraffur ist ihr Kennzeichen als Schätzung** (Regel 8 (c)); „ca.“ steht vor jeder Zahl. **Keine Mindestbreite:** Ein Teil unter 1 % der Kontextlänge bekommt keinen Balken (er wäre sonst länger als sein Anteil); die Zeile trägt dann nur Name, Zahl und den Zusatz „unter 1 %“. Ein Aussehen für alle Teile; der Name ist der Träger, die Länge der Wert. Neun Teile sind damit keine neun Farben (Befund G8).
+4. **Schätzung und Messung bleiben getrennt.** Der Balken ist die Schätzung für die nächste Anfrage. Der gemessene Wert der letzten Antwort steht als Text darunter („Letzte Antwort (gemessen)“); er wird nie in den Balken gezeichnet.
+5. **Kein Modell** oder **kein Verlauf:** siehe Zustände.
+
+#### DA-7 Aufteilung eines geladenen Modells
+
+**Gilt für** `ST-4`. Je Modell ein zweigeteilter Messbalken über die Breite der Zeile: Teil **Grafikkarte** (`--data-primary`), Teil **CPU** (`--data-secondary`), durch `--data-gap` getrennt; an jedem Teil Wort und Prozent („100 % Grafikkarte“, „70 % Grafikkarte · 30 % CPU“). Läuft ein Teil auf der CPU, steht darunter wie bisher die Warnung mit Symbol und Wort; der Balken ändert sein Aussehen nicht. Der CPU-Teil ist schraffiert (Wort und Prozent sind der erste Träger).
+
+#### DA-8 Fortschritt
+
+**Gilt für** Download (`MO-3`), Einlesen (`WI-6`, `PR-5`, `SP-3`), Update (`ES-10`). Der Baustein ist Baustein 17; hier stehen die Datenregeln.
+
+1. **Zahl und Balken:** „63 %“ (abgerundet; „100 %“ nur, wenn alles da ist) neben der Spur. Darunter eine Zeile mit den Mengen: „2,1 von 4,7 GB · 38 MB/s · noch etwa 1 Min.“ (Tabellenziffern). Die **Restzeit ist eine Schätzung**, darum „etwa“; sie erscheint erst nach einer Sekunde Messung und fällt weg, wenn das Tempo unbekannt ist.
+2. **Phasen:** **Verbindet:** unbestimmt (leere Spur, kein „0 %“), Größe unbekannt. **Lädt:** bestimmt. **Prüft:** Füllung bei 100 %, Wort „prüfe …“ (Schlüssel `downloads.phase.verifying` bleibt); **nichts pulsiert** (heute pulsiert der Balken, Befund G6). **Fertig:** `--progress-fill-done`, Haken und Wort. **Fehler:** die Füllung bleibt beim erreichten Stand, Kreuz, Wort und Ursache. **Abgebrochen:** Füllung bleibt, Wort „abgebrochen“ (Schlüssel `downloads.phase.aborted`).
+3. **Größe unbekannt** (der Server nennt keine): nur die geladene Menge als Zahl, keine Prozent, unbestimmte Spur.
+4. **Mehrere Downloads:** je ein Balken, jeder auf 0 bis 100 %; kein Gesamtbalken.
+
+#### DA-9 Tabelle der installierten Modelle
+
+**Gilt für** `MO-4`; Baustein 13. Zahlenspalten rechtsbündig, Tabellenziffern, Kopfzelle gleich ausgerichtet wie ihre Spalte; Text links.
+
+| Spalte | Inhalt | Ausrichtung | Sortierbar | Schmal (Inhaltsbreite unter 1000 px) |
+|---|---|---|---|---|
+| Name | Modellname | links, bricht an „/“, „:“, „-“ um, höchstens zwei Zeilen, nie gekürzt | ja | bleibt; unter dem Namen eine Zeile mit Parameter, Quantisierung und Fähigkeiten (`--text-xs`, `--text-secondary`) |
+| Parameter | wie Ollama sie nennt, Dezimalzeichen der Sprache („8,2B“) | rechts | ja (nach Zahl) | wandert unter den Namen |
+| Quantisierung | Kennung („Q4_K_M“), Inter | links | nein | wandert unter den Namen |
+| Größe | dezimale Dateigröße mit Einheit | rechts | ja (nach Byte) | bleibt |
+| Kontext | größte Kontextlänge („128K“) | rechts | ja (nach Tokens) | bleibt |
+| Fähigkeiten | Wörter, getrennt durch „ · “ | links | nein | wandert unter den Namen |
+| Geändert | Datum | rechts | ja (nach Zeit) | bleibt |
+| Aktion | „Löschen“ | rechts | nein | bleibt |
+
+Standardsortierung: zuletzt geändert zuerst (ein neu heruntergeladenes Modell steht oben). Unbekannte Werte („–“) stehen in beiden Richtungen am Ende. Schmal sind es fünf Spalten (Name, Größe, Kontext, Geändert, Aktion); nichts scrollt waagerecht. Gesperrte, ladende und leere Zustände nach Baustein 13 und `MO-4`.
+
+#### DA-10 Statistikzeile
+
+**Gilt für** `CH-2`. Eine Zeile unter der Antwort (unter den Fußnoten, `DESIGN.md` §Ausdrucksvolle Momente): „1.234 Tokens · 42,3 Tokens/s · 29,1 s“ in Inter, `--text-xs`, `--text-secondary`, Tabellenziffern, Formate nach der Tabelle. Fehlt die Messung (abgebrochen, Fehler), **steht die Zeile nicht da** (nie „0 Tokens/s“). Ist die Dauer 0, steht für das Tempo „–“.
+
+#### Zustände (DW-6.5)
+
+| Fläche | Keine Daten | Zu viele Werte | Ein Wert | Negativ | Sehr lange Namen |
+|---|---|---|---|---|---|
+| `DA-1` Balken | Das Werkzeug liefert kein Diagramm; die Werkzeug-Zeile (`CH-3`) zeigt „Kein Diagramm: die Abfrage hat keine Zeilen ergeben“. Ein gespeichertes Diagramm, das die Prüfung nicht besteht, zeigt statt der Zeichnung den Fehler aus „Texte (Phase 6)“ | über 50 Werte: kein Diagramm, Werkzeug-Zeile „Kein Diagramm: zu viele Werte (…)“; das Modell bekommt den Hinweis auf `ORDER BY … LIMIT` und versucht es neu. Bis 50 Werte zeichnet das Diagramm waagerecht | ein waagerechter Balken | Balken nach links, Nulllinie | zwei Zeilen, dann „…“ |
+| `DA-2` Linie | wie oben | wie oben (50 Punkte auf 824 px: 14 px Abstand, keine Punkte, vier Beschriftungen, x-Namen ausgedünnt) | ein Punkt mit Zahl | Nulllinie, Achse enthält null | x-Namen ausgedünnt, voller Name im Tooltip |
+| `DA-3` Kreis | wie oben; sind alle Werte 0 oder einer negativ: „Kein Diagramm: Anteile brauchen Werte ab null“ | über 12 Werte: kein Diagramm, Zeile „Kein Diagramm: zu viele Werte (…)“ | voller Kreis, eine Listenzeile „100 %“ | nicht erlaubt (siehe links) | zwei Zeilen in der Liste |
+| `DA-4` Auslastung | Strich und „nicht gemessen“, keine Spur; ohne NVIDIA-Karte der Satz aus `ST-3` | trifft nicht zu: feste Skala | – | trifft nicht zu | – |
+| `DA-5` Grafikspeicher | kein Gesamtwert: kein Balken, „Ollama belegt …“ und „Gesamt nicht gemessen“ | trifft nicht zu: mehr als drei Teile gibt es nicht | trifft nicht zu | trifft nicht zu | – |
+| `DA-6` Kontext | kein Modell: Satz mit Weg zu „Modelle“ (`SP-4`), kein Balken; neuer Chat: Grundbedarf als Balken | neun Teile: neun Zeilen, scrollt mit dem Panel | ein Teil: eine Zeile | trifft nicht zu | Teilnamen sind fest und kurz |
+| `DA-8` Fortschritt | Verbindet: unbestimmt | trifft nicht zu | – | trifft nicht zu | Name wird gekürzt, voll im Tooltip |
+| `DA-9` Tabelle | leer: Satz an der Stelle der Tabelle (`MO-4`) | viele Modelle: Tabelle scrollt senkrecht mit der Seite | ein Modell: eine Zeile | trifft nicht zu | Name bricht um, nie gekürzt |
+| `DA-10` Statistik | Zeile entfällt | trifft nicht zu | – | trifft nicht zu | – |
+
+**Zwei Dinge sagt jeder dieser Zustände:** was fehlt, und wem es auffällt. Ein fehlender Wert ist nie ein Nullwert und nie eine Marke (DA-0 Regel 8). Die Fehlerzeile eines nicht gezeichneten Diagramms steht in der Werkzeug-Zeile, dort wo der Nutzer hinsieht, wenn das Diagramm ausbleibt.
+
+#### Texte (Phase 6)
+
+Die Texte folgen `DESIGN.md` §Stimme und der Begriffstabelle. **Ergänzung der Begriffstabelle:** Diagramm = Diagramm · chart (nicht Grafik, Chart · graph, plot); Balkendiagramm, Liniendiagramm, Kreisdiagramm · bar chart, line chart, pie chart; gemessen · measured; geschätzt · estimated; Auslastung · utilization (nicht Last); Füllstand · fill level (nicht Belegung).
+
+| ID | Art | DE | EN |
+|---|---|---|---|
+| `DA-1` bis `DA-3` Name der Figur, `chat.chart.label` | Beschriftung | {{kind}}: {{title}}, {{count}} Werte von {{min}} bis {{max}} | {{kind}}: {{title}}, {{count}} values from {{min}} to {{max}} |
+| `DA-1` Art, `chat.chart.kind.bar` | Beschriftung | Balkendiagramm | Bar chart |
+| `DA-2` Art, `chat.chart.kind.line` | Beschriftung | Liniendiagramm | Line chart |
+| `DA-3` Art, `chat.chart.kind.pie` | Beschriftung | Kreisdiagramm | Pie chart |
+| `DA-0` Tabelle für Hilfstechnik | Beschriftung | Werte zum Diagramm | Values behind the chart |
+| `DA-0` Spaltenköpfe der Tabelle | Beschriftung | Name · Wert | Label · Value |
+| `DA-2` Achse | Hinweis | Achse beginnt bei {{value}} | Axis starts at {{value}} |
+| `DA-0` gespeichertes Diagramm unlesbar, `chat.chart.empty` | Fehler | Das Diagramm ließ sich nicht zeichnen: Die gespeicherten Daten sind unvollständig. Die Antwort selbst bleibt unverändert. Bitte das Modell, das Diagramm noch einmal zu erstellen. | The chart could not be drawn: the saved data is incomplete. The answer itself is unchanged. Ask the model to create the chart again. |
+| `DA-1` Werkzeug-Zeile, zu viele Werte | Status | Kein Diagramm: zu viele Werte ({{count}} von höchstens {{max}}) | No chart: too many values ({{count}} of at most {{max}}) |
+| `DA-1` Werkzeug-Zeile, keine Zeilen | Status | Kein Diagramm: die Abfrage hat keine Zeilen ergeben | No chart: the query returned no rows |
+| `DA-1` Werkzeug-Zeile, keine Zahl | Status | Kein Diagramm: Zeile {{row}} enthält keine Zahl | No chart: row {{row}} contains no number |
+| `DA-3` Werkzeug-Zeile, Anteile | Status | Kein Diagramm: Anteile brauchen Werte ab null | No chart: shares need values of zero or more |
+| `DA-0` Wert fehlt | Status | nicht gemessen | not measured |
+| `DA-0` Wert fehlt, für Hilfstechnik | Beschriftung | unbekannt | unknown |
+| `DA-0` Schätzung | Status | geschätzt | estimated |
+| `DA-0` Messung | Status | gemessen | measured |
+| `DA-4` Name des Messbalkens | Beschriftung | Auslastung: {{value}} | Utilization: {{value}} |
+| `DA-5` Nebenzeile | Status | {{used}} von {{total}} belegt · {{free}} frei | {{used}} of {{total}} used · {{free}} free |
+| `DA-5` Kein Gesamtwert | Status | Ollama belegt {{vram}} | Ollama uses {{vram}} |
+| `DA-5` Kein Gesamtwert | Status | Gesamt nicht gemessen | Total not measured |
+| `DA-6` Kopf | Status | ca. {{used}} von {{total}} Tokens | approx. {{used}} of {{total}} tokens |
+| `DA-6` Prozent | Status | ca. {{percent}} | approx. {{percent}} |
+| `DA-6` Balkenkopf | Beschriftung | Füllstand, geschätzt | Fill level, estimated |
+| `DA-6` Teil | Status | ca. {{tokens}} | approx. {{tokens}} |
+| `DA-6` Teil unter 1 % | Status | ca. {{tokens}} · unter 1 % | approx. {{tokens}} · under 1 % |
+| `DA-6` Reservemarke | Tooltip | Ab hier bleiben weniger als {{reserve}} Tokens für die Antwort | From here on, fewer than {{reserve}} tokens are left for the answer |
+| `DA-7` Teil | Beschriftung | {{percent}} Grafikkarte | {{percent}} graphics card |
+| `DA-7` Teil | Beschriftung | {{percent}} CPU | {{percent}} CPU |
+| `DA-8` Restzeit, `downloads.remaining` | Status | noch etwa {{time}} | about {{time}} left |
+| `DA-8` Größe unbekannt | Status | Größe noch unbekannt | Size not known yet |
+| `DA-10` Dauer | Status | {{minutes}} Min. {{seconds}} s | {{minutes}} min {{seconds}} s |
+| `DA-10` Dauer | Status | {{hours}} Std. {{minutes}} Min. | {{hours}} h {{minutes}} min |
+
+**Ohne neuen Text (Schlüssel bleiben):** `DA-4` und `DA-5` Beschriftungen (`gpu.utilization`, `gpu.vram`, `gpu.ollama`, `gpu.others`, `gpu.free`, `gpu.temperature`, `gpu.power`), `DA-6` Teilnamen und Hinweise (`sidePanel.part.*`, `sidePanel.level.*`, `sidePanel.estimateHint`, `sidePanel.measured`), `DA-8` Phasen (`downloads.phase.*`; das Wort „pulsiert“ gibt es nicht mehr, „prüfe …“ bleibt Text), `DA-9` Spaltenköpfe (`models.columns.*`), `DA-10` Statistik (`chat.stats`).
+
+#### Offene Punkte (Phase 6)
+
+**Für den Nutzer (Entscheidung):**
+1. **Zwei Farben statt drei Töne (entschieden am 2026-11-16).** Die Palette nutzt nur `--text` und `--accent-solid`; Schraffur, Lücke, Nummer und Reihenfolge tragen den Rest. Die Schraffur sind senkrechte Streifen, keine Punkte (entschieden am 2026-11-16); sie zählt zugleich als Kennzeichen eines geschätzten Teil-Balkens. Folge der Entscheidung: Die mittlere Helligkeit einer Schraffur hängt vom Untergrund ab; in Hell hebt sich ihre Fläche kaum vom Grund ab, Streifen und Umriss tragen (`DESIGN.md` §Daten, Regel 6).
+2. **Kreis ab sechs Stücken.** Die Doctrine rät ab fünf Stücken zum Balken. Die Spec lässt den Kreis zu (die Datenform ist fest). Alternative: Der Kreis wird ab sechs Stücken als waagerechter Balken gezeichnet, in der Reihenfolge der Abfrage.
+3. **„GB“ für zwei Konventionen** (Dateigröße dezimal, Speicher binär): so lassen (Spec) oder den Speicher als „GiB“ schreiben.
+
+**Für den Code-Plan (nicht Teil dieses Plans):** (a) Beschreibung des Werkzeugs `table_chart`: Wertspalte mit Einheit benennen („Umsatz (€)“), Ranglisten absteigend sortieren, ab fünf Anteilen Balken wählen. (b) `TableChart` speichert nur den Namen der Wertspalte, nicht den der Beschriftungsspalte; eine Achsenüberschrift der Kategorien gibt es deshalb nicht. (c) Die x-Abstände der Linie sind gleichmäßig; für echte Zeitabstände bräuchte die Datenform einen Typ der Beschriftung. (d) `downloadSpeed.remaining` und `chat.stats` brauchen Texte in beiden Sprachen und Einheiten ohne feste deutsche Wörter. (e) `pieSlices` entfernt Nullwerte auch aus der Liste (Befund G3).
 
 ---
 
@@ -865,7 +1097,7 @@ Die Befehlszeilen tragen die IDs aus §IA (P-01 bis P-25); die Gruppen stehen im
 
 **Blöcke (in Reihenfolge):**
 1. `SS-1` **Kopf.** Überschrift „Dein PC“ und eine Zeile darunter. Gehört der neue Chat zu einem Projekt: Projekt-Marke mit Link zur Projektseite.
-2. `SS-2` **PC-Status.** Zwei Karten nebeneinander, beide führen zur Status-Seite. Karte „Geladenes Modell“: Name, Größe, Fähigkeiten; mehrere geladene als „+n weitere“. Karte „Grafikspeicher“: belegt und frei von gesamt, als Zahl und als Balken (Regeln Phase 6).
+2. `SS-2` **PC-Status.** Zwei Karten nebeneinander, beide führen zur Status-Seite. Karte „Geladenes Modell“: Name, Größe, Fähigkeiten; mehrere geladene als „+n weitere“. Karte „Grafikspeicher“: belegt und frei von gesamt, als Zahl und als Balken (`DA-5`).
 3. `SS-3` **Banner-Zone.** Nur bei Bedarf: Ausweich-Banner (Ollama nicht erreichbar, wieder erreichbar).
 4. `SS-4` **Eingabefeld.** Die Fläche 5 in voller Breite der Spalte, mit Fokus.
 5. `SS-5` **Einstiege.** Vier Kacheln, jede mit Titel und einer Zeile. Sie stellen das Eingabefeld ein und setzen den Cursor hinein, sie senden nichts:
@@ -959,7 +1191,7 @@ Die Befehlszeilen tragen die IDs aus §IA (P-01 bis P-25); die Gruppen stehen im
 1. `CH-1` **Seitenkopf.** Titel des Chats. Projekt-Marke mit Link zur Projektseite (nur in einem Projekt). Aktionen rechts: „Ganzen Chat in Obsidian speichern“ und „Zusammenfassen“ (beide nur mit eingerichtetem Vault, gespeichertem Chat, mindestens einer Antwort und ohne laufende Antwort); „Chat-Einstellungen“ (Strg+J, Punkt bei eigenen Einstellungen); „Seitenpanel“ (Punkt in zwei Stufen, wenn der Kontext knapp wird); Menü „Mehr“ mit Umbenennen, Verschieben nach … und Löschen.
 2. `CH-2` **Verlauf.** Lesespalte, höchstens 800 px. Scrollt mit, solange der Nutzer unten ist; eine eigene neue Nachricht holt immer nach unten.
    - **Eigene Nachricht:** Anhänge (Datei- und Tabellen-Karten, Bild-Vorschauen; Klick vergrößert ein Bild, Schließen oder Esc beendet das), Text. Aktionen: Kopieren, Bearbeiten, Merken (nur mit Vault). Bearbeiten öffnet ein Feld an Ort und Stelle mit dem Hinweis, dass diese und alle folgenden Nachrichten ersetzt werden; „Senden und neu antworten“ (Strg+Enter), Abbrechen (Esc).
-   - **Antwort:** Gedanken (aufklappbar, während des Denkens als laufend markiert); Werkzeug-Zeilen (`CH-3`); Wartezeile (Modell wird geladen, Wissen wird durchsucht, arbeitet mit Werkzeugen); Text (Links öffnen im Browser, Bilder aus Antworten werden nie geladen, Quellen-Marken springen zur Quelle im Seitenpanel); Diagramm (Regeln Phase 6); Hinweise (Wissen nicht durchsucht, keine passende Stelle gefunden, Fehler, abgebrochen); Statistikzeile (Modell, Tokens, Tokens je Sekunde, Dauer). Aktionen: Kopieren, Antwort wiederholen (nur an der letzten Antwort), In Obsidian speichern, Merken.
+   - **Antwort:** Gedanken (aufklappbar, während des Denkens als laufend markiert); Werkzeug-Zeilen (`CH-3`); Wartezeile (Modell wird geladen, Wissen wird durchsucht, arbeitet mit Werkzeugen); Text (Links öffnen im Browser, Bilder aus Antworten werden nie geladen, Quellen-Marken springen zur Quelle im Seitenpanel); Diagramm (`DA-1` bis `DA-3`); Hinweise (Wissen nicht durchsucht, keine passende Stelle gefunden, Fehler, abgebrochen); Statistikzeile (Tokens, Tokens je Sekunde, Dauer; `DA-10`). Aktionen: Kopieren, Antwort wiederholen (nur an der letzten Antwort), In Obsidian speichern, Merken.
    - **Verdichtungs-Marke:** „bis hier verdichtet“ mit Zahl der Nachrichten; „Zusammenfassung ansehen“ (aufklappbar), „Verdichtung aufheben“.
    - **Sprungziel:** Eine über die Suche geöffnete Nachricht steht in der Mitte und ist kurz hervorgehoben.
 3. `CH-3` **Werkzeug-Zeile und Rückfrage-Karte.** Zeile: Zustand (wartet auf Freigabe, läuft, fertig, Fehler, abgelehnt, abgebrochen) als Text und Symbol, Name der Aktion in Klartext, aufklappbar zu MCP-Server, Eingabe und Ergebnis. Bei „wartet auf Freigabe“ steht darunter die Rückfrage-Karte (Ablauf 3). Im Code-Bereich hat eine Änderungs-Zeile zusätzlich die Vorher/Nachher-Ansicht und „Rückgängig“.
@@ -1175,7 +1407,7 @@ In jeder Zeile gibt es damit genau ein Ziel. Der Preis: „Verwalten …“ lieg
 1. `SP-1` **Kopf.** Vier Reiter: Quellen, Projekt, Kontext, GPU. Der Reiter „Kontext“ trägt den Füllstand als Punkt mit Text für Hilfstechnik. Rechts „Schließen“.
 2. `SP-2` **Quellen.** Eine Zeile, worauf sich die Liste bezieht (die letzte Antwort mit Wissen). Liste der Textstellen: Nummer, Datei, aufklappbar zum Text, Ähnlichkeit, „Datei öffnen“. Hinweis, wenn das Modell die Reihenfolge geprüft hat.
 3. `SP-3` **Projekt.** Link „Projekt bearbeiten“, die Anweisungen (nur lesen), Projekt-Dokumente mit „Einlesen“, Fortschritt und Dateiliste (Filter „nur Probleme“).
-4. `SP-4` **Kontext.** Füllstand: belegt von gesamt, aufgeteilt nach Teilen (Zusammenfassung, Erinnerungen, Anweisungen, Verlauf, Bilder, Dateien, Wissen, Werkzeuge, Skills), mit dem Hinweis, dass es eine Schätzung ist. Bei knappem oder vollem Kontext: Warnung, Knopf „Kontextlänge auf N erhöhen“ mit Schätzung des zusätzlichen Grafikspeichers, oder der Hinweis, dass das Modell nicht mehr kann. „Älteren Teil verdichten“ (öffnet `CH-7`). Bei aktiver Verdichtung: was sie spart und „Verdichtung aufheben“. Darunter die gemessenen Werte der letzten Antwort. Lässt sich der zusätzliche Grafikspeicher nicht schätzen (keine NVIDIA-Karte, Ollama-Server auf anderem PC oder das Modell erlaubt keine Schätzung), bleibt „Erhöhen“ benutzbar und sagt in einem Satz, dass der Mehrbedarf nicht vorab bekannt ist. Ist kein Modell gewählt, weil keines installiert ist, steht statt des Füllstands ein Satz mit Weg zu „Modelle“; Erhöhen und Verdichten sind gesperrt. Darstellung des Füllstands: Phase 6.
+4. `SP-4` **Kontext.** Füllstand: belegt von gesamt, aufgeteilt nach Teilen (Zusammenfassung, Erinnerungen, Anweisungen, Verlauf, Bilder, Dateien, Wissen, Werkzeuge, Skills), mit dem Hinweis, dass es eine Schätzung ist. Bei knappem oder vollem Kontext: Warnung, Knopf „Kontextlänge auf N erhöhen“ mit Schätzung des zusätzlichen Grafikspeichers, oder der Hinweis, dass das Modell nicht mehr kann. „Älteren Teil verdichten“ (öffnet `CH-7`). Bei aktiver Verdichtung: was sie spart und „Verdichtung aufheben“. Darunter die gemessenen Werte der letzten Antwort. Lässt sich der zusätzliche Grafikspeicher nicht schätzen (keine NVIDIA-Karte, Ollama-Server auf anderem PC oder das Modell erlaubt keine Schätzung), bleibt „Erhöhen“ benutzbar und sagt in einem Satz, dass der Mehrbedarf nicht vorab bekannt ist. Ist kein Modell gewählt, weil keines installiert ist, steht statt des Füllstands ein Satz mit Weg zu „Modelle“; Erhöhen und Verdichten sind gesperrt. Darstellung des Füllstands: `DA-6`.
 5. `SP-5` **GPU.** Grafikkarte und geladene Modelle in Kurzform (dieselben Inhalte wie die Status-Seite). Ohne NVIDIA-Karte oder bei einem Ollama-Server auf anderem PC steht statt der Messwerte der Grund; das ist ein normaler Zustand, kein Fehler.
 6. `SP-6` **Zweite Ansicht: Chat-Einstellungen.** Kopf mit Titel und „Schließen“. Felder: Systemprompt; Kontextlänge (Auswahl, Standard von Ollama); Temperatur (Regler, „Auf Standard zurücksetzen“); Seed; Denken (An, Aus oder Stufen, je nach Modell). „Als Vorlage speichern“ (Name, Speichern, Rückmeldung). Fußzeile: gilt ab der nächsten Nachricht und wird mit dem Chat gespeichert.
 
@@ -1283,7 +1515,7 @@ In jeder Zeile gibt es damit genau ein Ziel. Der Preis: „Verwalten …“ lieg
 3. `WI-3` **Hinweise.** Bei Bedarf: Embedding-Modell fehlt (mit Weg zu „Modelle“); die Sammlung gehört zum Obsidian-Vault und wird in den Einstellungen verwaltet (mit Link).
 4. `WI-4` **Name.** Eingabefeld, speichert beim Verlassen.
 5. `WI-5` **Quellen.** Liste der Ordner und Dateien, jede mit „Entfernen“. „Ordner hinzufügen“, „Dateien hinzufügen“. Hinweis, was gelesen wird und was nicht.
-6. `WI-6` **Fortschritt und Ergebnis.** Während des Einlesens: Zahl und aktuelle Datei. Danach: Dateien, Abschnitte, Zeitpunkt, und was sich geändert hat.
+6. `WI-6` **Fortschritt und Ergebnis.** Während des Einlesens: Zahl und aktuelle Datei (Regeln: `DA-8`). Danach: Dateien, Abschnitte, Zeitpunkt, und was sich geändert hat.
 7. `WI-7` **Dateiliste.** Filter „nur Probleme“. Zeilen: Datei, Zustand (eingelesen, leer, übersprungen, Fehler), Abschnitte oder Fehlergrund. Lange Listen enden mit „und n weitere“.
 8. `WI-8` **Fußnote.** Mit welchem Modell die Fingerabdrücke gerechnet wurden, lokal über Ollama.
 9. `WI-9` **Nichts gewählt.** Was eine Sammlung ist und dass die Dateien bleiben, wo sie sind; „Neue Sammlung“.
@@ -1488,8 +1720,8 @@ Die festen Anker und die Bestätigungspunkte der Chat-Spec (Fläche 4) gelten hi
 **Blöcke (in Reihenfolge):**
 1. `MO-1` **Seitenkopf.** Überschrift, „Aktualisieren“.
 2. `MO-2` **Herunterladen.** Feld für den Modellnamen und „Herunterladen“; Hinweis mit Link zur Ollama-Bibliothek (öffnet im Browser); Meldung bei ungültigem Namen.
-3. `MO-3` **Laufende Downloads.** Je Download: Name, Phase (verbindet, lädt, prüft, fertig, Fehler, abgebrochen), Fortschritt als Zahl und Balken, „Download abbrechen“ oder „Aus der Liste entfernen“. Regeln für den Balken: Phase 6.
-4. `MO-4` **Installierte Modelle.** Tabelle: Name, Parameter, Quantisierung, Größe, größter Kontext, Fähigkeiten (Bilder, Audio, Werkzeuge, Denken, Embedding, Einfügen), geändert, je Zeile „löschen“. Meldung, wenn das Löschen scheitert. Regeln für die Tabelle: Phase 6.
+3. `MO-3` **Laufende Downloads.** Je Download: Name, Phase (verbindet, lädt, prüft, fertig, Fehler, abgebrochen), Fortschritt als Zahl und Balken, „Download abbrechen“ oder „Aus der Liste entfernen“. Regeln für Zahl und Balken: `DA-8`.
+4. `MO-4` **Installierte Modelle.** Tabelle: Name, Parameter, Quantisierung, Größe, größter Kontext, Fähigkeiten (Bilder, Audio, Werkzeuge, Denken, Embedding, Einfügen), geändert, je Zeile „löschen“. Meldung, wenn das Löschen scheitert. Regeln für die Tabelle: `DA-9`.
 
 **Zustände:**
 
@@ -1504,7 +1736,7 @@ Die festen Anker und die Bestätigungspunkte der Chat-Spec (Fläche 4) gelten hi
 
 **Ausgang:** bleibt auf der Seite; Browser (Bibliothek).
 
-**Breite:** eine Spalte in voller Inhaltsbreite. Auf der Stufe schmal rücken Spalten zusammen (welche, legt Phase 6 fest); jeder Wert bleibt erreichbar, nichts scrollt waagerecht.
+**Breite:** eine Spalte in voller Inhaltsbreite. Auf der Stufe schmal rücken Spalten zusammen (welche, steht in `DA-9`); jeder Wert bleibt erreichbar, nichts scrollt waagerecht.
 
 **Texte (Phase 5)**
 
@@ -1538,8 +1770,8 @@ Die festen Anker und die Bestätigungspunkte der Chat-Spec (Fläche 4) gelten hi
 **Blöcke (in Reihenfolge):**
 1. `ST-1` **Seitenkopf.** Überschrift.
 2. `ST-2` **Verbindung.** Zustand (erreichbar mit Version, wird geprüft, nicht erreichbar), aktiver Ollama-Server, Link zu Einstellungen → Ollama-Server. Bei „nicht erreichbar“: Ursache und was zu tun ist. Nutzt die vorhandene Abfrage; heute steht dieser Wert nur im Tooltip der Leiste.
-3. `ST-3` **Grafikkarte.** Name, Auslastung, Grafikspeicher (belegt von gesamt, aufgeteilt in Ollama, andere Programme, frei), Temperatur, Stromverbrauch. Darstellung: Phase 6.
-4. `ST-4` **Geladene Modelle.** Erklärung, wann Ollama lädt und entlädt. Zusammenfassung (Zahl, belegter Speicher). Je Modell: Name, Speicher und Aufteilung Grafikkarte und Prozessor, Kontextlänge, Zeit bis zum Entladen; Warnung, wenn ein Teil auf dem Prozessor läuft, mit Abhilfe.
+3. `ST-3` **Grafikkarte.** Name, Auslastung, Grafikspeicher (belegt von gesamt, aufgeteilt in Ollama, andere Programme, frei), Temperatur, Stromverbrauch. Darstellung: `DA-4` und `DA-5`.
+4. `ST-4` **Geladene Modelle.** Erklärung, wann Ollama lädt und entlädt. Zusammenfassung (Zahl, belegter Speicher). Je Modell: Name, Speicher und Aufteilung Grafikkarte und Prozessor (`DA-7`), Kontextlänge, Zeit bis zum Entladen; Warnung, wenn ein Teil auf dem Prozessor läuft, mit Abhilfe.
 
 Die Seite frischt sich von selbst auf; es gibt keinen Knopf dafür.
 
