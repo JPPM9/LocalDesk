@@ -45,11 +45,12 @@ Alles andere bleibt ruhig. An drei Stellen darf es mehr sein:
 
 1. **Ankommen (Startseite „Dein PC“):** Der Lichtschein oben links ist hier am deutlichsten sichtbar, weil die Seite fast leer ist. Stärke: mittel. Der Schein ist der einzige Verlauf im System.
 2. **Ergebnis prüfen (Antwort mit Quellen): Fußnoten.** Quellen und Messwerte stehen als echte Fußnoten unter der Antwort: hochgestellte Ziffer im Text (`--accent-text`, Tabellenziffern), darunter eine kurze Linie von 120 px, dann die nummerierten Quellen in `--text-xs`, darunter die Messwerte. Keine Kästen, keine Chips. Stärke: leise, aber bei jeder Antwort mit Quelle. Die Fußnoten sind bewusst **nicht** die Signatur: Sie kommen nur in Antworten vor, der Lichtschnitt in jedem Fenster. Zwei gleichrangige Erkennungszeichen würden sich die Aufmerksamkeit teilen; so gehört dem einen das Fenster und dem anderen der Inhalt.
-3. **Versatz der schwebenden Flächen:** Die eigene Nachricht ragt 36 px nach rechts über die Lesespalte, ein Diagramm 36 px nach links, das Eingabefeld 24 px nach links. Nur im Chat und auf der Startseite. Auf Listen- und Formularseiten (Modelle, Einstellungen, Wissen, Skills) sitzt alles bündig, sonst wirkt es unordentlich.
+3. **Versatz der schwebenden Flächen:** Die eigene Nachricht ragt 36 px nach rechts über die Lesespalte, ein Diagramm 36 px nach links, das Eingabefeld 24 px nach links (jeweils die Obergrenze; bei schmalem Fenster gilt die Regel „Versatz bei schmalem Fenster“ unter „Abstände, Form, Tiefe“: bei 900 px Fenster 12 px). Nur im Chat und auf der Startseite. Auf Listen- und Formularseiten (Modelle, Einstellungen, Wissen, Skills) sitzt alles bündig, sonst wirkt es unordentlich.
 
 ## Schrift
 
-- **Schrift für alles:** Inter (Variable Font, liegt der App bei als `@fontsource-variable/inter`; Ersatz: `system-ui, "Segoe UI", sans-serif`). Keine zweite Familie, keine Mono-Schrift als Stilmittel. Mono nur dort, wo wirklich Code steht (Code-Blöcke, Befehle).
+- **Schrift für alles:** Inter (Variable Font, liegt der App bei als `@fontsource-variable/inter`; Ersatz: `system-ui, "Segoe UI", sans-serif`). Keine zweite Familie, keine Mono-Schrift als Stilmittel.
+- **Festbreite (`--font-mono`) nur für Code und Programm-Ausgaben** (Entscheidung des Nutzers, 2026-11-20): in der Rückfrage-Karte (Befehl, Eingabe des Werkzeugs), in der Code-Dateiansicht (Dateiinhalt), im Vorher/Nachher einer Änderung und bei den Meldungen eines MCP-Servers. **Nirgends sonst:** nicht in Überschriften, Knöpfen, Listen, Tabellen, Chips, Menüs, Zahlen oder Fließtext, auch nicht „zur Betonung“; alles andere bleibt Inter (Zahlen mit Tabellenziffern aus Inter). Der frühere Einwand gegen Mono als Stilmittel bleibt: Die Festbreite zeigt hier, dass etwas Text der Maschine ist, kein Stil.
 - **Skala:** Verhältnis 1,25 ab 16 px aufwärts; darunter feste Stufen mit mindestens 2 px Abstand (Auftrag aus der Mock-Prüfung: 14/15/17 lag zu dicht).
 
 ```css
@@ -499,6 +500,17 @@ Die eigene Nachricht hat `20px 20px 6px 20px` (die kleine Ecke zeigt zum Eingabe
 
 **Hauptfläche und Eingabefeld haben unterschiedliche Tiefe** (Auftrag aus der Mock-Prüfung): Der Inhalt liegt auf Ebene 0, das Eingabefeld auf Ebene 3, mit eigener Tonstufe, der einzigen Kante und dem größten Schatten der Seite.
 
+**Versatz bei schmalem Fenster** (Entscheidung des Nutzers, 2026-11-20; die gesperrten Maße 36 px und 24 px bleiben die Obergrenze). Der Versatz der schwebenden Flächen ist begrenzt auf den freien Rand neben der Lesespalte minus 12 px:
+
+```text
+Spaltenbreite  = min(800 px, Inhaltsbreite − 48 px)
+freier Rand    = max(0, (Inhaltsbreite − Spaltenbreite) / 2 − 12 px)
+Nachricht, Diagramm = min(36 px, freier Rand)
+Eingabefeld         = min(24 px, freier Rand)
+```
+
+Bei 900 px Fenster (eingeklappte Leiste: Inhalt 824 px, Spalte 776 px, freier Rand 12 px) ragen alle Flächen **12 px**. Die vollen 36 px gelten ab 896 px Inhaltsbreite (Fenster ab 972 px), das Eingabefeld hat die vollen 24 px ab 872 px. Der Versatz bleibt damit immer im sichtbaren Inhalt: Nichts wird abgeschnitten, und es entsteht kein waagerechtes Scrollen. Die Regel gilt nur dort, wo es einen Versatz gibt (Chat, Startseite).
+
 **Keine Fläche in einer Fläche.** Weil es keine Hauptfläche gibt, liegt ein Diagramm nie in einem zweiten Kasten. Auf einer schwebenden Fläche liegt keine weitere schwebende Fläche; Gliederung darin läuft über Abstand und Schrift.
 
 ## Bewegung
@@ -528,7 +540,7 @@ Die eigene Nachricht hat `20px 20px 6px 20px` (die kleine Ecke zeigt zum Eingabe
 - **Blau ist kein Akzent.** Nur Grund rechts vom Schnitt und Tönung der Schatten.
 - **Kein zweiter Verlauf, kein Leuchten.** Der Lichtschein oben links ist der einzige. Kein Schein um Knöpfe, keine Verlaufs-Schrift, keine Glas-Unschärfe.
 - **Keine zweite Schräge.**
-- **Keine Mono-Schrift als Stilmittel**, keine Großbuchstaben mit Sperrung als Beschriftung, keine Schrift unter 12 px.
+- **Keine Mono-Schrift als Stilmittel.** `--font-mono` steht nur für Code und Programm-Ausgaben (Rückfrage-Karte, Code-Dateiansicht, Vorher/Nachher, Meldungen eines MCP-Servers), sonst nirgends; alles andere ist Inter. Dazu: keine Großbuchstaben mit Sperrung als Beschriftung, keine Schrift unter 12 px.
 - **Kein reines Schwarz und kein reines Weiß**, auch nicht in Schatten.
 - **Kein Versatz auf Listen- und Formularseiten.**
 - **Keine Bewegung, die nichts mitteilt**; kein Federn.
@@ -624,7 +636,7 @@ Die Zuordnung oben (Hintergründe, Flächen, Text, Vollton, Fokus, Kante, Schatt
   --focus-outline-solid: 2px solid var(--focus-ring-solid);
   --focus-inset: inset 0 0 0 2px var(--focus-ring);
   --font-sans: "Inter Variable", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
-  --font-mono: "Cascadia Mono", Consolas, ui-monospace, monospace;
+  --font-mono: "Cascadia Mono", Consolas, ui-monospace, monospace;   /* nur Code und Programm-Ausgaben, siehe „Schrift“ */
 }
 [data-theme="dark"] {
   --scrim: oklch(from var(--shadow-ink) l c h / 0.62);
@@ -765,7 +777,7 @@ Quelle: `src/renderer/index.css`. „1:1“ heißt: im Code durch den neuen Name
 
 ## Components
 
-18 Bausteine. Jeder hat: Aufgabe, Token-Block (nur Alias-Stufe und Skalen), eine Zustandstabelle mit den sechs Zuständen (**normal, Maus drüber, gedrückt, Tastatur-Fokus, gesperrt, lädt**) und die Bedienung für Hilfstechnik. Fehlt ein Zustand, steht „trifft nicht zu“ mit Grund.
+24 Bausteine (18 Grundbausteine und sechs Nachträge vom 2026-11-20: Kontrollkästchen, Listenzeile, Reiter, Regler, Popover, Status-Popup). Jeder hat: Aufgabe, Token-Block (nur Alias-Stufe und Skalen), eine Zustandstabelle mit den sechs Zuständen (**normal, Maus drüber, gedrückt, Tastatur-Fokus, gesperrt, lädt**) und die Bedienung für Hilfstechnik. Fehlt ein Zustand, steht „trifft nicht zu“ mit Grund.
 
 **Für alle Bausteine.**
 
@@ -1451,20 +1463,218 @@ Die Fensterknöpfe haben 46 × 40 px (Windows-Konvention, über `--hit-min`). Zi
 | Gesperrt | Fenster ohne Fokus: Name und Symbole mit `--titlebar-inactive-opacity` | Kein `aria-disabled`; die Knöpfe bleiben bedienbar |
 | Lädt | trifft nicht zu: Die Titelleiste zeigt keinen Ladezustand; Zustände gehören zur Seite und zum Fuß der Leiste | |
 
+### Nachtrag (2026-11-20): Bausteine, die die Mocks brauchen
+
+Die Mocks (Phase 7) bauen sechs Teile, die in den 18 Bausteinen oben fehlten. Der Nutzer hat am 2026-11-20 entschieden, sie nachzutragen („Ja, nachtragen“). **Maßstab ist, was die Mocks bauen** (`mocks/_shared/components*.css`, `parts*.js`); es entsteht **kein neuer Farbton und kein neuer Farbwert**, jedes Token verweist nur auf bestehende Aliase und Skalen. Reihenfolge und Zustände wie oben; `components-check.mjs` rechnet die Kontraste dieser Bausteine mit.
+
+### 19. Kontrollkästchen (Zeile mit Haken)
+
+Aufgabe: In einer Liste mehrere Einträge zum Mitnehmen wählen (Skills hinzufügen, Projekt- und Dateiauswahl). Abgrenzung zum **Schalter**: Der Schalter wirkt sofort (Einstellung); das Kontrollkästchen wählt aus, die Wirkung folgt erst mit einem Knopf (Hinzufügen, Speichern). Die **ganze Zeile** ist die Klickfläche: Kasten links, daneben Name (Gewicht 500) und eine erklärende Zeile in `--text-xs`. Träger: Kante des Kastens (aus) oder Füllung (an) ≥ 3 : 1, Haken ≥ 4,5 : 1 (gehalten), Text ≥ 4,5 : 1. Der Zustand hängt nicht an der Farbe: Nur der angehakte Kasten trägt das Haken-Zeichen.
+
+```css
+:root {
+  --check-size: 20px;
+  --check-mark-size: 14px;
+  --check-radius: max(4px, calc(var(--radius-sm) / 2));
+  --check-gap: var(--space-3);
+  --check-row-radius: var(--radius-md);
+  --check-row-bleed: var(--space-2);
+  --check-edge: var(--field-edge);
+  --check-edge-hover: var(--field-edge-hover);
+  --check-edge-width: var(--field-edge-width);
+  --check-bg-on: var(--btn-primary-bg);
+  --check-bg-on-hover: var(--btn-primary-bg-hover);
+  --check-mark: var(--btn-primary-fg);
+  --check-row-bg-hover: var(--surface-hover);
+  --check-fg: var(--text);
+  --check-fg-secondary: var(--text-secondary);
+}
+```
+
+Die Zeile reicht um `--check-row-bleed` über die Textkante hinaus (Fläche unter dem Zeiger), mindestens `--hit-min` hoch; der Kasten bleibt oben an der ersten Textzeile, wenn die Zeile mehrzeilig ist.
+
+| Zustand | Aussehen und Tokens | Bedienung |
+|---|---|---|
+| Normal | aus: Kasten `--check-size` mit Innenkante `--check-edge` (Breite `--check-edge-width`), keine Füllung; an: Füllung `--check-bg-on` mit Haken `--check-mark` (`--check-mark-size`), keine Kante; Name `--check-fg`, Nebenzeile `--check-fg-secondary` | `role="checkbox"` auf der Zeile (`<button>`), `aria-checked`; Name und Nebenzeile sind der zugängliche Name |
+| Maus drüber | Zeilenfläche `--check-row-bg-hover`; aus: Kante `--check-edge-hover`; an: Füllung `--check-bg-on-hover` | |
+| Gedrückt | trifft nicht zu: Die Zeile schaltet beim Loslassen um und zeigt sofort den Haken; ein eigener Zwischenzustand brächte nichts | Leertaste und Klick schalten um |
+| Tastatur-Fokus | Ring **innen** um die ganze Zeile: `--focus-inset` | Tab; Leertaste schaltet |
+| Gesperrt | `--disabled-opacity`, `cursor: not-allowed`; der Grund steht als Text (zum Beispiel „Schon vorhanden“) | `aria-disabled="true"`, Grund per `aria-describedby` |
+| Lädt | trifft nicht zu: Ein Haken ändert nur die Auswahl und löst nichts aus, das warten müsste. Wartet die Liste selbst, stehen Platzhalter-Zeilen (Baustein Listenzeile) | |
+
+### 20. Listenzeile
+
+Aufgabe: Ein Eintrag in der Liste links auf einer Seite mit „Liste und Detail“ (Vorlagen, Wissen, E-Mail, Skills, Dateibaum, Chats eines Projekts). Sie ist die **Tabellen-Zeile in einer Spalte**: gleiche Farben, gleiche Regeln, kein Gitter und keine Trennlinie. Höhe `--trow-h` (zweizeilig: Name, Nebenzeile), eng im Dateibaum `--hit-min`. Träger: Text ≥ 4,5 : 1.
+
+**Farben: ausschließlich die `--trow-*` des Bausteins 13**, unverändert; hier stehen nur die Maße, die die Spalte braucht.
+
+```css
+:root {
+  --lrow-h: var(--trow-h);
+  --lrow-h-tight: var(--hit-min);
+  --lrow-px: var(--trow-px);
+  --lrow-gap: var(--space-3);
+  --lrow-radius: var(--trow-radius);
+  --lrow-name-weight: var(--weight-ui);
+  --lrow-name-weight-unread: var(--weight-strong);
+  --lrow-sub-font: var(--text-xs);
+  --lrow-more-room: var(--space-6);
+  --lrow-dot-size: 8px;
+}
+```
+
+Aufbau: Symbol (optional), Name (`--text-sm`, Gewicht `--lrow-name-weight`) über der Nebenzeile (`--lrow-sub-font`, `--trow-fg-secondary`); beide werden mit Auslassungszeichen gekürzt, der volle Text steht im Tooltip. Rechts steht, was die Zeile hat: Zähler, Stand in Worten oder die Aktion „Mehr“ (Icon-Knopf, erscheint unter dem Zeiger oder bei Fokus in der Zeile; dafür reserviert die Zeile `--lrow-more-room` rechts). **Ungelesen** (E-Mail): Name im Gewicht `--lrow-name-weight-unread` **und** ein Punkt `--lrow-dot-size` in `--accent-solid` (Form und Gewicht tragen, nicht nur Farbe). Ein Fehlerzeichen an der Zeile zeigt Symbol und Wort („Fehlerhaft“).
+
+| Zustand | Aussehen und Tokens | Bedienung |
+|---|---|---|
+| Normal | Name `--trow-fg`, Nebenzeile und Symbole `--trow-fg-secondary`, keine Fläche; Höhe `--lrow-h` (eng `--lrow-h-tight`), Radius `--lrow-radius` | `<a>` oder `<button>` in einer Liste; die Klickfläche ist die ganze Zeile |
+| Maus drüber | Fläche `--trow-bg-hover`; „Mehr“ erscheint | |
+| Gedrückt | Fläche `--trow-bg-pressed`, **alle** Texte und Symbole `--trow-fg-selected` | löst beim Loslassen aus |
+| Tastatur-Fokus | Ring **innen** (`--focus-inset`); „Mehr“ erscheint auch bei Fokus innerhalb der Zeile | Tab auf die Zeile; „Mehr“ bleibt per Tab erreichbar |
+| Gesperrt | `--disabled-opacity`, Grund in der Zeile | `aria-disabled="true"` |
+| Lädt | Platzhalter-Zeilen mit statischen Balken in `--surface-hover` | `aria-busy="true"` an der Liste |
+| Gewählt (Zusatz) | Fläche `--trow-bg-selected`; **alle** Texte und Zeichen auf der Zeile in `--trow-fg-selected`: Name, Nebenzeile, Symbol, Punkt (`--lrow-dot-size`), Stern, Fehlerwort. Zustandsfarben (`--status-*`, `--accent-text`) gelten dort nicht; Form und Wort bleiben | `aria-current="true"` |
+
+### 21. Reiter
+
+Aufgabe: Zwischen gleichrangigen Ansichten desselben Orts wechseln (Kopf des Seitenpanels: Quellen, Projekt, Kontext, GPU). Ein Reiter ist ein **gewählter Eintrag einer Reihe**: Er hat dieselbe Gestalt wie die Leisten-Zeile (Fläche für den gewählten, keine Fläche sonst), nur kompakt und waagerecht. Träger: Text ≥ 4,5 : 1.
+
+```css
+:root {
+  --tab-h: var(--hit-min);
+  --tab-px: var(--space-2);
+  --tab-gap: var(--space-1);
+  --tab-row-gap: 2px;
+  --tab-radius: var(--nav-radius);
+  --tab-font: var(--nav-font);
+  --tab-weight: var(--nav-weight);
+  --tab-weight-selected: var(--nav-weight-current);
+  --tab-fg: var(--nav-fg);
+  --tab-fg-hover: var(--nav-fg-hover);
+  --tab-bg-hover: var(--nav-bg-hover);
+  --tab-bg-selected: var(--nav-bg-current);
+  --tab-fg-selected: var(--nav-fg-current);
+  --tab-pip-size: 7px;
+}
+```
+
+Die Reiter stehen in einer Reihe (`--tab-row-gap`) und brechen nicht um; der Name wird nie gekürzt (kurze Wörter). Ein **Merkpunkt** (`--tab-pip-size`, in der Schriftfarbe des Reiters) zeigt, dass etwas auf dem Reiter Aufmerksamkeit braucht („Kontext“: wenig Platz übrig): gefüllt = Hinweis, Ring = Warnung; zusätzlich steht ein unsichtbarer Text für Hilfstechnik („Wenig Platz“). Der Punkt trägt die Form, nicht die Farbe.
+
+| Zustand | Aussehen und Tokens | Bedienung |
+|---|---|---|
+| Normal | Schrift `--tab-fg`, Gewicht `--tab-weight`, keine Fläche; gewählt: Fläche `--tab-bg-selected`, Schrift `--tab-fg-selected`, Gewicht `--tab-weight-selected` | `role="tablist"` mit `role="tab"`; `aria-selected`; der gewählte Reiter hat `tabindex="0"`, die anderen `-1` |
+| Maus drüber | Fläche `--tab-bg-hover`, Schrift `--tab-fg-hover` | |
+| Gedrückt | trifft nicht zu: Der Reiter wechselt beim Klick sofort, die Fläche des gewählten Reiters ist die Rückmeldung | |
+| Tastatur-Fokus | Ring **außen** mit Abstand `--ring-offset`: `--focus-outline` | Pfeil links und rechts bewegen, Pos1 und Ende springen, Tab verlässt die Reihe; der Fokus folgt der Auswahl (automatische Aktivierung) |
+| Gesperrt | `--disabled-opacity`, der Grund steht im Tooltip | `aria-disabled="true"` |
+| Lädt | trifft nicht zu: Die Reiter stehen fest; wartet der Inhalt, zeigt der Inhalt Platzhalter | |
+
+### 22. Regler
+
+Aufgabe: Einen Wert in einem Bereich einstellen, wo Annähern genügt (Temperatur im Seitenpanel und in den Einstellungen). Der Wert steht **immer auch als Zahl** (Tabellenziffern) neben der Beschriftung; sonst wäre die Stellung nur Lage. Daneben steht „Auf Standard zurücksetzen“ als leiser Knopf. Träger: Füllung gegen Spur ≥ 3 : 1, Daumen gegen Grund ≥ 3 : 1.
+
+```css
+:root {
+  --slider-h: var(--hit-min);
+  --slider-track-h: var(--progress-h);
+  --slider-track-radius: var(--progress-radius);
+  --slider-track: var(--progress-track);
+  --slider-fill: var(--progress-fill);
+  --slider-thumb-size: var(--switch-thumb);
+  --slider-thumb: var(--accent-solid);
+  --slider-thumb-halo: var(--surface-raised);
+  --slider-halo-width: var(--ring-width);
+}
+```
+
+Spur und Füllung sind der Fortschrittsbalken (Baustein 17). Der Daumen ist ein Kreis `--slider-thumb-size` in `--slider-thumb` mit einem Saum `--slider-halo-width` in `--slider-thumb-halo`, der ihn von der Füllung trennt (Lücke zeigt den Grund). Die Klickfläche ist die ganze Zeile `--slider-h`.
+
+| Zustand | Aussehen und Tokens | Bedienung |
+|---|---|---|
+| Normal | Spur `--slider-track`, Füllung `--slider-fill` bis zum Wert, Daumen `--slider-thumb` mit Saum | Der Daumen hat `role="slider"`, `tabindex="0"`, `aria-valuemin`, `aria-valuemax`, `aria-valuenow` (und `aria-valuetext`, wenn die Zahl allein nichts sagt) |
+| Maus drüber | Zeiger `pointer` auf dem Daumen; die Fläche bleibt gleich (die Form trägt) | |
+| Gedrückt | trifft nicht zu: Beim Ziehen folgt der Daumen dem Zeiger; ein eigener Zustand brächte nichts | Ziehen und Klick auf die Spur setzen den Wert |
+| Tastatur-Fokus | Ring **außen** um den Daumen, Abstand `--ring-offset`: `--focus-outline` | Pfeile ändern in kleinen Schritten, Bild auf und Bild ab in großen, Pos1 und Ende springen an die Enden |
+| Gesperrt | `--disabled-opacity`; der Grund steht als Text unter dem Regler | `aria-disabled="true"` |
+| Lädt | trifft nicht zu: Der Wert liegt vor dem Zeigen fest; die Seite zeigt sonst Platzhalter | |
+
+### 23. Popover
+
+Aufgabe: Eine kurze Liste von Zielen an einem Auslöser zeigen, der selbst zu klein ist, sie zu tragen. In den Mocks: die eingeklappte Leiste, in der „Projekte“ und „Letzte Chats“ zu einem Symbol geschrumpft sind. Ein Popover ist ein **Menü (Baustein 9) ohne eigene Fläche**: Es erbt Fläche, Radius, Schatten und Zeilen des Menüs und fügt nur Platzierung und Breite hinzu. Ebene 4. Träger: Text ≥ 4,5 : 1.
+
+```css
+:root {
+  --popover-bg: var(--menu-bg);
+  --popover-radius: var(--menu-radius);
+  --popover-padding: var(--menu-padding);
+  --popover-shadow: var(--menu-shadow);
+  --popover-w: var(--menu-w-sub);
+  --popover-gap: var(--space-2);
+  --popover-edge: var(--space-2);
+  --popover-top-min: calc(var(--titlebar-h) + var(--space-2));
+  --popover-label-fg: var(--text-secondary);
+  --popover-label-font: var(--menu-group-label-font);
+}
+```
+
+**Platzierung:** rechts neben dem Auslöser im Abstand `--popover-gap`, oben bündig mit ihm; die Position wird ins Fenster geschoben mit mindestens `--popover-edge` Rand (oben `--popover-top-min`, unter der Titelleiste). Eine Gruppenüberschrift (`--popover-label-font`, Gewicht 600, `--popover-label-fg`) benennt die Liste; die Zeilen sind die des Menüs, am Ende „Alle anzeigen“ mit Pfeil, getrennt durch Abstand statt Linie.
+
+| Zustand | Aussehen und Tokens | Bedienung |
+|---|---|---|
+| Normal | Fläche `--popover-bg`, Zeilen wie im Menü (`--menu-row-*`) | `role="menu"` mit `aria-label` (der Name der Liste); Auslöser mit `aria-haspopup="menu"` und `aria-expanded` |
+| Maus drüber | Zeile: `--menu-row-bg-hover` wie im Menü | |
+| Gedrückt | Zeile: `--menu-row-bg-pressed`, Texte `--menu-row-fg-on-tint` wie im Menü | |
+| Tastatur-Fokus | Ring **innen** auf der Zeile: `--focus-inset` | Wie das Menü: Pfeile bewegen, Enter öffnet, Esc schließt und gibt den Fokus dem Auslöser zurück |
+| Gesperrt | trifft nicht zu: Ein Popover öffnet nur, wenn der Auslöser bedienbar ist; eine gesperrte Zeile folgt dem Menü (`aria-disabled`, Grund in der Nebenzeile) | |
+| Lädt | trifft nicht zu: Die Liste liegt beim Öffnen vor (sie steht schon in der Leiste); fehlt sie, bleibt der Auslöser gesperrt mit Grund | |
+
+Ein Popover öffnet sich beim Klick, **nicht** beim Überfahren (Touch- und Tastaturnutzer hätten sonst keinen Weg); es schließt bei Klick daneben, Esc und Wahl.
+
+### 24. Status-Popup
+
+Aufgabe: Den Zustand eines Dienstes ansehen, ohne die Seite zu wechseln (Modellstatus am Fuß der Leiste: Grafikspeicher, geladene Modelle, Fehler). Es ist **kein Menü** (keine Zeilen zum Wählen), sondern ein Fenster mit Titel und Inhalt, darum ein eigener Baustein, auch wenn es Fläche, Radius und Schatten vom Menü erbt. Es **sperrt nichts**: kein Vorhang, der Rest bleibt bedienbar. Ebene 4. Träger: Text ≥ 4,5 : 1.
+
+```css
+:root {
+  --popup-bg: var(--menu-bg);
+  --popup-radius: var(--menu-radius);
+  --popup-padding: var(--menu-padding);
+  --popup-shadow: var(--menu-shadow);
+  --popup-w: var(--menu-w-sub);
+  --popup-gap: var(--space-2);
+  --popup-edge: var(--space-2);
+  --popup-title-font: var(--text-sm);
+  --popup-title-weight: var(--weight-strong);
+  --popup-fg: var(--text);
+  --popup-note-fg: var(--menu-row-fg-secondary);
+}
+```
+
+Aufbau: Kopf mit Titel („Modellstatus“, `--popup-title-*`) links und „Schließen“ (Icon-Knopf) rechts; darunter Gruppen aus Überschrift und Text (`--popup-note-fg`), Zahlen mit Tabellenziffern, am Ende ein Knopf zur ganzen Seite („Ganze Seite“; bei Fehler „Status ansehen“, bei fehlendem Modell „Modell herunterladen“ als Primär-Knopf). **Platzierung:** bei ausgeklappter Leiste **über** dem Auslöser, links bündig (Abstand `--popup-gap`); bei eingeklappter Leiste rechts daneben, unten bündig; immer mit mindestens `--popup-edge` Rand im Fenster. Der Inhalt zeigt den Fehler als schlichten Satz mit Ursache und nächstem Schritt (Stimme).
+
+| Zustand | Aussehen und Tokens | Bedienung |
+|---|---|---|
+| Normal | Fläche `--popup-bg`, Titel `--popup-fg`, Text `--popup-note-fg`, Knöpfe nach Baustein 1 und 2 | `role="dialog"` (nicht modal) mit `aria-labelledby` auf den Titel; Auslöser mit `aria-haspopup="dialog"` und `aria-expanded` |
+| Maus drüber | trifft nicht zu: Das Popup selbst reagiert nicht; seine Knöpfe folgen ihren Bausteinen | |
+| Gedrückt | trifft nicht zu: nicht bedienbar als Ganzes; die Knöpfe folgen ihren Bausteinen | |
+| Tastatur-Fokus | Ringe der Knöpfe („Schließen“, „Ganze Seite“) nach Baustein 1 und 2 | Esc schließt und gibt den Fokus dem Auslöser zurück; „Schließen“ ist der erste Knopf in der Tab-Reihenfolge des Popups |
+| Gesperrt | trifft nicht zu: Das Popup ist immer lesbar; ist der Dienst nicht erreichbar, steht das als Text darin | |
+| Lädt | trifft nicht zu: Die Werte stehen beim Öffnen fest; fehlen sie noch, zeigt der Inhalt Platzhalter-Balken statt Zahlen (`aria-busy="true"`) | |
+
 ### Kontrast der Bausteine
 
-Gerechnet von `.design-foundations/previews/_src/components-check.mjs` (liest die Token-Blöcke dieser Datei, löst jede `var()`-Kette bis zur Palettenstufe auf, rechnet WCAG-2.x-Kontrast). **364 Paare, hell und dunkel; 0 unter dem Ziel.** Hex-Werte in §Tokens und §Components: 0. Baustein-Tokens: 286, jedes verweist nur auf Aliase; jede Kette löst in beiden Schemata auf.
+Gerechnet von `.design-foundations/previews/_src/components-check.mjs` (liest die Token-Blöcke dieser Datei, löst jede `var()`-Kette bis zur Palettenstufe auf, rechnet WCAG-2.x-Kontrast). **456 Paare, hell und dunkel; 0 unter dem Ziel.** Hex-Werte in §Tokens und §Components: 0. Baustein-Tokens: 355, jedes verweist nur auf Aliase; jede Kette löst in beiden Schemata auf.
 
 | Art | Ziel | Paare | schlechtester Wert Dunkel | schlechtester Wert Hell |
 |---|---|---|---|---|
 | Ring | 3 : 1 | 37 | 4,54 (Fokusring: `--focus-ring` auf `--surface-active-pressed`) | 3,42 (Fokusring: `--focus-ring` auf `--surface-active-pressed`) |
-| Text | 4,5 : 1 | 82 | 5,11 (Knopf Gefährlich Maus drüber: `--btn-danger-fg-hover` auf `--btn-danger-bg-hover`) | 4,84 (Menü Nebenzeile Maus drüber: `--menu-row-fg-secondary` auf `--menu-row-bg-hover`) |
-| Fläche | 3 : 1 | 2 | 6,95 (Senden gegen Eingabefeld: `--ibtn-send-bg` auf `--field-bg`) | 5,78 (Knopf Primär gegen Grund (Träger-Fläche): `--btn-primary-bg` auf `--background`) |
-| Symbol | 3 oder 4,5 : 1 | 33 | 3,82 (Werkzeug Symbol error: `--tool-mark-error` auf `--glow`) | 4,93 (Menü Haken Maus drüber: `--menu-check` auf `--menu-row-bg-hover`) |
-| Kante | 3 : 1 | 10 | 3,05 (Feldkante gegen glow: `--field-edge` auf `--glow`) | 3,08 (Feldkante gegen glow: `--field-edge` auf `--glow`) |
+| Text | 4,5 : 1 | 109 | 5,11 (Knopf Gefährlich Maus drüber: `--btn-danger-fg-hover` auf `--btn-danger-bg-hover`) | 4,84 (Menü Nebenzeile Maus drüber: `--menu-row-fg-secondary` auf `--menu-row-bg-hover`) |
+| Fläche | 3 : 1 | 7 | 6,32 (Kontrollkästchen an: Füllung gegen glow: `--check-bg-on` auf `--glow`) | 5,37 (Kontrollkästchen an: Füllung gegen glow: `--check-bg-on` auf `--glow`) |
+| Symbol | 3 oder 4,5 : 1 | 39 | 3,82 (Werkzeug Symbol error: `--tool-mark-error` auf `--glow`) | 4,93 (Menü Haken Maus drüber: `--menu-check` auf `--menu-row-bg-hover`) |
+| Kante | 3 : 1 | 15 | 3,05 (Feldkante gegen glow: `--field-edge` auf `--glow`) | 3,08 (Feldkante gegen glow: `--field-edge` auf `--glow`) |
 | Spur | 3 : 1 | 10 | 3,05 (Schalter aus: Spur gegen glow: `--switch-track-off` auf `--glow`) | 3,08 (Schalter aus: Spur gegen glow: `--switch-track-off` auf `--glow`) |
-| Daumen | 3 : 1 | 4 | 3,36 (Schalter aus: Daumen gegen Spur: `--switch-thumb-off` auf `--switch-track-off`) | 3,43 (Schalter aus: Daumen gegen Spur: `--switch-thumb-off` auf `--switch-track-off`) |
-| Füllung | 3 : 1 | 4 | 3,42 (Fortschritt Fehler gegen Spur: `--progress-fill-error` auf `--progress-track`) | 4,17 (Fortschritt fertig gegen Spur: `--progress-fill-done` auf `--progress-track`) |
+| Daumen | 3 : 1 | 6 | 3,36 (Schalter aus: Daumen gegen Spur: `--switch-thumb-off` auf `--switch-track-off`) | 3,43 (Schalter aus: Daumen gegen Spur: `--switch-thumb-off` auf `--switch-track-off`) |
+| Füllung | 3 : 1 | 5 | 3,42 (Fortschritt Fehler gegen Spur: `--progress-fill-error` auf `--progress-track`) | 4,17 (Fortschritt fertig gegen Spur: `--progress-fill-done` auf `--progress-track`) |
 
 **Fokusring (DW-4.3) gegen jede Fläche.** Ziel 3 : 1 (WCAG 1.4.11 und 2.4.13).
 
@@ -1531,7 +1741,7 @@ Der Vollton (`--accent-solid`) steht **nicht** in der Tabelle, weil nichts, was 
 
 ## Daten
 
-**Stand Phase 6 (Fassung 2 nach der Prüfung), vom Nutzer noch nicht bestätigt.** Dieser Abschnitt **erweitert** die gesperrten Werte; er ändert keinen. **Es gibt keinen neuen Farbton, keinen neuen Farbwert und keinen neuen Lauf von `palette.mjs`:** Die Daten-Palette benutzt nur `--text` und `--accent-solid`, beide gesperrt, dazu Schraffur, Lücke, Nummer und Reihenfolge. Die Specs der Diagramme, Messbalken und Tabellen stehen in `JOURNEY.md` §Page specs, Abschnitt „Zahlen und Diagramme (Phase 6)“ (`DA-0` bis `DA-10`).
+**Stand Phase 6 (Fassung 2 nach der Prüfung), vom Nutzer bestätigt (Abnahme der Mocks 2026-11-20).** Dieser Abschnitt **erweitert** die gesperrten Werte; er ändert keinen. **Es gibt keinen neuen Farbton, keinen neuen Farbwert und keinen neuen Lauf von `palette.mjs`:** Die Daten-Palette benutzt nur `--text` und `--accent-solid`, beide gesperrt, dazu Schraffur, Lücke, Nummer und Reihenfolge. Die Specs der Diagramme, Messbalken und Tabellen stehen in `JOURNEY.md` §Page specs, Abschnitt „Zahlen und Diagramme (Phase 6)“ (`DA-0` bis `DA-10`).
 
 ### Was die gesperrten Regeln hergeben
 
@@ -1660,5 +1870,5 @@ Geschlossen mit der Sperre am 2026-11-15 (vom Nutzer angenommen, siehe Kopf): Ab
 Noch offen:
 
 2. **App-Symbol.** Es folgt der Farbe; der Bernstein liegt nahe am heutigen Orange. Anpassung erst nach der Sperre, im Code-Plan.
-3. **Daten-Palette** (bis zu zwölf Kategorien): beantwortet in Phase 6 (§Daten), ohne neuen Farbton und ohne neuen Lauf von `palette.mjs`; nur `--text` und `--accent-solid`, dazu Schraffur, Lücke und Nummer. Wartet auf die Bestätigung des Nutzers.
+3. **Daten-Palette** (bis zu zwölf Kategorien): beantwortet in Phase 6 (§Daten), ohne neuen Farbton und ohne neuen Lauf von `palette.mjs`; nur `--text` und `--accent-solid`, dazu Schraffur, Lücke und Nummer. Vom Nutzer bestätigt (Abnahme der Mocks 2026-11-20).
 4. **Design „wie Windows“** folgt dem System zwischen den zwei Schemata hier; ein drittes Schema gibt es nicht.

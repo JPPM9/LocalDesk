@@ -2,7 +2,7 @@
 
 <!-- Struktur- und Ablauf-Spezifikation von LocalDesk. Gehört zu DESIGN.md (visuelle Tokens). Für Farben, Schrift und Abstände siehe DESIGN.md (entsteht in Phase 3). -->
 
-**Status:** Gliederung vom Nutzer bestätigt am 2026-11-12 (Phase 1: Job, Journey, IA). Flows und Seiten-Specs (Phase 2) vom Nutzer bestätigt am 2026-11-14. Texte und Begriffe (Phase 5, 2026-11-15) stehen in §Page specs und sind vom Nutzer noch nicht bestätigt.
+**Status:** Gliederung vom Nutzer bestätigt am 2026-11-12 (Phase 1: Job, Journey, IA). Flows und Seiten-Specs (Phase 2) vom Nutzer bestätigt am 2026-11-14. Texte und Begriffe (Phase 5, 2026-11-15) stehen in §Page specs und sind vom Nutzer bestätigt am 2026-11-15. Die Daten-Specs (Phase 6, §Zahlen und Diagramme) und die Mocks (Phase 7) sind vom Nutzer bestätigt (Mocks abgenommen 2026-11-20). Entscheidungen vom 2026-11-20 sind eingearbeitet: „Zurück zum Chat“ steht über der Überschrift (Wissen, E-Mail, Skills); der Versatz der Flächen wird bei schmalem Fenster begrenzt (12 px bei 900 px).
 **Grenze dieses Dokuments:** `journey` regelt die **Struktur** (Gliederung, Navigation, Wege zwischen Flächen). Die Bedienung **im** Chat (Eingabefeld, Rückfrage-Karten, laufende Antwort) ist in Phase 2 mit `usability` und `ai-native` spezifiziert und steht in §Flows und §Page specs; Aussagen aus `ai-native` sind dort als „aus Prinzipien abgeleitet, kein gesicherter Kanon“ markiert.
 **Stand:** 2026-11-12 · **Eigentümer:** der Nutzer (Besitzer der App und der Entscheidungen) · **Basis:** `Research-Dokument vom 2026-11-11` (ein Nutzer, seine eigenen Aussagen), `src/renderer/App.tsx`, `src/renderer/components/NavRail.tsx`, `src/renderer/shortcuts/keymap.ts`, freigegebener Aufbau-Mock (Drahtgitter).
 
@@ -310,7 +310,7 @@ Alle Kürzel kommen in die zentrale Kürzel-Verwaltung (`keymap.ts`) und die Üb
 
 ## Flows
 
-**Stand:** Phase 2, geschrieben am 2026-11-12, **vom Nutzer noch nicht bestätigt**. Grundlage: der Code unter `src/renderer` (gelesen, nicht geändert) und die freigegebenen Drahtgitter-Mocks. Alle Abläufe sind User Flows mit Verzweigungen (NN/g, „User Flows vs. Task Flows“). Schreibweise: **Schritt** = Handlung oder Fläche, **Entscheidung** = Verzweigung mit „ja“ und „nein“. Blöcke wie `EF-6` verweisen auf die Seiten-Specs unten.
+**Stand:** Phase 2, geschrieben am 2026-11-12, **vom Nutzer bestätigt am 2026-11-14**. Grundlage: der Code unter `src/renderer` (gelesen, nicht geändert) und die freigegebenen Drahtgitter-Mocks. Alle Abläufe sind User Flows mit Verzweigungen (NN/g, „User Flows vs. Task Flows“). Schreibweise: **Schritt** = Handlung oder Fläche, **Entscheidung** = Verzweigung mit „ja“ und „nein“. Blöcke wie `EF-6` verweisen auf die Seiten-Specs unten.
 
 **Für alle Abläufe gilt:** Wo der Nutzer wählt, stehen höchstens drei Möglichkeiten (Hick–Hyman 1952); Verzweigungen mit mehr Ästen sind Prüfungen der App, keine Wahl. Die Hauptaktion ist das größte Ziel und liegt am Eingabefeld oder an der Karte, an der der Blick schon ist (Fitts 1954). Kein Ablauf endet in einer Sackgasse: Jeder Fehlerpfad nennt die Ursache und den nächsten Schritt (Nielsen 9).
 
@@ -493,11 +493,11 @@ Alle Kürzel kommen in die zentrale Kürzel-Verwaltung (`keymap.ts`) und die Üb
 
 ## Page specs
 
-**Stand:** Phase 2, geschrieben am 2026-11-12, **vom Nutzer noch nicht bestätigt**. 15 Flächen. Farben und Schrift stehen in `DESIGN.md` (Phase 3). Die Texte stehen am Ende jeder Fläche unter „Texte (Phase 5)“, davor Begriffstabelle, Muster und Längengrenzen. Diagramm-, Messbalken- und Tabellen-Regeln stehen im Abschnitt „Zahlen und Diagramme (Phase 6)“ (`DA-0` bis `DA-10`). Jeder Block hat eine Kennung (`RA-1`, `EF-7` …); die Abgleich-Tabelle am Ende ordnet jedes heutige Bedienelement einem Block zu.
+**Stand:** Phase 2, geschrieben am 2026-11-12, **vom Nutzer bestätigt am 2026-11-14**. 15 Flächen. Farben und Schrift stehen in `DESIGN.md` (Phase 3). Die Texte stehen am Ende jeder Fläche unter „Texte (Phase 5)“, davor Begriffstabelle, Muster und Längengrenzen. Diagramm-, Messbalken- und Tabellen-Regeln stehen im Abschnitt „Zahlen und Diagramme (Phase 6)“ (`DA-0` bis `DA-10`). Jeder Block hat eine Kennung (`RA-1`, `EF-7` …); die Abgleich-Tabelle am Ende ordnet jedes heutige Bedienelement einem Block zu.
 
 ### Gemeinsame Regeln für alle Flächen
 
-**Seitenkopf-Muster.** Jede Seite beginnt mit einem Seitenkopf: Überschrift (bekommt den Fokus nach einem Seitenwechsel), rechts die Aktionen der Seite. Höchstens eine Aktion ist als Hauptaktion hervorgehoben; Löschen steht räumlich getrennt davon (Fitts 1954). Wer über „Verwalten …“ aus einem Chat kam, sieht links von der Überschrift „Zurück zum Chat“.
+**Seitenkopf-Muster.** Jede Seite beginnt mit einem Seitenkopf: Überschrift (bekommt den Fokus nach einem Seitenwechsel), rechts die Aktionen der Seite. Höchstens eine Aktion ist als Hauptaktion hervorgehoben; Löschen steht räumlich getrennt davon (Fitts 1954). Wer über „Verwalten …“ aus einem Chat kam, sieht **über** der Überschrift „Zurück zum Chat“ (Entscheidung 2026-11-20: Neben der Überschrift ist bei 900 px zu wenig Breite, weil rechts die Aktionen stehen; das gilt für Wissen, E-Mail und Skills).
 
 **Liste und Detail.** Vorlagen, Wissen, Skills, E-Mail und Code haben links eine Liste und rechts das Gewählte. Die Liste gehört zur Seite, nicht zur Seitenleiste. Ist nichts gewählt, zeigt die rechte Seite, was hier hingehört, und die Hauptaktion (Antwort auf die Beschwerde „kahl“).
 
@@ -521,7 +521,7 @@ Stufe **schmal** = Inhaltsbreite unter 1000 px, **breit** = ab 1000 px. Nichts s
 
 ### Texte: Begriffe, Muster und Regeln (Phase 5)
 
-**Stand:** Phase 5, geschrieben am 2026-11-15, **vom Nutzer noch nicht bestätigt**; sechs Wortentscheidungen stehen im Bericht der Phase zur Bestätigung. Die **Stimme** (fünf Eigenschaften, Ton je Moment, Schreibweise) steht in `DESIGN.md` §Stimme. Hier stehen die **Wörter** (Begriffstabelle), die **Muster** und die **Längengrenzen**; die **Texte** selbst stehen je Fläche am Ende ihrer Spec unter „Texte (Phase 5)“, mit den Block-IDs der Spec.
+**Stand:** Phase 5, geschrieben am 2026-11-15, vom Nutzer bestätigt am 2026-11-15 (auch die sechs Wortentscheidungen). Die **Stimme** (fünf Eigenschaften, Ton je Moment, Schreibweise) steht in `DESIGN.md` §Stimme. Hier stehen die **Wörter** (Begriffstabelle), die **Muster** und die **Längengrenzen**; die **Texte** selbst stehen je Fläche am Ende ihrer Spec unter „Texte (Phase 5)“, mit den Block-IDs der Spec.
 
 **So sind die Text-Tabellen zu lesen.** Jede Zeile heißt `ID · Art · DE · EN`.
 
@@ -657,7 +657,7 @@ Zwei Kurzformen gelten: **„GPU“** bleibt, wo es heute steht (Reiter im Seite
 
 ### Zahlen und Diagramme (Phase 6)
 
-**Stand:** Phase 6, geschrieben am 2026-11-16, Fassung 2 nach der Prüfung (Entscheidungen des Nutzers vom 2026-11-16: Der Füllstand bleibt als Balken, klar als Schätzung; die Palette hat zwei Farben, der Rest geht über Muster und Zahl), **vom Nutzer noch nicht bestätigt**. Sie regelt alles, was Daten zeigt, und ersetzt die Vermerke „Regeln Phase 6“ in den Flächen. Farben, Aussehen und Maße stehen in `DESIGN.md` §Daten; hier stehen die Entscheidungen, was welche Daten zeigt und wie. Die Blöcke heißen `DA-0` bis `DA-10`; die Flächen verweisen darauf (`CH-2`, `SP-4`, `SS-2`, `ST-3`, `ST-4`, `MO-3`, `MO-4`). Die Datenformen sind im Code fest (`shared/table-chart.ts`: zwei Spalten, höchstens 50 Werte, Kreis höchstens 12 und nicht negativ); die Specs ändern sie nicht und führen keine neue Diagrammart ein.
+**Stand:** Phase 6, geschrieben am 2026-11-16, Fassung 2 nach der Prüfung (Entscheidungen des Nutzers vom 2026-11-16: Der Füllstand bleibt als Balken, klar als Schätzung; die Palette hat zwei Farben, der Rest geht über Muster und Zahl), vom Nutzer bestätigt (Abnahme der Mocks 2026-11-20). Sie regelt alles, was Daten zeigt, und ersetzt die Vermerke „Regeln Phase 6“ in den Flächen. Farben, Aussehen und Maße stehen in `DESIGN.md` §Daten; hier stehen die Entscheidungen, was welche Daten zeigt und wie. Die Blöcke heißen `DA-0` bis `DA-10`; die Flächen verweisen darauf (`CH-2`, `SP-4`, `SS-2`, `ST-3`, `ST-4`, `MO-3`, `MO-4`). Die Datenformen sind im Code fest (`shared/table-chart.ts`: zwei Spalten, höchstens 50 Werte, Kreis höchstens 12 und nicht negativ); die Specs ändern sie nicht und führen keine neue Diagrammart ein.
 
 **Datenflächen auf einen Blick (DW-6.1).** Die Art folgt der Datenbeziehung, nicht dem Datenformat (Doctrine `data-viz`, Entscheidungstabelle).
 
@@ -1130,6 +1130,7 @@ Die Befehlszeilen tragen die IDs aus §IA (P-01 bis P-25); die Gruppen stehen im
 | Lage | Verhalten |
 |---|---|
 | Spalte | Mittig, höchstens 800 px, mindestens 24 px Rand links und rechts. Bei 900 px Fenster: 824 − 48 = 776 px. |
+| Versatz der Flächen | Die schwebenden Flächen ragen höchstens 36 px (eigene Nachricht, Diagramm) und 24 px (Eingabefeld) über die Spalte, begrenzt auf den freien Rand neben der Spalte minus 12 px. Bei 900 px Fenster (Inhalt 824 px, Spalte 776 px) sind das **12 px**; die vollen 36 px gelten ab 896 px Inhaltsbreite, das Eingabefeld ab 872 px die vollen 24 px (Regel in `DESIGN.md` §Abstände, Form, Tiefe; Entscheidung 2026-11-20). |
 | `SS-2` | Zwei Karten nebeneinander ab 560 px Spaltenbreite, darunter untereinander. |
 | `SS-5` | Vier Kacheln in einer Reihe ab 744 px Spaltenbreite, darunter zwei mal zwei. Titel einzeilig, die zweite Zeile wird gekürzt; alle Kacheln sind gleich hoch. |
 | `SS-6` | Knöpfe brechen in Zeilen um; mehr als zwei Zeilen werden zu „Alle Vorlagen“ (Link zur Vorlagen-Seite). |
@@ -1241,7 +1242,7 @@ Rechts neben der Spalte: das Seitenpanel (Fläche 6).
 
 **Ausgang:** bleibt im Chat; Projektseite (Marke); Verwaltungsseiten über „+“; jede Seite über Leiste und Palette.
 
-**Breite:** Die Lesespalte bleibt mittig im Platz neben dem Seitenpanel. Ab 1100 px Fenster schiebt das Panel (310 px) die Spalte; sie hat dann mindestens 506 px. Unter 1100 px liegt das Panel als Überlagerung darüber. Die Aktionen im Seitenkopf bleiben bei jeder Breite sichtbar; der Titel wird gekürzt (voll im Tooltip).
+**Breite:** Die Lesespalte bleibt mittig im Platz neben dem Seitenpanel. Ab 1100 px Fenster schiebt das Panel (310 px) die Spalte; sie hat dann mindestens 506 px. Unter 1100 px liegt das Panel als Überlagerung darüber. Der Versatz der eigenen Nachricht, des Diagramms und des Eingabefelds ist auf den freien Rand minus 12 px begrenzt (bei 900 px Fenster 12 px; Regel in `DESIGN.md` §Abstände, Form, Tiefe). Die Aktionen im Seitenkopf bleiben bei jeder Breite sichtbar; der Titel wird gekürzt (voll im Tooltip).
 
 **Texte (Phase 5)**
 
@@ -1507,7 +1508,7 @@ In jeder Zeile gibt es damit genau ein Ziel. Der Preis: „Verwalten …“ lieg
 
 **Zweck:** Sammlungen von eigenen Dokumenten anlegen, einlesen und aktuell halten, damit das Modell im Chat daraus antworten kann.
 
-**Einstiege:** „+“-Menü → Wissen → „Verwalten …“; Einstellungen → „Wissen verwalten“; Palette P-05; Einstellungen → Obsidian → „Zur Sammlung“; Kachel „Aus Wissen fragen“, wenn keine Sammlung da ist. **Kein Eintrag in der Seitenleiste** (bewusst, §IA): Der Seitenkopf zeigt deshalb, wo der Nutzer ist, und „Zurück zum Chat“.
+**Einstiege:** „+“-Menü → Wissen → „Verwalten …“; Einstellungen → „Wissen verwalten“; Palette P-05; Einstellungen → Obsidian → „Zur Sammlung“; Kachel „Aus Wissen fragen“, wenn keine Sammlung da ist. **Kein Eintrag in der Seitenleiste** (bewusst, §IA): Der Seitenkopf zeigt deshalb, wo der Nutzer ist; „Zurück zum Chat“ steht darüber, über der Überschrift (Entscheidung 2026-11-20).
 
 **Blöcke (in Reihenfolge):**
 1. `WI-1` **Liste.** Oben „Neue Sammlung“. Zeilen: Name, Dateien und Abschnitte oder, während des Einlesens, der Fortschritt.
@@ -1560,7 +1561,7 @@ In jeder Zeile gibt es damit genau ein Ziel. Der Preis: „Verwalten …“ lieg
 
 **Zweck:** Die eigenen Mails lesen, eine Mail zusammenfassen lassen und Vorschläge zum Sortieren prüfen; nichts wird gesendet oder gelöscht.
 
-**Einstiege:** „+“-Menü → E-Mail → „Verwalten …“; Einstellungen → „E-Mail verwalten“; Palette P-07. Kein Eintrag in der Seitenleiste; „Zurück zum Chat“ im Seitenkopf wie bei Wissen.
+**Einstiege:** „+“-Menü → E-Mail → „Verwalten …“; Einstellungen → „E-Mail verwalten“; Palette P-07. Kein Eintrag in der Seitenleiste; „Zurück zum Chat“ im Seitenkopf wie bei Wissen, über der Überschrift.
 
 **Blöcke (in Reihenfolge):**
 1. `EM-1` **Listenkopf.** Konto-Auswahl (nur bei mehreren Konten). Suchfeld (Enter sucht, leer zeigt den Posteingang). „Sortieren vorschlagen“. „Aktualisieren“.
@@ -1663,7 +1664,7 @@ Die festen Anker und die Bestätigungspunkte der Chat-Spec (Fläche 4) gelten hi
 
 **Zweck:** Anleitungen für wiederkehrende Aufgaben schreiben, hinzufügen und prüfen, die im Chat eingeschaltet oder vom Modell selbst geladen werden.
 
-**Einstiege:** „+“-Menü → Skills → „Verwalten …“; Einstellungen → „Skills verwalten“; Palette P-06. Kein Eintrag in der Seitenleiste; „Zurück zum Chat“ im Seitenkopf.
+**Einstiege:** „+“-Menü → Skills → „Verwalten …“; Einstellungen → „Skills verwalten“; Palette P-06. Kein Eintrag in der Seitenleiste; „Zurück zum Chat“ im Seitenkopf, über der Überschrift (wie bei Wissen).
 
 **Blöcke (in Reihenfolge):**
 1. `SK-1` **Liste.** Oben „Neuer Skill“ (Hauptaktion der Liste) und ein beschriftetes Menü „Hinzufügen und mehr“: Von GitHub, Skill-Dateien hinzufügen, Alle neu laden, Skill-Ordner öffnen (heute vier Symbole ohne Namen). Die Liste ist Ablageziel für Skill-Dateien. Zeilen: Name, Beschreibung, Marke bei einem fehlerhaften Skill. Rückmeldung nach dem Hinzufügen.
