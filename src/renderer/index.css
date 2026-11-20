@@ -97,6 +97,7 @@
   --scrim: oklch(from var(--shadow-ink) l c h / 0.45);
   --control-h: 36px;
   --hit-min: 32px;
+  --titlebar-h: 40px;
   --disabled-opacity: 0.45;
   --press-scale: 0.97;
 

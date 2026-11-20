@@ -70,18 +70,27 @@ export function AppLayout() {
   }, [navigate]);
 
   return (
-    <div className="flex h-full">
-      <NavRail />
-      <main className="min-w-0 flex-1 overflow-y-auto">
-        <Outlet
-          context={
-            {
-              listCollapsed: collapsed,
-              toggleList: () => setCollapsed((c) => !c),
-            } satisfies LayoutContext
-          }
-        />
-      </main>
+    <div className="flex h-full flex-col">
+      {/* Titelleiste: Ziehfläche + leiser Name; die Fensterknöpfe zeichnet Windows rechts darüber. */}
+      <div
+        className="flex shrink-0 items-center px-4 text-xs text-muted select-none [-webkit-app-region:drag]"
+        style={{ height: 'var(--titlebar-h)' }}
+      >
+        LocalDesk
+      </div>
+      <div className="flex min-h-0 flex-1">
+        <NavRail />
+        <main className="min-w-0 flex-1 overflow-y-auto">
+          <Outlet
+            context={
+              {
+                listCollapsed: collapsed,
+                toggleList: () => setCollapsed((c) => !c),
+              } satisfies LayoutContext
+            }
+          />
+        </main>
+      </div>
       {helpOpen && <ShortcutHelp onClose={() => setHelpOpen(false)} />}
     </div>
   );
