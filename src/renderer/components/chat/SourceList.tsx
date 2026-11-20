@@ -43,7 +43,8 @@ export function SourceList({ sources, focus, expanded }: SourceListProps) {
   };
 
   return (
-    <div className="space-y-1 text-[13px]">
+    <div className="space-y-2 pt-3 text-xs">
+      <div className="h-px w-[120px] bg-[var(--control-edge)]" />
       <div className="flex items-center gap-2 text-xs font-medium text-muted">
         <BookOpen size={12} />
         {t('sources.title', { count: sources.length })}
@@ -58,20 +59,20 @@ export function SourceList({ sources, focus, expanded }: SourceListProps) {
             ref={(el) => {
               if (el) refs.current.set(source.n, el);
             }}
-            className="rounded-xl bg-surface-2"
+            className=""
           >
-            <div className="flex items-center gap-2 px-3 py-2">
+            <div className="flex items-center gap-2 py-1">
               <button
                 type="button"
                 onClick={() => toggle(source.n)}
                 aria-expanded={open.has(source.n)}
                 className="flex min-w-0 flex-1 items-center gap-2 text-left"
               >
-                <span className="grid h-5 min-w-5 shrink-0 place-items-center rounded-md bg-accent-soft px-1 text-xs font-medium text-accent-text">
+                <span className="shrink-0 text-xs font-medium text-accent-text tabular-nums">
                   {source.n}
                 </span>
                 <span
-                  className="truncate text-[13px] font-medium"
+                  className="truncate text-xs font-medium"
                   title={source.path}
                 >
                   {sourceLabel(source)}
@@ -91,7 +92,7 @@ export function SourceList({ sources, focus, expanded }: SourceListProps) {
               </button>
             </div>
             {open.has(source.n) && (
-              <div className="space-y-1 px-3 py-2">
+              <div className="space-y-1 py-2 pl-5">
                 {source.heading && (
                   <p className="text-xs text-muted">{source.heading}</p>
                 )}

@@ -1,6 +1,6 @@
 # LocalDesk
 
-![LocalDesk: a research report with sources, dark theme](docs/screenshot.png)
+![LocalDesk: the start page with the sidebar, model and GPU status, dark theme](docs/screenshot.png)
 
 A desktop app for chatting with AI models that run on your own computer, through [Ollama](https://ollama.com). No account, no cloud, no telemetry.
 

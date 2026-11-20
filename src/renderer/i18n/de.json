@@ -12,8 +12,8 @@
     "collapse": "Seitenleiste einklappen",
     "expand": "Seitenleiste ausklappen",
     "main": "Bereiche",
-    "collapseList": "Chatliste einklappen",
-    "expandList": "Chatliste ausklappen",
+    "collapseList": "Seitenleiste einklappen",
+    "expandList": "Seitenleiste ausklappen",
     "skills": "Skills",
     "mail": "E-Mail",
     "code": "Code"
@@ -62,14 +62,14 @@
       "error": "Fehler"
     },
     "modelInfo": "Fingerabdrücke berechnet mit {{model}} (über Ollama, lokal).",
-    "modelMissing": "Das Embedding-Modell {{model}} ist auf dem aktiven Ollama-Server nicht installiert. Lade es unter „Installierte Modelle“ herunter.",
+    "modelMissing": "Das Embedding-Modell {{model}} ist auf dem aktiven Ollama-Server nicht installiert. Lade es unter „Modelle“ herunter.",
     "obsidianManaged": "Diese Sammlung ist dein Obsidian-Vault. LocalDesk legt sie an und hält den Ordner aktuell; Frontmatter, Tags und [[Wiki-Links]] werden für die Suche aufbereitet, „.obsidian“ und deine Erinnerungen übersprungen. Ändern oder entfernen:",
     "obsidianSettings": "Einstellungen → Obsidian"
   },
   "status": {
     "checking": "Ollama: prüfe Verbindung …",
     "online": "Ollama {{version}}",
-    "offline": "Ollama offline",
+    "offline": "Ollama nicht erreichbar",
     "pageTitle": "Status",
     "openPage": "Ganze Seite",
     "close": "Schließen",
@@ -138,7 +138,7 @@
     "instructionsHint": "Gelten für jeden Chat in diesem Projekt – vor dem eigenen Systemprompt eines Chats. Gespeichert, sobald du das Feld verlässt.",
     "saved": "gespeichert",
     "documents": "Projekt-Dokumente",
-    "documentsHint": "Werden in jedem Chat dieses Projekts automatisch durchsucht – zusätzlich zu Sammlungen, die ein Chat über den Wissen-Knopf wählt.",
+    "documentsHint": "Werden in jedem Chat dieses Projekts automatisch durchsucht – zusätzlich zu Sammlungen, die ein Chat über das „+“-Menü wählt.",
     "chats_one": "{{count}} Chat",
     "chats_other": "{{count}} Chats",
     "noChats": "Noch keine Chats in diesem Projekt.",
@@ -230,7 +230,8 @@
       "week": "Letzte 7 Tage",
       "month": "Letzte 30 Tage",
       "older": "Älter"
-    }
+    },
+    "modelNamed": "Modell: {{name}}"
   },
   "compact": {
     "button": "Älteren Teil verdichten",
@@ -267,8 +268,8 @@
     "stay": "Hier bleiben"
   },
   "sidePanel": {
-    "button": "Seitenbereich (Quellen, Projekt, Kontext)",
-    "close": "Seitenbereich schließen",
+    "button": "Seitenpanel (Quellen, Projekt, Kontext)",
+    "close": "Seitenpanel schließen",
     "tab": {
       "sources": "Quellen",
       "project": "Projekt",
@@ -334,7 +335,7 @@
     "askDestructive": "Dieses Tool kann Dateien verändern oder überschreiben.",
     "allowOnce": "Einmal erlauben",
     "allowAlways": "Immer erlauben",
-    "allowAlwaysHint": "Gilt für dieses Tool auf diesem Server, auch in anderen Chats. Ändern unter Einstellungen → MCP-Server.",
+    "allowAlwaysHint": "Gilt für dieses Tool auf diesem MCP-Server, auch in anderen Chats. Ändern unter Einstellungen → MCP-Server.",
     "deny": "Ablehnen",
     "memoryAsk": "Das Modell möchte sich etwas über dich merken",
     "memoryTool": "Erinnerung",
@@ -551,9 +552,9 @@
     "active": "Vorlage: {{name}}",
     "clear": "Vorlage entfernen",
     "collections": "Wissen",
-    "collectionsHint": "Welche Sammlungen ein Chat mit dieser Vorlage vor jeder Antwort durchsucht. Später im Chat über den Wissen-Knopf änderbar.",
+    "collectionsHint": "Welche Sammlungen ein Chat mit dieser Vorlage vor jeder Antwort durchsucht. Später im Chat über das „+“-Menü änderbar.",
     "mcpServers": "MCP-Server",
-    "mcpServersHint": "Welche Werkzeuge ein Chat mit dieser Vorlage nutzen darf. Später im Chat über den MCP-Button änderbar.",
+    "mcpServersHint": "Welche Werkzeuge ein Chat mit dieser Vorlage nutzen darf. Später im Chat über das „+“-Menü änderbar.",
     "skills": "Skills",
     "skillsHint": "Gelten in jedem Chat, der mit dieser Vorlage startet.",
     "noneHint": "Mit Vorlagen startest du Chats mit festem Modell, Systemprompt und Parametern."
@@ -766,7 +767,7 @@
     "intro": "Eingeschaltete Skills gelten für jede Antwort in diesem Chat – ihr Text kostet entsprechend Kontext.",
     "none": "Noch keine Skills.",
     "toSkills": "Zur Seite „Skills“",
-    "manage": "Skills verwalten …",
+    "manage": "Skills verwalten",
     "noTools": "Dieses Modell kann keine Werkzeuge und lädt Skills deshalb nicht selbst. Es gelten nur die Skills, die du hier einschaltest.",
     "hidden": "Bei {{context}} Tokens Kontext sieht das Modell nur {{shown}} von {{total}} Skills als Auswahl. Erhöhe die Kontextlänge oder schalte wichtige Skills hier selbst ein."
   },
@@ -789,7 +790,7 @@
     "confirmRemove": "Den gespeicherten Ollama-Schlüssel entfernen? Die Websuche funktioniert dann in keinem Chat mehr, bis du einen neuen einträgst."
   },
   "mailSettings": {
-    "title": "E-Mail",
+    "title": "E-Mail-Konto",
     "intro": "LocalDesk liest deine Mails direkt bei Google – über eine eigene App, die du dort anlegst. Senden und Löschen gibt es nicht; Labels und Sterne ändert LocalDesk nur nach deiner Bestätigung.",
     "guide": "Schritt für Schritt: docs/email-einrichten.md im LocalDesk-Ordner.",
     "gmail": "Gmail",
@@ -822,7 +823,7 @@
     "account": "Konto",
     "search": "In Gmail suchen",
     "searchHint": "Gmail-Suche, z. B. „is:unread“ oder „from:bank“. Enter sucht, leer = Posteingang.",
-    "refresh": "Neu laden",
+    "refresh": "Aktualisieren",
     "inbox": "Posteingang",
     "results": "Suchergebnis",
     "empty": "Keine Mails gefunden.",
@@ -884,7 +885,7 @@
     "cancel": "Abbrechen"
   },
   "mailChat": {
-    "button": "E-Mail: Postfach im Chat nutzen",
+    "button": "E-Mail: Mails im Chat nutzen",
     "chip": "E-Mail",
     "title": "E-Mail im Chat",
     "intro": "Das Modell darf in diesem Chat Mails suchen und lesen. Labels (auch eigene anlegen oder umbenennen) und Sterne schlägt es nur vor – du bestätigst jede Änderung. Senden und Löschen gibt es nicht.",
@@ -938,7 +939,7 @@
     "none": "Noch keine Code-Sitzungen",
     "delete": "Sitzung löschen",
     "confirmDelete": "Sitzung „{{name}}“ löschen? Der Verlauf mit dem Agenten wird entfernt – deine Dateien bleiben unverändert.",
-    "intro": "Wähle mit „Neue Sitzung“ einen Projektordner. Der Agent arbeitet nur in diesem Ordner.",
+    "intro": "Wähle mit „Neue Sitzung“ einen Ordner. Der Agent arbeitet nur in diesem Ordner.",
     "introSafe": "Lesen geht ohne Rückfrage. Dateien ändern, Befehle ausführen und Commits gibt es nur nach deiner Freigabe – mit Vorher/Nachher-Ansicht und „Rückgängig“. Push gibt es nicht.",
     "loading": "Lade …",
     "emptyDir": "Der Ordner ist leer.",
@@ -946,7 +947,7 @@
     "tooLarge": "Die Datei ist größer als 1 MB – sie wird nicht angezeigt.",
     "binary": "Keine Textdatei – sie wird nicht angezeigt.",
     "agent": "Agent",
-    "agentEmpty": "Was soll der Agent in diesem Projekt tun?",
+    "agentEmpty": "Was soll der Agent in diesem Ordner tun?",
     "agentHint": "Zum Beispiel: „Erklär mir den Aufbau“, „Wo wird X berechnet?“. Er sieht nur diesen Ordner; Dateien liest er ohne Rückfrage.",
     "noToolModels": "Kein installiertes Modell kann Werkzeuge benutzen – der Agent braucht eins (z. B. qwen3, gpt-oss).",
     "ask": {
@@ -987,10 +988,10 @@
     }
   },
   "access": {
-    "askMail": "Das Modell möchte dein Postfach nutzen",
+    "askMail": "Das Modell möchte deine Mails nutzen",
     "askFiles": "Das Modell möchte auf Dateien zugreifen",
     "reasonLabel": "Begründung des Modells:",
-    "pickAccount": "Postfach",
+    "pickAccount": "Konto",
     "pickServers": "Dateien freigeben über",
     "mailHint": "Das Modell darf Mails suchen und lesen. Etwas ändern (Label, Stern) geht weiter nur nach deiner Bestätigung.",
     "filesHint": "Lesen läuft sofort. Schreiben und Überschreiben fragt weiter bei jedem Aufruf nach.",
@@ -1074,5 +1075,15 @@
   "plus": {
     "open": "Funktionen hinzufügen",
     "hint": "Für diesen Chat einschalten"
+  },
+  "chips": {
+    "knowledge": "Wissen",
+    "tools": "Werkzeuge",
+    "skills": "Skills",
+    "mail": "E-Mail",
+    "web": "Webseiten lesen",
+    "webSearch": "Im Web suchen",
+    "research": "Recherche",
+    "remove": "{{name}} ausschalten"
   }
 }

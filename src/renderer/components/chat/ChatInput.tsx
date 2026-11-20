@@ -58,6 +58,15 @@ interface ChatInputProps {
   onStop: () => void;
   /** Schalter in der Leiste unter dem Text (Wissen, Werkzeuge). */
   tools?: ReactNode;
+  /** Modellauswahl, rechts neben dem Senden-Knopf. */
+  modelSelect?: ReactNode;
+  /** Eingeschaltete Funktionen als entfernbare Marken über dem Text. */
+  chips?: {
+    id: string;
+    label: string;
+    removeLabel: string;
+    onRemove: () => void;
+  }[];
   /**
    * Dateien und Bilder anhängen: fehlt = gibt es hier nicht (z. B. im Code-Bereich).
    * Dateien gehen an jedes Modell; Bilder nur, wenn das Modell sie lesen kann.
@@ -113,6 +122,8 @@ export function ChatInput({
   onSend,
   onStop,
   tools,
+  modelSelect,
+  chips,
   attach,
   research,
 }: ChatInputProps) {
@@ -548,6 +559,27 @@ export function ChatInput({
           onCancel={() => setStartCard(false)}
         />
       )}
+      {chips && chips.length > 0 && (
+        <ul className="mb-2 flex flex-wrap gap-2">
+          {chips.map((chip) => (
+            <li
+              key={chip.id}
+              className="flex h-7 items-center gap-1 rounded-full bg-surface-active pr-1 pl-3 text-xs text-[var(--text-on-tint)]"
+            >
+              {chip.label}
+              <button
+                type="button"
+                onClick={chip.onRemove}
+                title={chip.removeLabel}
+                aria-label={chip.removeLabel}
+                className="grid h-5 w-5 place-items-center rounded-full hover:bg-surface-hover"
+              >
+                <X size={12} />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
       <textarea
         ref={textareaRef}
         value={text}
@@ -594,6 +626,7 @@ export function ChatInput({
         )}
         {tools}
         <span className="flex-1" />
+        {modelSelect}
         {isRunning ? (
           <button
             type="button"

@@ -135,7 +135,7 @@ describe('AccessGrants', () => {
     expect(
       (await grants.grant({ what: 'mail', ids: ['fremd'], scope: 'chat' }))
         .text,
-    ).toBe('Dieses Postfach gibt es nicht (mehr).');
+    ).toBe('Dieses Konto gibt es nicht (mehr).');
     expect(
       (await grants.grant({ what: 'files', ids: ['s9'], scope: 'chat' }))
         .isError,

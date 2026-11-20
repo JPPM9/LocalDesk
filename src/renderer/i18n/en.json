@@ -12,8 +12,8 @@
     "collapse": "Collapse sidebar",
     "expand": "Expand sidebar",
     "main": "Sections",
-    "collapseList": "Collapse chat list",
-    "expandList": "Expand chat list",
+    "collapseList": "Collapse sidebar",
+    "expandList": "Expand sidebar",
     "skills": "Skills",
     "mail": "E-mail",
     "code": "Code"
@@ -62,14 +62,14 @@
       "error": "error"
     },
     "modelInfo": "Fingerprints calculated with {{model}} (through Ollama, locally).",
-    "modelMissing": "The embedding model {{model}} is not installed on the active Ollama server. Download it under “Installed models”.",
+    "modelMissing": "The embedding model {{model}} is not installed on the active Ollama server. Download it under “Models”.",
     "obsidianManaged": "This collection is your Obsidian vault. LocalDesk creates it and keeps the folder up to date; front matter, tags and [[wiki links]] are prepared for search, “.obsidian” and your memories are skipped. To change or remove it:",
     "obsidianSettings": "Settings → Obsidian"
   },
   "status": {
     "checking": "Ollama: checking connection …",
     "online": "Ollama {{version}}",
-    "offline": "Ollama offline",
+    "offline": "Ollama not reachable",
     "pageTitle": "Status",
     "openPage": "Full page",
     "close": "Close",
@@ -138,7 +138,7 @@
     "instructionsHint": "Apply to every chat in this project – before a chat's own system prompt. Saved as soon as you leave the field.",
     "saved": "saved",
     "documents": "Project documents",
-    "documentsHint": "Searched automatically in every chat of this project – in addition to collections a chat picks with the Knowledge button.",
+    "documentsHint": "Searched automatically in every chat of this project – in addition to collections a chat picks with the “+” menu.",
     "chats_one": "{{count}} chat",
     "chats_other": "{{count}} chats",
     "noChats": "No chats in this project yet.",
@@ -230,7 +230,8 @@
       "week": "Last 7 days",
       "month": "Last 30 days",
       "older": "Older"
-    }
+    },
+    "modelNamed": "Model: {{name}}"
   },
   "compact": {
     "button": "Condense older part",
@@ -551,9 +552,9 @@
     "active": "Template: {{name}}",
     "clear": "Remove template",
     "collections": "Knowledge",
-    "collectionsHint": "Which collections a chat with this template searches before every answer. Can be changed later in the chat with the Knowledge button.",
+    "collectionsHint": "Which collections a chat with this template searches before every answer. Can be changed later in the chat with the “+” menu.",
     "mcpServers": "MCP servers",
-    "mcpServersHint": "Which tools a chat with this template may use. Can be changed later in the chat with the MCP button.",
+    "mcpServersHint": "Which tools a chat with this template may use. Can be changed later in the chat with the “+” menu.",
     "skills": "Skills",
     "skillsHint": "Apply in every chat that starts with this template.",
     "noneHint": "Templates let you start chats with a fixed model, system prompt and parameters."
@@ -766,7 +767,7 @@
     "intro": "Skills that are turned on apply to every answer in this chat – their text costs context accordingly.",
     "none": "No skills yet.",
     "toSkills": "Go to “Skills”",
-    "manage": "Manage skills …",
+    "manage": "Manage skills",
     "noTools": "This model cannot use tools, so it does not load skills on its own. Only the skills you switch on here apply.",
     "hidden": "With {{context}} tokens of context the model only sees {{shown}} of {{total}} skills to choose from. Raise the context length or switch important skills on here yourself."
   },
@@ -789,7 +790,7 @@
     "confirmRemove": "Remove the saved Ollama key? Web search then stops working in every chat until you enter a new one."
   },
   "mailSettings": {
-    "title": "E-mail",
+    "title": "E-mail account",
     "intro": "LocalDesk reads your mail directly from Google – through your own app that you create there. There is no sending or deleting; LocalDesk changes labels and stars only after you confirm.",
     "guide": "Step by step: docs/email-setup.md in the LocalDesk folder.",
     "gmail": "Gmail",
@@ -822,7 +823,7 @@
     "account": "Account",
     "search": "Search Gmail",
     "searchHint": "Gmail search, e.g. “is:unread” or “from:bank”. Enter searches, empty = inbox.",
-    "refresh": "Reload",
+    "refresh": "Refresh",
     "inbox": "Inbox",
     "results": "Search results",
     "empty": "No mail found.",
@@ -884,7 +885,7 @@
     "cancel": "Cancel"
   },
   "mailChat": {
-    "button": "E-mail: use your mailbox in chat",
+    "button": "E-mail: use your mail in chat",
     "chip": "E-mail",
     "title": "E-mail in chat",
     "intro": "In this chat the model may search and read mail. It only suggests labels (also creating or renaming your own) and stars – you confirm every change. There is no sending or deleting.",
@@ -938,7 +939,7 @@
     "none": "No code sessions yet",
     "delete": "Delete session",
     "confirmDelete": "Delete session “{{name}}”? The history with the agent is removed – your files stay untouched.",
-    "intro": "Pick a project folder with “New session”. The agent works only in that folder.",
+    "intro": "Pick a folder with “New session”. The agent works only in that folder.",
     "introSafe": "Reading needs no approval. Changing files, running commands and commits only happen after your approval – with a before/after view and “Undo”. There is no push.",
     "loading": "Loading …",
     "emptyDir": "The folder is empty.",
@@ -946,7 +947,7 @@
     "tooLarge": "The file is larger than 1 MB – it isn't shown.",
     "binary": "Not a text file – it isn't shown.",
     "agent": "Agent",
-    "agentEmpty": "What should the agent do in this project?",
+    "agentEmpty": "What should the agent do in this folder?",
     "agentHint": "For example: “Explain the structure”, “Where is X calculated?”. It only sees this folder; it reads files without asking.",
     "noToolModels": "No installed model can use tools – the agent needs one (e.g. qwen3, gpt-oss).",
     "ask": {
@@ -987,10 +988,10 @@
     }
   },
   "access": {
-    "askMail": "The model wants to use your mailbox",
+    "askMail": "The model wants to use your mail",
     "askFiles": "The model wants to access files",
     "reasonLabel": "The model's reason:",
-    "pickAccount": "Mailbox",
+    "pickAccount": "Account",
     "pickServers": "Share files through",
     "mailHint": "The model may search and read mail. Changing anything (label, star) still needs your confirmation.",
     "filesHint": "Reading runs right away. Writing and overwriting still ask on every call.",
@@ -1074,5 +1075,15 @@
   "plus": {
     "open": "Add features",
     "hint": "Turn on for this chat"
+  },
+  "chips": {
+    "knowledge": "Knowledge",
+    "tools": "Tools",
+    "skills": "Skills",
+    "mail": "E-mail",
+    "web": "Read web pages",
+    "webSearch": "Search the web",
+    "research": "Research",
+    "remove": "Turn off {{name}}"
   }
 }

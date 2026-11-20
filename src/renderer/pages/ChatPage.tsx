@@ -135,6 +135,56 @@ export function ChatPage() {
     const { [key]: _old, ...rest } = settings;
     updateSettings(on ? { ...rest, [key]: true } : rest);
   };
+  // Eingeschaltete Funktionen als Marken über dem Textfeld (entfernbar).
+  const chipFor = (
+    id: string,
+    name: string,
+    count: number | null,
+    onRemove: () => void,
+  ) => ({
+    id,
+    label: count && count > 1 ? `${name} · ${count}` : name,
+    removeLabel: t('chips.remove', { name }),
+    onRemove,
+  });
+  const chips = [
+    settings.collections?.length
+      ? chipFor(
+          'collections',
+          t('chips.knowledge'),
+          settings.collections.length,
+          () => setList('collections', []),
+        )
+      : null,
+    settings.mcpServers?.length
+      ? chipFor('mcp', t('chips.tools'), settings.mcpServers.length, () =>
+          setList('mcpServers', []),
+        )
+      : null,
+    settings.skills?.length
+      ? chipFor('skills', t('chips.skills'), settings.skills.length, () =>
+          setList('skills', []),
+        )
+      : null,
+    settings.mailAccounts?.length
+      ? chipFor('mail', t('chips.mail'), settings.mailAccounts.length, () =>
+          setList('mailAccounts', []),
+        )
+      : null,
+    settings.web
+      ? chipFor('web', t('chips.web'), null, () => setFlag('web', false))
+      : null,
+    settings.webSearch
+      ? chipFor('webSearch', t('chips.webSearch'), null, () =>
+          setFlag('webSearch', false),
+        )
+      : null,
+    researchArmed
+      ? chipFor('research', t('chips.research'), null, () =>
+          setResearchArmed(false),
+        )
+      : null,
+  ].filter((chip): chip is NonNullable<typeof chip> => chip !== null);
 
   const {
     models,
@@ -364,12 +414,6 @@ export function ChatPage() {
                     </button>
                   </>
                 )}
-              <ModelSelect
-                models={models}
-                value={model}
-                onChange={chooseModel}
-                disabled={isRunning}
-              />
               <button
                 type="button"
                 onClick={() => setSettingsOpen((open) => !open)}
@@ -544,6 +588,15 @@ export function ChatPage() {
                   updateSettings({ ...settings, contextLength: length }),
               },
             }}
+            modelSelect={
+              <ModelSelect
+                models={models}
+                value={model}
+                onChange={chooseModel}
+                disabled={isRunning}
+              />
+            }
+            chips={chips}
             tools={
               <PlusMenu>
                 <KnowledgeButton

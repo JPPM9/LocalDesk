@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-  <!-- LocalDesk: Sprechblase mit Eingabezeichen „>_“ – Chat mit lokaler KI. Flach, ein Akzent (Glut). -->
-  <rect x="8" y="8" width="240" height="240" rx="56" fill="#b8501a"/>
-  <path d="M60 58h136a20 20 0 0 1 20 20v84a20 20 0 0 1-20 20h-74l-38 32v-32H60a20 20 0 0 1-20-20V78a20 20 0 0 1 20-20z" fill="#fff"/>
-  <path d="M78 96l30 24-30 24" fill="none" stroke="#b8501a" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M124 146h50" stroke="#b8501a" stroke-width="16" stroke-linecap="round"/>
+  <!-- LocalDesk: Sprechblase mit Eingabezeichen „>_“ – Chat mit lokaler KI. Flach, Bernstein wie die App. -->
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="#e69a58"/>
+  <path d="M60 58h136a20 20 0 0 1 20 20v84a20 20 0 0 1-20 20h-74l-38 32v-32H60a20 20 0 0 1-20-20V78a20 20 0 0 1 20-20z" fill="#fff7f1"/>
+  <path d="M78 96l30 24-30 24" fill="none" stroke="#825936" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M124 146h50" stroke="#825936" stroke-width="16" stroke-linecap="round"/>
 </svg>

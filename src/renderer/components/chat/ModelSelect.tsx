@@ -15,8 +15,12 @@ export function ModelSelect({
   disabled,
 }: ModelSelectProps) {
   const { t } = useTranslation();
+  const current = models.find((m) => m.name === value);
+  const label = value
+    ? `${value}${current?.parameterSize ? ` · ${current.parameterSize}` : ''}`
+    : t('chat.noModels');
   return (
-    <label className="flex min-w-24 shrink items-center gap-2 rounded-lg bg-surface py-0.5 pr-1 pl-3 focus-within:border-accent shadow-card">
+    <label className="flex min-w-24 shrink items-center gap-2 rounded-[var(--radius-md)] px-2 hover:bg-surface-hover focus-within:bg-surface-hover">
       <span
         aria-hidden
         className={`h-2 w-2 shrink-0 rounded-full ${value ? 'bg-ok' : 'bg-subtle'}`}
@@ -25,10 +29,10 @@ export function ModelSelect({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled || models.length === 0}
-        aria-label={t('chat.model')}
+        aria-label={t('chat.modelNamed', { name: label })}
         // Darf schmaler werden (Name wird gekürzt), damit bei offenem Seitenbereich
         // der Chat-Titel sichtbar bleibt.
-        className="min-w-0 flex-1 bg-surface py-1 text-[13px] font-medium outline-none disabled:opacity-50"
+        className="min-w-0 flex-1 bg-transparent py-1 text-sm font-medium outline-none focus-visible:outline-none disabled:opacity-50 [&>option]:bg-[var(--surface-raised)]"
       >
         {models.length === 0 && <option value="">{t('chat.noModels')}</option>}
         {models.map((model) => (
