@@ -20,7 +20,7 @@
   },
   "knowledge": {
     "title": "Knowledge",
-    "intro": "Collections make your documents searchable in chat. Your files stay where they are – LocalDesk only keeps passages and their fingerprints.",
+    "intro": "A collection makes your documents searchable in chat. Your files stay where they are; LocalDesk only keeps passages and their fingerprints.",
     "new": "New collection",
     "defaultName": "New collection",
     "none": "No collections yet",
@@ -67,7 +67,7 @@
     "obsidianSettings": "Settings → Obsidian"
   },
   "status": {
-    "checking": "Ollama: checking connection …",
+    "checking": "Checking connection …",
     "online": "Ollama {{version}}",
     "offline": "Ollama not reachable",
     "pageTitle": "Status",
@@ -76,13 +76,13 @@
     "loadedTitle": "Loaded models",
     "loadedIntro": "Ollama loads a model into memory at the first chat and unloads it after a while without requests (default: 5 minutes). The size depends heavily on the context length.",
     "loading": "Asking Ollama …",
-    "noneLoaded": "No model is loaded right now. It shows up here as soon as you chat.",
+    "noneLoaded": "No model is loaded right now. It appears here as soon as you chat.",
     "summary_one": "{{count}} model loaded · {{vram}} VRAM used",
     "summary_other": "{{count}} models loaded · {{vram}} VRAM used",
     "vramOf": "{{vram}} of {{total}} in VRAM",
     "context": "Context length",
     "unloadIn": "Unloads in",
-    "cpuWarning": "Part of the model doesn't fit into graphics memory and runs on the processor – answers become much slower. Fixes: a smaller context length, a smaller model, or let other loaded models unload.",
+    "cpuWarning": "Part of the model doesn’t fit into graphics memory and runs on the processor. Answers become much slower. Fixes: a smaller context length, a smaller model, or let other loaded models unload.",
     "loadedShort": "{{name}} · {{vram}}",
     "loadedMore": "+{{count}} more",
     "gpuShort": "GPU {{util}} % · {{used}} / {{total}}"
@@ -99,7 +99,7 @@
     "temperature": "Temperature",
     "power": "Power draw",
     "remote": "LocalDesk can only measure the graphics card if the active Ollama server runs on this PC. For a server on your network, see below what Ollama itself reports.",
-    "noNvidia": "No NVIDIA graphics card found (nvidia-smi is missing). The loaded models below still show how much VRAM Ollama uses.",
+    "noNvidia": "No NVIDIA graphics card found, so nothing is measured. The loaded models show how much VRAM Ollama uses.",
     "error": "Couldn't read the graphics card: {{error}}"
   },
   "shortcuts": {
@@ -141,7 +141,7 @@
     "documentsHint": "Searched automatically in every chat of this project – in addition to collections a chat picks with the “+” menu.",
     "chats_one": "{{count}} chat",
     "chats_other": "{{count}} chats",
-    "noChats": "No chats in this project yet.",
+    "noChats": "No chats in this project yet. New chats appear here.",
     "badge": "Project: {{name}}",
     "skills": "Skills",
     "skillsHint": "Apply in every chat of this project – in addition to the skills you turn on in the chat."
@@ -201,7 +201,7 @@
     "chart": {
       "label": "Chart: {{title}}",
       "untitled": "Chart",
-      "empty": "This chart cannot be shown."
+      "empty": "The chart could not be drawn: the saved data is incomplete. The answer itself is unchanged. Ask the model to create the chart again."
     },
     "images": {
       "remove": "Remove image “{{name}}”",
@@ -386,7 +386,7 @@
     "refresh": "Refresh",
     "loading": "Loading models …",
     "error": "Couldn't load the model list",
-    "empty": "No models installed. Download one above, e.g. “qwen3:8b”.",
+    "empty": "No model is installed yet. Enter a model name above, for example “qwen3:8b”, and download it.",
     "columns": {
       "name": "Name",
       "parameters": "Parameters",
@@ -478,7 +478,7 @@
     "title_one": "{{count}} memory",
     "title_other": "{{count}} memories",
     "intro": "Facts about you that every model knows – each one a note in the vault (editable in Obsidian). Project memories only apply in chats of that project.",
-    "reload": "Reload",
+    "reload": "Refresh",
     "global": "For all chats",
     "project": "Project “{{name}}”",
     "placeholder": "New memory, e.g. “I'm studying statistics in my 3rd semester.”",
@@ -531,7 +531,7 @@
   },
   "templates": {
     "title": "Templates",
-    "intro": "Templates store model, system prompt and parameters for recurring tasks – e.g. “Python tutor” or “Summarize texts”. Pick one on the left or create a new one.",
+    "intro": "Templates save the model, system prompt and parameters for recurring tasks, for example “Python tutor”. Pick one on the left or create a new one.",
     "new": "New template",
     "none": "No templates yet",
     "untitled": "Untitled template",
@@ -807,7 +807,7 @@
     "confirmRemove": "Remove the Google app from LocalDesk? It stays in place at Google.",
     "outlookLater": "Outlook comes later – Microsoft requires its own Azure directory for it.",
     "accounts": "Signed-in accounts",
-    "noAccounts": "No account signed in yet.",
+    "noAccounts": "No account signed in yet. Sign in with Google so the model can read mail.",
     "connect": "Sign in with Google",
     "connectAnother": "Sign in another account",
     "waiting": "Your browser is open – sign in there and allow access. On “App not verified”: Advanced → Go to LocalDesk.",
@@ -856,7 +856,7 @@
     "start": "Get suggestions",
     "intro_one": "The model sees sender, subject and preview of the first mail in the list and suggests your own labels (also new ones) and stars. In Gmail, only what you tick and apply changes.",
     "intro_other": "The model sees sender, subject and preview of the first {{count}} mails in the list and suggests your own labels (also new ones) and stars. In Gmail, only what you tick and apply changes.",
-    "noLabels": "You have no labels of your own in Gmail yet – the model can suggest new labels (you confirm them) or stars. Or create one yourself below.",
+    "noLabels": "You have no labels of your own in Gmail yet. The model may suggest new ones; you confirm them. Or create one yourself.",
     "addNewLabel": "Create new label “{{name}}” and add it",
     "running_one": "The model is looking at 1 mail …",
     "running_other": "The model is looking at {{count}} mails …",
@@ -949,7 +949,7 @@
     "agent": "Agent",
     "agentEmpty": "What should the agent do in this folder?",
     "agentHint": "For example: “Explain the structure”, “Where is X calculated?”. It only sees this folder; it reads files without asking.",
-    "noToolModels": "No installed model can use tools – the agent needs one (e.g. qwen3, gpt-oss).",
+    "noToolModels": "No installed model can use tools, but the agent needs one, for example qwen3 or gpt-oss.",
     "ask": {
       "edit_file": "Change file?",
       "write_file": "Create or replace file?",
