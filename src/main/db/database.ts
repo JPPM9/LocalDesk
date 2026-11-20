@@ -301,6 +301,11 @@ const migrations: string[] = [
 
   CREATE INDEX message_tables_by_message ON message_tables(message_id, position);
   `,
+  // 23: Server-Art (Ollama oder OpenAI-kompatibel) und verschlüsselter API-Schlüssel.
+  `
+  ALTER TABLE server_profiles ADD COLUMN kind TEXT NOT NULL DEFAULT 'ollama';
+  ALTER TABLE server_profiles ADD COLUMN api_key_enc TEXT;
+  `,
 ];
 
 /** Öffnet (oder erstellt) die Datenbank und bringt den Aufbau auf den neuesten Stand. */

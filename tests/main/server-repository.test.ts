@@ -11,6 +11,28 @@ beforeEach(() => {
 });
 
 describe('ServerRepository', () => {
+  it('speichert die Art und den verschlüsselten Schlüssel, ohne ihn herauszugeben', () => {
+    const saved = repo.saveProfile({
+      id: 'lm',
+      name: 'LM Studio',
+      address: 'localhost',
+      kind: 'openai',
+    });
+    expect(saved).toMatchObject({
+      ok: true,
+      value: {
+        baseUrl: 'http://localhost:1234/v1',
+        kind: 'openai',
+        hasKey: false,
+      },
+    });
+    repo.setApiKey('lm', 'verschluesselt');
+    expect(repo.getApiKey('lm')).toBe('verschluesselt');
+    expect(repo.listProfiles().find((p) => p.id === 'lm')?.hasKey).toBe(true);
+    repo.setApiKey('lm', null);
+    expect(repo.getApiKey('lm')).toBeNull();
+  });
+
   it('startet mit „Dieser PC“ als aktivem Server', () => {
     expect(repo.listProfiles()).toEqual([
       {
@@ -18,6 +40,8 @@ describe('ServerRepository', () => {
         name: 'Dieser PC',
         baseUrl: 'http://localhost:11434',
         active: true,
+        kind: 'ollama',
+        hasKey: false,
       },
     ]);
   });
@@ -35,6 +59,8 @@ describe('ServerRepository', () => {
         name: 'Wohnzimmer',
         baseUrl: 'http://192.168.1.20:11434',
         active: false,
+        kind: 'ollama',
+        hasKey: false,
       },
     });
     expect(repo.listProfiles().map((p) => p.id)).toEqual(['local', 'lan']);

@@ -8,6 +8,7 @@ import { useDownloads } from '../hooks/useDownloads';
 import { formatBytes, formatContext, formatDate } from '../utils/format';
 import { useConfirm } from '../components/ConfirmDialog';
 import { DiscoverPanel } from '../components/models/DiscoverPanel';
+import { useActiveServer } from '../hooks/useActiveServer';
 
 // "completion" (Text erzeugen) können alle Chat-Modelle – das Abzeichen wäre nur Rauschen.
 const HIDDEN_CAPABILITIES = new Set(['completion']);
@@ -15,6 +16,8 @@ const HIDDEN_CAPABILITIES = new Set(['completion']);
 export function ModelsPage() {
   const { t } = useTranslation();
   const confirm = useConfirm();
+  // Nur Ollama lädt Modelle herunter und löscht sie; andere Server verwaltest du dort, wo sie laufen.
+  const canManage = useActiveServer()?.kind !== 'openai';
   const [result, setResult] = useState<Result<ModelInfo[]> | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -72,7 +75,10 @@ export function ModelsPage() {
     <>
       <PageHeader title={t('models.title')} actions={refreshButton} />
       <div className="space-y-6 p-6">
-        <DownloadPanel downloads={downloads} />
+        {canManage && <DownloadPanel downloads={downloads} />}
+        {!canManage && (
+          <p className="text-sm text-muted">{t('models.externalServer')}</p>
+        )}
         <div
           role="tablist"
           aria-label={t('models.title')}
@@ -91,7 +97,7 @@ export function ModelsPage() {
             </button>
           ))}
         </div>
-        {tab === 'discover' && <DiscoverPanel />}
+        {tab === 'discover' && <DiscoverPanel canDownload={canManage} />}
         {tab === 'installed' && deleteError && (
           <p className="rounded border border-error/40 bg-error/10 px-3 py-2 text-error">
             {deleteError}
@@ -120,7 +126,7 @@ export function ModelsPage() {
     return (
       <ModelTable
         models={result.value}
-        onDelete={(model) => void deleteModel(model)}
+        onDelete={canManage ? (model) => void deleteModel(model) : undefined}
       />
     );
   }
@@ -131,7 +137,7 @@ function ModelTable({
   onDelete,
 }: {
   models: ModelInfo[];
-  onDelete: (model: ModelInfo) => void;
+  onDelete?: (model: ModelInfo) => void;
 }) {
   const { t } = useTranslation();
   const columns = [
@@ -197,15 +203,17 @@ function ModelTable({
                 {formatDate(model.modifiedAt)}
               </td>
               <td className="px-2 py-2 text-right">
-                <button
-                  type="button"
-                  onClick={() => onDelete(model)}
-                  title={t('models.delete', { name: model.name })}
-                  aria-label={t('models.delete', { name: model.name })}
-                  className="grid h-7 w-7 place-items-center rounded text-muted hover:bg-error/10 hover:text-error"
-                >
-                  <Trash2 size={14} />
-                </button>
+                {onDelete && (
+                  <button
+                    type="button"
+                    onClick={() => onDelete(model)}
+                    title={t('models.delete', { name: model.name })}
+                    aria-label={t('models.delete', { name: model.name })}
+                    className="grid h-7 w-7 place-items-center rounded text-muted hover:bg-error/10 hover:text-error"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                )}
               </td>
             </tr>
           ))}

@@ -411,7 +411,8 @@
     "tab": {
       "installed": "Installed",
       "discover": "Discover"
-    }
+    },
+    "externalServer": "This server does not download or delete models from here. Manage the models where the server runs (for example in LM Studio)."
   },
   "mcp": {
     "title": "MCP servers",
@@ -454,8 +455,8 @@
     }
   },
   "servers": {
-    "title": "Ollama servers",
-    "intro": "Which Ollama server LocalDesk talks to. Switching applies immediately to status, models and new answers.",
+    "title": "AI servers",
+    "intro": "Which AI server LocalDesk talks to: Ollama or any OpenAI-compatible server (LM Studio, llama.cpp, cloud). Switching applies immediately to status, models and new answers.",
     "active": "active",
     "useThis": "Use “{{name}}”",
     "add": "Add server",
@@ -476,7 +477,19 @@
     "lanHelp2": "The Windows firewall there must allow incoming connections on port 11434 (private network only).",
     "lanHelp3": "Enter that computer's IP address here and check it with “Test”. Note: LocalDesk can only show GPU load for a server on this PC.",
     "thisPc": "This PC",
-    "lanHelp4": "For security, LocalDesk asks before every tool when the server is on another computer – even when reading mail or files. The server gets to see every result."
+    "lanHelp4": "For security, LocalDesk asks before every tool when the server is on another computer – even when reading mail or files. The server gets to see every result.",
+    "kind": "Type",
+    "kinds": {
+      "ollama": "Ollama",
+      "openai": "OpenAI-compatible (LM Studio, llama.cpp, cloud)"
+    },
+    "addressHintOpenai": "Address with path, e.g. http://localhost:1234/v1 – without a port, http assumes 1234, without a path /v1.",
+    "apiKey": "API key (optional)",
+    "apiKeyHint": "Stored encrypted on this PC and never shown again. Local servers usually need none.",
+    "apiKeySaved": "Key saved – leave empty to keep it",
+    "cloudBadge": "Internet: data leaves your PC",
+    "cloudWarning": "This server is not on your network. Everything you write in a chat and every tool result goes to it. LocalDesk therefore asks before every tool.",
+    "testOkGeneric": "Reachable"
   },
   "memories": {
     "title_one": "{{count}} memory",

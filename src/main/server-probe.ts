@@ -10,7 +10,7 @@ import type { Provider } from './providers/provider';
  */
 export async function probeServers(
   profiles: ServerProfile[],
-  makeProvider: (baseUrl: string) => Provider,
+  makeProvider: (baseUrl: string, profile: ServerProfile) => Provider,
 ): Promise<ServerProbe[]> {
   return Promise.all(
     profiles
@@ -23,7 +23,7 @@ export async function probeServers(
           local: isLocalServer(profile.baseUrl),
         };
         try {
-          const provider = makeProvider(profile.baseUrl);
+          const provider = makeProvider(profile.baseUrl, profile);
           const status = await provider.checkStatus();
           if (!status.online) {
             return { ...base, online: false, error: status.error, models: [] };

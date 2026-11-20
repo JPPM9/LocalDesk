@@ -44,13 +44,19 @@ export interface AppInfo {
   dataPath: string;
 }
 
-/** Ein gespeicherter Ollama-Server, z. B. „Dieser PC“ oder „Rechner im Wohnzimmer“. */
+/** Art des KI-Servers: Ollama oder jeder OpenAI-kompatible Server (LM Studio, llama.cpp, Cloud). */
+export type ServerKind = 'ollama' | 'openai';
+
+/** Ein gespeicherter KI-Server, z. B. „Dieser PC“ oder „Rechner im Wohnzimmer“. */
 export interface ServerProfile {
   id: string;
   name: string;
-  /** Vollständige Adresse, z. B. http://192.168.1.20:11434 */
+  /** Vollständige Adresse, z. B. http://192.168.1.20:11434 oder http://localhost:1234/v1 */
   baseUrl: string;
   active: boolean;
+  kind: ServerKind;
+  /** Ein API-Schlüssel ist gespeichert (er selbst verlässt nie den Main-Prozess). */
+  hasKey: boolean;
 }
 
 export interface ServerProfileInput {
@@ -58,6 +64,10 @@ export interface ServerProfileInput {
   name: string;
   /** Eingabe wie „192.168.1.20“ – wird zur vollständigen Adresse ergänzt. */
   address: string;
+  /** Fehlt = Ollama. */
+  kind?: ServerKind;
+  /** Fehlt = unverändert; leerer Text = Schlüssel entfernen. */
+  apiKey?: string;
 }
 
 /** Ergebnis einer Verbindungsprüfung zu einem KI-Server (z. B. Ollama). */
@@ -932,7 +942,11 @@ export interface LocalDeskApi {
   deleteServer: (profileId: string) => Promise<Result<void>>;
   setActiveServer: (profileId: string) => Promise<Result<ServerProfile>>;
   /** Prüft eine Adresse, ohne sie zu speichern. */
-  testServer: (address: string) => Promise<ProviderStatus>;
+  testServer: (
+    address: string,
+    kind?: ServerKind,
+    apiKey?: string,
+  ) => Promise<ProviderStatus>;
   /** Fragt die anderen eingetragenen Server ab (erreichbar, Modelle) – für den Failover-Hinweis. */
   probeServers: () => Promise<ServerProbe[]>;
 

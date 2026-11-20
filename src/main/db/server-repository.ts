@@ -7,6 +7,8 @@ interface ProfileRow {
   id: string;
   name: string;
   base_url: string;
+  kind: string;
+  api_key_enc: string | null;
 }
 
 const ACTIVE_KEY = 'activeServerId';
@@ -22,7 +24,7 @@ export class ServerRepository {
   listProfiles(): ServerProfile[] {
     const rows = this.db
       .prepare(
-        'SELECT id, name, base_url FROM server_profiles ORDER BY created_at, name',
+        'SELECT id, name, base_url, kind, api_key_enc FROM server_profiles ORDER BY created_at, name',
       )
       .all() as unknown as ProfileRow[];
     const activeId = this.activeId(rows);
@@ -48,21 +50,37 @@ export class ServerRepository {
     }
     const name = typeof raw.name === 'string' ? raw.name.trim() : '';
     if (!name) return { ok: false, error: tr('error.serverNameMissing') };
+    const kind = raw.kind === 'openai' ? 'openai' : 'ollama';
     const url = normalizeServerUrl(
       typeof raw.address === 'string' ? raw.address : '',
+      kind,
     );
     if (!url.ok) return url;
 
     this.db
       .prepare(
-        `INSERT INTO server_profiles (id, name, base_url, created_at) VALUES (?, ?, ?, ?)
-         ON CONFLICT(id) DO UPDATE SET name = excluded.name, base_url = excluded.base_url`,
+        `INSERT INTO server_profiles (id, name, base_url, kind, created_at) VALUES (?, ?, ?, ?, ?)
+         ON CONFLICT(id) DO UPDATE SET name = excluded.name, base_url = excluded.base_url, kind = excluded.kind`,
       )
-      .run(raw.id, name.slice(0, NAME_MAX_LENGTH), url.value, this.now());
+      .run(raw.id, name.slice(0, NAME_MAX_LENGTH), url.value, kind, this.now());
     return {
       ok: true,
       value: this.listProfiles().find((p) => p.id === raw.id)!,
     };
+  }
+
+  /** Verschlüsselter Schlüssel eines Servers (null = keiner). Die Verschlüsselung macht der Aufrufer. */
+  setApiKey(profileId: string, encrypted: string | null) {
+    this.db
+      .prepare('UPDATE server_profiles SET api_key_enc = ? WHERE id = ?')
+      .run(encrypted, profileId);
+  }
+
+  getApiKey(profileId: string): string | null {
+    const row = this.db
+      .prepare('SELECT api_key_enc FROM server_profiles WHERE id = ?')
+      .get(profileId) as { api_key_enc: string | null } | undefined;
+    return row?.api_key_enc ?? null;
   }
 
   /** Der letzte Server lässt sich nicht löschen – ohne Server kann die App nichts. */
@@ -103,5 +121,12 @@ export class ServerRepository {
 }
 
 function toProfile(row: ProfileRow, active: boolean): ServerProfile {
-  return { id: row.id, name: row.name, baseUrl: row.base_url, active };
+  return {
+    id: row.id,
+    name: row.name,
+    baseUrl: row.base_url,
+    active,
+    kind: row.kind === 'openai' ? 'openai' : 'ollama',
+    hasKey: row.api_key_enc !== null,
+  };
 }

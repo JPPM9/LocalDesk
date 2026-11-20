@@ -411,7 +411,8 @@
     "tab": {
       "installed": "Installiert",
       "discover": "Entdecken"
-    }
+    },
+    "externalServer": "Dieser Server lädt und löscht Modelle nicht von hier aus. Verwalte die Modelle dort, wo der Server läuft (z. B. in LM Studio)."
   },
   "mcp": {
     "title": "MCP-Server",
@@ -454,8 +455,8 @@
     }
   },
   "servers": {
-    "title": "Ollama-Server",
-    "intro": "Mit welchem Ollama-Server LocalDesk spricht. Umschalten gilt sofort für Status, Modelle und neue Antworten.",
+    "title": "KI-Server",
+    "intro": "Mit welchem KI-Server LocalDesk spricht: Ollama oder jeder OpenAI-kompatible Server (LM Studio, llama.cpp, Cloud). Umschalten gilt sofort für Status, Modelle und neue Antworten.",
     "active": "aktiv",
     "useThis": "„{{name}}“ verwenden",
     "add": "Server hinzufügen",
@@ -476,7 +477,19 @@
     "lanHelp2": "Die Windows-Firewall dort muss eingehende Verbindungen auf Port 11434 erlauben (nur im privaten Netzwerk).",
     "lanHelp3": "Hier die IP-Adresse dieses Rechners eintragen und mit „Testen“ prüfen. Hinweis: Die GPU-Auslastung kann LocalDesk nur bei einem Server auf diesem PC anzeigen.",
     "thisPc": "Dieser PC",
-    "lanHelp4": "Aus Sicherheitsgründen fragt LocalDesk bei einem Server auf einem anderen Rechner vor jedem Werkzeug nach – auch beim Lesen von Mails oder Dateien. Der Server bekommt jedes Ergebnis zu sehen."
+    "lanHelp4": "Aus Sicherheitsgründen fragt LocalDesk bei einem Server auf einem anderen Rechner vor jedem Werkzeug nach – auch beim Lesen von Mails oder Dateien. Der Server bekommt jedes Ergebnis zu sehen.",
+    "kind": "Art",
+    "kinds": {
+      "ollama": "Ollama",
+      "openai": "OpenAI-kompatibel (LM Studio, llama.cpp, Cloud)"
+    },
+    "addressHintOpenai": "Adresse samt Pfad, z. B. http://localhost:1234/v1 – ohne Port wird bei http 1234 angenommen, ohne Pfad /v1.",
+    "apiKey": "API-Schlüssel (optional)",
+    "apiKeyHint": "Wird verschlüsselt auf diesem PC gespeichert und nie wieder angezeigt. Lokale Server brauchen meist keinen.",
+    "apiKeySaved": "Schlüssel gespeichert – leer lassen zum Behalten",
+    "cloudBadge": "Internet: Daten verlassen deinen PC",
+    "cloudWarning": "Dieser Server liegt nicht in deinem Netz. Alles, was du in einem Chat schreibst, und jedes Werkzeug-Ergebnis geht an ihn. LocalDesk fragt deshalb vor jedem Werkzeug nach.",
+    "testOkGeneric": "Erreichbar"
   },
   "memories": {
     "title_one": "{{count}} Erinnerung",

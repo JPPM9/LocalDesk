@@ -16,6 +16,8 @@ const profile = (
   name: id,
   baseUrl,
   active,
+  kind: 'ollama',
+  hasKey: false,
 });
 
 const model = (name: string): ModelInfo => ({

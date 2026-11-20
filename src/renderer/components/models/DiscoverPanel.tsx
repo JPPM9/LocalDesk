@@ -20,7 +20,11 @@ const FIT_STYLE: Record<FitLevel, string> = {
 };
 
 /** Reiter „Entdecken“: Hugging Face durchsuchen, Größen vergleichen, nach „passt auf deinen PC“ laden. */
-export function DiscoverPanel() {
+export function DiscoverPanel({
+  canDownload = true,
+}: {
+  canDownload?: boolean;
+}) {
   const { t, i18n } = useTranslation();
   const [pc, setPc] = useState<PcInfo | null>(null);
   const [query, setQuery] = useState('');
@@ -237,19 +241,21 @@ export function DiscoverPanel() {
                                   : '–'}
                               </td>
                               <td className="py-1.5 text-right">
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    void download(model.id, file.quant)
-                                  }
-                                  aria-label={t('discover.downloadFor', {
-                                    name: `${model.id} ${file.quant}`,
-                                  })}
-                                  className="btn btn-secondary !min-h-8 flex items-center gap-1"
-                                >
-                                  <Download size={13} />
-                                  {t('downloads.start')}
-                                </button>
+                                {canDownload && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      void download(model.id, file.quant)
+                                    }
+                                    aria-label={t('discover.downloadFor', {
+                                      name: `${model.id} ${file.quant}`,
+                                    })}
+                                    className="btn btn-secondary !min-h-8 flex items-center gap-1"
+                                  >
+                                    <Download size={13} />
+                                    {t('downloads.start')}
+                                  </button>
+                                )}
                               </td>
                             </tr>
                           ))}

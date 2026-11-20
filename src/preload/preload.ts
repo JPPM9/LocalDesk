@@ -223,7 +223,8 @@ const api: LocalDeskApi = {
     ipcRenderer.invoke(IpcChannels.deleteServer, profileId),
   setActiveServer: (profileId) =>
     ipcRenderer.invoke(IpcChannels.setActiveServer, profileId),
-  testServer: (address) => ipcRenderer.invoke(IpcChannels.testServer, address),
+  testServer: (address, kind, apiKey) =>
+    ipcRenderer.invoke(IpcChannels.testServer, address, kind, apiKey),
   probeServers: () => ipcRenderer.invoke(IpcChannels.probeServers),
 
   listTemplates: () => ipcRenderer.invoke(IpcChannels.listTemplates),

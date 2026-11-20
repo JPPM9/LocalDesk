@@ -1,4 +1,4 @@
-import type { Result } from './api';
+import type { Result, ServerKind } from './api';
 import { tr } from './messages';
 
 export const OLLAMA_DEFAULT_PORT = 11434;
@@ -15,7 +15,10 @@ export const DEFAULT_SERVER_NAME = 'Dieser PC';
  * vollständige Server-Adresse (http://…:11434). Erlaubt sind nur http und https
  * ohne Pfad, Benutzername oder Passwort – es geht ausschließlich um einen Ollama-Server.
  */
-export function normalizeServerUrl(input: string): Result<string> {
+export function normalizeServerUrl(
+  input: string,
+  kind: ServerKind = 'ollama',
+): Result<string> {
   const trimmed = input.trim();
   if (!trimmed) return { ok: false, error: tr('server.addressMissing') };
 
@@ -45,6 +48,7 @@ export function normalizeServerUrl(input: string): Result<string> {
       error: tr('server.noCredentials'),
     };
   }
+  if (kind === 'openai') return normalizeOpenAiUrl(url, withScheme);
   if (url.pathname !== '/' || url.search || url.hash) {
     return {
       ok: false,
@@ -63,6 +67,45 @@ export function normalizeServerUrl(input: string): Result<string> {
     ? url.port || defaultPort(url.protocol)
     : String(OLLAMA_DEFAULT_PORT);
   return { ok: true, value: `${url.protocol}//${url.hostname}:${port}` };
+}
+
+/** Standard-Port von LM Studio (http ohne Port). */
+export const OPENAI_LOCAL_PORT = 1234;
+
+/**
+ * OpenAI-kompatible Server: Pfad erlaubt (meist „/v1“; fehlt er, wird „/v1“ ergänzt).
+ * Ohne Port gilt bei http der von LM Studio (1234), bei https der Standard-Port.
+ */
+function normalizeOpenAiUrl(url: URL, withScheme: string): Result<string> {
+  if (url.search || url.hash) return { ok: false, error: tr('server.noPath') };
+  const authority = withScheme
+    .replace(/^[a-z][a-z0-9+.-]*:\/\//i, '')
+    .split(/[/?#]/)[0];
+  const explicit = /:\d+$/.test(authority);
+  const port = explicit
+    ? url.port || defaultPort(url.protocol)
+    : url.protocol === 'http:'
+      ? String(OPENAI_LOCAL_PORT)
+      : '';
+  const path = url.pathname.replace(/\/+$/, '') || '/v1';
+  const host = `${url.protocol}//${url.hostname}${port ? `:${port}` : ''}`;
+  return { ok: true, value: `${host}${path}` };
+}
+
+/** Liegt der Server im eigenen Netz (dieser PC, Heimnetz)? Sonst verlassen Daten dein Netz. */
+export function isPrivateHost(baseUrl: string): boolean {
+  try {
+    const host = new URL(baseUrl).hostname;
+    return (
+      host === 'localhost' ||
+      host === '[::1]' ||
+      !host.includes('.') ||
+      host.endsWith('.local') ||
+      /^(127\.|10\.|192\.168\.|169\.254\.|172\.(1[6-9]|2\d|3[01])\.)/.test(host)
+    );
+  } catch {
+    return false;
+  }
 }
 
 function defaultPort(protocol: string) {

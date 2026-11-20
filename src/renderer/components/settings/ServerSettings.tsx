@@ -6,7 +6,8 @@ import type {
   ServerProfile,
   ServerProfileInput,
 } from '../../../shared/api';
-import { DEFAULT_SERVER_NAME } from '../../../shared/server';
+import type { ServerKind } from '../../../shared/api';
+import { DEFAULT_SERVER_NAME, isPrivateHost } from '../../../shared/server';
 import { clearFailoverFrom } from '../../failover';
 import { notifyServerChanged } from '../../serverEvents';
 import { Field } from './SettingsFields';
@@ -21,6 +22,8 @@ export function ServerSettings() {
   const [profiles, setProfiles] = useState<ServerProfile[]>([]);
   // Formular zum Anlegen/Bearbeiten; null = geschlossen.
   const [form, setForm] = useState<ServerProfileInput | null>(null);
+  // Beim Bearbeiten: Es ist schon ein Schlüssel gespeichert (leeres Feld = unverändert).
+  const [formHasKey, setFormHasKey] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
@@ -107,17 +110,24 @@ export function ServerSettings() {
               <div className="truncate tabular-nums text-xs text-muted">
                 {profile.baseUrl}
               </div>
+              {profile.kind === 'openai' && !isPrivateHost(profile.baseUrl) && (
+                <div className="text-xs text-warn">
+                  {t('servers.cloudBadge')}
+                </div>
+              )}
             </div>
-            <TestButton address={profile.baseUrl} />
+            <TestButton address={profile.baseUrl} kind={profile.kind} />
             <IconButton
               label={t('servers.edit')}
-              onClick={() =>
+              onClick={() => {
+                setFormHasKey(profile.hasKey);
                 setForm({
                   id: profile.id,
                   name: profile.name,
                   address: profile.baseUrl,
-                })
-              }
+                  kind: profile.kind,
+                });
+              }}
             >
               <Pencil size={14} />
             </IconButton>
@@ -140,6 +150,18 @@ export function ServerSettings() {
 
       {form ? (
         <div className="space-y-4 rounded-xl bg-surface p-4 shadow-card">
+          <Field label={t('servers.kind')}>
+            <select
+              value={form.kind ?? 'ollama'}
+              onChange={(e) =>
+                setForm({ ...form, kind: e.target.value as ServerKind })
+              }
+              className="field w-full"
+            >
+              <option value="ollama">{t('servers.kinds.ollama')}</option>
+              <option value="openai">{t('servers.kinds.openai')}</option>
+            </select>
+          </Field>
           <Field label={t('servers.name')}>
             <input
               autoFocus
@@ -149,16 +171,59 @@ export function ServerSettings() {
               className="field w-full"
             />
           </Field>
-          <Field label={t('servers.address')} hint={t('servers.addressHint')}>
+          <Field
+            label={t('servers.address')}
+            hint={t(
+              form.kind === 'openai'
+                ? 'servers.addressHintOpenai'
+                : 'servers.addressHint',
+            )}
+          >
             <input
               value={form.address}
               onChange={(e) => setForm({ ...form, address: e.target.value })}
-              placeholder="192.168.1.20"
+              placeholder={
+                form.kind === 'openai'
+                  ? 'http://localhost:1234/v1'
+                  : '192.168.1.20'
+              }
               className="field w-full tabular-nums"
             />
           </Field>
+          {form.kind === 'openai' && (
+            <>
+              <Field label={t('servers.apiKey')} hint={t('servers.apiKeyHint')}>
+                <input
+                  type="password"
+                  autoComplete="off"
+                  value={form.apiKey ?? ''}
+                  onChange={(e) => setForm({ ...form, apiKey: e.target.value })}
+                  placeholder={
+                    formHasKey && form.apiKey === undefined
+                      ? t('servers.apiKeySaved')
+                      : ''
+                  }
+                  className="field w-full tabular-nums"
+                />
+              </Field>
+              {form.address.trim() &&
+                !isPrivateHost(
+                  /^[a-z]+:\/\//i.test(form.address)
+                    ? form.address
+                    : `http://${form.address}`,
+                ) && (
+                  <p role="note" className="text-sm text-warn">
+                    {t('servers.cloudWarning')}
+                  </p>
+                )}
+            </>
+          )}
           <div className="flex items-center gap-2">
-            <TestButton address={form.address} />
+            <TestButton
+              address={form.address}
+              kind={form.kind ?? 'ollama'}
+              apiKey={form.apiKey}
+            />
             <div className="flex-1" />
             <button
               type="button"
@@ -182,9 +247,15 @@ export function ServerSettings() {
       ) : (
         <button
           type="button"
-          onClick={() =>
-            setForm({ id: crypto.randomUUID(), name: '', address: '' })
-          }
+          onClick={() => {
+            setFormHasKey(false);
+            setForm({
+              id: crypto.randomUUID(),
+              name: '',
+              address: '',
+              kind: 'ollama',
+            });
+          }}
           className="btn btn-secondary flex items-center gap-2"
         >
           <Plus size={15} />
@@ -208,16 +279,24 @@ export function ServerSettings() {
 }
 
 /** „Testen“ mit Ergebnis daneben (grün mit Version oder rot mit Grund). */
-function TestButton({ address }: { address: string }) {
+function TestButton({
+  address,
+  kind,
+  apiKey,
+}: {
+  address: string;
+  kind?: ServerKind;
+  apiKey?: string;
+}) {
   const { t } = useTranslation();
   const [status, setStatus] = useState<ProviderStatus | 'testing' | null>(null);
 
   // Neue Adresse → altes Ergebnis gilt nicht mehr.
-  useEffect(() => setStatus(null), [address]);
+  useEffect(() => setStatus(null), [address, kind, apiKey]);
 
   const test = async () => {
     setStatus('testing');
-    setStatus(await window.api.testServer(address));
+    setStatus(await window.api.testServer(address, kind, apiKey));
   };
 
   return (
@@ -228,7 +307,9 @@ function TestButton({ address }: { address: string }) {
           title={status.online ? undefined : status.error}
         >
           {status.online
-            ? t('servers.testOk', { version: status.version })
+            ? kind === 'openai'
+              ? t('servers.testOkGeneric')
+              : t('servers.testOk', { version: status.version })
             : status.error}
         </span>
       )}

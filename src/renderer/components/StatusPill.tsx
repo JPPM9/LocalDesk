@@ -22,7 +22,10 @@ export function StatusPill() {
 
   if (status?.online) {
     dotClass = 'bg-ok';
-    label = t('status.online', { version: status.version });
+    label =
+      status.version === 'OpenAI API'
+        ? status.version
+        : t('status.online', { version: status.version });
     detail = status.baseUrl;
   } else if (status) {
     dotClass = 'bg-error';

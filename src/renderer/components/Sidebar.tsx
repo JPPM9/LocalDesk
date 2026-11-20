@@ -200,7 +200,9 @@ export function Sidebar({
           to="/status"
           title={
             status?.online
-              ? t('status.online', { version: status.version })
+              ? status.version === 'OpenAI API'
+                ? status.version
+                : t('status.online', { version: status.version })
               : t('status.offline')
           }
           aria-label={t('nav.status')}

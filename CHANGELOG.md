@@ -5,6 +5,13 @@ den Release-Notizen auf GitHub – und erscheint in LocalDesk unter „Nach Upda
 
 ## Unveröffentlicht
 
+**KI-Server**
+
+- LocalDesk spricht jetzt auch mit OpenAI-kompatiblen Servern: LM Studio, llama.cpp-Server und Cloud-Anbieter (Einstellungen → KI-Server,
+  Art „OpenAI-kompatibel“, optional mit API-Schlüssel, verschlüsselt gespeichert). Chat, Werkzeuge und Wissen funktionieren dort wie
+  mit Ollama; Modelle lädst und löschst du dort, wo der Server läuft. Bei einem Server außerhalb deines Netzes warnt die App und fragt
+  vor jedem Werkzeug nach.
+
 **Modelle**
 
 - Neuer Reiter „Entdecken“ unter Modelle: GGUF-Modelle auf Hugging Face suchen, Größen je Quantisierung vergleichen und sehen, ob ein

@@ -515,6 +515,17 @@ export const en: Record<MessageKey, string> = {
     'The downloaded file does not match its checksum – it was discarded. Please try again.',
   'update.rateLimit':
     'GitHub is not accepting more requests right now – try again in an hour.',
+  'openai.unexpected':
+    'Unexpected response – is this an OpenAI-compatible server?',
+  'openai.noPull':
+    'This server does not download models. Download them where the server runs (for example in LM Studio).',
+  'openai.noDelete':
+    'This server does not delete models from here. Remove them where the server runs.',
+  'openai.noModelInfo': 'This server provides no technical model data.',
+  'openai.keyRejected':
+    'The server rejected the API key. Check the key under Settings → Servers.',
+  'server.keyUnavailable':
+    'The API key cannot be stored encrypted on this PC, so it was not saved.',
   'ollama.unexpected': 'Unexpected response – is this really Ollama?',
   'ollama.notEmbedding': 'Unexpected response – is this an embedding model?',
   'ollama.noModelInfo': 'No model information',

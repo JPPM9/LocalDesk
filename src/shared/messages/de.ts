@@ -530,6 +530,17 @@ export const de = {
     'Die geladene Datei passt nicht zur Prüfsumme – sie wurde verworfen. Bitte erneut versuchen.',
   'update.rateLimit':
     'GitHub lässt gerade keine weiteren Anfragen zu – in einer Stunde erneut versuchen.',
+  'openai.unexpected':
+    'Unerwartete Antwort – ist das ein OpenAI-kompatibler Server?',
+  'openai.noPull':
+    'Dieser Server lädt keine Modelle herunter. Lade sie dort, wo der Server läuft (z. B. in LM Studio).',
+  'openai.noDelete':
+    'Dieser Server löscht keine Modelle von hier aus. Entferne sie dort, wo der Server läuft.',
+  'openai.noModelInfo': 'Dieser Server liefert keine technischen Modelldaten.',
+  'openai.keyRejected':
+    'Der Server hat den API-Schlüssel abgelehnt. Prüfe den Schlüssel unter Einstellungen → Server.',
+  'server.keyUnavailable':
+    'Der API-Schlüssel lässt sich auf diesem PC nicht verschlüsselt speichern, deshalb wurde er nicht gespeichert.',
   'ollama.unexpected': 'Unerwartete Antwort – ist das wirklich Ollama?',
   'ollama.notEmbedding': 'Unerwartete Antwort – ist das ein Embedding-Modell?',
   'ollama.noModelInfo': 'Keine Modell-Angaben',
