@@ -115,7 +115,7 @@ export function LabelManager({
                         type="button"
                         onClick={() => void rename()}
                         disabled={busy || !editing.name.trim()}
-                        className="rounded bg-accent px-3 py-1 text-xs text-white disabled:opacity-40"
+                        className="rounded bg-accent px-3 py-1 text-xs text-accent-fg disabled:opacity-40"
                       >
                         {t('mailLabels.save')}
                       </button>
@@ -166,7 +166,7 @@ export function LabelManager({
               type="button"
               onClick={() => void create()}
               disabled={busy || !newName.trim()}
-              className="shrink-0 rounded bg-accent px-3 py-2 text-[13px] text-white disabled:opacity-40"
+              className="shrink-0 rounded bg-accent px-3 py-2 text-[13px] text-accent-fg disabled:opacity-40"
             >
               {t('mailLabels.create')}
             </button>

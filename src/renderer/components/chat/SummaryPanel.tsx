@@ -95,7 +95,7 @@ export function SummaryPanel({
   const button =
     'rounded border border-border bg-surface px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-50';
   const primary =
-    'rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90 disabled:opacity-50';
+    'rounded bg-accent px-3 py-1 text-xs text-accent-fg hover:opacity-90 disabled:opacity-50';
 
   switch (state.kind) {
     case 'suggest':
@@ -265,7 +265,7 @@ function DraftEditor({
           type="button"
           disabled={!ready || saving}
           onClick={() => onSave({ title, text })}
-          className="rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90 disabled:opacity-50"
+          className="rounded bg-accent px-3 py-1 text-xs text-accent-fg hover:opacity-90 disabled:opacity-50"
         >
           {t('summary.save')}
         </button>

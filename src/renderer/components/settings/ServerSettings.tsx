@@ -173,7 +173,7 @@ export function ServerSettings() {
             <button
               type="button"
               onClick={() => void save()}
-              className="rounded bg-accent px-3 py-1 text-white"
+              className="rounded bg-accent px-3 py-1 text-accent-fg"
             >
               {t('servers.save')}
             </button>

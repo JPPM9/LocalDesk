@@ -1,54 +1,144 @@
 @import 'tailwindcss';
 
 /*
- * Farb-Tokens: Jede Farbe hat einen Namen nach ihrer Aufgabe (z. B. "surface"),
- * nicht nach ihrem Aussehen. Hell und Dunkel setzen nur andere Werte für dieselben
- * Namen – die Komponenten müssen das Farbschema dadurch nicht kennen.
- * Ob hell oder dunkel, entscheidet Einstellungen → Darstellung (System / Hell / Dunkel);
- * der Main-Prozess stellt dafür Electrons nativeTheme um, und prefers-color-scheme folgt.
- * Richtung „Werkbank“: neutrales Graphit, ein Akzent in Glut-Orange (wie eine Messgeräte-Anzeige), Messwerte in Mono.
+ * Design „Späte Stunde“ (DESIGN.md): Bernstein führt, Blau nur als Tiefe (Grund rechts vom
+ * Lichtschnitt, Schatten). Die Stufen stammen wörtlich aus scripts/palette.mjs (DESIGN.md §Farb-Tokens).
+ * Die --ld-*-Namen bleiben, damit die Seiten unverändert laufen; sie zeigen auf die neuen Aliase
+ * (Abbildungstabelle in DESIGN.md). Hell/Dunkel: Electrons nativeTheme → prefers-color-scheme.
  */
 :root {
   color-scheme: light;
-  --ld-bg: #fafafa; /* Grund, Eingabefelder, Code */
-  --ld-surface: #ffffff; /* Flächen: Inhalt, Karten, Listen */
-  --ld-surface-2: #f4f4f5; /* zweite Ebene: Gedanken, Quellen, Kästen in Karten */
-  --ld-surface-hover: #eeeef0;
-  --ld-sidebar: #f4f4f5; /* Symbolleiste links */
-  --ld-border: #e4e4e7;
-  --ld-text: #171717;
-  --ld-muted: #525252; /* Nebentexte */
-  --ld-subtle: #6e6e73; /* ganz leise: Hinweise, Zähler (Kontrast ≥ 4,5) */
-  --ld-accent: #b8501a; /* Glut: weiße Schrift darauf 5,0 : 1 */
-  --ld-accent-soft: #fbeee3;
-  --ld-accent-text: #9a3f0c; /* Akzent als Schrift auf hellem Grund */
-  --ld-bubble: #eeeef0; /* deine Nachrichten */
-  --ld-ok: #15803d;
-  --ld-warn: #a16207;
-  --ld-error: #b91c1c;
-  --ld-shadow: 0 1px 2px rgb(0 0 0 / 0.05), 0 8px 24px rgb(0 0 0 / 0.06);
+  --neutral-1: #fdfdfc;
+  --neutral-5: #e2ddd9;
+  --neutral-11: #68625d;
+  --neutral-12: #302d2b;
+  --accent-1: #fffcfa;
+  --accent-2: #fff7f1;
+  --accent-3: #ffeddf;
+  --accent-4: #fce2ce;
+  --accent-5: #fad6bb;
+  --accent-9: #e69a58;
+  --accent-10: #d0894b;
+  --accent-11: #825936;
+  --accent-12: #3e2917;
+  --accent-on-solid: #140b05;
+  --error-9: #e1524f;
+  --error-11: #974843;
+  --success-9: #5ad664;
+  --success-11: #337437;
+  --warning-9: #dbb155;
+  --warning-11: #76602f;
+  --depth-accent-1: #fafdff;
+  --depth-accent-2: #f2faff;
+  --depth-accent-11: #3a6a81;
+
+  --background: var(--accent-2);
+  --background-deep: var(--depth-accent-2);
+  --glow: var(--accent-3);
+  --surface: var(--accent-1);
+  --surface-raised: var(--accent-1);
+  --surface-hover: var(--accent-3);
+  --surface-active: var(--accent-5);
+  --surface-voice: var(--accent-4);
+  --text: var(--neutral-12);
+  --text-secondary: var(--neutral-11);
+  --text-on-tint: var(--accent-12);
+  --accent-solid: var(--accent-11);
+  --accent-solid-hover: var(--accent-12);
+  --accent-solid-fg: var(--neutral-1);
+  --accent-text: var(--accent-11);
+  --accent-bg-subtle: var(--accent-3);
+  --focus-ring: var(--accent-11);
+  --control-edge: #92877e;
+  --shadow-ink: oklch(from var(--depth-accent-11) l c h / 0.2);
+  --status-mark-error: var(--error-11);
+  --status-mark-success: var(--success-11);
+  --status-mark-warning: var(--warning-11);
+
+  --shadow-2: 0 12px 30px -14px var(--shadow-ink);
+  --shadow-3:
+    0 30px 60px -22px var(--shadow-ink), 0 4px 12px -4px var(--shadow-ink);
+  --shadow-4:
+    0 40px 90px -24px var(--shadow-ink), 0 8px 20px -6px var(--shadow-ink);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --measure: 58ch;
+
+  --leading-body: 1.6;
+  --leading-ui: 1.35;
+  --leading-display: 1.15;
+  --weight-body: 400;
+  --weight-ui: 500;
+  --weight-strong: 600;
+
+  --duration-micro: 140ms;
+  --duration-standard: 320ms;
+  --duration-large: 480ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --focus-outline: 2px solid var(--focus-ring);
+
+  /* Alte Namen → neue Aliase. Rahmen fallen in den Seiten-Schritten weg; bis dahin bleiben sie leise. */
+  --ld-bg: var(--background);
+  --ld-surface: var(--surface);
+  --ld-surface-2: var(--surface-hover);
+  --ld-surface-hover: var(--surface-hover);
+  --ld-sidebar: transparent;
+  --ld-border: var(--neutral-5);
+  --ld-text: var(--text);
+  --ld-muted: var(--text-secondary);
+  --ld-subtle: var(--text-secondary);
+  --ld-accent: var(--accent-solid);
+  --ld-accent-fg: var(--accent-solid-fg);
+  --ld-accent-soft: var(--accent-bg-subtle);
+  --ld-accent-text: var(--accent-text);
+  --ld-bubble: var(--surface-voice);
+  --ld-ok: var(--status-mark-success);
+  --ld-warn: var(--status-mark-warning);
+  --ld-error: var(--status-mark-error);
+  --ld-shadow: var(--shadow-2);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --ld-bg: #141415;
-    --ld-surface: #19191b;
-    --ld-surface-2: #1f1f21;
-    --ld-surface-hover: #262628;
-    --ld-sidebar: #0f0f10;
-    --ld-border: #2a2a2d;
-    --ld-text: #ededed;
-    --ld-muted: #a1a1a6;
-    --ld-subtle: #8b8b91;
-    --ld-accent: #b8501a; /* weiße Schrift darauf 5,0 : 1; als Schrift: accent-text */
-    --ld-accent-soft: #2c1d13;
-    --ld-accent-text: #f2a66b;
-    --ld-bubble: #232325;
-    --ld-ok: #4cc38a;
-    --ld-warn: #e6b422;
-    --ld-error: #ff6b6b;
-    --ld-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 10px 30px rgb(0 0 0 / 0.35);
+    --neutral-1: #131312;
+    --neutral-5: #35312e;
+    --neutral-11: #bdb6b1;
+    --neutral-12: #ebe7e4;
+    --accent-1: #15120f;
+    --accent-2: #1e1814;
+    --accent-3: #2c1f15;
+    --accent-4: #382515;
+    --accent-5: #462b14;
+    --accent-11: #dbad88;
+    --accent-12: #fee2cc;
+    --depth-accent-1: #101315;
+    --depth-accent-2: #151a1d;
+
+    --background: var(--accent-1);
+    --background-deep: var(--depth-accent-1);
+    --glow: var(--accent-4);
+    --surface: var(--accent-2);
+    --surface-raised: var(--accent-3);
+    --surface-hover: var(--accent-3);
+    --accent-solid: var(--accent-9);
+    --accent-solid-hover: var(--accent-10);
+    --accent-solid-fg: var(--accent-on-solid);
+    --control-edge: #7b7169;
+    --shadow-ink: oklch(from var(--depth-accent-2) 0.05 c h / 0.78);
+    --status-mark-error: var(--error-9);
+    --status-mark-success: var(--success-9);
+    --status-mark-warning: var(--warning-9);
   }
 }
 
@@ -64,6 +154,7 @@
   --color-muted: var(--ld-muted);
   --color-subtle: var(--ld-subtle);
   --color-accent: var(--ld-accent);
+  --color-accent-fg: var(--ld-accent-fg);
   --color-accent-soft: var(--ld-accent-soft);
   --color-accent-text: var(--ld-accent-text);
   --color-bubble: var(--ld-bubble);
@@ -75,12 +166,24 @@
   --font-sans:
     'Inter Variable', 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
   --font-mono: 'Cascadia Mono', Consolas, ui-monospace, monospace;
-  /* Weichere Ecken überall (Tailwind: rounded-sm/rounded = 8 px, -lg = 12 px …). */
-  --radius-sm: 0.5rem;
-  --radius-md: 0.625rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.25rem;
+  /* Radien der Skala (DESIGN.md): Zeile/Knopf md, schwebende Fläche lg, Feld/Dialog xl. */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+  --radius-2xl: 22px;
+}
+
+/* Schriftskala 12/14/16/20/25/31/39/49 (DESIGN.md §Schrift). */
+@theme {
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 20px;
+  --text-xl: 25px;
+  --text-2xl: 31px;
+  --text-3xl: 39px;
+  --text-4xl: 49px;
 }
 
 /*
@@ -101,30 +204,43 @@ body,
 
 body {
   margin: 0;
-  background: var(--ld-bg);
-  color: var(--ld-text);
+  /* Lichtschnitt (Signatur): warm links, kühl rechts, Lichtschein oben links. */
+  background-color: var(--background);
+  background-image:
+    linear-gradient(
+      104deg,
+      transparent 0 61.8%,
+      var(--background-deep) 61.8% 100%
+    ),
+    radial-gradient(900px 620px at 8% -8%, var(--glow), transparent 72%);
+  background-attachment: fixed;
+  color: var(--text);
   font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.55;
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
 }
 
 /* Sichtbare Markierung für die Tastatur – aber nicht beim Klicken mit der Maus. */
 :focus-visible {
-  outline: 2px solid var(--ld-accent);
+  outline: var(--focus-outline);
   outline-offset: 2px;
 }
 
 /*
- * Windows „Animationseffekte“ aus → keine Übergänge und kein weiches Scrollen.
- * Drehende Lade-Symbole bleiben: Sie zeigen, dass noch etwas läuft.
+ * Windows „Animationseffekte“ aus → keine Wege und kein weiches Scrollen; erlaubt bleibt
+ * eine reine Überblendung der Deckkraft (höchstens 100 ms). Drehende Lade-Symbole bleiben:
+ * Sie zeigen, dass noch etwas läuft.
  */
 @media (prefers-reduced-motion: reduce) {
   *:not(.animate-spin),
   *::before,
   *::after {
-    transition-duration: 0s !important;
-    animation-duration: 0s !important;
+    animation-duration: 0.01ms !important;
+    transition-property: opacity !important;
+    transition-duration: 100ms !important;
+    transition-timing-function: linear !important;
     scroll-behavior: auto !important;
   }
 }

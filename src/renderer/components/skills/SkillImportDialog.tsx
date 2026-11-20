@@ -394,7 +394,7 @@ export function SkillImportDialog({
               type="button"
               onClick={() => void add()}
               disabled={ready.length === 0 || blocked || busy !== null}
-              className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:opacity-90 disabled:opacity-50"
             >
               {busy === 'adding' && (
                 <LoaderCircle size={15} className="animate-spin" />

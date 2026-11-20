@@ -327,7 +327,7 @@ function ContextTab({
                 onClick={() =>
                   onChangeSettings({ ...settings, contextLength: suggestion })
                 }
-                className="rounded bg-accent px-3 py-1 text-white"
+                className="rounded bg-accent px-3 py-1 text-accent-fg"
               >
                 {t('sidePanel.increase', { size: formatContext(suggestion) })}
               </button>

@@ -162,7 +162,7 @@ function Dialog({
             className={`rounded-lg px-4 py-2 text-sm font-medium ${
               danger
                 ? 'bg-error text-bg hover:opacity-90'
-                : 'bg-accent text-white hover:opacity-90'
+                : 'bg-accent text-accent-fg hover:opacity-90'
             }`}
           >
             {options.confirmLabel ?? t('dialog.confirm')}

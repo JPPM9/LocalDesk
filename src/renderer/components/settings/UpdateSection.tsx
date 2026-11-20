@@ -29,7 +29,7 @@ export function UpdateSection({ version }: { version: string }) {
   const button =
     'flex items-center gap-2 rounded border border-border bg-surface px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-50';
   const primary =
-    'flex items-center gap-2 rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90';
+    'flex items-center gap-2 rounded bg-accent px-3 py-1 text-xs text-accent-fg hover:opacity-90';
   const check = (
     <button
       type="button"

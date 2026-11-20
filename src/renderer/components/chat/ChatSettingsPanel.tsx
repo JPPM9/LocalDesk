@@ -121,7 +121,7 @@ function SaveAsTemplate({
           <button
             type="button"
             onClick={() => void save()}
-            className="rounded bg-accent px-3 text-white"
+            className="rounded bg-accent px-3 text-accent-fg"
           >
             {t('templates.save')}
           </button>

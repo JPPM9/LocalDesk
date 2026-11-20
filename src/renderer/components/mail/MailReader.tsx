@@ -75,7 +75,7 @@ export function MailReader({ accountId, messageId }: MailReaderProps) {
                   type="button"
                   onClick={() => void summarize()}
                   disabled={!model}
-                  className="flex shrink-0 items-center gap-2 rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-white hover:opacity-90 disabled:opacity-40"
+                  className="flex shrink-0 items-center gap-2 rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-accent-fg hover:opacity-90 disabled:opacity-40"
                 >
                   <TextQuote size={15} />
                   {t('mail.summarize')}

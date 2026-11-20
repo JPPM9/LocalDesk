@@ -111,7 +111,7 @@ export function WebSearchSettings() {
                 type="button"
                 onClick={() => void save()}
                 disabled={!key.trim()}
-                className="rounded bg-accent px-3 py-1 text-white disabled:opacity-40"
+                className="rounded bg-accent px-3 py-1 text-accent-fg disabled:opacity-40"
               >
                 {t('mcp.save')}
               </button>

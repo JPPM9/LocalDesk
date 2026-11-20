@@ -93,7 +93,7 @@ export function MemoryEditor({
           type="button"
           disabled={!trimmed || busy}
           onClick={() => void save()}
-          className="rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90 disabled:opacity-50"
+          className="rounded bg-accent px-3 py-1 text-xs text-accent-fg hover:opacity-90 disabled:opacity-50"
         >
           {t('memories.save')}
         </button>

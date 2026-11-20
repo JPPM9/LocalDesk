@@ -142,7 +142,7 @@ export function ResearchStartCard({
             <button
               type="button"
               onClick={() => context.onRaise(raiseTo)}
-              className="rounded-lg bg-accent px-3 py-1 text-xs font-medium text-white hover:opacity-90"
+              className="rounded-lg bg-accent px-3 py-1 text-xs font-medium text-accent-fg hover:opacity-90"
             >
               {t('research.raise', { length: formatContext(raiseTo) })}
             </button>
@@ -155,7 +155,7 @@ export function ResearchStartCard({
           type="button"
           onClick={() => onStart(depth)}
           disabled={!canStart}
-          className="rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90 disabled:opacity-40"
+          className="rounded bg-accent px-3 py-1 text-xs text-accent-fg hover:opacity-90 disabled:opacity-40"
         >
           {t('research.start')}
         </button>

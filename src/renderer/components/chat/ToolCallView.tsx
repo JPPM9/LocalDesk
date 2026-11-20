@@ -139,7 +139,7 @@ export function ToolCallView({
           <button
             type="button"
             onClick={() => onDecision(call.id, 'once')}
-            className="rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90"
+            className="rounded bg-accent px-3 py-1 text-xs text-accent-fg hover:opacity-90"
           >
             {isCommand
               ? t(`code.confirm.${call.toolName}`)

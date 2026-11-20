@@ -144,7 +144,7 @@ export function EditBox({
           type="button"
           onClick={send}
           disabled={!text.trim() && !allowEmpty}
-          className="rounded-lg bg-accent px-3 py-1 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+          className="rounded-lg bg-accent px-3 py-1 text-sm font-medium text-accent-fg hover:opacity-90 disabled:opacity-50"
         >
           {t('chat.editSend')}
         </button>

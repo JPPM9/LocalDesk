@@ -72,7 +72,7 @@ export function AppLayout() {
   return (
     <div className="flex h-full">
       <NavRail />
-      <main className="min-w-0 flex-1 overflow-y-auto bg-surface">
+      <main className="min-w-0 flex-1 overflow-y-auto">
         <Outlet
           context={
             {

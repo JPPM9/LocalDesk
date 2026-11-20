@@ -47,7 +47,7 @@ export function DownloadPanel({ downloads }: { downloads: DownloadView[] }) {
         <button
           type="submit"
           disabled={!name.trim()}
-          className="flex items-center gap-2 rounded bg-accent px-3 py-2 text-white disabled:opacity-40"
+          className="flex items-center gap-2 rounded bg-accent px-3 py-2 text-accent-fg disabled:opacity-40"
         >
           <Download size={15} />
           {t('downloads.start')}

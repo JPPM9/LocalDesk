@@ -154,7 +154,7 @@ export function SortPanel({
                 type="button"
                 onClick={() => void suggest()}
                 disabled={!model || count === 0}
-                className="flex shrink-0 items-center gap-2 rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-white hover:opacity-90 disabled:opacity-40"
+                className="flex shrink-0 items-center gap-2 rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-accent-fg hover:opacity-90 disabled:opacity-40"
               >
                 <ScrollText size={15} />
                 {t('mailSort.start')}
@@ -304,7 +304,7 @@ export function SortPanel({
                   type="button"
                   onClick={() => void apply()}
                   disabled={selected.length === 0 || applying}
-                  className="flex items-center gap-2 rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-white hover:opacity-90 disabled:opacity-40"
+                  className="flex items-center gap-2 rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-accent-fg hover:opacity-90 disabled:opacity-40"
                 >
                   {applying && (
                     <LoaderCircle size={15} className="animate-spin" />

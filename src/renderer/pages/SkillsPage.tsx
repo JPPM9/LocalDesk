@@ -214,7 +214,7 @@ export function SkillsPage() {
           <button
             type="button"
             onClick={() => navigate(`/skills/${NEW}`)}
-            className="flex min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-accent px-3 py-2 font-medium text-white hover:opacity-90"
+            className="flex min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-accent px-3 py-2 font-medium text-accent-fg hover:opacity-90"
           >
             <Plus size={16} />
             {t('skills.new')}
@@ -338,7 +338,7 @@ export function SkillsPage() {
                   type="button"
                   onClick={() => void onSave()}
                   disabled={!dirty}
-                  className="flex items-center gap-2 rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-white hover:opacity-90 disabled:opacity-40"
+                  className="flex items-center gap-2 rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-accent-fg hover:opacity-90 disabled:opacity-40"
                 >
                   <Save size={15} />
                   {t('skills.save')}

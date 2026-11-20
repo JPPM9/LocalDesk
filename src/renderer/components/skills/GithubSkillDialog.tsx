@@ -161,7 +161,7 @@ export function GithubSkillDialog({
             type="button"
             onClick={() => void open(input, false)}
             disabled={busy !== null || !input.trim()}
-            className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:opacity-90 disabled:opacity-50"
           >
             {busy === 'opening' ? (
               <LoaderCircle size={15} className="animate-spin" />
@@ -327,7 +327,7 @@ export function GithubSkillDialog({
               type="button"
               onClick={() => void check()}
               disabled={busy !== null || picked.size === 0}
-              className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:opacity-90 disabled:opacity-50"
             >
               {busy === 'checking' && (
                 <LoaderCircle size={15} className="animate-spin" />

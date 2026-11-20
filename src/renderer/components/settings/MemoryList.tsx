@@ -162,7 +162,7 @@ export function MemoryList() {
           type="button"
           onClick={() => void add()}
           disabled={!text.trim()}
-          className="flex shrink-0 items-center gap-1 rounded bg-accent px-3 py-1 text-xs text-white disabled:opacity-40"
+          className="flex shrink-0 items-center gap-1 rounded bg-accent px-3 py-1 text-xs text-accent-fg disabled:opacity-40"
         >
           <Plus size={13} />
           {t('memories.add')}

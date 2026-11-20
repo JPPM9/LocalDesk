@@ -143,7 +143,7 @@ export function AccessCard({ call, onDecision }: AccessCardProps) {
           type="button"
           disabled={ids.length === 0}
           onClick={() => decide('chat')}
-          className="rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90 disabled:opacity-50"
+          className="rounded bg-accent px-3 py-1 text-xs text-accent-fg hover:opacity-90 disabled:opacity-50"
         >
           {t('access.allowChat')}
         </button>

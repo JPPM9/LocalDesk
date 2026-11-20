@@ -527,7 +527,7 @@ export function ChatInput({
             <button
               type="button"
               onClick={() => context.onRaise(raiseTo)}
-              className="rounded-lg bg-accent px-3 py-1 text-xs font-medium text-white hover:opacity-90"
+              className="rounded-lg bg-accent px-3 py-1 text-xs font-medium text-accent-fg hover:opacity-90"
             >
               {t('chat.files.raise', { length: formatContext(raiseTo) })}
             </button>
@@ -609,7 +609,7 @@ export function ChatInput({
             disabled={!canSend}
             title={t('chat.send')}
             aria-label={t('chat.send')}
-            className="grid h-9 w-9 place-items-center rounded-xl bg-accent text-white hover:opacity-90 disabled:opacity-35"
+            className="grid h-9 w-9 place-items-center rounded-xl bg-accent text-accent-fg hover:opacity-90 disabled:opacity-35"
           >
             <ArrowUp size={18} />
           </button>

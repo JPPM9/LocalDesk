@@ -35,7 +35,11 @@ CSS des Grunds (verbindlich):
 ```css
 background-color: var(--background);
 background-image:
-  linear-gradient(104deg, transparent 0 61.8%, var(--background-deep) 61.8% 100%),
+  linear-gradient(
+    104deg,
+    transparent 0 61.8%,
+    var(--background-deep) 61.8% 100%
+  ),
   radial-gradient(900px 620px at 8% -8%, var(--glow), transparent 72%);
 ```
 
@@ -55,14 +59,14 @@ Alles andere bleibt ruhig. An drei Stellen darf es mehr sein:
 
 ```css
 :root {
-  --text-xs: 12px;    /* Fußnoten, Messwerte, Kürzel, Gruppenköpfe */
-  --text-sm: 14px;    /* Leiste, Knöpfe, Chips, Tabellen, Beschriftungen */
-  --text-base: 16px;  /* Fließtext, Nachrichten, Eingabefeld */
-  --text-lg: 20px;    /* Überschriften in Antworten, Kartentitel */
-  --text-xl: 25px;    /* Seitentitel */
-  --text-2xl: 31px;   /* Titel der Startseite */
-  --text-3xl: 39px;   /* große Zahl (Status, Startseite) */
-  --text-4xl: 49px;   /* Reserve für einen einzelnen großen Wert */
+  --text-xs: 12px; /* Fußnoten, Messwerte, Kürzel, Gruppenköpfe */
+  --text-sm: 14px; /* Leiste, Knöpfe, Chips, Tabellen, Beschriftungen */
+  --text-base: 16px; /* Fließtext, Nachrichten, Eingabefeld */
+  --text-lg: 20px; /* Überschriften in Antworten, Kartentitel */
+  --text-xl: 25px; /* Seitentitel */
+  --text-2xl: 31px; /* Titel der Startseite */
+  --text-3xl: 39px; /* große Zahl (Status, Startseite) */
+  --text-4xl: 49px; /* Reserve für einen einzelnen großen Wert */
 
   --leading-body: 1.6;
   --leading-ui: 1.35;
@@ -72,7 +76,7 @@ Alles andere bleibt ruhig. An drei Stellen darf es mehr sein:
   --weight-ui: 500;
   --weight-strong: 600;
 
-  --tracking-display: -0.02em;  /* ab --text-xl */
+  --tracking-display: -0.02em; /* ab --text-xl */
   --tracking-body: 0;
 }
 ```
@@ -147,7 +151,7 @@ Zwei Läufe von `scripts/palette.mjs`, beide wörtlich. Kein Farbwert ist nach A
   --accent-text: var(--accent-11);
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   --neutral-1: #131312;
   --neutral-2: #1a1919;
   --neutral-3: #242220;
@@ -260,7 +264,7 @@ Zwei Läufe von `scripts/palette.mjs`, beide wörtlich. Kein Farbwert ist nach A
   --depth-accent-text: var(--depth-accent-11);
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   --depth-neutral-1: #121313;
   --depth-neutral-2: #191a1a;
   --depth-neutral-3: #202224;
@@ -321,32 +325,46 @@ Zwei Läufe von `scripts/palette.mjs`, beide wörtlich. Kein Farbwert ist nach A
 Diese Schicht steht **nach** den beiden Blöcken und überschreibt die Standard-Aliase von Lauf 1 dort, wo diese DNA es verlangt (warmer statt neutraler Grund, Vollton je Schema). Sie verweist nur auf Stufen von oben; die zwei gerechneten Werte sind gekennzeichnet.
 
 ```css
-:root {                                       /* Hell */
-  --background: var(--accent-2);              /* warmer Grund (links vom Schnitt) */
-  --background-deep: var(--depth-accent-2);   /* kühler Grund (rechts vom Schnitt) */
-  --glow: var(--accent-3);                    /* Lichtschein oben links */
-  --surface: var(--accent-1);                 /* schwebende Fläche: Diagramm, Karte */
-  --surface-raised: var(--accent-1);          /* höchste Ebene: Eingabefeld, Menü, Palette (unterscheidet sich durch Rand und Schatten) */
-  --surface-hover: var(--accent-3);           /* Zeile unter dem Zeiger, Suchzeile, geöffneter Chat */
-  --surface-active: var(--accent-5);          /* gewählter Bereich der Leiste, Chip, Kürzel */
-  --surface-voice: var(--accent-4);           /* eigene Nachricht */
+:root {
+  /* Hell */
+  --background: var(--accent-2); /* warmer Grund (links vom Schnitt) */
+  --background-deep: var(
+    --depth-accent-2
+  ); /* kühler Grund (rechts vom Schnitt) */
+  --glow: var(--accent-3); /* Lichtschein oben links */
+  --surface: var(--accent-1); /* schwebende Fläche: Diagramm, Karte */
+  --surface-raised: var(
+    --accent-1
+  ); /* höchste Ebene: Eingabefeld, Menü, Palette (unterscheidet sich durch Rand und Schatten) */
+  --surface-hover: var(
+    --accent-3
+  ); /* Zeile unter dem Zeiger, Suchzeile, geöffneter Chat */
+  --surface-active: var(
+    --accent-5
+  ); /* gewählter Bereich der Leiste, Chip, Kürzel */
+  --surface-voice: var(--accent-4); /* eigene Nachricht */
   --text: var(--neutral-12);
   --text-secondary: var(--neutral-11);
-  --text-on-tint: var(--accent-12);           /* Text auf --surface-active und --surface-voice; auf --surface-active der EINZIGE erlaubte Text */
-  --accent-solid: var(--accent-11);           /* Vollton: Senden, Marke, Balken */
+  --text-on-tint: var(
+    --accent-12
+  ); /* Text auf --surface-active und --surface-voice; auf --surface-active der EINZIGE erlaubte Text */
+  --accent-solid: var(--accent-11); /* Vollton: Senden, Marke, Balken */
   --accent-solid-hover: var(--accent-12);
-  --accent-solid-fg: var(--neutral-1);        /* Symbol und Text auf dem Vollton */
+  --accent-solid-fg: var(--neutral-1); /* Symbol und Text auf dem Vollton */
   --accent-text: var(--accent-11);
   --accent-bg-subtle: var(--accent-3);
   --focus-ring: var(--accent-11);
-  --control-edge: #92877e;                    /* gerechnet, siehe unten */
+  --control-edge: #92877e; /* gerechnet, siehe unten */
   --shadow-ink: oklch(from var(--depth-accent-11) l c h / 0.2);
-  --status-mark-error: var(--error-11);       /* Symbole und Punkte: in Hell Stufe 11 */
+  --status-mark-error: var(
+    --error-11
+  ); /* Symbole und Punkte: in Hell Stufe 11 */
   --status-mark-success: var(--success-11);
   --status-mark-warning: var(--warning-11);
   --status-mark-info: var(--info-11);
 }
-[data-theme="dark"] {                         /* Dunkel */
+[data-theme='dark'] {
+  /* Dunkel */
   --background: var(--accent-1);
   --background-deep: var(--depth-accent-1);
   --glow: var(--accent-4);
@@ -358,9 +376,11 @@ Diese Schicht steht **nach** den beiden Blöcken und überschreibt die Standard-
   --accent-solid: var(--accent-9);
   --accent-solid-hover: var(--accent-10);
   --accent-solid-fg: var(--accent-on-solid);
-  --control-edge: #7b7169;                    /* gerechnet, siehe unten */
+  --control-edge: #7b7169; /* gerechnet, siehe unten */
   --shadow-ink: oklch(from var(--depth-accent-2) 0.05 c h / 0.78);
-  --status-mark-error: var(--error-9);        /* Symbole und Punkte: in Dunkel Stufe 9 */
+  --status-mark-error: var(
+    --error-9
+  ); /* Symbole und Punkte: in Dunkel Stufe 9 */
   --status-mark-success: var(--success-9);
   --status-mark-warning: var(--warning-9);
   --status-mark-info: var(--info-9);
@@ -415,39 +435,39 @@ Lauf 2 (Blau 230,34°, --prefix depth)
 
 Dazu nachgerechnet: **212 Paare der Zuordnung oben, hell und dunkel, alle bestanden.** Text gegen 4,5 : 1, Bedienelemente und Zustandsmarken gegen 3 : 1 (WCAG 2.x). Die Tabelle zeigt je Art den schlechtesten Wert.
 
-| Art | Ziel | Paare | schlechtester Wert Dunkel | schlechtester Wert Hell |
-|---|---|---|---|---|
-| Text | 4,5 : 1 | 14 | 11,83 (`--text` auf `--glow`) | 12,00 (`--text` auf `--glow`) |
-| Nebentext | 4,5 : 1 | 14 | 7,27 (`--text-secondary` auf `--glow`) | 5,28 (`--text-secondary` auf `--glow`) |
-| Zustand fertig | 4,5 : 1 | 6 | 7,59 (`--ok-fg` auf `--glow`) | 4,99 (`--ok-fg` auf `--glow`) |
-| Quellen-Ziffer | 4,5 : 1 | 6 | 7,17 (`--fn-fg` auf `--glow`) | 5,37 (`--fn-fg` auf `--glow`) |
-| Nachricht | 4,5 : 1 | 2 | 11,75 (`--bubble-fg` auf `--bubble-bg`) | 11,02 (`--bubble-fg` auf `--bubble-bg`) |
-| Nebentext in Nachricht | 4,5 : 1 | 2 | 7,27 (`--text-secondary` auf `--bubble-bg`) | 4,84 (`--text-secondary` auf `--bubble-bg`) |
-| Leiste aktiv | 4,5 : 1 | 2 | 10,50 (`--nav-active-fg` auf `--nav-active-bg`) | 10,04 (`--nav-active-fg` auf `--nav-active-bg`) |
-| Chip | 4,5 : 1 | 2 | 10,50 (`--chip-fg` auf `--chip-bg`) | 10,04 (`--chip-fg` auf `--chip-bg`) |
-| Kürzel | 4,5 : 1 | 2 | 10,50 (`--kbd-fg` auf `--kbd-bg`) | 10,04 (`--kbd-fg` auf `--kbd-bg`) |
-| Senden-Symbol | 4,5 : 1 | 2 | 8,45 (`--send-fg` auf `--send-bg`) | 6,01 (`--send-fg` auf `--send-bg`) |
-| Tasten-Symbol auf Eingabefeld | 4,5 : 1 | 2 | 7,98 (`--btn-fg` auf `--input-bg`) | 5,88 (`--btn-fg` auf `--input-bg`) |
-| Balken (nicht Text) | 3 : 1 | 8 | 6,32 (`--bar` auf `--glow`) | 5,37 (`--bar` auf `--glow`) |
-| Statuspunkt (nicht Text) | 3 : 1 | 6 | 7,78 (`--lamp` auf `--glow`) | 4,99 (`--lamp` auf `--glow`) |
-| Fokusring (nicht Text) | 3 : 1 | 8 | 7,17 (`--focus-ring` auf `--glow`) | 5,37 (`--focus-ring` auf `--glow`) |
-| Senden-Fläche gegen Eingabefeld (nicht Text, Symbol trägt) | 3 : 1 | 2 | 6,95 (`--send-bg` auf `--input-bg`) | 5,99 (`--send-bg` auf `--input-bg`) |
-| Rand Eingabefeld (nicht Text) | 3 : 1 | 8 | 3,05 (`--control-edge` auf `--glow`) | 3,08 (`--control-edge` auf `--glow`) |
-| Meldetext | 4,5 : 1 | 48 | 6,95 (`--error-11` auf `--glow`) | 4,99 (`--success-11` auf `--glow`) |
-| Melde-Symbol (nicht Text) | 3 : 1 | 40 | 3,82 (`--error-9` auf `--glow`) | 4,99 (`--success-11` auf `--glow`) |
-| Akzent als Text | 4,5 : 1 | 10 | 7,17 (`--accent-11` auf `--glow`) | 5,37 (`--accent-11` auf `--glow`) |
-| Vollton-Fläche (nicht Text) | 3 : 1 | 10 | 6,32 (`--accent-solid` auf `--glow`) | 5,37 (`--accent-solid` auf `--glow`) |
-| Text auf Vollton | 4,5 : 1 | 2 | 8,45 (`--accent-solid-fg` auf `--accent-solid`) | 6,01 (`--accent-solid-fg` auf `--accent-solid`) |
-| Text auf getönter Fläche | 4,5 : 1 | 6 | 10,57 (`--text` auf `--accent-5`) | 10,03 (`--text` auf `--accent-5`) |
-| Akzent-Text hell auf getönter Fläche | 4,5 : 1 | 6 | 10,50 (`--accent-12` auf `--accent-5`) | 10,04 (`--accent-12` auf `--accent-5`) |
-| Nebentext auf getönter Fläche | 4,5 : 1 | 4 | 7,27 (`--text-secondary` auf `--accent-4`) | 4,84 (`--text-secondary` auf `--accent-4`) |
+| Art                                                        | Ziel    | Paare | schlechtester Wert Dunkel                       | schlechtester Wert Hell                         |
+| ---------------------------------------------------------- | ------- | ----- | ----------------------------------------------- | ----------------------------------------------- |
+| Text                                                       | 4,5 : 1 | 14    | 11,83 (`--text` auf `--glow`)                   | 12,00 (`--text` auf `--glow`)                   |
+| Nebentext                                                  | 4,5 : 1 | 14    | 7,27 (`--text-secondary` auf `--glow`)          | 5,28 (`--text-secondary` auf `--glow`)          |
+| Zustand fertig                                             | 4,5 : 1 | 6     | 7,59 (`--ok-fg` auf `--glow`)                   | 4,99 (`--ok-fg` auf `--glow`)                   |
+| Quellen-Ziffer                                             | 4,5 : 1 | 6     | 7,17 (`--fn-fg` auf `--glow`)                   | 5,37 (`--fn-fg` auf `--glow`)                   |
+| Nachricht                                                  | 4,5 : 1 | 2     | 11,75 (`--bubble-fg` auf `--bubble-bg`)         | 11,02 (`--bubble-fg` auf `--bubble-bg`)         |
+| Nebentext in Nachricht                                     | 4,5 : 1 | 2     | 7,27 (`--text-secondary` auf `--bubble-bg`)     | 4,84 (`--text-secondary` auf `--bubble-bg`)     |
+| Leiste aktiv                                               | 4,5 : 1 | 2     | 10,50 (`--nav-active-fg` auf `--nav-active-bg`) | 10,04 (`--nav-active-fg` auf `--nav-active-bg`) |
+| Chip                                                       | 4,5 : 1 | 2     | 10,50 (`--chip-fg` auf `--chip-bg`)             | 10,04 (`--chip-fg` auf `--chip-bg`)             |
+| Kürzel                                                     | 4,5 : 1 | 2     | 10,50 (`--kbd-fg` auf `--kbd-bg`)               | 10,04 (`--kbd-fg` auf `--kbd-bg`)               |
+| Senden-Symbol                                              | 4,5 : 1 | 2     | 8,45 (`--send-fg` auf `--send-bg`)              | 6,01 (`--send-fg` auf `--send-bg`)              |
+| Tasten-Symbol auf Eingabefeld                              | 4,5 : 1 | 2     | 7,98 (`--btn-fg` auf `--input-bg`)              | 5,88 (`--btn-fg` auf `--input-bg`)              |
+| Balken (nicht Text)                                        | 3 : 1   | 8     | 6,32 (`--bar` auf `--glow`)                     | 5,37 (`--bar` auf `--glow`)                     |
+| Statuspunkt (nicht Text)                                   | 3 : 1   | 6     | 7,78 (`--lamp` auf `--glow`)                    | 4,99 (`--lamp` auf `--glow`)                    |
+| Fokusring (nicht Text)                                     | 3 : 1   | 8     | 7,17 (`--focus-ring` auf `--glow`)              | 5,37 (`--focus-ring` auf `--glow`)              |
+| Senden-Fläche gegen Eingabefeld (nicht Text, Symbol trägt) | 3 : 1   | 2     | 6,95 (`--send-bg` auf `--input-bg`)             | 5,99 (`--send-bg` auf `--input-bg`)             |
+| Rand Eingabefeld (nicht Text)                              | 3 : 1   | 8     | 3,05 (`--control-edge` auf `--glow`)            | 3,08 (`--control-edge` auf `--glow`)            |
+| Meldetext                                                  | 4,5 : 1 | 48    | 6,95 (`--error-11` auf `--glow`)                | 4,99 (`--success-11` auf `--glow`)              |
+| Melde-Symbol (nicht Text)                                  | 3 : 1   | 40    | 3,82 (`--error-9` auf `--glow`)                 | 4,99 (`--success-11` auf `--glow`)              |
+| Akzent als Text                                            | 4,5 : 1 | 10    | 7,17 (`--accent-11` auf `--glow`)               | 5,37 (`--accent-11` auf `--glow`)               |
+| Vollton-Fläche (nicht Text)                                | 3 : 1   | 10    | 6,32 (`--accent-solid` auf `--glow`)            | 5,37 (`--accent-solid` auf `--glow`)            |
+| Text auf Vollton                                           | 4,5 : 1 | 2     | 8,45 (`--accent-solid-fg` auf `--accent-solid`) | 6,01 (`--accent-solid-fg` auf `--accent-solid`) |
+| Text auf getönter Fläche                                   | 4,5 : 1 | 6     | 10,57 (`--text` auf `--accent-5`)               | 10,03 (`--text` auf `--accent-5`)               |
+| Akzent-Text hell auf getönter Fläche                       | 4,5 : 1 | 6     | 10,50 (`--accent-12` auf `--accent-5`)          | 10,04 (`--accent-12` auf `--accent-5`)          |
+| Nebentext auf getönter Fläche                              | 4,5 : 1 | 4     | 7,27 (`--text-secondary` auf `--accent-4`)      | 4,84 (`--text-secondary` auf `--accent-4`)      |
 
 Verbotene Paare (zur Kontrolle mitgerechnet, dürfen nicht benutzt werden):
 
-| Paar | Dunkel | Hell | Ziel |
-|---|---|---|---|
-| `--text-secondary` auf `--surface-active` | 6,49 | 4,41 | 4,5 : 1 |
-| `--accent-text` auf `--surface-active` | 6,40 | 4,49 | 4,5 : 1 |
+| Paar                                      | Dunkel | Hell | Ziel    |
+| ----------------------------------------- | ------ | ---- | ------- |
+| `--text-secondary` auf `--surface-active` | 6,49   | 4,41 | 4,5 : 1 |
+| `--accent-text` auf `--surface-active`    | 6,40   | 4,49 | 4,5 : 1 |
 
 Die Namen in der Tabelle sind die des Vorschau-Blatts: `--bubble-bg` = `--surface-voice`, `--input-bg` = `--surface-raised`, `--bar` und `--send-bg` = `--accent-solid`, `--send-fg` = `--accent-solid-fg`, `--lamp` = `--status-mark-success`, `--ok-fg` = `--success-11`, `--fn-fg` = `--accent-text`, `--nav-active-bg`, `--chip-bg` und `--kbd-bg` = `--surface-active`, `--btn-fg` = `--text-secondary`. Alle Einzelwerte: `.design-foundations/previews/_src/contrast.json` (lokal).
 
@@ -459,8 +479,14 @@ Nicht gemessen und in Phase 7 auf den fertigen Seiten zu prüfen: Text über dem
 
 ```css
 :root {
-  --space-1: 4px;  --space-2: 8px;  --space-3: 12px;  --space-4: 16px;
-  --space-5: 24px; --space-6: 32px; --space-7: 48px;  --space-8: 64px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
 }
 ```
 
@@ -470,10 +496,10 @@ Eng innerhalb einer Gruppe (4 bis 12 px), weit zwischen Gruppen (24 bis 48 px). 
 
 ```css
 :root {
-  --radius-sm: 8px;    /* Kürzel, kleine Marken */
-  --radius-md: 12px;   /* Zeilen der Leiste, Suchzeile, Knöpfe mit Text */
-  --radius-lg: 18px;   /* schwebende Flächen: Diagramm, Karte, Menü */
-  --radius-xl: 22px;   /* Eingabefeld, Palette, Dialog */
+  --radius-sm: 8px; /* Kürzel, kleine Marken */
+  --radius-md: 12px; /* Zeilen der Leiste, Suchzeile, Knöpfe mit Text */
+  --radius-lg: 18px; /* schwebende Flächen: Diagramm, Karte, Menü */
+  --radius-xl: 22px; /* Eingabefeld, Palette, Dialog */
   --radius-full: 999px; /* Chips, runde Knöpfe (Senden, Büroklammer, Plus) */
 }
 ```
@@ -482,19 +508,21 @@ Die eigene Nachricht hat `20px 20px 6px 20px` (die kleine Ecke zeigt zum Eingabe
 
 **Tiefe.** Es gibt keine Rahmen. Eine Ebene entsteht aus einer Tonstufe und, ab Ebene 2, einem weichen Schatten in `--shadow-ink` (blau getönt, nie reines Schwarz). Höher heißt in Dunkel heller, in Hell weißer.
 
-| Ebene | Was | Fläche | Schatten |
-|---|---|---|---|
-| 0 | Grund des Fensters, Seitenleiste, Titelleiste, Lesespalte | `--background` / `--background-deep` | keiner |
-| 1 | ruhende Hervorhebung: Zeile unter dem Zeiger, Suchzeile, geöffneter Chat, gewählter Bereich | `--surface-hover`, `--surface-active` | keiner |
-| 2 | schwebender Inhalt: Diagramm, Karte, eigene Nachricht | `--surface`, `--surface-voice` | `--shadow-2` |
-| 3 | Eingabefeld (die höchste Fläche der Seite) | `--surface-raised` plus Rand `--control-edge` | `--shadow-3` |
-| 4 | Überlagerungen: „+“-Menü, Palette, Dialog, Tooltip | `--surface-raised` | `--shadow-4` |
+| Ebene | Was                                                                                         | Fläche                                        | Schatten     |
+| ----- | ------------------------------------------------------------------------------------------- | --------------------------------------------- | ------------ |
+| 0     | Grund des Fensters, Seitenleiste, Titelleiste, Lesespalte                                   | `--background` / `--background-deep`          | keiner       |
+| 1     | ruhende Hervorhebung: Zeile unter dem Zeiger, Suchzeile, geöffneter Chat, gewählter Bereich | `--surface-hover`, `--surface-active`         | keiner       |
+| 2     | schwebender Inhalt: Diagramm, Karte, eigene Nachricht                                       | `--surface`, `--surface-voice`                | `--shadow-2` |
+| 3     | Eingabefeld (die höchste Fläche der Seite)                                                  | `--surface-raised` plus Rand `--control-edge` | `--shadow-3` |
+| 4     | Überlagerungen: „+“-Menü, Palette, Dialog, Tooltip                                          | `--surface-raised`                            | `--shadow-4` |
 
 ```css
 :root {
   --shadow-2: 0 12px 30px -14px var(--shadow-ink);
-  --shadow-3: 0 30px 60px -22px var(--shadow-ink), 0 4px 12px -4px var(--shadow-ink);
-  --shadow-4: 0 40px 90px -24px var(--shadow-ink), 0 8px 20px -6px var(--shadow-ink);
+  --shadow-3:
+    0 30px 60px -22px var(--shadow-ink), 0 4px 12px -4px var(--shadow-ink);
+  --shadow-4:
+    0 40px 90px -24px var(--shadow-ink), 0 8px 20px -6px var(--shadow-ink);
 }
 ```
 
@@ -520,7 +548,9 @@ Bei 900 px Fenster (eingeklappte Leiste: Inhalt 824 px, Spalte 776 px, freier Ra
 
 ```css
 :root {
-  --duration-micro: 140ms; --duration-standard: 320ms; --duration-large: 480ms;
+  --duration-micro: 140ms;
+  --duration-standard: 320ms;
+  --duration-large: 480ms;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
@@ -548,32 +578,32 @@ Bei 900 px Fenster (eingeklappte Leiste: Inhalt 824 px, Spalte 776 px, freier Ra
 
 ## Stimme
 
-**Stand Phase 5.** Die Wörter sind Teil der Oberfläche, nicht Beschriftung obendrauf (Metts/Welfle, *Writing Is Designing*). Die **Stimme** bleibt überall gleich, der **Ton** wechselt mit dem Moment (Podmajersky, *Strategic Writing for UX*). Deutsch (du-Form) und Englisch sind gleichwertig; das Englische ist keine Wort-für-Wort-Übersetzung, sondern dieselbe Stimme. Die Texte selbst, die Begriffstabelle (ein Wort je Sache und Sprache) und die Längengrenzen stehen in `JOURNEY.md` §Page specs, Abschnitt „Texte: Begriffe, Muster und Regeln“ und je Fläche unter „Texte (Phase 5)“. Änderungen an Wörtern beginnen dort, danach folgt der Code (wie bei Tokens).
+**Stand Phase 5.** Die Wörter sind Teil der Oberfläche, nicht Beschriftung obendrauf (Metts/Welfle, _Writing Is Designing_). Die **Stimme** bleibt überall gleich, der **Ton** wechselt mit dem Moment (Podmajersky, _Strategic Writing for UX_). Deutsch (du-Form) und Englisch sind gleichwertig; das Englische ist keine Wort-für-Wort-Übersetzung, sondern dieselbe Stimme. Die Texte selbst, die Begriffstabelle (ein Wort je Sache und Sprache) und die Längengrenzen stehen in `JOURNEY.md` §Page specs, Abschnitt „Texte: Begriffe, Muster und Regeln“ und je Fläche unter „Texte (Phase 5)“. Änderungen an Wörtern beginnen dort, danach folgt der Code (wie bei Tokens).
 
 ### Fünf Eigenschaften
 
 Alle konkret, keine Wohlfühlwörter. Jede hat ein Beispiel, das passt, und eines, das nicht passt.
 
-| Eigenschaft | Das heißt | Passt (Deutsch · Englisch) | Passt nicht (Deutsch · Englisch) |
-|---|---|---|---|
-| **Ruhig** | Sagt, was ist, ohne Alarm. Kein Ausrufezeichen, kein Witz, kein „Oops“. Besonders bei Fehlern (Yifrah: Fehlertexte sind der Ort für Genauigkeit, nicht für Persönlichkeit). | „Ollama ist nicht erreichbar. Starte Ollama, dann geht es hier von selbst weiter.“ · “Ollama is not reachable. Start Ollama and this picks up on its own.” | „Achtung! Die Verbindung ist weg!“ · “Oops! Something went wrong!” |
-| **Direkt** | Das Wichtigste zuerst, ein Satz eine Sache. Ein Knopf nennt die Tat: Verb und Objekt (Yifrah, Redish: vorn die Hauptsache). | „Modell herunterladen“ · “Download a model” | „Hier klicken, um ein neues Modell zu erhalten“ · “Click here to get a new model” |
-| **Genau** | Nennt Namen, Zahl, Ort und Ursache. Was nur geschätzt ist, heißt „geschätzt“. Sagt, was sicher ist („Dein Text bleibt im Feld.“). | „Geschätzt: 6.200 von 8.192 Tokens“ · “Estimated: 6,200 of 8,192 tokens” | „Alles im grünen Bereich“ · “Everything looks great” |
-| **Schlicht** | Einfache Wörter, kurze Sätze, ein Wort je Sache (Begriffstabelle). Ein Fachwort nur, wenn der Nutzer es auf dem Bildschirm sieht (Redish: einfache Sprache ist schneller zu befolgen). | „Der Grafikspeicher ist voll. Ein Teil des Modells läuft auf dem Prozessor.“ · “Graphics memory is full. Part of the model runs on the processor.” | „Die Allokation überschreitet das Limit; Offloading aktiv.“ · “Allocation exceeds the limit; offloading active.” |
-| **Auf Augenhöhe** | Du-Form, kein Vorwurf, keine Anbiederung, keine Werbung. LocalDesk spricht wie ein Kollege am Nachbarplatz, nicht wie ein Verkäufer und nicht wie ein Lehrer. | „Hier bündelst du Chats mit eigenen Anweisungen und Dokumenten.“ · “Group chats here, with their own instructions and documents.” | „Super, leg jetzt los und entdecke die Möglichkeiten!“ · “Awesome, start now and unlock the possibilities!” (Werbung); „Du hast vergessen, ein Modell zu installieren.“ · “You forgot to install a model.” (Vorwurf) |
+| Eigenschaft       | Das heißt                                                                                                                                                                              | Passt (Deutsch · Englisch)                                                                                                                                 | Passt nicht (Deutsch · Englisch)                                                                                                                                                                                     |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Ruhig**         | Sagt, was ist, ohne Alarm. Kein Ausrufezeichen, kein Witz, kein „Oops“. Besonders bei Fehlern (Yifrah: Fehlertexte sind der Ort für Genauigkeit, nicht für Persönlichkeit).            | „Ollama ist nicht erreichbar. Starte Ollama, dann geht es hier von selbst weiter.“ · “Ollama is not reachable. Start Ollama and this picks up on its own.” | „Achtung! Die Verbindung ist weg!“ · “Oops! Something went wrong!”                                                                                                                                                   |
+| **Direkt**        | Das Wichtigste zuerst, ein Satz eine Sache. Ein Knopf nennt die Tat: Verb und Objekt (Yifrah, Redish: vorn die Hauptsache).                                                            | „Modell herunterladen“ · “Download a model”                                                                                                                | „Hier klicken, um ein neues Modell zu erhalten“ · “Click here to get a new model”                                                                                                                                    |
+| **Genau**         | Nennt Namen, Zahl, Ort und Ursache. Was nur geschätzt ist, heißt „geschätzt“. Sagt, was sicher ist („Dein Text bleibt im Feld.“).                                                      | „Geschätzt: 6.200 von 8.192 Tokens“ · “Estimated: 6,200 of 8,192 tokens”                                                                                   | „Alles im grünen Bereich“ · “Everything looks great”                                                                                                                                                                 |
+| **Schlicht**      | Einfache Wörter, kurze Sätze, ein Wort je Sache (Begriffstabelle). Ein Fachwort nur, wenn der Nutzer es auf dem Bildschirm sieht (Redish: einfache Sprache ist schneller zu befolgen). | „Der Grafikspeicher ist voll. Ein Teil des Modells läuft auf dem Prozessor.“ · “Graphics memory is full. Part of the model runs on the processor.”         | „Die Allokation überschreitet das Limit; Offloading aktiv.“ · “Allocation exceeds the limit; offloading active.”                                                                                                     |
+| **Auf Augenhöhe** | Du-Form, kein Vorwurf, keine Anbiederung, keine Werbung. LocalDesk spricht wie ein Kollege am Nachbarplatz, nicht wie ein Verkäufer und nicht wie ein Lehrer.                          | „Hier bündelst du Chats mit eigenen Anweisungen und Dokumenten.“ · “Group chats here, with their own instructions and documents.”                          | „Super, leg jetzt los und entdecke die Möglichkeiten!“ · “Awesome, start now and unlock the possibilities!” (Werbung); „Du hast vergessen, ein Modell zu installieren.“ · “You forgot to install a model.” (Vorwurf) |
 
 ### Ton je Moment
 
 Die Stimme bleibt, der Ton passt sich dem Moment an.
 
-| Moment | Ton | Muster | Beispiel (Deutsch · Englisch) |
-|---|---|---|---|
-| **Ankommen** (Startseite) | ruhig, kurz, selbstverständlich | eine Zeile, die zeigt, dass alles hier läuft | „Alles läuft auf diesem PC.“ · “Everything runs on this PC.” |
-| **Leer** | einladend, sachlich | ein Satz, was hierher gehört, und genau eine Aktion (Redish) | „Hier bündelst du Chats mit eigenen Anweisungen und Dokumenten. [Neues Projekt]“ · “Group chats here, with their own instructions and documents. [New project]” |
-| **Arbeiten** | knapp, Zustand in Worten | Wort plus laufender Vorgang, kein Prozent ohne Zahl | „Wird gelesen …“ · “Reading …” |
-| **Rückfrage vor Folgenreichem** | ernst, genau | erst die Folge, dann die Wahl; der Knopf nennt die Tat, nie „Ja“ (Yifrah) | „Dieses Tool kann Dateien überschreiben.“ → [Einmal erlauben] [Ablehnen] · “This tool can overwrite files.” → [Allow once] [Deny] |
-| **Fehler** | ruhig, präzise, ohne Persönlichkeit | was passiert ist, warum, was tun; zuerst das Sichere (Yifrah; Nielsen 9) | „Die Antwort ist abgebrochen: Verbindung getrennt. Dein Text bleibt im Feld. Versuche es mit „Antwort wiederholen“ noch einmal.“ · “The answer stopped: connection lost. Your text stays in the field. Try “Regenerate response”.” |
-| **Erfolg** | knapp, ohne Feier | benennt das Ergebnis, nicht das Gefühl | „1 Änderung übernommen.“ · “1 change applied.” |
+| Moment                          | Ton                                 | Muster                                                                    | Beispiel (Deutsch · Englisch)                                                                                                                                                                                                      |
+| ------------------------------- | ----------------------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Ankommen** (Startseite)       | ruhig, kurz, selbstverständlich     | eine Zeile, die zeigt, dass alles hier läuft                              | „Alles läuft auf diesem PC.“ · “Everything runs on this PC.”                                                                                                                                                                       |
+| **Leer**                        | einladend, sachlich                 | ein Satz, was hierher gehört, und genau eine Aktion (Redish)              | „Hier bündelst du Chats mit eigenen Anweisungen und Dokumenten. [Neues Projekt]“ · “Group chats here, with their own instructions and documents. [New project]”                                                                    |
+| **Arbeiten**                    | knapp, Zustand in Worten            | Wort plus laufender Vorgang, kein Prozent ohne Zahl                       | „Wird gelesen …“ · “Reading …”                                                                                                                                                                                                     |
+| **Rückfrage vor Folgenreichem** | ernst, genau                        | erst die Folge, dann die Wahl; der Knopf nennt die Tat, nie „Ja“ (Yifrah) | „Dieses Tool kann Dateien überschreiben.“ → [Einmal erlauben] [Ablehnen] · “This tool can overwrite files.” → [Allow once] [Deny]                                                                                                  |
+| **Fehler**                      | ruhig, präzise, ohne Persönlichkeit | was passiert ist, warum, was tun; zuerst das Sichere (Yifrah; Nielsen 9)  | „Die Antwort ist abgebrochen: Verbindung getrennt. Dein Text bleibt im Feld. Versuche es mit „Antwort wiederholen“ noch einmal.“ · “The answer stopped: connection lost. Your text stays in the field. Try “Regenerate response”.” |
+| **Erfolg**                      | knapp, ohne Feier                   | benennt das Ergebnis, nicht das Gefühl                                    | „1 Änderung übernommen.“ · “1 change applied.”                                                                                                                                                                                     |
 
 ### Schreibweise
 
@@ -598,11 +628,11 @@ Die Stimme bleibt, der Ton passt sich dem Moment an.
 
 ### Drei Stufen
 
-| Stufe | Frage, die sie beantwortet | Beispiel | Wer darf sie ändern |
-|---|---|---|---|
-| 1 Global | Welche Werte gibt es? | `--accent-9`, `--neutral-12`, `--space-4`, `--radius-lg` | nur ein neuer `palette.mjs`-Lauf (Farbe) oder eine Änderung der Skalen oben |
-| 2 Alias | Welche Aufgabe hat ein Wert? | `--surface-raised`, `--text-secondary`, `--status-error-fg` | diese Datei, mit Begründung |
-| 3 Baustein | Was nimmt dieser eine Baustein? | `--btn-primary-bg`, `--menu-row-h` | diese Datei; verweist **nur** auf Alias-Tokens und Skalen, nie auf Palettenstufen oder Farbwerte |
+| Stufe      | Frage, die sie beantwortet      | Beispiel                                                    | Wer darf sie ändern                                                                              |
+| ---------- | ------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| 1 Global   | Welche Werte gibt es?           | `--accent-9`, `--neutral-12`, `--space-4`, `--radius-lg`    | nur ein neuer `palette.mjs`-Lauf (Farbe) oder eine Änderung der Skalen oben                      |
+| 2 Alias    | Welche Aufgabe hat ein Wert?    | `--surface-raised`, `--text-secondary`, `--status-error-fg` | diese Datei, mit Begründung                                                                      |
+| 3 Baustein | Was nimmt dieser eine Baustein? | `--btn-primary-bg`, `--menu-row-h`                          | diese Datei; verweist **nur** auf Alias-Tokens und Skalen, nie auf Palettenstufen oder Farbwerte |
 
 Regel der Namen (Entsprechung zum W3C-DTCG-Pfad `component.part.property.state`): `--<baustein>-<teil>-<eigenschaft>[-<zustand>]`, Zustand = `hover`, `pressed`, `disabled`, `open`. Ein Wert, der sich im Zustand nicht ändert, bekommt kein Zustands-Token.
 
@@ -612,12 +642,20 @@ Die Zuordnung oben (Hintergründe, Flächen, Text, Vollton, Fokus, Kante, Schatt
 
 ```css
 :root {
-  --surface-hover-strong: var(--accent-4);     /* Zeile unter dem Zeiger auf Ebene 3 und 4; in Dunkel ist --surface-raised gleich --surface-hover */
-  --surface-active-hover: var(--accent-6);     /* Chip, gewählte Zeile unter dem Zeiger; nur --text-on-tint darauf */
-  --surface-active-pressed: var(--accent-7);   /* gedrückt; nur --text-on-tint darauf */
+  --surface-hover-strong: var(
+    --accent-4
+  ); /* Zeile unter dem Zeiger auf Ebene 3 und 4; in Dunkel ist --surface-raised gleich --surface-hover */
+  --surface-active-hover: var(
+    --accent-6
+  ); /* Chip, gewählte Zeile unter dem Zeiger; nur --text-on-tint darauf */
+  --surface-active-pressed: var(
+    --accent-7
+  ); /* gedrückt; nur --text-on-tint darauf */
   --status-error-bg: var(--error-3);
-  --status-error-fg: var(--error-11);          /* Text und Kante */
-  --status-error-solid: var(--error-9);        /* Vollton: nur Schließen-Knopf und Gefährlich im Zustand Maus drüber */
+  --status-error-fg: var(--error-11); /* Text und Kante */
+  --status-error-solid: var(
+    --error-9
+  ); /* Vollton: nur Schließen-Knopf und Gefährlich im Zustand Maus drüber */
   --status-success-bg: var(--success-3);
   --status-success-fg: var(--success-11);
   --status-success-solid: var(--success-9);
@@ -627,18 +665,28 @@ Die Zuordnung oben (Hintergründe, Flächen, Text, Vollton, Fokus, Kante, Schatt
   --status-info-bg: var(--info-3);
   --status-info-fg: var(--info-11);
   --status-info-solid: var(--info-9);
-  --status-solid-fg: var(--accent-on-solid);   /* Symbol und Text auf einem --status-*-solid */
-  --scrim: oklch(from var(--shadow-ink) l c h / 0.45);   /* Vorhang hinter Dialog und Palette */
-  --ctx-hover-fill: var(--surface-hover);      /* Zeigerfläche, vom Baustein-Kontext gesetzt */
+  --status-solid-fg: var(
+    --accent-on-solid
+  ); /* Symbol und Text auf einem --status-*-solid */
+  --scrim: oklch(
+    from var(--shadow-ink) l c h / 0.45
+  ); /* Vorhang hinter Dialog und Palette */
+  --ctx-hover-fill: var(
+    --surface-hover
+  ); /* Zeigerfläche, vom Baustein-Kontext gesetzt */
   --ctx-pressed-fill: var(--surface-active);
   --focus-outline: 2px solid var(--focus-ring);
-  --focus-ring-solid: var(--text);             /* Ring um Elemente mit Vollton-Fläche: dunkel in Hell, hell in Dunkel, nie gleich dem Vollton */
+  --focus-ring-solid: var(
+    --text
+  ); /* Ring um Elemente mit Vollton-Fläche: dunkel in Hell, hell in Dunkel, nie gleich dem Vollton */
   --focus-outline-solid: 2px solid var(--focus-ring-solid);
   --focus-inset: inset 0 0 0 2px var(--focus-ring);
-  --font-sans: "Inter Variable", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
-  --font-mono: "Cascadia Mono", Consolas, ui-monospace, monospace;   /* nur Code und Programm-Ausgaben, siehe „Schrift“ */
+  --font-sans:
+    'Inter Variable', 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-mono:
+    'Cascadia Mono', Consolas, ui-monospace, monospace; /* nur Code und Programm-Ausgaben, siehe „Schrift“ */
 }
-[data-theme="dark"] {
+[data-theme='dark'] {
   --scrim: oklch(from var(--shadow-ink) l c h / 0.62);
 }
 ```
@@ -649,25 +697,25 @@ Die Zuordnung oben (Hintergründe, Flächen, Text, Vollton, Fokus, Kante, Schatt
 
 ```css
 :root {
-  --measure: 58ch;        /* Lesespalte (Schrift-Abschnitt, hier als Token geführt) */
-  --hit-min: 32px;        /* kleinste Klickfläche überhaupt */
-  --control-h: 36px;      /* Knopf, Feld, Auswahl, Menüzeile (einzeilig), Werkzeug-Zeile */
-  --control-h-lg: 44px;   /* Palettenzeile, Tabellenzeile */
-  --row-h: 38px;          /* Zeile der Leiste */
+  --measure: 58ch; /* Lesespalte (Schrift-Abschnitt, hier als Token geführt) */
+  --hit-min: 32px; /* kleinste Klickfläche überhaupt */
+  --control-h: 36px; /* Knopf, Feld, Auswahl, Menüzeile (einzeilig), Werkzeug-Zeile */
+  --control-h-lg: 44px; /* Palettenzeile, Tabellenzeile */
+  --row-h: 38px; /* Zeile der Leiste */
   --titlebar-h: 40px;
   --icon-s: 16px;
   --icon-m: 20px;
-  --edge-width: 1px;      /* nur mit --control-edge */
+  --edge-width: 1px; /* nur mit --control-edge */
   --ring-width: 2px;
   --ring-offset: 2px;
   --disabled-opacity: 0.45;
-  --press-scale: 0.97;    /* Knöpfe geben um 3 % nach */
+  --press-scale: 0.97; /* Knöpfe geben um 3 % nach */
   --z-content: 0;
-  --z-sticky: 10;         /* Titelleiste, Seitenkopf */
-  --z-panel: 20;          /* Seitenpanel als Überlagerung */
-  --z-menu: 30;           /* Menü, Auswahl-Liste */
+  --z-sticky: 10; /* Titelleiste, Seitenkopf */
+  --z-panel: 20; /* Seitenpanel als Überlagerung */
+  --z-menu: 30; /* Menü, Auswahl-Liste */
   --z-scrim: 40;
-  --z-dialog: 50;         /* Dialog, Palette */
+  --z-dialog: 50; /* Dialog, Palette */
   --z-tooltip: 60;
 }
 ```
@@ -676,25 +724,25 @@ Die Zuordnung oben (Hintergründe, Flächen, Text, Vollton, Fokus, Kante, Schatt
 
 Alle vier Skalen sind in den gesperrten Abschnitten definiert; hier der Überblick mit dem, was die Bausteine daraus nehmen.
 
-| Skala | Werte | Wo definiert | Regel für Bausteine |
-|---|---|---|---|
-| Abstände | `--space-1` bis `--space-8` (4, 8, 12, 16, 24, 32, 48, 64 px) | „Abstände, Form, Tiefe“ | Innen eng (4 bis 12), zwischen Gruppen weit (24 bis 48). Kein Abstand außerhalb der Skala. |
-| Radien | `--radius-sm` 8, `-md` 12, `-lg` 18, `-xl` 22, `-full` | ebenda | Zeile und Knopf `md`, schwebende Fläche und Menü `lg`, Eingabefeld, Palette, Dialog `xl`, Chip und runde Knöpfe `full` |
-| Schatten | `--shadow-2`, `--shadow-3`, `--shadow-4` (Tinte `--shadow-ink`) | ebenda | Kein Schatten unter Ebene 2. Kein Schatten in anderer Farbe als `--shadow-ink`. |
-| Ebenen | 0 Grund, 1 ruhige Hervorhebung, 2 schwebender Inhalt, 3 Eingabefeld, 4 Überlagerung | ebenda | Tabelle unten ordnet jeden Baustein zu |
-| Stapel (Z) | `--z-content` bis `--z-tooltip` | oben | Ein Tooltip liegt über einem Dialog, ein Dialog über seinem Vorhang, das Menü über dem Inhalt |
+| Skala      | Werte                                                                               | Wo definiert            | Regel für Bausteine                                                                                                    |
+| ---------- | ----------------------------------------------------------------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Abstände   | `--space-1` bis `--space-8` (4, 8, 12, 16, 24, 32, 48, 64 px)                       | „Abstände, Form, Tiefe“ | Innen eng (4 bis 12), zwischen Gruppen weit (24 bis 48). Kein Abstand außerhalb der Skala.                             |
+| Radien     | `--radius-sm` 8, `-md` 12, `-lg` 18, `-xl` 22, `-full`                              | ebenda                  | Zeile und Knopf `md`, schwebende Fläche und Menü `lg`, Eingabefeld, Palette, Dialog `xl`, Chip und runde Knöpfe `full` |
+| Schatten   | `--shadow-2`, `--shadow-3`, `--shadow-4` (Tinte `--shadow-ink`)                     | ebenda                  | Kein Schatten unter Ebene 2. Kein Schatten in anderer Farbe als `--shadow-ink`.                                        |
+| Ebenen     | 0 Grund, 1 ruhige Hervorhebung, 2 schwebender Inhalt, 3 Eingabefeld, 4 Überlagerung | ebenda                  | Tabelle unten ordnet jeden Baustein zu                                                                                 |
+| Stapel (Z) | `--z-content` bis `--z-tooltip`                                                     | oben                    | Ein Tooltip liegt über einem Dialog, ein Dialog über seinem Vorhang, das Menü über dem Inhalt                          |
 
 **Verschachtelte Radien.** Liegt eine Fläche mit Abstand `d` zum Rand einer äußeren Fläche mit Radius `R` und folgt deren Ecke, gilt: innerer Radius = `max(4px, R − d)`, im Code `max(4px, calc(var(--radius-xx) - var(--space-x)))`. Beispiele: Menüzeile in Menü `lg` 18 mit 8 px Rand = 10 px; Palettenzeile in Palette `xl` 22 mit 8 px Rand = 14 px; Knopf im Eingabefeld (nur Pillen, siehe unten). Ist `d ≥ R` (Knopf in einem Dialog mit 24 px Rand), ist die Ecke weit weg, und der innere Baustein nimmt seinen eigenen Radius aus der Skala. **Ausgenommen:** Pillen und Kreise (`--radius-full`: Chip, Senden, Büroklammer, Plus). Sie sind rund, egal wo sie liegen.
 
 **Ebene je Baustein.**
 
-| Ebene | Bausteine |
-|---|---|
-| 0 | Titelleiste, Leisten-Zeile (Ruhe), Tabellen-Zeile (Ruhe), Nachricht der Antwort, Werkzeug-Zeile (Ruhe) |
-| 1 | Zeile unter dem Zeiger, gewählte Zeile, Chip, Kürzel, Banner, Fortschritts-Spur |
-| 2 | Karte, Rückfrage-Karte, eigene Nachricht |
-| 3 | Eingabefeld (Chat), Auswahl-Feld |
-| 4 | Menü, Palette, Dialog, Tooltip |
+| Ebene | Bausteine                                                                                              |
+| ----- | ------------------------------------------------------------------------------------------------------ |
+| 0     | Titelleiste, Leisten-Zeile (Ruhe), Tabellen-Zeile (Ruhe), Nachricht der Antwort, Werkzeug-Zeile (Ruhe) |
+| 1     | Zeile unter dem Zeiger, gewählte Zeile, Chip, Kürzel, Banner, Fortschritts-Spur                        |
+| 2     | Karte, Rückfrage-Karte, eigene Nachricht                                                               |
+| 3     | Eingabefeld (Chat), Auswahl-Feld                                                                       |
+| 4     | Menü, Palette, Dialog, Tooltip                                                                         |
 
 **Klarstellung zu „Keine Fläche in einer Fläche“.** Gemeint sind schwebende Flächen (Ebene 2 und höher). Marken der Ebene 1 ohne Schatten (Chip, Kürzel, gewählte Zeile) dürfen auf jeder Ebene liegen. Zwei Flächen ab Ebene 2 liegen nie ineinander; Gliederung innerhalb läuft über Abstand und Schrift.
 
@@ -709,9 +757,19 @@ Alle vier Skalen sind in den gesperrten Abschnitten definiert; hier der Überbli
 ### Fokusring
 
 ```css
-:focus-visible { outline: var(--focus-outline); outline-offset: var(--ring-offset); }
-.is-inset:focus-visible { outline: none; box-shadow: var(--focus-inset); }   /* Zeilen in Listen und Menüs */
-@media (forced-colors: active) { :focus-visible { outline: 2px solid Highlight; } }
+:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: var(--ring-offset);
+}
+.is-inset:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-inset);
+} /* Zeilen in Listen und Menüs */
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: 2px solid Highlight;
+  }
+}
 ```
 
 - **Außen (Standard)** für alles, was frei steht: Knopf, Feld, Chip, Karte, Schalter. Die 2 px Lücke zeigt den Grund hinter dem Baustein; der Ring wird gegen **diesen** Grund gemessen. Das löst die Akzentfläche: Der Ring auf dem Senden-Knopf (Vollton) liegt nie auf dem Vollton.
@@ -727,51 +785,51 @@ Messwerte: Abschnitt „Kontrast der Bausteine“ unten, Ring gegen jede Fläche
 
 Quelle: `src/renderer/index.css`. „1:1“ heißt: im Code durch den neuen Namen ersetzen, sonst nichts. „Neu denken“ heißt: Das alte Token wurde anders benutzt, als es die neue DNA erlaubt; die Spalte „Statt dessen“ sagt, was an die Stelle tritt.
 
-| Heutiges Token | Heute | Neuer Alias | Art | Hinweis für den Umbau |
-|---|---|---|---|---|
-| `--ld-bg` | Grund, Eingabefelder, Code | `--background` (Grund) | 1:1 für den Grund | Eingabefelder → `--field-bg` (= `--surface-raised`); Code-Blöcke → `--surface-hover` |
-| `--ld-surface` | Inhalt, Karten, Listen | `--surface` (Karte) | 1:1 für Karten | Es gibt keine Inhaltsfläche mehr: Listen und Inhalt liegen auf `--background` |
-| `--ld-surface-2` | zweite Ebene: Gedanken, Quellen, Kästen in Karten | `--surface-hover` (nur auf dem Grund) | Neu denken | Kasten in Karte entfällt (Abstand und Schrift); Quellen werden Fußnoten ohne Fläche |
-| `--ld-surface-hover` | Zeile unter dem Zeiger | `--ctx-hover-fill` | 1:1 | wird je Ebene `--surface-hover` oder `--surface-hover-strong` |
-| `--ld-sidebar` | Leiste links | `--background` | Neu denken | Die Leiste hat keine eigene Fläche; sie teilt den durchgehenden Grund mit dem Lichtschnitt |
-| `--ld-border` | Rahmen, Trenner, Feldkante | `--control-edge` nur an Feldern | Neu denken | Alle anderen Rahmen und Trenner entfallen; Gliederung über Abstand |
-| `--ld-text` | Text | `--text` | 1:1 | |
-| `--ld-muted` | Nebentext | `--text-secondary` | 1:1 | auf `--surface-active` verboten |
-| `--ld-subtle` | ganz leise | `--text-secondary` | Zusammenlegen | Keine Palettenstufe unterhalb von `--text-secondary` hält 4,5 : 1; eine dritte Textstufe gibt es nicht |
-| `--ld-accent` | Akzent, Fläche | `--accent-solid` (Schrift darauf: `--accent-solid-fg`) | 1:1 | Vollton bleibt selten (Senden, Marke, Balken) |
-| `--ld-accent-soft` | getönte Fläche | `--accent-bg-subtle` | 1:1 | gewählter Bereich und Chip nehmen `--surface-active` statt dessen |
-| `--ld-accent-text` | Akzent als Schrift | `--accent-text` | 1:1 | |
-| `--ld-bubble` | eigene Nachricht | `--surface-voice` | 1:1 | Text `--text` |
-| `--ld-ok` | gut | `--status-success-fg` (Text), `--status-mark-success` (Symbol) | Teilen | immer mit Wort |
-| `--ld-warn` | Warnung | `--status-warning-fg`, `--status-mark-warning` | Teilen | immer mit Wort |
-| `--ld-error` | Fehler | `--status-error-fg`, `--status-mark-error` | Teilen | immer mit Wort |
-| `--ld-shadow` | Schatten der Karte | `--shadow-2` (Karte), `--shadow-3` (Eingabefeld), `--shadow-4` (Überlagerung) | Teilen | nach Ebene wählen |
+| Heutiges Token       | Heute                                             | Neuer Alias                                                                   | Art               | Hinweis für den Umbau                                                                                  |
+| -------------------- | ------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------ |
+| `--ld-bg`            | Grund, Eingabefelder, Code                        | `--background` (Grund)                                                        | 1:1 für den Grund | Eingabefelder → `--field-bg` (= `--surface-raised`); Code-Blöcke → `--surface-hover`                   |
+| `--ld-surface`       | Inhalt, Karten, Listen                            | `--surface` (Karte)                                                           | 1:1 für Karten    | Es gibt keine Inhaltsfläche mehr: Listen und Inhalt liegen auf `--background`                          |
+| `--ld-surface-2`     | zweite Ebene: Gedanken, Quellen, Kästen in Karten | `--surface-hover` (nur auf dem Grund)                                         | Neu denken        | Kasten in Karte entfällt (Abstand und Schrift); Quellen werden Fußnoten ohne Fläche                    |
+| `--ld-surface-hover` | Zeile unter dem Zeiger                            | `--ctx-hover-fill`                                                            | 1:1               | wird je Ebene `--surface-hover` oder `--surface-hover-strong`                                          |
+| `--ld-sidebar`       | Leiste links                                      | `--background`                                                                | Neu denken        | Die Leiste hat keine eigene Fläche; sie teilt den durchgehenden Grund mit dem Lichtschnitt             |
+| `--ld-border`        | Rahmen, Trenner, Feldkante                        | `--control-edge` nur an Feldern                                               | Neu denken        | Alle anderen Rahmen und Trenner entfallen; Gliederung über Abstand                                     |
+| `--ld-text`          | Text                                              | `--text`                                                                      | 1:1               |                                                                                                        |
+| `--ld-muted`         | Nebentext                                         | `--text-secondary`                                                            | 1:1               | auf `--surface-active` verboten                                                                        |
+| `--ld-subtle`        | ganz leise                                        | `--text-secondary`                                                            | Zusammenlegen     | Keine Palettenstufe unterhalb von `--text-secondary` hält 4,5 : 1; eine dritte Textstufe gibt es nicht |
+| `--ld-accent`        | Akzent, Fläche                                    | `--accent-solid` (Schrift darauf: `--accent-solid-fg`)                        | 1:1               | Vollton bleibt selten (Senden, Marke, Balken)                                                          |
+| `--ld-accent-soft`   | getönte Fläche                                    | `--accent-bg-subtle`                                                          | 1:1               | gewählter Bereich und Chip nehmen `--surface-active` statt dessen                                      |
+| `--ld-accent-text`   | Akzent als Schrift                                | `--accent-text`                                                               | 1:1               |                                                                                                        |
+| `--ld-bubble`        | eigene Nachricht                                  | `--surface-voice`                                                             | 1:1               | Text `--text`                                                                                          |
+| `--ld-ok`            | gut                                               | `--status-success-fg` (Text), `--status-mark-success` (Symbol)                | Teilen            | immer mit Wort                                                                                         |
+| `--ld-warn`          | Warnung                                           | `--status-warning-fg`, `--status-mark-warning`                                | Teilen            | immer mit Wort                                                                                         |
+| `--ld-error`         | Fehler                                            | `--status-error-fg`, `--status-mark-error`                                    | Teilen            | immer mit Wort                                                                                         |
+| `--ld-shadow`        | Schatten der Karte                                | `--shadow-2` (Karte), `--shadow-3` (Eingabefeld), `--shadow-4` (Überlagerung) | Teilen            | nach Ebene wählen                                                                                      |
 
 **Namen aus `@theme inline` (Tailwind).**
 
-| Heute | Neu | Heute | Neu |
-|---|---|---|---|
-| `--color-bg` | `--background` | `--color-accent-soft` | `--accent-bg-subtle` |
-| `--color-surface` | `--surface` | `--color-accent-text` | `--accent-text` |
-| `--color-surface-2` | `--surface-hover` (siehe oben) | `--color-bubble` | `--surface-voice` |
-| `--color-surface-hover` | `--ctx-hover-fill` | `--color-ok` / `-warn` / `-error` | `--status-success-fg` / `-warning-fg` / `-error-fg` |
-| `--color-sidebar` | `--background` | `--shadow-card` | `--shadow-2` |
-| `--color-border` | `--control-edge` (nur Felder) | `--font-sans` / `--font-mono` | `--font-sans` / `--font-mono` (Alias oben) |
-| `--color-text` / `-muted` / `-subtle` | `--text` / `--text-secondary` / `--text-secondary` | `--radius-sm` … `--radius-2xl` | siehe unten |
-| `--color-accent` | `--accent-solid` | | |
+| Heute                                 | Neu                                                | Heute                             | Neu                                                 |
+| ------------------------------------- | -------------------------------------------------- | --------------------------------- | --------------------------------------------------- |
+| `--color-bg`                          | `--background`                                     | `--color-accent-soft`             | `--accent-bg-subtle`                                |
+| `--color-surface`                     | `--surface`                                        | `--color-accent-text`             | `--accent-text`                                     |
+| `--color-surface-2`                   | `--surface-hover` (siehe oben)                     | `--color-bubble`                  | `--surface-voice`                                   |
+| `--color-surface-hover`               | `--ctx-hover-fill`                                 | `--color-ok` / `-warn` / `-error` | `--status-success-fg` / `-warning-fg` / `-error-fg` |
+| `--color-sidebar`                     | `--background`                                     | `--shadow-card`                   | `--shadow-2`                                        |
+| `--color-border`                      | `--control-edge` (nur Felder)                      | `--font-sans` / `--font-mono`     | `--font-sans` / `--font-mono` (Alias oben)          |
+| `--color-text` / `-muted` / `-subtle` | `--text` / `--text-secondary` / `--text-secondary` | `--radius-sm` … `--radius-2xl`    | siehe unten                                         |
+| `--color-accent`                      | `--accent-solid`                                   |                                   |                                                     |
 
 **Radien.** Heute `sm` 8, `md` 10, `lg` 12, `xl` 16, `2xl` 20 px. Neu `--radius-sm` 8 (gleich), `--radius-md` 12 (statt 10), `--radius-lg` 18 (statt 12), `--radius-xl` 22 (statt 16), `--radius-full`. `--radius-2xl` entfällt (20 px kommt nur in der eigenen Nachricht vor, siehe Baustein Nachricht). Die Regel `.rounded { border-radius: var(--radius-sm); }` entfällt mit dem Wechsel auf die neue Skala.
 
 **Übrige Regeln aus `index.css`.**
 
-| Heute | Neu |
-|---|---|
-| `body { font-size: 14px; line-height: 1.55 }` | `font-size: var(--text-base)` (16 px), `line-height: var(--leading-body)` (1,6) |
-| `body { background: var(--ld-bg) }` | Grund mit Lichtschnitt (CSS in „Signatur“) |
-| `:focus-visible { outline: 2px solid var(--ld-accent); outline-offset: 2px }` | `var(--focus-outline)`, Innenform `--focus-inset` (Abschnitt „Fokusring“) |
-| `@media (prefers-color-scheme: dark)` | `[data-theme="dark"]` am Wurzelelement; der Umbau setzt das Attribut aus `nativeTheme.shouldUseDarkColors` |
-| `@media (prefers-reduced-motion: reduce)` mit `0s` | Regel aus „Bewegung“ (Überblendung 100 ms statt 0 s; Dauer-Drehungen entfallen außer dem Wort-Symbol) |
-| `scrollbar-color: var(--ld-border) transparent` | `--control-edge` für den Daumen auf `--background`, Spur transparent |
+| Heute                                                                         | Neu                                                                                                        |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `body { font-size: 14px; line-height: 1.55 }`                                 | `font-size: var(--text-base)` (16 px), `line-height: var(--leading-body)` (1,6)                            |
+| `body { background: var(--ld-bg) }`                                           | Grund mit Lichtschnitt (CSS in „Signatur“)                                                                 |
+| `:focus-visible { outline: 2px solid var(--ld-accent); outline-offset: 2px }` | `var(--focus-outline)`, Innenform `--focus-inset` (Abschnitt „Fokusring“)                                  |
+| `@media (prefers-color-scheme: dark)`                                         | `[data-theme="dark"]` am Wurzelelement; der Umbau setzt das Attribut aus `nativeTheme.shouldUseDarkColors` |
+| `@media (prefers-reduced-motion: reduce)` mit `0s`                            | Regel aus „Bewegung“ (Überblendung 100 ms statt 0 s; Dauer-Drehungen entfallen außer dem Wort-Symbol)      |
+| `scrollbar-color: var(--ld-border) transparent`                               | `--control-edge` für den Daumen auf `--background`, Spur transparent                                       |
 
 **Vollständigkeit.** Alle 17 `--ld-*`-Werte aus `index.css` stehen in der ersten Tabelle; alle 19 Namen aus `@theme inline` in der zweiten; alle übrigen Regeln in der dritten. Jeder neue Alias löst über eine Kette von `var()` auf eine Palettenstufe auf (geprüft, siehe unten).
 
@@ -827,14 +885,14 @@ Aufgabe: Eine Handlung auslösen, benannt mit einem Verb. Höchstens ein Primär
 
 Die vier Arten: **Primär** (Vollton; Senden-nahe Hauptaktion), **Sekundär** (getönt; „Immer erlauben“, „Verwalten“), **Leise** (ohne Fläche; „Abbrechen“, „Ablehnen“), **Gefährlich** (Löschen; blass im Ruhezustand, Vollton erst unter dem Zeiger, damit ein Streifen des Zeigers nichts auslöst). Träger: das Etikett (Text ≥ 4,5 : 1).
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Fläche `--btn-<art>-bg`, Schrift `--btn-<art>-fg`, `--btn-font`, `--btn-weight`, Höhe `--btn-h`, Radius `--btn-radius` | `<button>`; Enter und Leertaste lösen aus |
-| Maus drüber | Fläche `--btn-<art>-bg-hover`; Leise: Schrift `--btn-quiet-fg-hover`; Gefährlich: Schrift `--btn-danger-fg-hover` | nur Zeiger, nie als einziger Hinweis auf eine Folge |
-| Gedrückt | Fläche `--btn-<art>-bg-pressed`; `scale(var(--btn-pressed-scale))`, 140 ms; Leise: Schrift `--btn-quiet-fg-pressed` | löst beim Loslassen aus; Wegziehen bricht ab |
-| Tastatur-Fokus | Ring außen, Abstand `--ring-offset`: `--focus-outline`; Primär und Gefährlich (unter dem Zeiger) mit `--focus-outline-solid` | Tab; der Ring liegt außerhalb der Füllung (Lücke zeigt den Grund) |
-| Gesperrt | `opacity: var(--btn-disabled-opacity)`, keine Zeigerfläche | `aria-disabled="true"`; der Grund steht als Tooltip und per `aria-describedby` |
-| Lädt | Fläche wie Normal; Etikett wird zum Verb im Progressiv („Sendet …“), davor das statische Lade-Symbol | `aria-busy="true"`, Klicks ignoriert, Breite stabil |
+| Zustand        | Aussehen und Tokens                                                                                                          | Bedienung                                                                      |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Normal         | Fläche `--btn-<art>-bg`, Schrift `--btn-<art>-fg`, `--btn-font`, `--btn-weight`, Höhe `--btn-h`, Radius `--btn-radius`       | `<button>`; Enter und Leertaste lösen aus                                      |
+| Maus drüber    | Fläche `--btn-<art>-bg-hover`; Leise: Schrift `--btn-quiet-fg-hover`; Gefährlich: Schrift `--btn-danger-fg-hover`            | nur Zeiger, nie als einziger Hinweis auf eine Folge                            |
+| Gedrückt       | Fläche `--btn-<art>-bg-pressed`; `scale(var(--btn-pressed-scale))`, 140 ms; Leise: Schrift `--btn-quiet-fg-pressed`          | löst beim Loslassen aus; Wegziehen bricht ab                                   |
+| Tastatur-Fokus | Ring außen, Abstand `--ring-offset`: `--focus-outline`; Primär und Gefährlich (unter dem Zeiger) mit `--focus-outline-solid` | Tab; der Ring liegt außerhalb der Füllung (Lücke zeigt den Grund)              |
+| Gesperrt       | `opacity: var(--btn-disabled-opacity)`, keine Zeigerfläche                                                                   | `aria-disabled="true"`; der Grund steht als Tooltip und per `aria-describedby` |
+| Lädt           | Fläche wie Normal; Etikett wird zum Verb im Progressiv („Sendet …“), davor das statische Lade-Symbol                         | `aria-busy="true"`, Klicks ignoriert, Breite stabil                            |
 
 ### 2. Icon-Knopf
 
@@ -860,14 +918,14 @@ Aufgabe: Eine Handlung mit nur einem Symbol (Büroklammer, „+“, Senden, Kopi
 }
 ```
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Symbol `--ibtn-fg`, Größe `--ibtn-icon`, Fläche keine; 32 px (`--ibtn-size`); rund für „+“, Büroklammer, Senden (`--ibtn-radius-round`); Senden 40 px (`--ibtn-size-lg`) mit `--ibtn-send-bg` und `--ibtn-send-fg` | `<button>` mit `aria-label` |
-| Maus drüber | Fläche `--ibtn-bg-hover`, Symbol `--ibtn-fg-hover`; Senden: `--ibtn-send-bg-hover` | Tooltip nach 400 ms |
-| Gedrückt | Fläche `--ibtn-bg-pressed`, Symbol `--ibtn-fg-pressed` (Symbole auf getönter Fläche nur `--text-on-tint`); `scale(var(--press-scale))` | |
-| Tastatur-Fokus | Ring außen (`--focus-outline`); Senden mit `--focus-outline-solid` | Tooltip sofort bei Fokus |
-| Gesperrt | `--disabled-opacity` | `aria-disabled="true"`, Grund im Tooltip (Senden ohne Text: „Nachricht fehlt“; Ollama nicht erreichbar: Ursache) |
-| Lädt | Senden wird **Stopp** (gefülltes Quadrat) an derselben Stelle, `aria-label` „Stopp“; sonst statisches Lade-Symbol | Tippen im Feld bleibt möglich |
+| Zustand        | Aussehen und Tokens                                                                                                                                                                                                | Bedienung                                                                                                        |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| Normal         | Symbol `--ibtn-fg`, Größe `--ibtn-icon`, Fläche keine; 32 px (`--ibtn-size`); rund für „+“, Büroklammer, Senden (`--ibtn-radius-round`); Senden 40 px (`--ibtn-size-lg`) mit `--ibtn-send-bg` und `--ibtn-send-fg` | `<button>` mit `aria-label`                                                                                      |
+| Maus drüber    | Fläche `--ibtn-bg-hover`, Symbol `--ibtn-fg-hover`; Senden: `--ibtn-send-bg-hover`                                                                                                                                 | Tooltip nach 400 ms                                                                                              |
+| Gedrückt       | Fläche `--ibtn-bg-pressed`, Symbol `--ibtn-fg-pressed` (Symbole auf getönter Fläche nur `--text-on-tint`); `scale(var(--press-scale))`                                                                             |                                                                                                                  |
+| Tastatur-Fokus | Ring außen (`--focus-outline`); Senden mit `--focus-outline-solid`                                                                                                                                                 | Tooltip sofort bei Fokus                                                                                         |
+| Gesperrt       | `--disabled-opacity`                                                                                                                                                                                               | `aria-disabled="true"`, Grund im Tooltip (Senden ohne Text: „Nachricht fehlt“; Ollama nicht erreichbar: Ursache) |
+| Lädt           | Senden wird **Stopp** (gefülltes Quadrat) an derselben Stelle, `aria-label` „Stopp“; sonst statisches Lade-Symbol                                                                                                  | Tippen im Feld bleibt möglich                                                                                    |
 
 Umschalter (`aria-pressed`) und Menü-Auslöser (`aria-expanded`) zeigen den Zustand „an“ oder „offen“ mit `--ibtn-bg-open` und `--ibtn-fg-open`; der „+“-Knopf dreht dazu sein Symbol um 45° (wird zum ×), damit der Zustand nicht an der Farbe hängt.
 
@@ -898,14 +956,14 @@ Aufgabe: Text aufnehmen. Eine sichtbare Beschriftung (`<label>`) steht immer da;
 
 Zwei Formen: **Formularfeld** (Höhe `--field-h`, Radius `--field-radius`, kein Schatten) und **Chat-Feld** (Ebene 3, Radius `--field-radius-chat`, Schatten `--field-shadow-chat`, wächst bis zur Höchsthöhe, enthält Chips und Werkzeugzeile; Feldkante rundum). Zusätzlich die Zustände **Fehler** (Kante `--field-edge-error`, Symbol plus Text darunter mit `aria-invalid="true"` und `aria-describedby`) und **Ablegen** (Fläche `--field-drop-bg`, Kante `--field-drop-edge`, Wort „Hier ablegen“).
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Fläche `--field-bg`, Schrift `--field-fg`, Platzhalter `--field-placeholder`, Kante `--field-edge` 1 px | |
-| Maus drüber | Kante `--field-edge-hover` | |
-| Gedrückt | trifft nicht zu: Ein Feld wird nicht „gehalten“; der Klick setzt den Fokus, und dieser Zustand ist der Tastatur-Fokus | |
-| Tastatur-Fokus | Ring außen um das Feld (`--focus-outline`), Kante bleibt; im Chat-Feld um das ganze Feld (`:focus-within`) | Cursor sichtbar; Strg+L fokussiert das Chat-Feld |
-| Gesperrt | `--disabled-opacity`; der Platzhalter nennt den Grund („Ollama ist nicht erreichbar“) | `aria-disabled` plus `readonly`, Text bleibt kopierbar |
-| Lädt | `readonly`, `aria-busy="true"`, rechts statisch das Wort „Wird gelesen“ (Anhang) | Tippen bleibt im Chat-Feld erlaubt |
+| Zustand        | Aussehen und Tokens                                                                                                   | Bedienung                                              |
+| -------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Normal         | Fläche `--field-bg`, Schrift `--field-fg`, Platzhalter `--field-placeholder`, Kante `--field-edge` 1 px               |                                                        |
+| Maus drüber    | Kante `--field-edge-hover`                                                                                            |                                                        |
+| Gedrückt       | trifft nicht zu: Ein Feld wird nicht „gehalten“; der Klick setzt den Fokus, und dieser Zustand ist der Tastatur-Fokus |                                                        |
+| Tastatur-Fokus | Ring außen um das Feld (`--focus-outline`), Kante bleibt; im Chat-Feld um das ganze Feld (`:focus-within`)            | Cursor sichtbar; Strg+L fokussiert das Chat-Feld       |
+| Gesperrt       | `--disabled-opacity`; der Platzhalter nennt den Grund („Ollama ist nicht erreichbar“)                                 | `aria-disabled` plus `readonly`, Text bleibt kopierbar |
+| Lädt           | `readonly`, `aria-busy="true"`, rechts statisch das Wort „Wird gelesen“ (Anhang)                                      | Tippen bleibt im Chat-Feld erlaubt                     |
 
 ### 4. Auswahl
 
@@ -929,15 +987,15 @@ Aufgabe: Aus einer Liste genau einen Wert wählen (Modell, Sprache, Darstellung)
 
 **Zugänglicher Name der Modellauswahl:** `aria-label="Modell: <sichtbarer Name>"`, zum Beispiel „Modell: Qwen3 14B“. Er beginnt mit „Modell“ (Tests und Hilfstechnik finden ihn dort) und enthält den sichtbaren Text vollständig (WCAG 2.5.3, Beschriftung im Namen). Der Auslöser hat `aria-haspopup="listbox"`; die Liste ist die Variante „Auswahl-Liste“ des Menüs.
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Feld: wie Eingabefeld (`--select-bg`, `--select-edge`), Pfeil `--select-chevron`; Inline: Text `--select-inline-fg`, Pfeil, ohne Fläche | `<button>` mit `aria-expanded` (true offen, false zu) |
-| Maus drüber | Feld: Kante `--select-edge-hover`; Inline: Fläche `--select-inline-bg-hover` | |
-| Gedrückt | Feld: wie Hover; Inline: Fläche `--ctx-pressed-fill` | öffnet beim Loslassen |
-| Tastatur-Fokus | Ring außen | Enter, Leertaste, ↓ öffnen; Fokus geht auf den gewählten Eintrag |
-| Gesperrt | `--disabled-opacity`; Text „Keine Modelle“ bei Ollama nicht erreichbar | `aria-disabled`, Grund per `aria-describedby` |
-| Lädt | Text „Modelle werden geladen“ statt Name, statisches Symbol | `aria-busy="true"` |
-| Offen (Zusatz) | Inline: `--select-inline-bg-open`, Schrift `--select-inline-fg-open`; Feld: Pfeil dreht um 180° | |
+| Zustand        | Aussehen und Tokens                                                                                                                     | Bedienung                                                        |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Normal         | Feld: wie Eingabefeld (`--select-bg`, `--select-edge`), Pfeil `--select-chevron`; Inline: Text `--select-inline-fg`, Pfeil, ohne Fläche | `<button>` mit `aria-expanded` (true offen, false zu)            |
+| Maus drüber    | Feld: Kante `--select-edge-hover`; Inline: Fläche `--select-inline-bg-hover`                                                            |                                                                  |
+| Gedrückt       | Feld: wie Hover; Inline: Fläche `--ctx-pressed-fill`                                                                                    | öffnet beim Loslassen                                            |
+| Tastatur-Fokus | Ring außen                                                                                                                              | Enter, Leertaste, ↓ öffnen; Fokus geht auf den gewählten Eintrag |
+| Gesperrt       | `--disabled-opacity`; Text „Keine Modelle“ bei Ollama nicht erreichbar                                                                  | `aria-disabled`, Grund per `aria-describedby`                    |
+| Lädt           | Text „Modelle werden geladen“ statt Name, statisches Symbol                                                                             | `aria-busy="true"`                                               |
+| Offen (Zusatz) | Inline: `--select-inline-bg-open`, Schrift `--select-inline-fg-open`; Feld: Pfeil dreht um 180°                                         |                                                                  |
 
 ### 5. Schalter
 
@@ -960,14 +1018,14 @@ Aufgabe: Eine Einstellung sofort ein- oder ausschalten (Einstellungen, Server, S
 
 Die ganze Zeile (Beschriftung plus Spur) ist die Klickfläche, mindestens `--hit-min` hoch. Beschriftung links, Spur rechts; die Beschriftung nennt die Einstellung, nicht den Zustand.
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | aus: Spur `--switch-track-off`, Daumen `--switch-thumb-off` links; an: Spur `--switch-track-on`, Daumen `--switch-thumb-on` rechts mit Haken `--switch-check` | `role="switch"`, `aria-checked` |
-| Maus drüber | aus: Spur `--switch-track-off-hover`; an: `--switch-track-on-hover` | |
-| Gedrückt | Daumen `scale(var(--press-scale))` | Umschalten beim Loslassen |
-| Tastatur-Fokus | Ring außen um die Spur; eingeschaltet `--focus-outline-solid` | Leertaste schaltet |
-| Gesperrt | `--disabled-opacity`; Grund als Text unter der Beschriftung | `aria-disabled="true"` |
-| Lädt | Daumen mittig, Wort „Wird geändert“ neben der Spur, statisch | `aria-busy="true"`; `aria-checked` ändert sich erst mit dem Ergebnis |
+| Zustand        | Aussehen und Tokens                                                                                                                                           | Bedienung                                                            |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Normal         | aus: Spur `--switch-track-off`, Daumen `--switch-thumb-off` links; an: Spur `--switch-track-on`, Daumen `--switch-thumb-on` rechts mit Haken `--switch-check` | `role="switch"`, `aria-checked`                                      |
+| Maus drüber    | aus: Spur `--switch-track-off-hover`; an: `--switch-track-on-hover`                                                                                           |                                                                      |
+| Gedrückt       | Daumen `scale(var(--press-scale))`                                                                                                                            | Umschalten beim Loslassen                                            |
+| Tastatur-Fokus | Ring außen um die Spur; eingeschaltet `--focus-outline-solid`                                                                                                 | Leertaste schaltet                                                   |
+| Gesperrt       | `--disabled-opacity`; Grund als Text unter der Beschriftung                                                                                                   | `aria-disabled="true"`                                               |
+| Lädt           | Daumen mittig, Wort „Wird geändert“ neben der Spur, statisch                                                                                                  | `aria-busy="true"`; `aria-checked` ändert sich erst mit dem Ergebnis |
 
 ### 6. Chip
 
@@ -991,14 +1049,14 @@ Aufgabe: Eine eingeschaltete Kategorie im Eingabefeld zeigen (Wissen, Skills, E-
 
 **Langer Name:** Der Name wird bei `--chip-max-w` mit Auslassungszeichen gekürzt, der volle Name steht im Tooltip und im zugänglichen Namen; das × bleibt immer sichtbar (feste Breite). Mehr Chips als eine Zeile brechen um. **Warnung** (Modell ohne Werkzeuge): vorangestelltes Warndreieck in `--chip-fg` (Form trägt, nicht Farbe), Wort im zugänglichen Namen („Warnung: Modell kann keine Werkzeuge nutzen“).
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Fläche `--chip-bg`, Schrift und × `--chip-fg`, Höhe `--chip-h` | zwei `<button>` im Chip; Name mit `aria-haspopup="menu"`, × mit `aria-label="<Name> entfernen"` |
-| Maus drüber | Fläche `--chip-bg-hover` (der Teil unter dem Zeiger) | |
-| Gedrückt | Fläche `--chip-bg-pressed`, `scale(var(--press-scale))` | |
-| Tastatur-Fokus | Ring außen um den jeweiligen Teil (Name oder ×) | Tab, Entf/Rücktaste auf dem Chip entfernt |
-| Gesperrt | `--disabled-opacity` (Ollama nicht erreichbar blendet nichts aus; Chips bleiben sichtbar) | `aria-disabled` |
-| Lädt | Symbol statisch, Wort „Wird gelesen“ statt Auswahl | `aria-busy="true"` |
+| Zustand        | Aussehen und Tokens                                                                       | Bedienung                                                                                       |
+| -------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Normal         | Fläche `--chip-bg`, Schrift und × `--chip-fg`, Höhe `--chip-h`                            | zwei `<button>` im Chip; Name mit `aria-haspopup="menu"`, × mit `aria-label="<Name> entfernen"` |
+| Maus drüber    | Fläche `--chip-bg-hover` (der Teil unter dem Zeiger)                                      |                                                                                                 |
+| Gedrückt       | Fläche `--chip-bg-pressed`, `scale(var(--press-scale))`                                   |                                                                                                 |
+| Tastatur-Fokus | Ring außen um den jeweiligen Teil (Name oder ×)                                           | Tab, Entf/Rücktaste auf dem Chip entfernt                                                       |
+| Gesperrt       | `--disabled-opacity` (Ollama nicht erreichbar blendet nichts aus; Chips bleiben sichtbar) | `aria-disabled`                                                                                 |
+| Lädt           | Symbol statisch, Wort „Wird gelesen“ statt Auswahl                                        | `aria-busy="true"`                                                                              |
 
 ### 7. Leisten-Zeile
 
@@ -1027,15 +1085,15 @@ Aufgabe: Ein Ziel in der Seitenleiste: Bereich (Chat, Vorlagen, Code, Modelle), 
 
 Der aktuelle Bereich ist durch **Fläche, Schriftgewicht 600 und `aria-current="page"`** gekennzeichnet (nicht nur Farbe). Lange Namen kürzen mit Auslassungszeichen, voll im Tooltip. Die Suchzeile ist ein Knopf (`aria-keyshortcuts="Control+K"`) mit dem Kürzel „Strg K“ als Marke rechts. Die Zeile „Mehr“ erscheint bei Zeiger und bei Fokus in der Zeile und ist ein Icon-Knopf (auf der gewählten Zeile in `--text-on-tint`).
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Schrift `--nav-fg`, Symbol 20 px, keine Fläche; Suchzeile: Fläche `--nav-search-bg` | `<a>` oder `<button>` |
-| Maus drüber | Fläche `--nav-bg-hover`, Schrift `--nav-fg-hover`; Suchzeile `--nav-search-bg-hover` | |
-| Gedrückt | Fläche `--nav-bg-pressed`, Schrift `--nav-fg-pressed` | |
-| Tastatur-Fokus | Ring **innen** (`--focus-inset`); die Zeile liegt am Rand eines scrollenden Bereichs | Pfeile ↑ ↓ innerhalb der Liste, Tab zwischen Gruppen |
-| Gesperrt | `--disabled-opacity`, Grund im Tooltip | `aria-disabled="true"` |
-| Lädt | Platzhalter-Zeile: zwei statische Balken in `--surface-hover` (kein Schimmern), Gruppe `aria-busy="true"` | |
-| Aktuell (Zusatz) | Fläche `--nav-bg-current`, Schrift `--nav-fg-current`, Gewicht `--nav-weight-current` | `aria-current="page"` |
+| Zustand          | Aussehen und Tokens                                                                                       | Bedienung                                            |
+| ---------------- | --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Normal           | Schrift `--nav-fg`, Symbol 20 px, keine Fläche; Suchzeile: Fläche `--nav-search-bg`                       | `<a>` oder `<button>`                                |
+| Maus drüber      | Fläche `--nav-bg-hover`, Schrift `--nav-fg-hover`; Suchzeile `--nav-search-bg-hover`                      |                                                      |
+| Gedrückt         | Fläche `--nav-bg-pressed`, Schrift `--nav-fg-pressed`                                                     |                                                      |
+| Tastatur-Fokus   | Ring **innen** (`--focus-inset`); die Zeile liegt am Rand eines scrollenden Bereichs                      | Pfeile ↑ ↓ innerhalb der Liste, Tab zwischen Gruppen |
+| Gesperrt         | `--disabled-opacity`, Grund im Tooltip                                                                    | `aria-disabled="true"`                               |
+| Lädt             | Platzhalter-Zeile: zwei statische Balken in `--surface-hover` (kein Schimmern), Gruppe `aria-busy="true"` |                                                      |
+| Aktuell (Zusatz) | Fläche `--nav-bg-current`, Schrift `--nav-fg-current`, Gewicht `--nav-weight-current`                     | `aria-current="page"`                                |
 
 ### 8. Karte
 
@@ -1059,14 +1117,14 @@ Aufgabe: Ein Ding zusammenfassen (Modell, Einstieg, Anhang, Rückfrage). Schwebt
 }
 ```
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Fläche `--card-bg`, Schatten `--card-shadow`, Radius `--card-radius`, Innenabstand `--card-padding` | statisch: `<section>` mit Überschrift; bedienbar: die Karte ist **ein** `<a>` oder `<button>` |
-| Maus drüber | nur bedienbare Karte: Fläche `--card-bg-hover`, Schatten `--card-shadow-hover`, `translateY(var(--card-lift))`, 140 ms | statische Karte: trifft nicht zu, nichts ist anklickbar |
-| Gedrückt | bedienbar: Fläche `--card-bg-hover`, Schatten `--card-shadow`, `scale(0.99)` | |
-| Tastatur-Fokus | bedienbar: Ring außen (Radius folgt `--card-radius`) | |
-| Gesperrt | bedienbar: `--disabled-opacity`, Grund als Text in der Karte | `aria-disabled="true"` |
-| Lädt | Titel- und Textbalken in `--surface-hover`, statisch, Text „Lädt“ für Hilfstechnik | `aria-busy="true"` |
+| Zustand        | Aussehen und Tokens                                                                                                    | Bedienung                                                                                     |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Normal         | Fläche `--card-bg`, Schatten `--card-shadow`, Radius `--card-radius`, Innenabstand `--card-padding`                    | statisch: `<section>` mit Überschrift; bedienbar: die Karte ist **ein** `<a>` oder `<button>` |
+| Maus drüber    | nur bedienbare Karte: Fläche `--card-bg-hover`, Schatten `--card-shadow-hover`, `translateY(var(--card-lift))`, 140 ms | statische Karte: trifft nicht zu, nichts ist anklickbar                                       |
+| Gedrückt       | bedienbar: Fläche `--card-bg-hover`, Schatten `--card-shadow`, `scale(0.99)`                                           |                                                                                               |
+| Tastatur-Fokus | bedienbar: Ring außen (Radius folgt `--card-radius`)                                                                   |                                                                                               |
+| Gesperrt       | bedienbar: `--disabled-opacity`, Grund als Text in der Karte                                                           | `aria-disabled="true"`                                                                        |
+| Lädt           | Titel- und Textbalken in `--surface-hover`, statisch, Text „Lädt“ für Hilfstechnik                                     | `aria-busy="true"`                                                                            |
 
 Diagramme auf einer Karte stehen **rahmenlos** (keine zweite Fläche); auf dem Grund (Chat) schweben sie selbst als Karte.
 
@@ -1098,34 +1156,39 @@ Aufgabe: Aktionen, Schalter oder eine Auswahl an einem Auslöser anbieten. Ebene
   --menu-group-gap: var(--space-2);
   --menu-group-label-font: var(--text-xs);
 }
-.menu, .palette, .dialog, .tooltip, .field-chat {   /* Ebene 3 und 4: Zeigerfläche stärker */
+.menu,
+.palette,
+.dialog,
+.tooltip,
+.field-chat {
+  /* Ebene 3 und 4: Zeigerfläche stärker */
   --ctx-hover-fill: var(--surface-hover-strong);
 }
 ```
 
 Eine Zeile hat Symbol, Name (`--text-sm`, Gewicht 500), eine erklärende Zeile (`--text-xs`, `--text-secondary`) und rechts den Zustand in Worten. Auf der hervorgehobenen Zeile (Fokus, gedrückt) tragen **alle** Texte und Symbole `--menu-row-fg-on-tint`; die Rangfolge entsteht aus Größe und Gewicht. **Trennung ohne Linie:** Gruppen trennt ein Abstand von `--menu-group-gap` (der Eintrag bleibt als `role="separator"` für Hilfstechnik). JOURNEY nennt dafür „Trennlinie“; gemeint ist dieser Abstand.
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Fläche keine (auf `--menu-bg`), Schrift `--menu-row-fg`, Nebenzeile `--menu-row-fg-secondary`, Haken `--menu-check` | Zeilen sind `menuitem`, `menuitemcheckbox` oder `option` |
-| Maus drüber | Fläche `--menu-row-bg-hover` | Zeiger bewegt die Hervorhebung nicht in den Fokus |
-| Gedrückt | Fläche `--menu-row-bg-pressed`, alle Texte `--menu-row-fg-on-tint` | löst beim Loslassen aus; Schalter-Zeilen lassen das Menü offen |
-| Tastatur-Fokus | Fläche `--menu-row-bg-focus`, alle Texte `--menu-row-fg-on-tint`, Ring **innen** | ↑ ↓ wechseln, Pos1/Ende, Anfangsbuchstabe springt |
-| Gesperrt | `--disabled-opacity`, Grund in der Nebenzeile | `aria-disabled="true"`, bleibt per Pfeil erreichbar |
-| Lädt | Platzhalter-Zeile (statische Balken, Wort „Lädt“) | `aria-busy="true"` am Menü |
+| Zustand        | Aussehen und Tokens                                                                                                 | Bedienung                                                      |
+| -------------- | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Normal         | Fläche keine (auf `--menu-bg`), Schrift `--menu-row-fg`, Nebenzeile `--menu-row-fg-secondary`, Haken `--menu-check` | Zeilen sind `menuitem`, `menuitemcheckbox` oder `option`       |
+| Maus drüber    | Fläche `--menu-row-bg-hover`                                                                                        | Zeiger bewegt die Hervorhebung nicht in den Fokus              |
+| Gedrückt       | Fläche `--menu-row-bg-pressed`, alle Texte `--menu-row-fg-on-tint`                                                  | löst beim Loslassen aus; Schalter-Zeilen lassen das Menü offen |
+| Tastatur-Fokus | Fläche `--menu-row-bg-focus`, alle Texte `--menu-row-fg-on-tint`, Ring **innen**                                    | ↑ ↓ wechseln, Pos1/Ende, Anfangsbuchstabe springt              |
+| Gesperrt       | `--disabled-opacity`, Grund in der Nebenzeile                                                                       | `aria-disabled="true"`, bleibt per Pfeil erreichbar            |
+| Lädt           | Platzhalter-Zeile (statische Balken, Wort „Lädt“)                                                                   | `aria-busy="true"` am Menü                                     |
 
 **Aufbau des „+“-Menüs für Hilfstechnik (gültiges ARIA-Menü).**
 
-| Teil | Markup | Hinweis |
-|---|---|---|
-| „+“-Knopf | `<button aria-label="Mehr hinzufügen" aria-haspopup="menu" aria-expanded="true|false" aria-controls="<id>">` | `aria-expanded` folgt dem Zustand: `true`, solange das Menü offen ist, sonst `false`; er steht nie fest auf einem Wert, und der Knopf trägt kein `aria-pressed`. Symbol dreht 45° (siehe Icon-Knopf). |
-| Erste Ebene | `<div role="menu" aria-labelledby="<Knopf>">` mit sechs Zeilen | Beim Öffnen geht der Fokus auf die erste Zeile; Esc schließt und gibt den Fokus an „+“ zurück; Tab schließt |
-| Zeile „Recherche“ | `role="menuitemcheckbox" aria-checked="true|false"` | Enter oder Leertaste schaltet; Menü bleibt offen |
-| Zeilen mit Untermenü (Wissen, Werkzeuge, Skills, E-Mail, Internet) | `role="menuitem" aria-haspopup="menu" aria-expanded="true|false"`; Zustand in Worten steht im sichtbaren Text und damit im Namen („Wissen, Sammlung Notizen“) | Enter, → oder Klick öffnet das Untermenü; ← oder Esc schließt es und kehrt zur Zeile zurück |
-| Untermenü | `<div role="menu" aria-label="<Zeilenname>">` | öffnet rechts daneben |
-| Einträge im Untermenü | `role="menuitemcheckbox" aria-checked` (Haken links); Zeile mit Auswahl (eine Sammlung) ebenso | Enter oder Leertaste schaltet, das Untermenü bleibt offen |
-| „Verwalten …“ | `<a role="menuitem" href="…">`, **letzter Punkt** des Untermenüs, nach dem Abstand `--menu-group-gap` | nie zweiter Punkt in einer Zeile; in der Pfeilreihenfolge erreichbar |
-| Warnungen | Text mit `id`, am Punkt `aria-describedby` | wird mit dem Punkt vorgelesen |
+| Teil                                                               | Markup                                                                                                | Hinweis                                                                                                     |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| „+“-Knopf                                                          | `<button aria-label="Mehr hinzufügen" aria-haspopup="menu" aria-expanded="true                        | false" aria-controls="<id>">`                                                                               | `aria-expanded` folgt dem Zustand: `true`, solange das Menü offen ist, sonst `false`; er steht nie fest auf einem Wert, und der Knopf trägt kein `aria-pressed`. Symbol dreht 45° (siehe Icon-Knopf). |
+| Erste Ebene                                                        | `<div role="menu" aria-labelledby="<Knopf>">` mit sechs Zeilen                                        | Beim Öffnen geht der Fokus auf die erste Zeile; Esc schließt und gibt den Fokus an „+“ zurück; Tab schließt |
+| Zeile „Recherche“                                                  | `role="menuitemcheckbox" aria-checked="true                                                           | false"`                                                                                                     | Enter oder Leertaste schaltet; Menü bleibt offen                                                                                                                                                      |
+| Zeilen mit Untermenü (Wissen, Werkzeuge, Skills, E-Mail, Internet) | `role="menuitem" aria-haspopup="menu" aria-expanded="true                                             | false"`; Zustand in Worten steht im sichtbaren Text und damit im Namen („Wissen, Sammlung Notizen“)         | Enter, → oder Klick öffnet das Untermenü; ← oder Esc schließt es und kehrt zur Zeile zurück                                                                                                           |
+| Untermenü                                                          | `<div role="menu" aria-label="<Zeilenname>">`                                                         | öffnet rechts daneben                                                                                       |
+| Einträge im Untermenü                                              | `role="menuitemcheckbox" aria-checked` (Haken links); Zeile mit Auswahl (eine Sammlung) ebenso        | Enter oder Leertaste schaltet, das Untermenü bleibt offen                                                   |
+| „Verwalten …“                                                      | `<a role="menuitem" href="…">`, **letzter Punkt** des Untermenüs, nach dem Abstand `--menu-group-gap` | nie zweiter Punkt in einer Zeile; in der Pfeilreihenfolge erreichbar                                        |
+| Warnungen                                                          | Text mit `id`, am Punkt `aria-describedby`                                                            | wird mit dem Punkt vorgelesen                                                                               |
 
 **Menü am Fensterrand (Platzierung).** Das Menü bleibt am Auslöser. Es öffnet dorthin, wo Platz ist (zuerst nach oben beim Eingabefeld, sonst nach unten), schiebt sich waagerecht ins Fenster mit mindestens `--space-2` Rand und begrenzt seine Höhe auf den freien Platz minus `--space-4`; der Inhalt scrollt dann im Menü, der Kopf bleibt. Das Untermenü öffnet rechts; fehlt dort der Platz, links; fehlt er auch dort, ersetzt es die erste Ebene mit „Zurück“ als erstem Punkt. Bei 900 px Fensterbreite bleibt `--menu-w` 410 px, höchstens Fensterbreite minus 48 px.
 
@@ -1146,7 +1209,10 @@ Aufgabe: Per Strg+K zu Seite, Befehl, Projekt oder Chat springen. Ebene 4, mitti
   --palette-input-font: var(--text-base);
   --palette-input-edge: var(--control-edge);
   --palette-row-h: var(--control-h-lg);
-  --palette-row-radius: max(4px, calc(var(--palette-radius) - var(--palette-padding)));
+  --palette-row-radius: max(
+    4px,
+    calc(var(--palette-radius) - var(--palette-padding))
+  );
   --palette-row-fg: var(--text);
   --palette-row-fg-secondary: var(--text-secondary);
   --palette-row-bg-hover: var(--surface-hover-strong);
@@ -1161,14 +1227,14 @@ Aufgabe: Per Strg+K zu Seite, Befehl, Projekt oder Chat springen. Ebene 4, mitti
 
 Die Eingabezeile hat keinen Rahmen; ihre **Unterkante** in `--palette-input-edge` ist die Kante des Feldes (3 : 1) und trennt sie von den Ergebnissen. Kürzel stehen rechts als Marke (`--surface-active`, `--text-on-tint`, `--radius-sm`). Auf der gewählten Zeile tragen alle Texte `--palette-row-fg-selected`.
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Zeile ohne Fläche, Name `--palette-row-fg`, Nebenzeile `--palette-row-fg-secondary` | Container `role="dialog" aria-modal="true" aria-label="Befehlspalette"`; Eingabe `role="combobox" aria-expanded="true" aria-controls aria-activedescendant`; Liste `role="listbox"`; Gruppen `role="group" aria-labelledby`; Zeilen `role="option" aria-selected` |
-| Maus drüber | Auswahl springt auf die Zeile (Fläche `--palette-row-bg-selected`), vorher kurz `--palette-row-bg-hover` | |
-| Gedrückt | Fläche `--palette-row-bg-pressed`, Texte `--palette-row-fg-selected` | Klick führt aus |
-| Tastatur-Fokus | Der Fokus bleibt im Eingabefeld (Ring außen um das Feld in der Zeile, innen auf dem Kopf der Palette); die gewählte Zeile ist `--palette-row-bg-selected` mit Ring **innen** | ↑ ↓ wählen, Enter führt aus, Esc schließt, Fokus kehrt zum Auslöser zurück |
-| Gesperrt | Befehl, der gerade nicht geht, steht mit Grund in der Nebenzeile, `--disabled-opacity` | `aria-disabled="true"` |
-| Lädt | Zeile „sucht in Chats“ (statisch) in der Gruppe Chats, Auswahl springt nicht | `aria-live="polite"` meldet die Zahl der Treffer |
+| Zustand        | Aussehen und Tokens                                                                                                                                                          | Bedienung                                                                                                                                                                                                                                                         |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Normal         | Zeile ohne Fläche, Name `--palette-row-fg`, Nebenzeile `--palette-row-fg-secondary`                                                                                          | Container `role="dialog" aria-modal="true" aria-label="Befehlspalette"`; Eingabe `role="combobox" aria-expanded="true" aria-controls aria-activedescendant`; Liste `role="listbox"`; Gruppen `role="group" aria-labelledby`; Zeilen `role="option" aria-selected` |
+| Maus drüber    | Auswahl springt auf die Zeile (Fläche `--palette-row-bg-selected`), vorher kurz `--palette-row-bg-hover`                                                                     |                                                                                                                                                                                                                                                                   |
+| Gedrückt       | Fläche `--palette-row-bg-pressed`, Texte `--palette-row-fg-selected`                                                                                                         | Klick führt aus                                                                                                                                                                                                                                                   |
+| Tastatur-Fokus | Der Fokus bleibt im Eingabefeld (Ring außen um das Feld in der Zeile, innen auf dem Kopf der Palette); die gewählte Zeile ist `--palette-row-bg-selected` mit Ring **innen** | ↑ ↓ wählen, Enter führt aus, Esc schließt, Fokus kehrt zum Auslöser zurück                                                                                                                                                                                        |
+| Gesperrt       | Befehl, der gerade nicht geht, steht mit Grund in der Nebenzeile, `--disabled-opacity`                                                                                       | `aria-disabled="true"`                                                                                                                                                                                                                                            |
+| Lädt           | Zeile „sucht in Chats“ (statisch) in der Gruppe Chats, Auswahl springt nicht                                                                                                 | `aria-live="polite"` meldet die Zahl der Treffer                                                                                                                                                                                                                  |
 
 ### 11. Dialog
 
@@ -1193,14 +1259,14 @@ Aufgabe: Eine Entscheidung oder ein Entwurf, der die Seite anhält (Bestätigung
 
 Aufbau: Titel, Text (nennt, was betroffen ist und was erhalten bleibt), Knopfzeile rechts: **Leise** „Abbrechen“ links, **Primär** (oder **Gefährlich** bei Löschen) rechts. Anfangsfokus: bei Folgenreichem auf „Abbrechen“, sonst auf das erste Feld.
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Fläche `--dialog-bg`, Schatten `--dialog-shadow`, Vorhang `--dialog-scrim` | `role="dialog"` oder `alertdialog`, `aria-modal="true"`, `aria-labelledby`, `aria-describedby`; Hintergrund `inert`; Fokus eingesperrt; Esc schließt und gibt den Fokus zurück |
-| Maus drüber | trifft nicht zu: Der Dialog selbst ist keine Bedienfläche; seine Knöpfe haben eigene Zustände | |
-| Gedrückt | trifft nicht zu, gleicher Grund | |
-| Tastatur-Fokus | Ring der Knöpfe und Felder darin; der Container hat `tabindex="-1"` und keinen Ring | Tab bleibt im Dialog |
-| Gesperrt | trifft nicht zu: Ein Dialog ist offen oder zu. Läuft die Aktion bereits, sperrt der Bestätigungsknopf (Zustand Lädt) und „Abbrechen“ bleibt | |
-| Lädt | Der Bestätigungsknopf zeigt „Lädt“ (Knopf, Zustand Lädt), Text nennt die Dauer; Esc und Vorhang-Klick schließen nicht, bis die Aktion beendet ist | `aria-busy="true"` am Dialog |
+| Zustand        | Aussehen und Tokens                                                                                                                               | Bedienung                                                                                                                                                                      |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Normal         | Fläche `--dialog-bg`, Schatten `--dialog-shadow`, Vorhang `--dialog-scrim`                                                                        | `role="dialog"` oder `alertdialog`, `aria-modal="true"`, `aria-labelledby`, `aria-describedby`; Hintergrund `inert`; Fokus eingesperrt; Esc schließt und gibt den Fokus zurück |
+| Maus drüber    | trifft nicht zu: Der Dialog selbst ist keine Bedienfläche; seine Knöpfe haben eigene Zustände                                                     |                                                                                                                                                                                |
+| Gedrückt       | trifft nicht zu, gleicher Grund                                                                                                                   |                                                                                                                                                                                |
+| Tastatur-Fokus | Ring der Knöpfe und Felder darin; der Container hat `tabindex="-1"` und keinen Ring                                                               | Tab bleibt im Dialog                                                                                                                                                           |
+| Gesperrt       | trifft nicht zu: Ein Dialog ist offen oder zu. Läuft die Aktion bereits, sperrt der Bestätigungsknopf (Zustand Lädt) und „Abbrechen“ bleibt       |                                                                                                                                                                                |
+| Lädt           | Der Bestätigungsknopf zeigt „Lädt“ (Knopf, Zustand Lädt), Text nennt die Dauer; Esc und Vorhang-Klick schließen nicht, bis die Aktion beendet ist | `aria-busy="true"` am Dialog                                                                                                                                                   |
 
 ### 12. Tooltip
 
@@ -1221,14 +1287,14 @@ Aufgabe: Einen Namen oder Grund zu einem Element zeigen (Icon-Knopf, gekürzter 
 }
 ```
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal (sichtbar) | Fläche `--tip-bg`, Schrift `--tip-fg`, Kürzel in `--tip-fg-secondary` | `role="tooltip"`, am Auslöser `aria-describedby`; erscheint nach `--tip-delay` (Zeiger) oder sofort (Fokus) |
-| Maus drüber | bleibt sichtbar, solange der Zeiger auf Auslöser **oder** Tooltip ist (WCAG 1.4.13, hover-fähig) | |
-| Gedrückt | trifft nicht zu: nicht bedienbar | |
-| Tastatur-Fokus | trifft nicht zu: Ein Tooltip nimmt keinen Fokus; er erscheint, wenn der **Auslöser** Fokus hat | Esc schließt, ohne den Fokus zu bewegen |
-| Gesperrt | trifft nicht zu: Auf einem gesperrten Auslöser nennt er den **Grund**; der Auslöser bleibt dafür fokussierbar | |
-| Lädt | trifft nicht zu: Der Text liegt vor dem Zeigen fest | |
+| Zustand           | Aussehen und Tokens                                                                                           | Bedienung                                                                                                   |
+| ----------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Normal (sichtbar) | Fläche `--tip-bg`, Schrift `--tip-fg`, Kürzel in `--tip-fg-secondary`                                         | `role="tooltip"`, am Auslöser `aria-describedby`; erscheint nach `--tip-delay` (Zeiger) oder sofort (Fokus) |
+| Maus drüber       | bleibt sichtbar, solange der Zeiger auf Auslöser **oder** Tooltip ist (WCAG 1.4.13, hover-fähig)              |                                                                                                             |
+| Gedrückt          | trifft nicht zu: nicht bedienbar                                                                              |                                                                                                             |
+| Tastatur-Fokus    | trifft nicht zu: Ein Tooltip nimmt keinen Fokus; er erscheint, wenn der **Auslöser** Fokus hat                | Esc schließt, ohne den Fokus zu bewegen                                                                     |
+| Gesperrt          | trifft nicht zu: Auf einem gesperrten Auslöser nennt er den **Grund**; der Auslöser bleibt dafür fokussierbar |                                                                                                             |
+| Lädt              | trifft nicht zu: Der Text liegt vor dem Zeigen fest                                                           |                                                                                                             |
 
 ### 13. Tabellen-Zeile
 
@@ -1254,15 +1320,15 @@ Aufgabe: Daten in Spalten (Modelle, Status, Einstellungen, Quellen). **Kein Gitt
 
 Zahlen stehen rechtsbündig mit Tabellenziffern. Die Kopfzeile ist sortierbar über Knöpfe in den Kopfzellen (`aria-sort`). Auf der gewählten Zeile tragen **alle** Zellen `--trow-fg-selected`; Zustandspunkte (geladen, Fehler) zeigen dort Form und Wort statt `--status-mark-*`.
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Name `--trow-fg`, andere Zellen `--trow-fg-secondary`, keine Fläche | `<table>` mit `<th scope>`; die erste Zelle enthält den Knopf oder Link, dessen Klickfläche die ganze Zeile deckt |
-| Maus drüber | Fläche `--trow-bg-hover`; Aktion „Mehr“ erscheint | |
-| Gedrückt | Fläche `--trow-bg-pressed`, Texte `--trow-fg-selected` | |
-| Tastatur-Fokus | Ring **innen** | Tab auf den Zeilenknopf; „Mehr“ bleibt per Tab erreichbar |
-| Gesperrt | `--disabled-opacity`, Grund in der Zeile | `aria-disabled="true"` |
-| Lädt | Platzhalter-Zeilen mit statischen Balken in `--surface-hover` | `aria-busy="true"` an der Tabelle |
-| Gewählt (Zusatz) | Fläche `--trow-bg-selected`, alle Texte `--trow-fg-selected` | `aria-selected` oder `aria-current` |
+| Zustand          | Aussehen und Tokens                                                 | Bedienung                                                                                                         |
+| ---------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Normal           | Name `--trow-fg`, andere Zellen `--trow-fg-secondary`, keine Fläche | `<table>` mit `<th scope>`; die erste Zelle enthält den Knopf oder Link, dessen Klickfläche die ganze Zeile deckt |
+| Maus drüber      | Fläche `--trow-bg-hover`; Aktion „Mehr“ erscheint                   |                                                                                                                   |
+| Gedrückt         | Fläche `--trow-bg-pressed`, Texte `--trow-fg-selected`              |                                                                                                                   |
+| Tastatur-Fokus   | Ring **innen**                                                      | Tab auf den Zeilenknopf; „Mehr“ bleibt per Tab erreichbar                                                         |
+| Gesperrt         | `--disabled-opacity`, Grund in der Zeile                            | `aria-disabled="true"`                                                                                            |
+| Lädt             | Platzhalter-Zeilen mit statischen Balken in `--surface-hover`       | `aria-busy="true"` an der Tabelle                                                                                 |
+| Gewählt (Zusatz) | Fläche `--trow-bg-selected`, alle Texte `--trow-fg-selected`        | `aria-selected` oder `aria-current`                                                                               |
 
 ### 14. Werkzeug-Zeile mit Rückfrage-Karte
 
@@ -1302,14 +1368,14 @@ Aufgabe: Zeigen, was das Modell tut, und vor Folgenreichem fragen. Die **Zeile**
 
 **Rückfrage-Karte:** Titel („Erlauben?“) mit dem Namen der Aktion, ein Satz (was, über welchen Server), bei verändernden Werkzeugen eine Warnzeile (Symbol plus Wort, ohne Kasten), die Vorschau (Befehl, Adresse, Änderung) in `--ask-code-font` mit Einzug statt Kasten, dann die Knöpfe: **Primär** („Einmal erlauben“, je nach Art „Erlauben“, „Übernehmen“, „Ausführen“, „Committen“), **Sekundär** („Immer erlauben“, nur wo angeboten), **Leise** („Ablehnen“). Höchstens drei.
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Name `--tool-name-fg`, Stand `--tool-status-fg` mit Symbol `--tool-mark-*`, keine Fläche | Kopf `<button aria-expanded>`; Karte `role="group" aria-labelledby`; Stand als `role="status"` (höflich), beim Wechsel zu „wartet auf Freigabe“ wird die Frage vorgelesen |
-| Maus drüber | Fläche `--tool-bg-hover` | |
-| Gedrückt | Fläche `--tool-bg-pressed`, Texte `--tool-fg-pressed`, Symbole `--tool-fg-pressed` | |
-| Tastatur-Fokus | Zeile: Ring innen; Knöpfe der Karte: Ring außen | Der Fokus springt **nicht** von selbst in die Karte, wenn der Nutzer gerade schreibt; sonst auf den ersten Knopf. Esc lehnt nicht ab (Esc stoppt die Antwort, wie heute). |
-| Gesperrt | Die Zeile ist nie gesperrt. Karte: Ist nichts freizugeben (kein Konto), bleibt nur „Ablehnen“ aktiv, die anderen sind `aria-disabled` mit Grund | |
-| Lädt | Stand „läuft“: Anzeige „arbeitet“ plus Wort; unter `prefers-reduced-motion` ein stehendes Symbol mit Wort | `aria-busy` an der Zeile |
+| Zustand        | Aussehen und Tokens                                                                                                                             | Bedienung                                                                                                                                                                 |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Normal         | Name `--tool-name-fg`, Stand `--tool-status-fg` mit Symbol `--tool-mark-*`, keine Fläche                                                        | Kopf `<button aria-expanded>`; Karte `role="group" aria-labelledby`; Stand als `role="status"` (höflich), beim Wechsel zu „wartet auf Freigabe“ wird die Frage vorgelesen |
+| Maus drüber    | Fläche `--tool-bg-hover`                                                                                                                        |                                                                                                                                                                           |
+| Gedrückt       | Fläche `--tool-bg-pressed`, Texte `--tool-fg-pressed`, Symbole `--tool-fg-pressed`                                                              |                                                                                                                                                                           |
+| Tastatur-Fokus | Zeile: Ring innen; Knöpfe der Karte: Ring außen                                                                                                 | Der Fokus springt **nicht** von selbst in die Karte, wenn der Nutzer gerade schreibt; sonst auf den ersten Knopf. Esc lehnt nicht ab (Esc stoppt die Antwort, wie heute). |
+| Gesperrt       | Die Zeile ist nie gesperrt. Karte: Ist nichts freizugeben (kein Konto), bleibt nur „Ablehnen“ aktiv, die anderen sind `aria-disabled` mit Grund |                                                                                                                                                                           |
+| Lädt           | Stand „läuft“: Anzeige „arbeitet“ plus Wort; unter `prefers-reduced-motion` ein stehendes Symbol mit Wort                                       | `aria-busy` an der Zeile                                                                                                                                                  |
 
 ### 15. Nachricht
 
@@ -1340,14 +1406,14 @@ Aufgabe: Eine Äußerung im Chat. **Eigene Nachricht:** schwebende Fläche der E
 
 Aktionen (Kopieren, Bearbeiten, Merken, Antwort wiederholen) sind Icon-Knöpfe unter der Nachricht. Sie erscheinen bei Zeiger **und** bei Fokus in der Nachricht (`:focus-within`), liegen immer im Tab-Ablauf und tragen Namen. Fehler in der Antwort: eine Zeile mit Symbol, Wort und der Aktion „Antwort wiederholen“, keine Fläche.
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | eigene: `--msg-own-bg`, `--msg-own-fg`, Radius `--msg-own-radius`, Schatten `--msg-own-shadow`; Antwort: `--msg-answer-fg` auf dem Grund | Verlauf `role="log"` mit `aria-live="polite"`; jede Nachricht `<article>` mit Beschriftung („Du“, „Modell“) für Hilfstechnik |
-| Maus drüber | Die Aktionszeile wird sichtbar (Deckkraft, 140 ms); Fläche unverändert | |
-| Gedrückt | trifft nicht zu: Die Nachricht ist keine Bedienfläche; ihre Aktionen sind Icon-Knöpfe | |
-| Tastatur-Fokus | Aktionen zeigen sich und tragen den Ring; **Sprungziel** (Treffer aus der Suche): `tabindex="-1"`, Fläche `--msg-target-bg` kurz (Einblenden 320 ms, 1,6 s halten, Ausblenden 480 ms), kein Ring | Fokus auf die Nachricht beim Sprung |
-| Gesperrt | Nachricht nie; Aktionen Bearbeiten und Wiederholen sind `aria-disabled`, solange eine Antwort läuft (Grund im Tooltip) | |
-| Lädt | Antwort läuft: Wartezeile („Modell wird geladen“, „arbeitet mit Werkzeugen“) mit der Anzeige „arbeitet“, dann fließender Text; Stopp ersetzt Senden | `aria-busy="true"` am Verlauf; reduziert: stehendes Symbol mit Wort |
+| Zustand        | Aussehen und Tokens                                                                                                                                                                              | Bedienung                                                                                                                    |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| Normal         | eigene: `--msg-own-bg`, `--msg-own-fg`, Radius `--msg-own-radius`, Schatten `--msg-own-shadow`; Antwort: `--msg-answer-fg` auf dem Grund                                                         | Verlauf `role="log"` mit `aria-live="polite"`; jede Nachricht `<article>` mit Beschriftung („Du“, „Modell“) für Hilfstechnik |
+| Maus drüber    | Die Aktionszeile wird sichtbar (Deckkraft, 140 ms); Fläche unverändert                                                                                                                           |                                                                                                                              |
+| Gedrückt       | trifft nicht zu: Die Nachricht ist keine Bedienfläche; ihre Aktionen sind Icon-Knöpfe                                                                                                            |                                                                                                                              |
+| Tastatur-Fokus | Aktionen zeigen sich und tragen den Ring; **Sprungziel** (Treffer aus der Suche): `tabindex="-1"`, Fläche `--msg-target-bg` kurz (Einblenden 320 ms, 1,6 s halten, Ausblenden 480 ms), kein Ring | Fokus auf die Nachricht beim Sprung                                                                                          |
+| Gesperrt       | Nachricht nie; Aktionen Bearbeiten und Wiederholen sind `aria-disabled`, solange eine Antwort läuft (Grund im Tooltip)                                                                           |                                                                                                                              |
+| Lädt           | Antwort läuft: Wartezeile („Modell wird geladen“, „arbeitet mit Werkzeugen“) mit der Anzeige „arbeitet“, dann fließender Text; Stopp ersetzt Senden                                              | `aria-busy="true"` am Verlauf; reduziert: stehendes Symbol mit Wort                                                          |
 
 ### 16. Banner
 
@@ -1374,7 +1440,8 @@ Aufgabe: Einen Zustand melden, der über dem Eingabefeld oder in einer Seite ste
   --banner-info-fg: var(--status-info-fg);
   --banner-info-mark: var(--status-mark-info);
 }
-.banner {   /* der Banner stellt den Sekundär-Knopf um, nur in seinem Inneren */
+.banner {
+  /* der Banner stellt den Sekundär-Knopf um, nur in seinem Inneren */
   --btn-secondary-bg: var(--surface-raised);
   --btn-secondary-bg-hover: var(--surface-hover-strong);
   --btn-secondary-bg-pressed: var(--surface-active);
@@ -1384,14 +1451,14 @@ Aufgabe: Einen Zustand melden, der über dem Eingabefeld oder in einer Seite ste
 
 Das Wort der Art („Fehler“, „Hinweis“) steht in `--banner-<art>-fg`, der erklärende Text in `--banner-fg`. Die Aktionen im Banner sind Knöpfe der Art Sekundär mit den hier überschriebenen Baustein-Tokens (weiße Fläche auf der Tönung; Beispiel für die Baustein-Stufe: Der Banner stellt den Knopf um, ohne die Alias-Stufe zu berühren). Auf Fehler-Banner, solange die Ursache besteht, gibt es kein Schließen.
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Fläche `--banner-<art>-bg`, Symbol `--banner-<art>-mark`, Wort `--banner-<art>-fg`, Text `--banner-fg` | Neu auftauchend: `role="alert"` bei Fehler, sonst `role="status"`; bleibt der Banner stehen (Ollama), `role="status"` |
-| Maus drüber | trifft nicht zu: Das Banner ist keine Bedienfläche; seine Knöpfe haben Zustände | |
-| Gedrückt | trifft nicht zu, gleicher Grund | |
-| Tastatur-Fokus | Ring der Knöpfe darin (außen); das Banner selbst nimmt keinen Fokus | Tab erreicht „Erneut prüfen“, „Zur Status-Seite“, Schließen |
-| Gesperrt | trifft nicht zu: Ein Hinweis ist da oder nicht | |
-| Lädt | Beispiel „Verbindung wird geprüft“: Text und statisches Lade-Symbol, die Aktion zeigt ihren Zustand Lädt; Rückkehr geschieht von selbst | `aria-busy="true"` |
+| Zustand        | Aussehen und Tokens                                                                                                                     | Bedienung                                                                                                             |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Normal         | Fläche `--banner-<art>-bg`, Symbol `--banner-<art>-mark`, Wort `--banner-<art>-fg`, Text `--banner-fg`                                  | Neu auftauchend: `role="alert"` bei Fehler, sonst `role="status"`; bleibt der Banner stehen (Ollama), `role="status"` |
+| Maus drüber    | trifft nicht zu: Das Banner ist keine Bedienfläche; seine Knöpfe haben Zustände                                                         |                                                                                                                       |
+| Gedrückt       | trifft nicht zu, gleicher Grund                                                                                                         |                                                                                                                       |
+| Tastatur-Fokus | Ring der Knöpfe darin (außen); das Banner selbst nimmt keinen Fokus                                                                     | Tab erreicht „Erneut prüfen“, „Zur Status-Seite“, Schließen                                                           |
+| Gesperrt       | trifft nicht zu: Ein Hinweis ist da oder nicht                                                                                          |                                                                                                                       |
+| Lädt           | Beispiel „Verbindung wird geprüft“: Text und statisches Lade-Symbol, die Aktion zeigt ihren Zustand Lädt; Rückkehr geschieht von selbst | `aria-busy="true"`                                                                                                    |
 
 ### 17. Fortschritt
 
@@ -1414,15 +1481,15 @@ Aufgabe: Zeigen, wie weit etwas ist (Modell laden, Dateien einlesen, Recherche).
 
 Die Zahl („63 %“, Tabellenziffern) und der Schritt („Schicht 4 von 9“) stehen **neben** der Spur, nie auf ihr. Die Füllung wächst mit `transform: scaleX()` über `--progress-duration`; unter `prefers-reduced-motion` springt sie.
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Spur `--progress-track`, Füllung `--progress-fill`, Zahl `--progress-label-fg` | `role="progressbar"` mit `aria-valuenow`, `aria-valuemin`, `aria-valuemax`, `aria-label` |
-| Maus drüber | trifft nicht zu: nicht bedienbar | |
-| Gedrückt | trifft nicht zu, gleicher Grund | |
-| Tastatur-Fokus | trifft nicht zu: nimmt keinen Fokus. Ein „Abbrechen“ daneben ist ein Knopf mit eigenem Ring | |
-| Gesperrt | Pausiert: Füllung bleibt, `--disabled-opacity`, Wort „Pausiert“ | `aria-valuetext="Pausiert bei 63 Prozent"` |
-| Lädt | Unbestimmt: leere Spur, Wort „Wird vorbereitet“ mit statischem Symbol (keine Dauerbewegung) | `aria-busy="true"`, ohne `aria-valuenow` |
-| Fertig und Fehler (Zusatz) | Füllung `--progress-fill-done` mit Haken und Wort „Fertig“; `--progress-fill-error` mit Kreuz und Wort | `role="status"` meldet das Ergebnis |
+| Zustand                    | Aussehen und Tokens                                                                                    | Bedienung                                                                                |
+| -------------------------- | ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| Normal                     | Spur `--progress-track`, Füllung `--progress-fill`, Zahl `--progress-label-fg`                         | `role="progressbar"` mit `aria-valuenow`, `aria-valuemin`, `aria-valuemax`, `aria-label` |
+| Maus drüber                | trifft nicht zu: nicht bedienbar                                                                       |                                                                                          |
+| Gedrückt                   | trifft nicht zu, gleicher Grund                                                                        |                                                                                          |
+| Tastatur-Fokus             | trifft nicht zu: nimmt keinen Fokus. Ein „Abbrechen“ daneben ist ein Knopf mit eigenem Ring            |                                                                                          |
+| Gesperrt                   | Pausiert: Füllung bleibt, `--disabled-opacity`, Wort „Pausiert“                                        | `aria-valuetext="Pausiert bei 63 Prozent"`                                               |
+| Lädt                       | Unbestimmt: leere Spur, Wort „Wird vorbereitet“ mit statischem Symbol (keine Dauerbewegung)            | `aria-busy="true"`, ohne `aria-valuenow`                                                 |
+| Fertig und Fehler (Zusatz) | Füllung `--progress-fill-done` mit Haken und Wort „Fertig“; `--progress-fill-error` mit Kreuz und Wort | `role="status"` meldet das Ergebnis                                                      |
 
 ### 18. Titelleiste
 
@@ -1454,14 +1521,14 @@ Aufgabe: Das Fenster bedienen (Ziehfläche, Name, Minimieren, Maximieren oder Wi
 
 Die Fensterknöpfe haben 46 × 40 px (Windows-Konvention, über `--hit-min`). Ziehfläche mit `-webkit-app-region: drag`, die Knöpfe mit `no-drag`; Doppelklick auf die Ziehfläche maximiert. Die Fensterknöpfe haben die Namen „Minimieren“, „Maximieren“ (oder „Wiederherstellen“) und „Schließen“. Für `titleBarOverlay` im Hauptprozess werden `color` und `symbolColor` aus `--titlebar-bg` und `--titlebar-btn-fg` zur Laufzeit aufgelöst (Umbau-Aufgabe, nicht Teil dieses Plans).
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Name `--titlebar-name-fg`, Knöpfe `--titlebar-btn-fg`, Fläche `--titlebar-bg` | `<header>`; Knöpfe `<button aria-label>` |
-| Maus drüber | Knopf: Fläche `--titlebar-btn-bg-hover`, Symbol `--titlebar-btn-fg-hover`; Schließen: `--titlebar-close-bg-hover` mit `--titlebar-close-fg-hover` | |
-| Gedrückt | Knopf: Fläche `--titlebar-btn-bg-pressed`, Symbol `--titlebar-btn-fg-pressed`; Schließen: `--titlebar-close-bg-pressed` mit `--titlebar-close-fg-pressed` | |
+| Zustand        | Aussehen und Tokens                                                                                                                                                                                                                                                                       | Bedienung                                               |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Normal         | Name `--titlebar-name-fg`, Knöpfe `--titlebar-btn-fg`, Fläche `--titlebar-bg`                                                                                                                                                                                                             | `<header>`; Knöpfe `<button aria-label>`                |
+| Maus drüber    | Knopf: Fläche `--titlebar-btn-bg-hover`, Symbol `--titlebar-btn-fg-hover`; Schließen: `--titlebar-close-bg-hover` mit `--titlebar-close-fg-hover`                                                                                                                                         |                                                         |
+| Gedrückt       | Knopf: Fläche `--titlebar-btn-bg-pressed`, Symbol `--titlebar-btn-fg-pressed`; Schließen: `--titlebar-close-bg-pressed` mit `--titlebar-close-fg-pressed`                                                                                                                                 |                                                         |
 | Tastatur-Fokus | Ring **innen** (der Knopf füllt die Leistenhöhe und sitzt am Fensterrand, außen ist kein Platz): `--focus-inset` (also `--focus-ring`); auf Schließen im Zustand Maus drüber oder Gedrückt in der Symbolfarbe der Fläche (`--titlebar-close-ring-hover`, `--titlebar-close-ring-pressed`) | Tab erreicht die drei Knöpfe; Alt+F4 und Strg+W bleiben |
-| Gesperrt | Fenster ohne Fokus: Name und Symbole mit `--titlebar-inactive-opacity` | Kein `aria-disabled`; die Knöpfe bleiben bedienbar |
-| Lädt | trifft nicht zu: Die Titelleiste zeigt keinen Ladezustand; Zustände gehören zur Seite und zum Fuß der Leiste | |
+| Gesperrt       | Fenster ohne Fokus: Name und Symbole mit `--titlebar-inactive-opacity`                                                                                                                                                                                                                    | Kein `aria-disabled`; die Knöpfe bleiben bedienbar      |
+| Lädt           | trifft nicht zu: Die Titelleiste zeigt keinen Ladezustand; Zustände gehören zur Seite und zum Fuß der Leiste                                                                                                                                                                              |                                                         |
 
 ### Nachtrag (2026-11-20): Bausteine, die die Mocks brauchen
 
@@ -1493,14 +1560,14 @@ Aufgabe: In einer Liste mehrere Einträge zum Mitnehmen wählen (Skills hinzufü
 
 Die Zeile reicht um `--check-row-bleed` über die Textkante hinaus (Fläche unter dem Zeiger), mindestens `--hit-min` hoch; der Kasten bleibt oben an der ersten Textzeile, wenn die Zeile mehrzeilig ist.
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | aus: Kasten `--check-size` mit Innenkante `--check-edge` (Breite `--check-edge-width`), keine Füllung; an: Füllung `--check-bg-on` mit Haken `--check-mark` (`--check-mark-size`), keine Kante; Name `--check-fg`, Nebenzeile `--check-fg-secondary` | `role="checkbox"` auf der Zeile (`<button>`), `aria-checked`; Name und Nebenzeile sind der zugängliche Name |
-| Maus drüber | Zeilenfläche `--check-row-bg-hover`; aus: Kante `--check-edge-hover`; an: Füllung `--check-bg-on-hover` | |
-| Gedrückt | trifft nicht zu: Die Zeile schaltet beim Loslassen um und zeigt sofort den Haken; ein eigener Zwischenzustand brächte nichts | Leertaste und Klick schalten um |
-| Tastatur-Fokus | Ring **innen** um die ganze Zeile: `--focus-inset` | Tab; Leertaste schaltet |
-| Gesperrt | `--disabled-opacity`, `cursor: not-allowed`; der Grund steht als Text (zum Beispiel „Schon vorhanden“) | `aria-disabled="true"`, Grund per `aria-describedby` |
-| Lädt | trifft nicht zu: Ein Haken ändert nur die Auswahl und löst nichts aus, das warten müsste. Wartet die Liste selbst, stehen Platzhalter-Zeilen (Baustein Listenzeile) | |
+| Zustand        | Aussehen und Tokens                                                                                                                                                                                                                                  | Bedienung                                                                                                   |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Normal         | aus: Kasten `--check-size` mit Innenkante `--check-edge` (Breite `--check-edge-width`), keine Füllung; an: Füllung `--check-bg-on` mit Haken `--check-mark` (`--check-mark-size`), keine Kante; Name `--check-fg`, Nebenzeile `--check-fg-secondary` | `role="checkbox"` auf der Zeile (`<button>`), `aria-checked`; Name und Nebenzeile sind der zugängliche Name |
+| Maus drüber    | Zeilenfläche `--check-row-bg-hover`; aus: Kante `--check-edge-hover`; an: Füllung `--check-bg-on-hover`                                                                                                                                              |                                                                                                             |
+| Gedrückt       | trifft nicht zu: Die Zeile schaltet beim Loslassen um und zeigt sofort den Haken; ein eigener Zwischenzustand brächte nichts                                                                                                                         | Leertaste und Klick schalten um                                                                             |
+| Tastatur-Fokus | Ring **innen** um die ganze Zeile: `--focus-inset`                                                                                                                                                                                                   | Tab; Leertaste schaltet                                                                                     |
+| Gesperrt       | `--disabled-opacity`, `cursor: not-allowed`; der Grund steht als Text (zum Beispiel „Schon vorhanden“)                                                                                                                                               | `aria-disabled="true"`, Grund per `aria-describedby`                                                        |
+| Lädt           | trifft nicht zu: Ein Haken ändert nur die Auswahl und löst nichts aus, das warten müsste. Wartet die Liste selbst, stehen Platzhalter-Zeilen (Baustein Listenzeile)                                                                                  |                                                                                                             |
 
 ### 20. Listenzeile
 
@@ -1525,15 +1592,15 @@ Aufgabe: Ein Eintrag in der Liste links auf einer Seite mit „Liste und Detail�
 
 Aufbau: Symbol (optional), Name (`--text-sm`, Gewicht `--lrow-name-weight`) über der Nebenzeile (`--lrow-sub-font`, `--trow-fg-secondary`); beide werden mit Auslassungszeichen gekürzt, der volle Text steht im Tooltip. Rechts steht, was die Zeile hat: Zähler, Stand in Worten oder die Aktion „Mehr“ (Icon-Knopf, erscheint unter dem Zeiger oder bei Fokus in der Zeile; dafür reserviert die Zeile `--lrow-more-room` rechts). **Ungelesen** (E-Mail): Name im Gewicht `--lrow-name-weight-unread` **und** ein Punkt `--lrow-dot-size` in `--accent-solid` (Form und Gewicht tragen, nicht nur Farbe). Ein Fehlerzeichen an der Zeile zeigt Symbol und Wort („Fehlerhaft“).
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Name `--trow-fg`, Nebenzeile und Symbole `--trow-fg-secondary`, keine Fläche; Höhe `--lrow-h` (eng `--lrow-h-tight`), Radius `--lrow-radius` | `<a>` oder `<button>` in einer Liste; die Klickfläche ist die ganze Zeile |
-| Maus drüber | Fläche `--trow-bg-hover`; „Mehr“ erscheint | |
-| Gedrückt | Fläche `--trow-bg-pressed`, **alle** Texte und Symbole `--trow-fg-selected` | löst beim Loslassen aus |
-| Tastatur-Fokus | Ring **innen** (`--focus-inset`); „Mehr“ erscheint auch bei Fokus innerhalb der Zeile | Tab auf die Zeile; „Mehr“ bleibt per Tab erreichbar |
-| Gesperrt | `--disabled-opacity`, Grund in der Zeile | `aria-disabled="true"` |
-| Lädt | Platzhalter-Zeilen mit statischen Balken in `--surface-hover` | `aria-busy="true"` an der Liste |
-| Gewählt (Zusatz) | Fläche `--trow-bg-selected`; **alle** Texte und Zeichen auf der Zeile in `--trow-fg-selected`: Name, Nebenzeile, Symbol, Punkt (`--lrow-dot-size`), Stern, Fehlerwort. Zustandsfarben (`--status-*`, `--accent-text`) gelten dort nicht; Form und Wort bleiben | `aria-current="true"` |
+| Zustand          | Aussehen und Tokens                                                                                                                                                                                                                                            | Bedienung                                                                 |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Normal           | Name `--trow-fg`, Nebenzeile und Symbole `--trow-fg-secondary`, keine Fläche; Höhe `--lrow-h` (eng `--lrow-h-tight`), Radius `--lrow-radius`                                                                                                                   | `<a>` oder `<button>` in einer Liste; die Klickfläche ist die ganze Zeile |
+| Maus drüber      | Fläche `--trow-bg-hover`; „Mehr“ erscheint                                                                                                                                                                                                                     |                                                                           |
+| Gedrückt         | Fläche `--trow-bg-pressed`, **alle** Texte und Symbole `--trow-fg-selected`                                                                                                                                                                                    | löst beim Loslassen aus                                                   |
+| Tastatur-Fokus   | Ring **innen** (`--focus-inset`); „Mehr“ erscheint auch bei Fokus innerhalb der Zeile                                                                                                                                                                          | Tab auf die Zeile; „Mehr“ bleibt per Tab erreichbar                       |
+| Gesperrt         | `--disabled-opacity`, Grund in der Zeile                                                                                                                                                                                                                       | `aria-disabled="true"`                                                    |
+| Lädt             | Platzhalter-Zeilen mit statischen Balken in `--surface-hover`                                                                                                                                                                                                  | `aria-busy="true"` an der Liste                                           |
+| Gewählt (Zusatz) | Fläche `--trow-bg-selected`; **alle** Texte und Zeichen auf der Zeile in `--trow-fg-selected`: Name, Nebenzeile, Symbol, Punkt (`--lrow-dot-size`), Stern, Fehlerwort. Zustandsfarben (`--status-*`, `--accent-text`) gelten dort nicht; Form und Wort bleiben | `aria-current="true"`                                                     |
 
 ### 21. Reiter
 
@@ -1560,14 +1627,14 @@ Aufgabe: Zwischen gleichrangigen Ansichten desselben Orts wechseln (Kopf des Sei
 
 Die Reiter stehen in einer Reihe (`--tab-row-gap`) und brechen nicht um; der Name wird nie gekürzt (kurze Wörter). Ein **Merkpunkt** (`--tab-pip-size`, in der Schriftfarbe des Reiters) zeigt, dass etwas auf dem Reiter Aufmerksamkeit braucht („Kontext“: wenig Platz übrig): gefüllt = Hinweis, Ring = Warnung; zusätzlich steht ein unsichtbarer Text für Hilfstechnik („Wenig Platz“). Der Punkt trägt die Form, nicht die Farbe.
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Schrift `--tab-fg`, Gewicht `--tab-weight`, keine Fläche; gewählt: Fläche `--tab-bg-selected`, Schrift `--tab-fg-selected`, Gewicht `--tab-weight-selected` | `role="tablist"` mit `role="tab"`; `aria-selected`; der gewählte Reiter hat `tabindex="0"`, die anderen `-1` |
-| Maus drüber | Fläche `--tab-bg-hover`, Schrift `--tab-fg-hover` | |
-| Gedrückt | trifft nicht zu: Der Reiter wechselt beim Klick sofort, die Fläche des gewählten Reiters ist die Rückmeldung | |
-| Tastatur-Fokus | Ring **außen** mit Abstand `--ring-offset`: `--focus-outline` | Pfeil links und rechts bewegen, Pos1 und Ende springen, Tab verlässt die Reihe; der Fokus folgt der Auswahl (automatische Aktivierung) |
-| Gesperrt | `--disabled-opacity`, der Grund steht im Tooltip | `aria-disabled="true"` |
-| Lädt | trifft nicht zu: Die Reiter stehen fest; wartet der Inhalt, zeigt der Inhalt Platzhalter | |
+| Zustand        | Aussehen und Tokens                                                                                                                                         | Bedienung                                                                                                                              |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Normal         | Schrift `--tab-fg`, Gewicht `--tab-weight`, keine Fläche; gewählt: Fläche `--tab-bg-selected`, Schrift `--tab-fg-selected`, Gewicht `--tab-weight-selected` | `role="tablist"` mit `role="tab"`; `aria-selected`; der gewählte Reiter hat `tabindex="0"`, die anderen `-1`                           |
+| Maus drüber    | Fläche `--tab-bg-hover`, Schrift `--tab-fg-hover`                                                                                                           |                                                                                                                                        |
+| Gedrückt       | trifft nicht zu: Der Reiter wechselt beim Klick sofort, die Fläche des gewählten Reiters ist die Rückmeldung                                                |                                                                                                                                        |
+| Tastatur-Fokus | Ring **außen** mit Abstand `--ring-offset`: `--focus-outline`                                                                                               | Pfeil links und rechts bewegen, Pos1 und Ende springen, Tab verlässt die Reihe; der Fokus folgt der Auswahl (automatische Aktivierung) |
+| Gesperrt       | `--disabled-opacity`, der Grund steht im Tooltip                                                                                                            | `aria-disabled="true"`                                                                                                                 |
+| Lädt           | trifft nicht zu: Die Reiter stehen fest; wartet der Inhalt, zeigt der Inhalt Platzhalter                                                                    |                                                                                                                                        |
 
 ### 22. Regler
 
@@ -1589,14 +1656,14 @@ Aufgabe: Einen Wert in einem Bereich einstellen, wo Annähern genügt (Temperatu
 
 Spur und Füllung sind der Fortschrittsbalken (Baustein 17). Der Daumen ist ein Kreis `--slider-thumb-size` in `--slider-thumb` mit einem Saum `--slider-halo-width` in `--slider-thumb-halo`, der ihn von der Füllung trennt (Lücke zeigt den Grund). Die Klickfläche ist die ganze Zeile `--slider-h`.
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Spur `--slider-track`, Füllung `--slider-fill` bis zum Wert, Daumen `--slider-thumb` mit Saum | Der Daumen hat `role="slider"`, `tabindex="0"`, `aria-valuemin`, `aria-valuemax`, `aria-valuenow` (und `aria-valuetext`, wenn die Zahl allein nichts sagt) |
-| Maus drüber | Zeiger `pointer` auf dem Daumen; die Fläche bleibt gleich (die Form trägt) | |
-| Gedrückt | trifft nicht zu: Beim Ziehen folgt der Daumen dem Zeiger; ein eigener Zustand brächte nichts | Ziehen und Klick auf die Spur setzen den Wert |
-| Tastatur-Fokus | Ring **außen** um den Daumen, Abstand `--ring-offset`: `--focus-outline` | Pfeile ändern in kleinen Schritten, Bild auf und Bild ab in großen, Pos1 und Ende springen an die Enden |
-| Gesperrt | `--disabled-opacity`; der Grund steht als Text unter dem Regler | `aria-disabled="true"` |
-| Lädt | trifft nicht zu: Der Wert liegt vor dem Zeigen fest; die Seite zeigt sonst Platzhalter | |
+| Zustand        | Aussehen und Tokens                                                                           | Bedienung                                                                                                                                                  |
+| -------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Normal         | Spur `--slider-track`, Füllung `--slider-fill` bis zum Wert, Daumen `--slider-thumb` mit Saum | Der Daumen hat `role="slider"`, `tabindex="0"`, `aria-valuemin`, `aria-valuemax`, `aria-valuenow` (und `aria-valuetext`, wenn die Zahl allein nichts sagt) |
+| Maus drüber    | Zeiger `pointer` auf dem Daumen; die Fläche bleibt gleich (die Form trägt)                    |                                                                                                                                                            |
+| Gedrückt       | trifft nicht zu: Beim Ziehen folgt der Daumen dem Zeiger; ein eigener Zustand brächte nichts  | Ziehen und Klick auf die Spur setzen den Wert                                                                                                              |
+| Tastatur-Fokus | Ring **außen** um den Daumen, Abstand `--ring-offset`: `--focus-outline`                      | Pfeile ändern in kleinen Schritten, Bild auf und Bild ab in großen, Pos1 und Ende springen an die Enden                                                    |
+| Gesperrt       | `--disabled-opacity`; der Grund steht als Text unter dem Regler                               | `aria-disabled="true"`                                                                                                                                     |
+| Lädt           | trifft nicht zu: Der Wert liegt vor dem Zeigen fest; die Seite zeigt sonst Platzhalter        |                                                                                                                                                            |
 
 ### 23. Popover
 
@@ -1619,14 +1686,14 @@ Aufgabe: Eine kurze Liste von Zielen an einem Auslöser zeigen, der selbst zu kl
 
 **Platzierung:** rechts neben dem Auslöser im Abstand `--popover-gap`, oben bündig mit ihm; die Position wird ins Fenster geschoben mit mindestens `--popover-edge` Rand (oben `--popover-top-min`, unter der Titelleiste). Eine Gruppenüberschrift (`--popover-label-font`, Gewicht 600, `--popover-label-fg`) benennt die Liste; die Zeilen sind die des Menüs, am Ende „Alle anzeigen“ mit Pfeil, getrennt durch Abstand statt Linie.
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Fläche `--popover-bg`, Zeilen wie im Menü (`--menu-row-*`) | `role="menu"` mit `aria-label` (der Name der Liste); Auslöser mit `aria-haspopup="menu"` und `aria-expanded` |
-| Maus drüber | Zeile: `--menu-row-bg-hover` wie im Menü | |
-| Gedrückt | Zeile: `--menu-row-bg-pressed`, Texte `--menu-row-fg-on-tint` wie im Menü | |
-| Tastatur-Fokus | Ring **innen** auf der Zeile: `--focus-inset` | Wie das Menü: Pfeile bewegen, Enter öffnet, Esc schließt und gibt den Fokus dem Auslöser zurück |
-| Gesperrt | trifft nicht zu: Ein Popover öffnet nur, wenn der Auslöser bedienbar ist; eine gesperrte Zeile folgt dem Menü (`aria-disabled`, Grund in der Nebenzeile) | |
-| Lädt | trifft nicht zu: Die Liste liegt beim Öffnen vor (sie steht schon in der Leiste); fehlt sie, bleibt der Auslöser gesperrt mit Grund | |
+| Zustand        | Aussehen und Tokens                                                                                                                                      | Bedienung                                                                                                    |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Normal         | Fläche `--popover-bg`, Zeilen wie im Menü (`--menu-row-*`)                                                                                               | `role="menu"` mit `aria-label` (der Name der Liste); Auslöser mit `aria-haspopup="menu"` und `aria-expanded` |
+| Maus drüber    | Zeile: `--menu-row-bg-hover` wie im Menü                                                                                                                 |                                                                                                              |
+| Gedrückt       | Zeile: `--menu-row-bg-pressed`, Texte `--menu-row-fg-on-tint` wie im Menü                                                                                |                                                                                                              |
+| Tastatur-Fokus | Ring **innen** auf der Zeile: `--focus-inset`                                                                                                            | Wie das Menü: Pfeile bewegen, Enter öffnet, Esc schließt und gibt den Fokus dem Auslöser zurück              |
+| Gesperrt       | trifft nicht zu: Ein Popover öffnet nur, wenn der Auslöser bedienbar ist; eine gesperrte Zeile folgt dem Menü (`aria-disabled`, Grund in der Nebenzeile) |                                                                                                              |
+| Lädt           | trifft nicht zu: Die Liste liegt beim Öffnen vor (sie steht schon in der Leiste); fehlt sie, bleibt der Auslöser gesperrt mit Grund                      |                                                                                                              |
 
 Ein Popover öffnet sich beim Klick, **nicht** beim Überfahren (Touch- und Tastaturnutzer hätten sonst keinen Weg); es schließt bei Klick daneben, Esc und Wahl.
 
@@ -1652,76 +1719,76 @@ Aufgabe: Den Zustand eines Dienstes ansehen, ohne die Seite zu wechseln (Modells
 
 Aufbau: Kopf mit Titel („Modellstatus“, `--popup-title-*`) links und „Schließen“ (Icon-Knopf) rechts; darunter Gruppen aus Überschrift und Text (`--popup-note-fg`), Zahlen mit Tabellenziffern, am Ende ein Knopf zur ganzen Seite („Ganze Seite“; bei Fehler „Status ansehen“, bei fehlendem Modell „Modell herunterladen“ als Primär-Knopf). **Platzierung:** bei ausgeklappter Leiste **über** dem Auslöser, links bündig (Abstand `--popup-gap`); bei eingeklappter Leiste rechts daneben, unten bündig; immer mit mindestens `--popup-edge` Rand im Fenster. Der Inhalt zeigt den Fehler als schlichten Satz mit Ursache und nächstem Schritt (Stimme).
 
-| Zustand | Aussehen und Tokens | Bedienung |
-|---|---|---|
-| Normal | Fläche `--popup-bg`, Titel `--popup-fg`, Text `--popup-note-fg`, Knöpfe nach Baustein 1 und 2 | `role="dialog"` (nicht modal) mit `aria-labelledby` auf den Titel; Auslöser mit `aria-haspopup="dialog"` und `aria-expanded` |
-| Maus drüber | trifft nicht zu: Das Popup selbst reagiert nicht; seine Knöpfe folgen ihren Bausteinen | |
-| Gedrückt | trifft nicht zu: nicht bedienbar als Ganzes; die Knöpfe folgen ihren Bausteinen | |
-| Tastatur-Fokus | Ringe der Knöpfe („Schließen“, „Ganze Seite“) nach Baustein 1 und 2 | Esc schließt und gibt den Fokus dem Auslöser zurück; „Schließen“ ist der erste Knopf in der Tab-Reihenfolge des Popups |
-| Gesperrt | trifft nicht zu: Das Popup ist immer lesbar; ist der Dienst nicht erreichbar, steht das als Text darin | |
-| Lädt | trifft nicht zu: Die Werte stehen beim Öffnen fest; fehlen sie noch, zeigt der Inhalt Platzhalter-Balken statt Zahlen (`aria-busy="true"`) | |
+| Zustand        | Aussehen und Tokens                                                                                                                        | Bedienung                                                                                                                    |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| Normal         | Fläche `--popup-bg`, Titel `--popup-fg`, Text `--popup-note-fg`, Knöpfe nach Baustein 1 und 2                                              | `role="dialog"` (nicht modal) mit `aria-labelledby` auf den Titel; Auslöser mit `aria-haspopup="dialog"` und `aria-expanded` |
+| Maus drüber    | trifft nicht zu: Das Popup selbst reagiert nicht; seine Knöpfe folgen ihren Bausteinen                                                     |                                                                                                                              |
+| Gedrückt       | trifft nicht zu: nicht bedienbar als Ganzes; die Knöpfe folgen ihren Bausteinen                                                            |                                                                                                                              |
+| Tastatur-Fokus | Ringe der Knöpfe („Schließen“, „Ganze Seite“) nach Baustein 1 und 2                                                                        | Esc schließt und gibt den Fokus dem Auslöser zurück; „Schließen“ ist der erste Knopf in der Tab-Reihenfolge des Popups       |
+| Gesperrt       | trifft nicht zu: Das Popup ist immer lesbar; ist der Dienst nicht erreichbar, steht das als Text darin                                     |                                                                                                                              |
+| Lädt           | trifft nicht zu: Die Werte stehen beim Öffnen fest; fehlen sie noch, zeigt der Inhalt Platzhalter-Balken statt Zahlen (`aria-busy="true"`) |                                                                                                                              |
 
 ### Kontrast der Bausteine
 
 Gerechnet von `.design-foundations/previews/_src/components-check.mjs` (liest die Token-Blöcke dieser Datei, löst jede `var()`-Kette bis zur Palettenstufe auf, rechnet WCAG-2.x-Kontrast). **456 Paare, hell und dunkel; 0 unter dem Ziel.** Hex-Werte in §Tokens und §Components: 0. Baustein-Tokens: 355, jedes verweist nur auf Aliase; jede Kette löst in beiden Schemata auf.
 
-| Art | Ziel | Paare | schlechtester Wert Dunkel | schlechtester Wert Hell |
-|---|---|---|---|---|
-| Ring | 3 : 1 | 37 | 4,54 (Fokusring: `--focus-ring` auf `--surface-active-pressed`) | 3,42 (Fokusring: `--focus-ring` auf `--surface-active-pressed`) |
-| Text | 4,5 : 1 | 109 | 5,11 (Knopf Gefährlich Maus drüber: `--btn-danger-fg-hover` auf `--btn-danger-bg-hover`) | 4,84 (Menü Nebenzeile Maus drüber: `--menu-row-fg-secondary` auf `--menu-row-bg-hover`) |
-| Fläche | 3 : 1 | 7 | 6,32 (Kontrollkästchen an: Füllung gegen glow: `--check-bg-on` auf `--glow`) | 5,37 (Kontrollkästchen an: Füllung gegen glow: `--check-bg-on` auf `--glow`) |
-| Symbol | 3 oder 4,5 : 1 | 39 | 3,82 (Werkzeug Symbol error: `--tool-mark-error` auf `--glow`) | 4,93 (Menü Haken Maus drüber: `--menu-check` auf `--menu-row-bg-hover`) |
-| Kante | 3 : 1 | 15 | 3,05 (Feldkante gegen glow: `--field-edge` auf `--glow`) | 3,08 (Feldkante gegen glow: `--field-edge` auf `--glow`) |
-| Spur | 3 : 1 | 10 | 3,05 (Schalter aus: Spur gegen glow: `--switch-track-off` auf `--glow`) | 3,08 (Schalter aus: Spur gegen glow: `--switch-track-off` auf `--glow`) |
-| Daumen | 3 : 1 | 6 | 3,36 (Schalter aus: Daumen gegen Spur: `--switch-thumb-off` auf `--switch-track-off`) | 3,43 (Schalter aus: Daumen gegen Spur: `--switch-thumb-off` auf `--switch-track-off`) |
-| Füllung | 3 : 1 | 5 | 3,42 (Fortschritt Fehler gegen Spur: `--progress-fill-error` auf `--progress-track`) | 4,17 (Fortschritt fertig gegen Spur: `--progress-fill-done` auf `--progress-track`) |
+| Art     | Ziel           | Paare | schlechtester Wert Dunkel                                                                | schlechtester Wert Hell                                                                 |
+| ------- | -------------- | ----- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Ring    | 3 : 1          | 37    | 4,54 (Fokusring: `--focus-ring` auf `--surface-active-pressed`)                          | 3,42 (Fokusring: `--focus-ring` auf `--surface-active-pressed`)                         |
+| Text    | 4,5 : 1        | 109   | 5,11 (Knopf Gefährlich Maus drüber: `--btn-danger-fg-hover` auf `--btn-danger-bg-hover`) | 4,84 (Menü Nebenzeile Maus drüber: `--menu-row-fg-secondary` auf `--menu-row-bg-hover`) |
+| Fläche  | 3 : 1          | 7     | 6,32 (Kontrollkästchen an: Füllung gegen glow: `--check-bg-on` auf `--glow`)             | 5,37 (Kontrollkästchen an: Füllung gegen glow: `--check-bg-on` auf `--glow`)            |
+| Symbol  | 3 oder 4,5 : 1 | 39    | 3,82 (Werkzeug Symbol error: `--tool-mark-error` auf `--glow`)                           | 4,93 (Menü Haken Maus drüber: `--menu-check` auf `--menu-row-bg-hover`)                 |
+| Kante   | 3 : 1          | 15    | 3,05 (Feldkante gegen glow: `--field-edge` auf `--glow`)                                 | 3,08 (Feldkante gegen glow: `--field-edge` auf `--glow`)                                |
+| Spur    | 3 : 1          | 10    | 3,05 (Schalter aus: Spur gegen glow: `--switch-track-off` auf `--glow`)                  | 3,08 (Schalter aus: Spur gegen glow: `--switch-track-off` auf `--glow`)                 |
+| Daumen  | 3 : 1          | 6     | 3,36 (Schalter aus: Daumen gegen Spur: `--switch-thumb-off` auf `--switch-track-off`)    | 3,43 (Schalter aus: Daumen gegen Spur: `--switch-thumb-off` auf `--switch-track-off`)   |
+| Füllung | 3 : 1          | 5     | 3,42 (Fortschritt Fehler gegen Spur: `--progress-fill-error` auf `--progress-track`)     | 4,17 (Fortschritt fertig gegen Spur: `--progress-fill-done` auf `--progress-track`)     |
 
 **Fokusring (DW-4.3) gegen jede Fläche.** Ziel 3 : 1 (WCAG 1.4.11 und 2.4.13).
 
 | Fläche (hinter oder unter dem Ring) | Dunkel | Hell |
-|---|---|---|
-| `--background` | 9,19 | 5,78 |
-| `--background-deep` | 9,19 | 5,80 |
-| `--glow` | 7,17 | 5,37 |
-| `--surface` | 8,65 | 5,99 |
-| `--surface-raised` | 7,87 | 5,99 |
-| `--surface-hover` | 7,87 | 5,37 |
-| `--surface-hover-strong` | 7,17 | 4,93 |
-| `--surface-voice` | 7,17 | 4,93 |
-| `--accent-bg-subtle` | 7,87 | 5,37 |
-| `--surface-active` | 6,40 | 4,49 |
-| `--surface-active-hover` | 5,56 | 3,99 |
-| `--surface-active-pressed` | 4,54 | 3,42 |
-| `--status-error-bg` | 7,95 | 5,34 |
-| `--status-success-bg` | 7,76 | 5,44 |
-| `--status-warning-bg` | 7,85 | 5,40 |
-| `--status-info-bg` | 7,80 | 5,40 |
+| ----------------------------------- | ------ | ---- |
+| `--background`                      | 9,19   | 5,78 |
+| `--background-deep`                 | 9,19   | 5,80 |
+| `--glow`                            | 7,17   | 5,37 |
+| `--surface`                         | 8,65   | 5,99 |
+| `--surface-raised`                  | 7,87   | 5,99 |
+| `--surface-hover`                   | 7,87   | 5,37 |
+| `--surface-hover-strong`            | 7,17   | 4,93 |
+| `--surface-voice`                   | 7,17   | 4,93 |
+| `--accent-bg-subtle`                | 7,87   | 5,37 |
+| `--surface-active`                  | 6,40   | 4,49 |
+| `--surface-active-hover`            | 5,56   | 3,99 |
+| `--surface-active-pressed`          | 4,54   | 3,42 |
+| `--status-error-bg`                 | 7,95   | 5,34 |
+| `--status-success-bg`               | 7,76   | 5,44 |
+| `--status-warning-bg`               | 7,85   | 5,40 |
+| `--status-info-bg`                  | 7,80   | 5,40 |
 
 **Ring für Vollton-Flächen** (`--focus-ring-solid`, außen mit Lücke) gegen jeden Grund hinter der Lücke, und die Ringe der Fensterknöpfe gegen ihre eigenen Flächen:
 
-| Fläche | Dunkel | Hell |
-|---|---|---|
-| `--background` (Ring `--focus-ring-solid`) | 15,18 | 12,91 |
-| `--background-deep` (Ring `--focus-ring-solid`) | 15,17 | 12,95 |
-| `--glow` (Ring `--focus-ring-solid`) | 11,83 | 12,00 |
-| `--surface` (Ring `--focus-ring-solid`) | 14,28 | 13,38 |
-| `--surface-raised` (Ring `--focus-ring-solid`) | 13,00 | 13,38 |
-| `--surface-hover` (Ring `--focus-ring-solid`) | 13,00 | 12,00 |
-| `--surface-hover-strong` (Ring `--focus-ring-solid`) | 11,83 | 11,01 |
-| `--surface-voice` (Ring `--focus-ring-solid`) | 11,83 | 11,01 |
-| `--accent-bg-subtle` (Ring `--focus-ring-solid`) | 13,00 | 12,00 |
-| `--surface-active` (Ring `--focus-ring-solid`) | 10,57 | 10,03 |
-| `--surface-active-hover` (Ring `--focus-ring-solid`) | 9,18 | 8,91 |
-| `--surface-active-pressed` (Ring `--focus-ring-solid`) | 7,50 | 7,63 |
-| `--status-error-bg` (Ring `--focus-ring-solid`) | 13,12 | 11,92 |
-| `--status-success-bg` (Ring `--focus-ring-solid`) | 12,82 | 12,16 |
-| `--status-warning-bg` (Ring `--focus-ring-solid`) | 12,97 | 12,07 |
-| `--status-info-bg` (Ring `--focus-ring-solid`) | 12,88 | 12,06 |
-| Fensterknopf: `--focus-ring` auf `--titlebar-btn-bg-hover` | 7,87 | 5,37 |
-| Fensterknopf: `--focus-ring` auf `--titlebar-btn-bg-pressed` | 6,40 | 4,49 |
-| Fensterknopf: `--focus-ring` auf `--glow` | 7,17 | 5,37 |
-| Schließen, Maus drüber: `--titlebar-close-ring-hover` auf `--titlebar-close-bg-hover` | 5,11 | 5,11 |
-| Schließen, gedrückt: `--titlebar-close-ring-pressed` auf `--titlebar-close-bg-pressed` | 9,29 | 6,21 |
+| Fläche                                                                                 | Dunkel | Hell  |
+| -------------------------------------------------------------------------------------- | ------ | ----- |
+| `--background` (Ring `--focus-ring-solid`)                                             | 15,18  | 12,91 |
+| `--background-deep` (Ring `--focus-ring-solid`)                                        | 15,17  | 12,95 |
+| `--glow` (Ring `--focus-ring-solid`)                                                   | 11,83  | 12,00 |
+| `--surface` (Ring `--focus-ring-solid`)                                                | 14,28  | 13,38 |
+| `--surface-raised` (Ring `--focus-ring-solid`)                                         | 13,00  | 13,38 |
+| `--surface-hover` (Ring `--focus-ring-solid`)                                          | 13,00  | 12,00 |
+| `--surface-hover-strong` (Ring `--focus-ring-solid`)                                   | 11,83  | 11,01 |
+| `--surface-voice` (Ring `--focus-ring-solid`)                                          | 11,83  | 11,01 |
+| `--accent-bg-subtle` (Ring `--focus-ring-solid`)                                       | 13,00  | 12,00 |
+| `--surface-active` (Ring `--focus-ring-solid`)                                         | 10,57  | 10,03 |
+| `--surface-active-hover` (Ring `--focus-ring-solid`)                                   | 9,18   | 8,91  |
+| `--surface-active-pressed` (Ring `--focus-ring-solid`)                                 | 7,50   | 7,63  |
+| `--status-error-bg` (Ring `--focus-ring-solid`)                                        | 13,12  | 11,92 |
+| `--status-success-bg` (Ring `--focus-ring-solid`)                                      | 12,82  | 12,16 |
+| `--status-warning-bg` (Ring `--focus-ring-solid`)                                      | 12,97  | 12,07 |
+| `--status-info-bg` (Ring `--focus-ring-solid`)                                         | 12,88  | 12,06 |
+| Fensterknopf: `--focus-ring` auf `--titlebar-btn-bg-hover`                             | 7,87   | 5,37  |
+| Fensterknopf: `--focus-ring` auf `--titlebar-btn-bg-pressed`                           | 6,40   | 4,49  |
+| Fensterknopf: `--focus-ring` auf `--glow`                                              | 7,17   | 5,37  |
+| Schließen, Maus drüber: `--titlebar-close-ring-hover` auf `--titlebar-close-bg-hover`  | 5,11   | 5,11  |
+| Schließen, gedrückt: `--titlebar-close-ring-pressed` auf `--titlebar-close-bg-pressed` | 9,29   | 6,21  |
 
 Zur Unterscheidung von der Füllung (Information, kein Paar, weil nicht benachbart): `--focus-ring-solid` gegen `--accent-solid` 1,87 (Dunkel), 2,23 (Hell); `--focus-ring` gegen `--accent-solid` 1,13 und 1,00.
 
@@ -1729,15 +1796,15 @@ Der Vollton (`--accent-solid`) steht **nicht** in der Tabelle, weil nichts, was 
 
 **Verbotene Kombinationen** (zur Kontrolle gerechnet; sie dürfen in keiner Spec vorkommen):
 
-| Paar | Dunkel | Hell | Ziel |
-|---|---|---|---|
-| `--text-secondary` auf `--surface-active` | 6,49 | 4,41 | 4,50 : 1 |
-| `--accent-text` auf `--surface-active` | 6,40 | 4,49 | 4,50 : 1 |
-| `--text-secondary` auf `--surface-active-hover` | 5,64 | 3,92 | 4,50 : 1 |
-| `--status-mark-warning` auf `--surface-active` | 6,46 | 4,42 | 3,00 : 1 |
-| `--status-mark-success` auf `--surface-active` | 6,95 | 4,17 | 3,00 : 1 |
-| `--control-edge` auf `--surface-active` | 2,73 | 2,57 | 3,00 : 1 |
-| `--focus-ring` auf `--accent-solid` | 1,13 | 1,00 | 3,00 : 1 |
+| Paar                                            | Dunkel | Hell | Ziel     |
+| ----------------------------------------------- | ------ | ---- | -------- |
+| `--text-secondary` auf `--surface-active`       | 6,49   | 4,41 | 4,50 : 1 |
+| `--accent-text` auf `--surface-active`          | 6,40   | 4,49 | 4,50 : 1 |
+| `--text-secondary` auf `--surface-active-hover` | 5,64   | 3,92 | 4,50 : 1 |
+| `--status-mark-warning` auf `--surface-active`  | 6,46   | 4,42 | 3,00 : 1 |
+| `--status-mark-success` auf `--surface-active`  | 6,95   | 4,17 | 3,00 : 1 |
+| `--control-edge` auf `--surface-active`         | 2,73   | 2,57 | 3,00 : 1 |
+| `--focus-ring` auf `--accent-solid`             | 1,13   | 1,00 | 3,00 : 1 |
 
 ## Daten
 
@@ -1762,38 +1829,59 @@ Alles Alias-Stufe: Die Werte verweisen nur auf Aliase, nie auf Palettenstufen un
   /* Schraffur: senkrechte Streifen des Akzents, halb Streifen, halb Grund (kein Winkel: „Keine zweite Schräge“). */
   --data-hatch-on: 3px;
   --data-hatch-off: 3px;
-  --data-hatch: repeating-linear-gradient(90deg, var(--accent-solid) 0 var(--data-hatch-on), transparent var(--data-hatch-on) calc(var(--data-hatch-on) + var(--data-hatch-off)));
+  --data-hatch: repeating-linear-gradient(
+    90deg,
+    var(--accent-solid) 0 var(--data-hatch-on),
+    transparent var(--data-hatch-on)
+      calc(var(--data-hatch-on) + var(--data-hatch-off))
+  );
 
   /* Zwölf Plätze: Folge Pol voll, Akzent voll, Akzent schraffiert, wiederholt. Schluss eines Rings: Regel unten. */
-  --data-1: var(--data-pole);   --data-2: var(--data-accent);   --data-3: var(--data-hatch);
-  --data-4: var(--data-pole);   --data-5: var(--data-accent);   --data-6: var(--data-hatch);
-  --data-7: var(--data-pole);   --data-8: var(--data-accent);   --data-9: var(--data-hatch);
-  --data-10: var(--data-pole);  --data-11: var(--data-accent);  --data-12: var(--data-hatch);
+  --data-1: var(--data-pole);
+  --data-2: var(--data-accent);
+  --data-3: var(--data-hatch);
+  --data-4: var(--data-pole);
+  --data-5: var(--data-accent);
+  --data-6: var(--data-hatch);
+  --data-7: var(--data-pole);
+  --data-8: var(--data-accent);
+  --data-9: var(--data-hatch);
+  --data-10: var(--data-pole);
+  --data-11: var(--data-accent);
+  --data-12: var(--data-hatch);
 
   /* Rollen */
-  --data-bar: var(--data-accent);          /* Balken, Linie, Punkte: eine Reihe, ein Ton */
+  --data-bar: var(
+    --data-accent
+  ); /* Balken, Linie, Punkte: eine Reihe, ein Ton */
   --data-line: var(--data-accent);
-  --data-primary: var(--data-accent);      /* erster Teil einer Zweiteilung (Ollama, Grafikkarte) */
-  --data-secondary: var(--data-hatch);     /* zweiter Teil (andere Programme, CPU), auch die Teile des Kontexts */
-  --data-outline: var(--accent-solid);     /* Umriss eines schraffierten Stücks */
-  --data-fill: var(--accent-solid);        /* Füllung eines Messbalkens, gleich --progress-fill */
-  --data-track: var(--surface-active);     /* Spur, gleich --progress-track */
-  --data-zero: var(--text-secondary);      /* Nulllinie, Reservemarke, Leitlinie */
+  --data-primary: var(
+    --data-accent
+  ); /* erster Teil einer Zweiteilung (Ollama, Grafikkarte) */
+  --data-secondary: var(
+    --data-hatch
+  ); /* zweiter Teil (andere Programme, CPU), auch die Teile des Kontexts */
+  --data-outline: var(--accent-solid); /* Umriss eines schraffierten Stücks */
+  --data-fill: var(
+    --accent-solid
+  ); /* Füllung eines Messbalkens, gleich --progress-fill */
+  --data-track: var(--surface-active); /* Spur, gleich --progress-track */
+  --data-zero: var(--text-secondary); /* Nulllinie, Reservemarke, Leitlinie */
   --data-label: var(--text);
   --data-label-quiet: var(--text-secondary);
 
   /* Maße */
-  --data-gap: 2px;                         /* Lücke zwischen Teilen; der Grund scheint durch */
+  --data-gap: 2px; /* Lücke zwischen Teilen; der Grund scheint durch */
   --data-outline-w: 1.5px;
-  --data-meter-h: var(--space-2);          /* Messbalken, gleich --progress-h */
-  --data-bar-h: 18px;                      /* Balkendicke bei bis zu 12 Werten */
-  --data-bar-h-dense: 14px;                /* ab 13 Werten */
-  --data-row-pitch: 32px;                  /* Zeilenabstand der Balken bis 12 Werten */
-  --data-row-pitch-dense: 24px;            /* ab 13 Werten */
-  --data-row-pitch-wrapped: 36px;          /* Zeile, deren Name auf zwei Zeilen umbricht */
+  --data-meter-h: var(--space-2); /* Messbalken, gleich --progress-h */
+  --data-bar-h: 18px; /* Balkendicke bei bis zu 12 Werten */
+  --data-bar-h-dense: 14px; /* ab 13 Werten */
+  --data-row-pitch: 32px; /* Zeilenabstand der Balken bis 12 Werten */
+  --data-row-pitch-dense: 24px; /* ab 13 Werten */
+  --data-row-pitch-wrapped: 36px; /* Zeile, deren Name auf zwei Zeilen umbricht */
   --data-line-w: 2px;
   --data-point-r: 4px;
-  --data-estimate-edge: 6px;               /* gestricheltes Ende eines geschätzten Balkens, innerhalb seiner Länge */
+  --data-estimate-edge: 6px; /* gestricheltes Ende eines geschätzten Balkens, innerhalb seiner Länge */
 }
 ```
 
@@ -1804,7 +1892,7 @@ Alles Alias-Stufe: Die Werte verweisen nur auf Aliase, nie auf Palettenstufen un
 3. **Der Schluss eines Rings.** Beim Kreis grenzt das letzte Stück an das erste. Hätte das letzte Stück dasselbe Aussehen wie das erste (bei 4, 7 und 10 Stücken: Pol voll), nimmt es das Aussehen, das keinem seiner beiden Nachbarn gehört: Akzent voll. Gerechnet für 2 bis 12 Stücke (Tabelle unten).
 4. **Nachbarn unterscheiden sich in der mittleren Leuchtdichte um mindestens 1,3 : 1** (eigenes Maß dieser DNA; WCAG kennt dafür keinen Wert). Die mittlere Leuchtdichte einer Schraffur ist der Mittelwert aus Streifenfarbe und dem, was durch die Lücken scheint (Grund oder Spur); gerechnet gegen jeden dieser sieben Untergründe, der schlechteste Wert zählt.
 5. **Jede Tinte hält ≥ 3 : 1 gegen jeden der sechs Gründe**, in beiden Schemata (WCAG 1.4.11): Pol, Akzent, die Streifen und der Umriss. Text im Diagramm nimmt `--data-label` oder `--data-label-quiet` (≥ 4,5 : 1).
-6. **Ehrliche Grenze der Schraffur.** In Hell ist die *mittlere* Leuchtdichte eines schraffierten Stücks hoch (der Grund scheint durch); gegen den Grund hält es nur über Streifen und Umriss, nicht über die Fläche. Darum trägt jedes schraffierte Stück einen Umriss von `--data-outline-w` in `--data-outline` und eine Lücke.
+6. **Ehrliche Grenze der Schraffur.** In Hell ist die _mittlere_ Leuchtdichte eines schraffierten Stücks hoch (der Grund scheint durch); gegen den Grund hält es nur über Streifen und Umriss, nicht über die Fläche. Darum trägt jedes schraffierte Stück einen Umriss von `--data-outline-w` in `--data-outline` und eine Lücke.
 7. **Mengen sind nie nur Farbe.** Größe liegt in Länge oder Lage (Munzner 2014), nie im Ton. Negativ ist kein eigenes Aussehen: Es zeigt sich durch die Lage unter der Nulllinie und das Minuszeichen.
 8. **Eine Hervorhebung je Bild** (Knaflic 2015): In einem Diagramm trägt höchstens ein Ding den Akzent mehr als die anderen.
 9. **Fehlend erzeugt nichts, Schätzung bleibt Schätzung.** Siehe `JOURNEY.md` `DA-0` Regel 8. Das Kennzeichen eines ganz geschätzten Balkens ist ein gestrichelter Rand (`--data-estimate-edge`, innerhalb seiner Länge, nie darüber hinaus) **oder** die Schraffur (Entscheidung des Nutzers vom 2026-11-16); „ca.“ vor jeder Zahl und das Wort „geschätzt“ am Kopf stehen immer. Der Messbalken des Kontexts trägt den gestrichelten Rand, seine Teil-Balken die Schraffur. Die Schraffur sind senkrechte Streifen (entschieden: keine Punkte).
@@ -1816,48 +1904,48 @@ Alles Alias-Stufe: Die Werte verweisen nur auf Aliase, nie auf Palettenstufen un
 
 Gerechnet von `.design-foundations/previews/_src/daten-check.mjs` (liest die Token-Blöcke dieser Datei, löst jede `var()`-Kette auf, WCAG-2.x-Kontrast; prüft außerdem, dass §Daten keinen Farbwert, keine Mischung und keine Palettenstufe enthält). **83 Paare, hell und dunkel; 0 unter dem Ziel.** Sechs Gründe: `--background`, `--background-deep`, `--glow`, `--surface`, `--surface-raised`, `--surface-hover`; als siebter Untergrund der Schraffur die Spur `--data-track`.
 
-| Art | Ziel | Paare | schlechtester Wert Dunkel | schlechtester Wert Hell |
-|---|---|---|---|---|
-| Tinte gegen Grund | 3,0 : 1 | 12 | 6,32 (Akzent auf glow) | 5,37 (Akzent auf glow) |
-| Rolle gegen Grund | 3,0 : 1 | 36 | 6,32 (--data-bar auf glow) | 5,28 (--data-zero auf glow) |
-| Beschriftung gegen Grund | 4,5 : 1 | 12 | 7,27 (--data-label-quiet auf glow) | 5,28 (--data-label-quiet auf glow) |
-| Füllung gegen Spur | 3,0 : 1 | 1 | 5,65 (--data-fill auf --data-track) | 4,49 (--data-fill auf --data-track) |
-| Streifen gegen Spur | 3,0 : 1 | 1 | 5,65 (--data-accent auf --data-track) | 4,49 (--data-accent auf --data-track) |
-| Nachbarn (Paar) | 1,3 : 1 | 3 | 1,69 (Akzent voll – Akzent schraffiert auf data-track) | 2,23 (Pol voll – Akzent voll auf background) |
-| Zweiteilung (primary / secondary) | 1,3 : 1 | 7 | 1,69 (A–H auf data-track) | 2,75 (A–H auf data-track) |
-| Nachbarn im Ring | 1,3 : 1 | 11 | 1,69 (n=3 auf 2-3 auf data-track) | 2,23 (n=2 auf 1-2 auf background) |
+| Art                               | Ziel    | Paare | schlechtester Wert Dunkel                              | schlechtester Wert Hell                      |
+| --------------------------------- | ------- | ----- | ------------------------------------------------------ | -------------------------------------------- |
+| Tinte gegen Grund                 | 3,0 : 1 | 12    | 6,32 (Akzent auf glow)                                 | 5,37 (Akzent auf glow)                       |
+| Rolle gegen Grund                 | 3,0 : 1 | 36    | 6,32 (--data-bar auf glow)                             | 5,28 (--data-zero auf glow)                  |
+| Beschriftung gegen Grund          | 4,5 : 1 | 12    | 7,27 (--data-label-quiet auf glow)                     | 5,28 (--data-label-quiet auf glow)           |
+| Füllung gegen Spur                | 3,0 : 1 | 1     | 5,65 (--data-fill auf --data-track)                    | 4,49 (--data-fill auf --data-track)          |
+| Streifen gegen Spur               | 3,0 : 1 | 1     | 5,65 (--data-accent auf --data-track)                  | 4,49 (--data-accent auf --data-track)        |
+| Nachbarn (Paar)                   | 1,3 : 1 | 3     | 1,69 (Akzent voll – Akzent schraffiert auf data-track) | 2,23 (Pol voll – Akzent voll auf background) |
+| Zweiteilung (primary / secondary) | 1,3 : 1 | 7     | 1,69 (A–H auf data-track)                              | 2,75 (A–H auf data-track)                    |
+| Nachbarn im Ring                  | 1,3 : 1 | 11    | 1,69 (n=3 auf 2-3 auf data-track)                      | 2,23 (n=2 auf 1-2 auf background)            |
 
 **Die zwei Farben** (relative Leuchtdichte; Kontrast gegen den schwächsten der sechs Gründe):
 
-| Farbe | Hell: Leuchtdichte | Hell: schwächster Grund | Dunkel: Leuchtdichte | Dunkel: schwächster Grund |
-|---|---|---|---|---|
-| Pol (`--data-pole`) | 0,027 | 12,00 : 1 | 0,804 | 11,83 : 1 |
-| Akzent (`--data-accent`) | 0,122 | 5,37 : 1 | 0,406 | 6,32 : 1 |
+| Farbe                    | Hell: Leuchtdichte | Hell: schwächster Grund | Dunkel: Leuchtdichte | Dunkel: schwächster Grund |
+| ------------------------ | ------------------ | ----------------------- | -------------------- | ------------------------- |
+| Pol (`--data-pole`)      | 0,027              | 12,00 : 1               | 0,804                | 11,83 : 1                 |
+| Akzent (`--data-accent`) | 0,122              | 5,37 : 1                | 0,406                | 6,32 : 1                  |
 
 **Nachbarn nach mittlerer Leuchtdichte** (Verhältnis; bei der Schraffur der Mittelwert aus Streifen und Untergrund, der schlechteste der sieben Untergründe; Ziel ≥ 1,3 : 1):
 
-| Paar | Hell | Dunkel |
-|---|---|---|
-| Pol voll – Akzent voll | 2,23 : 1 | 1,87 : 1 |
+| Paar                             | Hell     | Dunkel   |
+| -------------------------------- | -------- | -------- |
+| Pol voll – Akzent voll           | 2,23 : 1 | 1,87 : 1 |
 | Akzent voll – Akzent schraffiert | 2,75 : 1 | 1,69 : 1 |
-| Akzent schraffiert – Pol voll | 6,14 : 1 | 3,17 : 1 |
+| Akzent schraffiert – Pol voll    | 6,14 : 1 | 3,17 : 1 |
 
-**Ehrliche Grenze der Schraffur** (Regel 6): Ihre *mittlere* Leuchtdichte hebt sich in Hell nur um 1,69 : 1 vom Grund ab (Dunkel 3,68 : 1). Die Fläche allein trägt das nicht; Streifen und Umriss (≥ 5,37 : 1) tragen es.
+**Ehrliche Grenze der Schraffur** (Regel 6): Ihre _mittlere_ Leuchtdichte hebt sich in Hell nur um 1,69 : 1 vom Grund ab (Dunkel 3,68 : 1). Die Fläche allein trägt das nicht; Streifen und Umriss (≥ 5,37 : 1) tragen es.
 
 **Ringe mit 2 bis 12 Stücken.** Aussehen des letzten Stücks nach Regel 3: 2: Akzent voll, 3: Akzent schraffiert, 4: Akzent voll, 5: Akzent voll, 6: Akzent schraffiert, 7: Akzent voll, 8: Akzent voll, 9: Akzent schraffiert, 10: Akzent voll, 11: Akzent voll, 12: Akzent schraffiert. Alle Nachbarpaare, auch das Paar letztes und erstes, halten ≥ 1,3 : 1 (schlechtester Wert Dunkel 1,69, Hell 2,23).
 
 **Sehschwäche-Simulation** (Machado, Oliveira und Fernandes 2009, Schweregrad 1,0). Abstand der Nachbarn in OKLab × 100, bei der Schraffur die mittlere Farbe auf `--surface`; ab etwa 2 ist ein Unterschied sichtbar:
 
-| Schema | Sicht | Pol – Akzent | Akzent – schraffiert | schraffiert – Pol |
-|---|---|---|---|---|
-| Hell | normal | 21,2 | 32,6 | 52,2 |
-| Hell | Protanopie | 18,6 | 34,4 | 51,7 |
-| Hell | Deuteranopie | 21,3 | 32,2 | 52,2 |
-| Hell | Tritanopie | 21,8 | 32,2 | 52,0 |
-| Dunkel | normal | 21,6 | 15,3 | 34,4 |
-| Dunkel | Protanopie | 24,2 | 14,4 | 37,2 |
-| Dunkel | Deuteranopie | 20,1 | 15,4 | 33,4 |
-| Dunkel | Tritanopie | 21,8 | 15,5 | 34,3 |
+| Schema | Sicht        | Pol – Akzent | Akzent – schraffiert | schraffiert – Pol |
+| ------ | ------------ | ------------ | -------------------- | ----------------- |
+| Hell   | normal       | 21,2         | 32,6                 | 52,2              |
+| Hell   | Protanopie   | 18,6         | 34,4                 | 51,7              |
+| Hell   | Deuteranopie | 21,3         | 32,2                 | 52,2              |
+| Hell   | Tritanopie   | 21,8         | 32,2                 | 52,0              |
+| Dunkel | normal       | 21,6         | 15,3                 | 34,4              |
+| Dunkel | Protanopie   | 24,2         | 14,4                 | 37,2              |
+| Dunkel | Deuteranopie | 20,1         | 15,4                 | 33,4              |
+| Dunkel | Tritanopie   | 21,8         | 15,5                 | 34,3              |
 
 Kleinster Nachbarabstand in allen Sichten: 14,4. Die Nachbarn bleiben in jeder Sicht unterscheidbar; die Identität trägt trotzdem nie die Farbe (Regel 1).
 

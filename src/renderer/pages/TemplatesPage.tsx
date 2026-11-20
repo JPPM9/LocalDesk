@@ -120,7 +120,7 @@ export function TemplatesPage() {
           <button
             type="button"
             onClick={() => navigate(`/templates/${NEW}`)}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-3 py-2 font-medium text-white hover:opacity-90"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-3 py-2 font-medium text-accent-fg hover:opacity-90"
           >
             <BookmarkPlus size={15} />
             {t('templates.new')}
@@ -188,7 +188,7 @@ export function TemplatesPage() {
                   type="button"
                   onClick={() => void onSave()}
                   disabled={!dirty}
-                  className="flex items-center gap-2 rounded bg-accent px-3 py-1 text-xs text-white disabled:opacity-40"
+                  className="flex items-center gap-2 rounded bg-accent px-3 py-1 text-xs text-accent-fg disabled:opacity-40"
                 >
                   <Save size={14} />
                   {t('templates.save')}

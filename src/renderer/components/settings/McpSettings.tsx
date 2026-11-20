@@ -149,7 +149,7 @@ export function McpSettings() {
             <button
               type="button"
               onClick={() => void save()}
-              className="rounded bg-accent px-3 py-1 text-white"
+              className="rounded bg-accent px-3 py-1 text-accent-fg"
             >
               {t('mcp.save')}
             </button>
@@ -385,7 +385,7 @@ function ToolRow({
                 current === permission
                   ? permission === 'off'
                     ? 'bg-surface-hover font-medium text-text'
-                    : 'bg-accent text-white'
+                    : 'bg-accent text-accent-fg'
                   : 'text-muted hover:bg-surface-hover'
               }`}
             >

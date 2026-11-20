@@ -157,7 +157,7 @@ export function IndexButton({
       type="button"
       onClick={() => void start()}
       disabled={disabled || view.config.sources.length === 0}
-      className="flex items-center gap-2 rounded bg-accent px-3 py-1 text-xs text-white disabled:opacity-40"
+      className="flex items-center gap-2 rounded bg-accent px-3 py-1 text-xs text-accent-fg disabled:opacity-40"
     >
       <RefreshCw size={13} />
       {view.stats.indexedAt ? t('knowledge.reindex') : t('knowledge.index')}

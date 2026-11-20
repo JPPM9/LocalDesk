@@ -105,7 +105,7 @@ export function MailPage() {
           action={
             <Link
               to="/settings"
-              className="inline-block rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-white hover:opacity-90"
+              className="inline-block rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-accent-fg hover:opacity-90"
             >
               {t('mail.toSettings')}
             </Link>

@@ -146,7 +146,7 @@ export function MailSettings() {
                 type="button"
                 onClick={() => void save()}
                 disabled={!clientId.trim() || !clientSecret.trim()}
-                className="rounded bg-accent px-3 py-1 text-white disabled:opacity-40"
+                className="rounded bg-accent px-3 py-1 text-accent-fg disabled:opacity-40"
               >
                 {t('mcp.save')}
               </button>
@@ -238,7 +238,7 @@ export function MailSettings() {
                 <button
                   type="button"
                   onClick={() => void connect()}
-                  className="rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90"
+                  className="rounded bg-accent px-3 py-1 text-xs text-accent-fg hover:opacity-90"
                 >
                   {t(
                     accounts.length > 0
@@ -262,7 +262,7 @@ export function MailSettings() {
               <button
                 type="button"
                 onClick={startEdit}
-                className="rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90"
+                className="rounded bg-accent px-3 py-1 text-xs text-accent-fg hover:opacity-90"
               >
                 {t('mailSettings.setUp')}
               </button>
