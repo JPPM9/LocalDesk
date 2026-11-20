@@ -3,7 +3,7 @@
 Jede Version hat hier einen Abschnitt `## <Version> – <Datum>`. Sein Text wird beim Release zu
 den Release-Notizen auf GitHub – und erscheint in LocalDesk unter „Nach Updates suchen“.
 
-## Unveröffentlicht
+## 0.1.1 – 2026-11-20
 
 **Oberfläche**
 
@@ -12,8 +12,10 @@ den Release-Notizen auf GitHub – und erscheint in LocalDesk unter „Nach Upda
   Breite ist sie schmal und lässt sich als Überlagerung öffnen (Strg+B).
 - Befehlspalette (Strg+K): Seiten, Befehle, Projekte und Chats finden, auch im Chat-Inhalt. Zoom, Vollbild und Entwicklerwerkzeuge sind
   jetzt Befehle der Palette, ihre Kürzel bleiben.
-- Eigene Titelleiste statt der Windows-Menüzeile.
-- Startseite „Dein PC“ mit geladenem Modell und Grafikspeicher.
+- Eigene Titelleiste statt der Windows-Menüzeile. Zoom (Strg+Plus, Strg+Minus, Strg+0), Vollbild (F11), Entwicklerwerkzeuge
+  (Strg+Umschalt+I) und Neuladen (Strg+R) funktionieren weiter über ihre Kürzel.
+- Startseite „Dein PC“ mit geladenem Modell und Grafikspeicher. Ein Klick auf den Modellstatus unten in der Seitenleiste öffnet ein
+  Popup mit Ollama-Zustand, geladenen Modellen und Grafikkarte.
 - Wissen, Skills und E-Mail stehen im „+“-Menü des Eingabefelds, unter Einstellungen → Verwalten und in der Palette. Eingeschaltete
   Funktionen erscheinen als Marken über dem Text; die Modellauswahl sitzt im Eingabefeld.
 - Quellen stehen als Fußnoten unter der Antwort. Neues App-Symbol.
