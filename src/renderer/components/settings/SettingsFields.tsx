@@ -62,7 +62,7 @@ export function SettingsFields({
           onChange={(e) => set('systemPrompt', e.target.value || undefined)}
           rows={6}
           placeholder={t('settingsPanel.systemPromptPlaceholder')}
-          className="w-full resize-y rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent"
+          className="field w-full resize-y"
         />
       </Field>
 
@@ -84,7 +84,7 @@ export function SettingsFields({
               e.target.value ? Number(e.target.value) : undefined,
             )
           }
-          className="w-full rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent"
+          className="field w-full"
         >
           <option value="">
             {t('settingsPanel.contextDefault', {
@@ -148,7 +148,7 @@ export function SettingsFields({
             )
           }
           placeholder={t('settingsPanel.seedPlaceholder')}
-          className="w-full rounded border border-border bg-bg px-2 py-2 tabular-nums outline-none focus:border-accent"
+          className="field w-full tabular-nums"
         />
       </Field>
 
@@ -164,7 +164,7 @@ export function SettingsFields({
           <select
             value={thinkToValue(settings.think)}
             onChange={(e) => set('think', valueToThink(e.target.value))}
-            className="w-full rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent"
+            className="field w-full"
           >
             <option value="">{t('settingsPanel.default')}</option>
             {style === 'toggle' ? (

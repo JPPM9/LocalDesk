@@ -1,9 +1,9 @@
 import { useState, type KeyboardEvent } from 'react';
 import { NavLink } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { FolderInput, Pencil, Trash2 } from 'lucide-react';
 import type { ChatFolder, ChatSummary } from '../../../shared/api';
 import { MoveMenu } from './MoveMenu';
+import { RowMenu } from '../RowMenu';
 import { messageLocale } from '../../../shared/messages';
 
 /** Datentyp beim Ziehen – so erkennen Ordner, dass ein Chat ankommt. */
@@ -68,35 +68,33 @@ export function ChatRow({
           event.dataTransfer.effectAllowed = 'move';
         }}
         className={({ isActive }) =>
-          `group my-px flex items-center gap-1 rounded-lg px-3 py-2 text-sm ${
+          `group my-px flex h-[38px] items-center gap-1 rounded-[var(--radius-md)] px-3 text-sm ${
             isActive
-              ? 'bg-surface-hover font-medium text-text'
+              ? 'bg-surface-active font-medium text-[var(--text-on-tint)]'
               : 'text-muted hover:bg-surface-hover hover:text-text'
           }`
         }
       >
         <span className="min-w-0 flex-1 truncate">{chat.title}</span>
-        <span
-          className={`shrink-0 gap-0.5 group-hover:flex ${menuOpen ? 'flex' : 'hidden'}`}
-        >
-          <IconButton
-            label={t('folders.moveTo')}
-            onClick={() => setMenuOpen((o) => !o)}
-          >
-            <FolderInput size={13} />
-          </IconButton>
-          <IconButton
-            label={t('chat.rename')}
-            onClick={() => {
-              setDraft(chat.title);
-              setEditing(true);
-            }}
-          >
-            <Pencil size={13} />
-          </IconButton>
-          <IconButton label={t('chat.delete')} onClick={() => onDelete(chat)}>
-            <Trash2 size={13} />
-          </IconButton>
+        <span className="shrink-0 opacity-0 group-focus-within:opacity-100 group-hover:opacity-100">
+          <RowMenu
+            name={chat.title}
+            items={[
+              { label: t('folders.moveTo'), onClick: () => setMenuOpen(true) },
+              {
+                label: t('chat.rename'),
+                onClick: () => {
+                  setDraft(chat.title);
+                  setEditing(true);
+                },
+              },
+              {
+                label: t('chat.delete'),
+                danger: true,
+                onClick: () => onDelete(chat),
+              },
+            ]}
+          />
         </span>
       </NavLink>
       {menuOpen && (
@@ -111,32 +109,5 @@ export function ChatRow({
         />
       )}
     </div>
-  );
-}
-
-export function IconButton({
-  label,
-  onClick,
-  children,
-}: {
-  label: string;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      title={label}
-      aria-label={label}
-      onClick={(event) => {
-        // Der Knopf liegt im Link – ohne das würde der Klick auch den Chat öffnen.
-        event.preventDefault();
-        event.stopPropagation();
-        onClick();
-      }}
-      className="rounded-md p-1 text-subtle hover:bg-surface hover:text-text"
-    >
-      {children}
-    </button>
   );
 }

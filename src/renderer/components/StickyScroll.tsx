@@ -100,7 +100,7 @@ export function StickyScroll({
           }}
           title={t('chat.jumpToBottom')}
           aria-label={t('chat.jumpToBottom')}
-          className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full border border-border bg-surface px-3 py-2 text-xs text-muted shadow-lg hover:text-text"
+          className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-surface px-3 py-2 text-xs text-muted hover:text-text shadow-card"
         >
           <ArrowDown size={14} />
           {t('chat.jumpToBottom')}

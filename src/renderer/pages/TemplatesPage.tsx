@@ -115,12 +115,12 @@ export function TemplatesPage() {
 
   return (
     <div className="flex h-full">
-      <aside className="flex w-[270px] shrink-0 flex-col border-r border-border bg-surface">
+      <aside className="flex w-[270px] shrink-0 flex-col bg-surface">
         <div className="px-3 pt-3 pb-2">
           <button
             type="button"
             onClick={() => navigate(`/templates/${NEW}`)}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-3 py-2 font-medium text-white hover:opacity-90"
+            className="btn btn-primary flex w-full items-center justify-center gap-2"
           >
             <BookmarkPlus size={15} />
             {t('templates.new')}
@@ -167,7 +167,7 @@ export function TemplatesPage() {
                     onClick={() => navigate(`/chat?template=${draft.id}`)}
                     disabled={dirty}
                     title={dirty ? t('templates.saveFirst') : undefined}
-                    className="flex items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-50"
+                    className="btn btn-secondary flex items-center gap-2"
                   >
                     <MessageSquarePlus size={14} />
                     {t('templates.startChat')}
@@ -179,7 +179,7 @@ export function TemplatesPage() {
                     onClick={() => void onDelete()}
                     title={t('templates.delete')}
                     aria-label={t('templates.delete')}
-                    className="rounded border border-border px-2 py-1 hover:bg-surface-hover"
+                    className="rounded px-2 py-1 hover:bg-surface-hover bg-surface-hover"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -188,7 +188,7 @@ export function TemplatesPage() {
                   type="button"
                   onClick={() => void onSave()}
                   disabled={!dirty}
-                  className="flex items-center gap-2 rounded bg-accent px-3 py-1 text-xs text-white disabled:opacity-40"
+                  className="btn btn-primary flex items-center gap-2"
                 >
                   <Save size={14} />
                   {t('templates.save')}
@@ -212,7 +212,7 @@ export function TemplatesPage() {
                   value={draft.name}
                   onChange={(e) => update({ name: e.target.value })}
                   placeholder={t('templates.namePlaceholder')}
-                  className="w-full rounded border border-border bg-surface px-2 py-2 outline-none focus:border-accent"
+                  className="w-full rounded bg-surface px-2 py-2 outline-none focus:border-accent shadow-card"
                 />
               </Field>
 
@@ -227,7 +227,7 @@ export function TemplatesPage() {
                 <select
                   value={draft.model ?? ''}
                   onChange={(e) => chooseModel(e.target.value)}
-                  className="w-full rounded border border-border bg-surface px-2 py-2 outline-none focus:border-accent"
+                  className="w-full rounded bg-surface px-2 py-2 outline-none focus:border-accent shadow-card"
                 >
                   <option value="">{t('templates.anyModel')}</option>
                   {modelMissing && (

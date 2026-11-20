@@ -62,7 +62,7 @@ export function SaveNoteButton({
           disabled={state.kind === 'saving'}
           title={label}
           aria-label={label}
-          className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
+          className="icon-btn shrink-0"
         >
           <StateIcon state={state} size={17} />
         </button>

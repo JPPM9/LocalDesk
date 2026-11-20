@@ -143,7 +143,7 @@ export function AccessCard({ call, onDecision }: AccessCardProps) {
           type="button"
           disabled={ids.length === 0}
           onClick={() => decide('chat')}
-          className="rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90 disabled:opacity-50"
+          className="btn btn-primary"
         >
           {t('access.allowChat')}
         </button>
@@ -151,14 +151,14 @@ export function AccessCard({ call, onDecision }: AccessCardProps) {
           type="button"
           disabled={ids.length === 0}
           onClick={() => decide('once')}
-          className="rounded border border-border bg-surface px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-50"
+          className="btn btn-secondary"
         >
           {t('access.allowOnce')}
         </button>
         <button
           type="button"
           onClick={() => onDecision(call.id, 'deny')}
-          className="rounded border border-border bg-surface px-3 py-1 text-xs hover:bg-surface-hover"
+          className="btn btn-secondary"
         >
           {t('toolCall.deny')}
         </button>

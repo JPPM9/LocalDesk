@@ -113,7 +113,7 @@ function Dialog({
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-[60] dialog-scrim flex items-center justify-center p-4"
       onClick={() => onSettle(false)}
     >
       <div
@@ -121,7 +121,7 @@ function Dialog({
         aria-modal="true"
         aria-labelledby="confirm-title"
         aria-describedby="confirm-message"
-        className="w-full max-w-sm rounded-xl border border-border bg-surface p-5 shadow-xl"
+        className="dialog w-full max-w-[440px]"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-start gap-3">
@@ -135,7 +135,7 @@ function Dialog({
             <Icon size={18} />
           </span>
           <div className="min-w-0">
-            <h2 id="confirm-title" className="font-medium">
+            <h2 id="confirm-title" className="text-lg font-semibold">
               {title}
             </h2>
             <p
@@ -151,7 +151,7 @@ function Dialog({
             ref={cancelRef}
             type="button"
             onClick={() => onSettle(false)}
-            className="rounded-lg border border-border bg-surface-2 px-4 py-2 text-sm hover:bg-surface-hover"
+            className="btn btn-secondary"
           >
             {t('dialog.cancel')}
           </button>
@@ -159,11 +159,7 @@ function Dialog({
             ref={confirmRef}
             type="button"
             onClick={() => onSettle(true)}
-            className={`rounded-lg px-4 py-2 text-sm font-medium ${
-              danger
-                ? 'bg-error text-bg hover:opacity-90'
-                : 'bg-accent text-white hover:opacity-90'
-            }`}
+            className={`btn ${danger ? 'btn-danger' : 'btn-primary'}`}
           >
             {options.confirmLabel ?? t('dialog.confirm')}
           </button>

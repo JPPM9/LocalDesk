@@ -99,7 +99,7 @@ export function MailSettings() {
         <p className="mt-1 text-xs text-muted">{t('mailSettings.guide')}</p>
       </div>
 
-      <div className="space-y-3 rounded-xl border border-border bg-surface p-4">
+      <div className="space-y-3 rounded-xl bg-surface p-4 shadow-card">
         <div className="flex items-center gap-2 font-medium">
           <Mail size={15} className="text-muted" />
           {t('mailSettings.gmail')}
@@ -116,7 +116,7 @@ export function MailSettings() {
                 onChange={(e) => setClientId(e.target.value)}
                 placeholder="123456789012-abc….apps.googleusercontent.com"
                 spellCheck={false}
-                className="w-full rounded border border-border bg-bg px-2 py-2 font-mono text-xs outline-none focus:border-accent"
+                className="field w-full tabular-nums"
               />
             </Field>
             <Field
@@ -130,7 +130,7 @@ export function MailSettings() {
                 placeholder="GOCSPX-…"
                 spellCheck={false}
                 autoComplete="off"
-                className="w-full rounded border border-border bg-bg px-2 py-2 font-mono text-xs outline-none focus:border-accent"
+                className="field w-full tabular-nums"
               />
             </Field>
             {error && <p className="text-xs text-error">{error}</p>}
@@ -138,7 +138,7 @@ export function MailSettings() {
               <button
                 type="button"
                 onClick={() => setEditing(false)}
-                className="rounded border border-border px-3 py-1 hover:bg-surface-hover"
+                className="btn btn-secondary"
               >
                 {t('mcp.cancel')}
               </button>
@@ -146,7 +146,7 @@ export function MailSettings() {
                 type="button"
                 onClick={() => void save()}
                 disabled={!clientId.trim() || !clientSecret.trim()}
-                className="rounded bg-accent px-3 py-1 text-white disabled:opacity-40"
+                className="btn btn-primary"
               >
                 {t('mcp.save')}
               </button>
@@ -159,7 +159,7 @@ export function MailSettings() {
                 <CircleCheck size={13} />
                 {t('mailSettings.saved')} · {t('mailSettings.secretStored')}
               </p>
-              <p className="font-mono text-xs break-all text-muted">
+              <p className="tabular-nums text-xs break-all text-muted">
                 {google.clientId}
               </p>
               <div className="flex items-center gap-2 pt-1">
@@ -167,7 +167,7 @@ export function MailSettings() {
                   type="button"
                   onClick={startEdit}
                   disabled={locked}
-                  className="rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-40"
+                  className="btn btn-secondary"
                 >
                   {t('mailSettings.change')}
                 </button>
@@ -175,7 +175,7 @@ export function MailSettings() {
                   type="button"
                   onClick={() => void remove()}
                   disabled={locked}
-                  className="rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-40"
+                  className="btn btn-secondary"
                 >
                   {t('mailSettings.remove')}
                 </button>
@@ -187,7 +187,7 @@ export function MailSettings() {
               </div>
             </div>
 
-            <div className="space-y-2 border-t border-border pt-3">
+            <div className="space-y-2 pt-3">
               <h3 className="text-[13px] font-medium">
                 {t('mailSettings.accounts')}
               </h3>
@@ -200,7 +200,7 @@ export function MailSettings() {
                   {accounts.map((account) => (
                     <li
                       key={account.id}
-                      className="flex items-center gap-2 rounded-lg border border-border bg-bg px-3 py-2"
+                      className="flex items-center gap-2 rounded-lg px-3 py-2 bg-surface shadow-card"
                     >
                       <span className="min-w-0 flex-1 truncate text-[13px]">
                         {account.email}
@@ -208,7 +208,7 @@ export function MailSettings() {
                       <button
                         type="button"
                         onClick={() => void disconnect(account)}
-                        className="min-h-7 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
+                        className="btn btn-secondary"
                       >
                         {t('mailSettings.disconnect')}
                       </button>
@@ -229,7 +229,7 @@ export function MailSettings() {
                   <button
                     type="button"
                     onClick={() => void window.api.cancelMailConnect()}
-                    className="rounded border border-border bg-surface px-3 py-1 text-xs hover:bg-surface-hover"
+                    className="btn btn-secondary"
                   >
                     {t('mailSettings.cancel')}
                   </button>
@@ -238,7 +238,7 @@ export function MailSettings() {
                 <button
                   type="button"
                   onClick={() => void connect()}
-                  className="rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90"
+                  className="btn btn-primary"
                 >
                   {t(
                     accounts.length > 0
@@ -262,7 +262,7 @@ export function MailSettings() {
               <button
                 type="button"
                 onClick={startEdit}
-                className="rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90"
+                className="btn btn-primary"
               >
                 {t('mailSettings.setUp')}
               </button>

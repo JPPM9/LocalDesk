@@ -26,7 +26,7 @@ export function ResearchButton({
       className={`flex items-center gap-2 rounded-full border px-3 py-1 text-[13px] disabled:opacity-40 ${
         armed
           ? 'border-transparent bg-accent-soft text-accent-text'
-          : 'border-border bg-surface text-muted hover:text-text'
+          : 'border-transparent bg-bg text-muted hover:text-text'
       }`}
     >
       <Telescope size={14} />

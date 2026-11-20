@@ -51,7 +51,7 @@ export function SidePanel(props: SidePanelProps) {
   const tabs: SidePanelTab[] = ['sources', 'project', 'context', 'gpu'];
 
   return (
-    <aside className="flex w-[310px] shrink-0 flex-col border-l border-border bg-bg">
+    <aside className="flex w-[310px] shrink-0 flex-col bg-bg">
       <div className="flex h-14 shrink-0 items-center gap-2 px-3">
         <div
           role="tablist"
@@ -81,7 +81,7 @@ export function SidePanel(props: SidePanelProps) {
           type="button"
           onClick={props.onClose}
           aria-label={t('sidePanel.close')}
-          className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text"
+          className="icon-btn shrink-0"
         >
           <X size={16} />
         </button>
@@ -185,16 +185,18 @@ function ProjectTab({ project }: { project: ChatFolder | undefined }) {
   );
 }
 
+// Aussehen nach Platz (DESIGN.md §Daten): Pol voll, Akzent voll, Akzent schraffiert – der Name
+// und die Reihenfolge der Liste tragen die Identität, nie die Farbe.
 const PART_COLORS: Record<ContextPart, string> = {
-  instructions: 'bg-muted/25',
-  memory: 'bg-muted/35',
-  summary: 'bg-muted/45',
-  skills: 'bg-muted/55',
+  instructions: 'bg-text',
+  memory: 'bg-accent',
+  summary: 'data-hatch',
+  skills: 'bg-text',
   history: 'bg-accent',
-  images: 'bg-muted/65',
-  files: 'bg-muted/75',
-  knowledge: 'bg-muted/90',
-  tools: 'bg-muted/15',
+  images: 'data-hatch',
+  files: 'bg-text',
+  knowledge: 'bg-accent',
+  tools: 'data-hatch',
 };
 
 /** Füllstand: Anteile, Warnung, „Kontextlänge erhöhen“ mit geschätztem Speicher. */
@@ -262,7 +264,7 @@ function ContextTab({
             {percent} %
           </span>
         </div>
-        <div className="flex h-2.5 overflow-hidden rounded bg-bg">
+        <div className="flex h-2.5 gap-px overflow-hidden rounded border border-dashed border-muted bg-surface-active">
           {(Object.keys(usage.parts) as ContextPart[]).map((part) => (
             <div
               key={part}
@@ -288,7 +290,7 @@ function ContextTab({
       </div>
 
       {compaction && (
-        <div className="space-y-2 rounded border border-border bg-surface px-3 py-2 text-xs">
+        <div className="space-y-2 rounded bg-surface px-3 py-2 text-xs shadow-card">
           <p>
             {t('compact.active', {
               count: compaction.messagesCovered,
@@ -301,7 +303,7 @@ function ContextTab({
           <button
             type="button"
             onClick={onClearCompaction}
-            className="rounded border border-border px-3 py-1 hover:bg-surface-hover"
+            className="btn btn-secondary"
           >
             {t('compact.clear')}
           </button>
@@ -327,7 +329,7 @@ function ContextTab({
                 onClick={() =>
                   onChangeSettings({ ...settings, contextLength: suggestion })
                 }
-                className="rounded bg-accent px-3 py-1 text-white"
+                className="btn btn-primary"
               >
                 {t('sidePanel.increase', { size: formatContext(suggestion) })}
               </button>
@@ -355,11 +357,11 @@ function ContextTab({
             <p className="text-muted">{t('sidePanel.atMaximum')}</p>
           )}
           {canCompact && (
-            <div className="space-y-1 border-t border-border/60 pt-2">
+            <div className="space-y-1 pt-2">
               <button
                 type="button"
                 onClick={onCompact}
-                className="rounded border border-border bg-surface px-3 py-1 hover:bg-surface-hover"
+                className="btn btn-secondary"
               >
                 {t('compact.button')}
               </button>
@@ -370,7 +372,7 @@ function ContextTab({
       )}
 
       {last?.stats && (
-        <div className="space-y-0.5 rounded border border-border px-3 py-2 text-xs">
+        <div className="space-y-0.5 rounded px-3 py-2 text-xs bg-surface-hover">
           <p className="font-medium">{t('sidePanel.measured')}</p>
           <p className="text-muted">
             {t('sidePanel.measuredValue', {

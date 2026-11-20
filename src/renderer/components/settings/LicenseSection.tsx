@@ -19,13 +19,13 @@ export function LicenseSection() {
   };
 
   return (
-    <div className="mt-3 space-y-2 rounded-xl border border-border bg-surface p-4">
+    <div className="mt-3 space-y-2 rounded-xl bg-surface p-4 shadow-card">
       <h3 className="text-[13px] font-medium">{t('settings.licenses')}</h3>
       <p className="text-xs text-muted">{t('settings.licensesIntro')}</p>
       <button
         type="button"
         onClick={() => void toggle()}
-        className="min-h-7 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
+        className="btn btn-secondary"
       >
         {open ? t('settings.licensesHide') : t('settings.licensesShow')}
       </button>
@@ -33,7 +33,7 @@ export function LicenseSection() {
         <p className="text-xs text-error">{t('settings.licensesMissing')}</p>
       )}
       {text && (
-        <pre className="max-h-96 overflow-auto rounded-lg border border-border bg-bg p-3 font-mono text-xs leading-relaxed whitespace-pre-wrap">
+        <pre className="max-h-96 overflow-auto rounded-lg p-3 tabular-nums text-xs leading-relaxed whitespace-pre-wrap bg-surface shadow-card">
           {text}
         </pre>
       )}

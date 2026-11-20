@@ -5,6 +5,19 @@ den Release-Notizen auf GitHub – und erscheint in LocalDesk unter „Nach Upda
 
 ## Unveröffentlicht
 
+**Oberfläche**
+
+- Neues Design „Späte Stunde“: warme Bernstein-Töne mit kühlem Schatten, größere Schrift, mehr Luft, keine Rahmen, weiche Bewegung.
+- Eine Seitenleiste statt Symbolleiste und Chatliste: Chat, Vorlagen, Code, Modelle, Projekte, letzte Chats, Modellstatus. Unter 1100 px
+  Breite ist sie schmal und lässt sich als Überlagerung öffnen (Strg+B).
+- Befehlspalette (Strg+K): Seiten, Befehle, Projekte und Chats finden, auch im Chat-Inhalt. Zoom, Vollbild und Entwicklerwerkzeuge sind
+  jetzt Befehle der Palette, ihre Kürzel bleiben.
+- Eigene Titelleiste statt der Windows-Menüzeile.
+- Startseite „Dein PC“ mit geladenem Modell und Grafikspeicher.
+- Wissen, Skills und E-Mail stehen im „+“-Menü des Eingabefelds, unter Einstellungen → Verwalten und in der Palette. Eingeschaltete
+  Funktionen erscheinen als Marken über dem Text; die Modellauswahl sitzt im Eingabefeld.
+- Quellen stehen als Fußnoten unter der Antwort. Neues App-Symbol.
+
 **Chat**
 
 - Datenanalyse: Tabellen (CSV, TSV, Excel .xlsx; bis 20 MB und 200 000 Zeilen) per Büroklammer anhängen

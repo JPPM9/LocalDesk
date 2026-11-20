@@ -68,8 +68,8 @@ export function ObsidianSettings() {
       </div>
 
       {status && !editing && (
-        <div className="space-y-2 rounded-xl border border-border bg-surface p-4">
-          <p className="font-mono text-xs break-all">{status.vaultPath}</p>
+        <div className="space-y-2 rounded-xl bg-surface p-4 shadow-card">
+          <p className="tabular-nums text-xs break-all">{status.vaultPath}</p>
           {!status.ok ? (
             <p className="flex items-center gap-2 text-xs text-error">
               <TriangleAlert size={13} />
@@ -96,14 +96,14 @@ export function ObsidianSettings() {
             <button
               type="button"
               onClick={startEdit}
-              className="rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
+              className="btn btn-secondary"
             >
               {t('obsidian.change')}
             </button>
             <button
               type="button"
               onClick={() => void remove()}
-              className="rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
+              className="btn btn-secondary"
             >
               {t('obsidian.remove')}
             </button>
@@ -115,19 +115,19 @@ export function ObsidianSettings() {
 
       {(editing || status === null) &&
         (editing ? (
-          <div className="space-y-4 rounded-xl border border-border bg-surface p-4">
+          <div className="space-y-4 rounded-xl bg-surface p-4 shadow-card">
             <Field label={t('obsidian.vault')} hint={t('obsidian.vaultHint')}>
               <div className="flex gap-2">
                 <input
                   value={vaultPath}
                   onChange={(e) => setVaultPath(e.target.value)}
                   placeholder="C:\\Users\\…\\Obsidian\\Mein Vault"
-                  className="min-w-0 flex-1 rounded border border-border bg-bg px-2 py-2 font-mono text-xs outline-none focus:border-accent"
+                  className="field min-w-0 flex-1 tabular-nums"
                 />
                 <button
                   type="button"
                   onClick={() => void pick()}
-                  className="flex shrink-0 items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
+                  className="btn btn-secondary flex shrink-0 items-center gap-2"
                 >
                   <FolderOpen size={13} />
                   {t('obsidian.pick')}
@@ -138,7 +138,7 @@ export function ObsidianSettings() {
               <input
                 value={folder}
                 onChange={(e) => setFolder(e.target.value)}
-                className="w-full rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent"
+                className="field w-full"
               />
             </Field>
             {error && <p className="text-xs text-error">{error}</p>}
@@ -146,7 +146,7 @@ export function ObsidianSettings() {
               <button
                 type="button"
                 onClick={() => setEditing(false)}
-                className="rounded border border-border px-3 py-1 hover:bg-surface-hover"
+                className="btn btn-secondary"
               >
                 {t('mcp.cancel')}
               </button>
@@ -154,7 +154,7 @@ export function ObsidianSettings() {
                 type="button"
                 onClick={() => void save()}
                 disabled={!vaultPath.trim()}
-                className="rounded bg-accent px-3 py-1 text-white disabled:opacity-40"
+                className="btn btn-primary"
               >
                 {t('mcp.save')}
               </button>
@@ -164,7 +164,7 @@ export function ObsidianSettings() {
           <button
             type="button"
             onClick={startEdit}
-            className="flex items-center gap-2 rounded border border-border px-3 py-2 hover:bg-surface-hover"
+            className="btn btn-secondary flex items-center gap-2"
           >
             <FolderOpen size={15} />
             {t('obsidian.setUp')}

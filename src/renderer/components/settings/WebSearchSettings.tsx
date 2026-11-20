@@ -70,7 +70,7 @@ export function WebSearchSettings() {
         </p>
       </div>
 
-      <div className="space-y-3 rounded-xl border border-border bg-surface p-4">
+      <div className="space-y-3 rounded-xl bg-surface p-4 shadow-card">
         <div className="flex items-center gap-2 font-medium">
           <Search size={15} className="text-muted" />
           {t('webSearchSettings.provider')}
@@ -89,7 +89,7 @@ export function WebSearchSettings() {
                 placeholder={t('webSearchSettings.keyPlaceholder')}
                 spellCheck={false}
                 autoComplete="off"
-                className="w-full rounded border border-border bg-bg px-2 py-2 font-mono text-xs outline-none focus:border-accent"
+                className="field w-full tabular-nums"
               />
             </Field>
             {error && <p className="text-xs text-error">{error}</p>}
@@ -102,7 +102,7 @@ export function WebSearchSettings() {
                     setKey('');
                     setError(null);
                   }}
-                  className="rounded border border-border px-3 py-1 hover:bg-surface-hover"
+                  className="btn btn-secondary"
                 >
                   {t('mcp.cancel')}
                 </button>
@@ -111,7 +111,7 @@ export function WebSearchSettings() {
                 type="button"
                 onClick={() => void save()}
                 disabled={!key.trim()}
-                className="rounded bg-accent px-3 py-1 text-white disabled:opacity-40"
+                className="btn btn-primary"
               >
                 {t('mcp.save')}
               </button>
@@ -130,7 +130,7 @@ export function WebSearchSettings() {
                 onClick={() => void test()}
                 disabled={testing}
                 title={t('webSearchSettings.testHint')}
-                className="flex items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-40"
+                className="btn btn-secondary flex items-center gap-2"
               >
                 {testing && <LoaderCircle size={12} className="animate-spin" />}
                 {testing
@@ -144,14 +144,14 @@ export function WebSearchSettings() {
                   setError(null);
                   setEditing(true);
                 }}
-                className="rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
+                className="btn btn-secondary"
               >
                 {t('webSearchSettings.replace')}
               </button>
               <button
                 type="button"
                 onClick={() => void remove()}
-                className="rounded border border-border px-3 py-1 text-xs text-error hover:bg-surface-hover"
+                className="btn btn-secondary text-error"
               >
                 {t('webSearchSettings.remove')}
               </button>

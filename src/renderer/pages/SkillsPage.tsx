@@ -39,8 +39,7 @@ const ICON_BTN =
   'grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text';
 const SIDEBAR_BTN =
   'grid h-8 w-7 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text';
-const FIELD =
-  'w-full rounded border border-border bg-bg px-3 py-2 outline-none focus:border-accent';
+const FIELD = 'field w-full';
 
 export function SkillsPage() {
   const { t } = useTranslation();
@@ -209,12 +208,12 @@ export function SkillsPage() {
           {t('skills.dropHere')}
         </div>
       )}
-      <aside className="flex w-[270px] shrink-0 flex-col border-r border-border bg-surface">
+      <aside className="flex w-[270px] shrink-0 flex-col bg-surface">
         <div className="flex gap-2 px-3 pt-3 pb-2">
           <button
             type="button"
             onClick={() => navigate(`/skills/${NEW}`)}
-            className="flex min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-accent px-3 py-2 font-medium text-white hover:opacity-90"
+            className="btn btn-primary flex min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap"
           >
             <Plus size={16} />
             {t('skills.new')}
@@ -338,7 +337,7 @@ export function SkillsPage() {
                   type="button"
                   onClick={() => void onSave()}
                   disabled={!dirty}
-                  className="flex items-center gap-2 rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-white hover:opacity-90 disabled:opacity-40"
+                  className="btn btn-primary flex items-center gap-2"
                 >
                   <Save size={15} />
                   {t('skills.save')}
@@ -402,7 +401,7 @@ export function SkillsPage() {
                   rows={20}
                   onChange={(e) => update({ body: e.target.value })}
                   spellCheck={false}
-                  className={`${FIELD} resize-y font-mono text-[13px] leading-relaxed`}
+                  className={`${FIELD} resize-y tabular-nums text-[13px] leading-relaxed`}
                 />
               </Field>
               {advice && !advice.fits && advice.suggested !== null && (
@@ -416,13 +415,13 @@ export function SkillsPage() {
               )}
               {draft.id && selected?.files && selected.files.length > 0 && (
                 <Field label={t('skills.files')} hint={t('skills.filesHint')}>
-                  <ul className="divide-y divide-border rounded-lg border border-border bg-surface">
+                  <ul className="divide-y divide-border rounded-lg bg-surface shadow-card">
                     {selected.files.map((file) => (
                       <li
                         key={file.path}
                         className="flex items-center gap-3 px-3 py-2 text-xs"
                       >
-                        <span className="min-w-0 flex-1 truncate font-mono">
+                        <span className="min-w-0 flex-1 truncate tabular-nums">
                           {file.path}
                         </span>
                         <span className="shrink-0 text-subtle">
@@ -436,7 +435,7 @@ export function SkillsPage() {
               {draft.id && (
                 <p className="text-xs text-subtle">
                   {t('skills.fileHint')}{' '}
-                  <span className="font-mono">{`skills\\${draft.id}\\SKILL.md`}</span>
+                  <span className="tabular-nums">{`skills\\${draft.id}\\SKILL.md`}</span>
                 </p>
               )}
             </div>

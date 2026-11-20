@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, session, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, session, shell } from 'electron';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import type { DatabaseSync } from 'node:sqlite';
@@ -44,6 +44,11 @@ import { registerCodeHandlers } from './code-service';
 import { CodeBackups } from './code/backups';
 import { MailAccountRepository } from './db/mail-account-repository';
 import { tr } from '../shared/messages';
+import {
+  applyWindowChrome,
+  overlayOptions,
+  registerWindowCommandHandler,
+} from './window-chrome';
 
 // Gleiche Kennung wie im Installer (electron-builder.yml, appId): Taskleiste und
 // Verknüpfungen gehören so zusammen.
@@ -56,6 +61,9 @@ const createWindow = () => {
     minWidth: 900,
     minHeight: 600,
     title: 'LocalDesk',
+    // Eigene Titelleiste (Renderer); Windows zeichnet nur die Fensterknöpfe darüber.
+    titleBarStyle: 'hidden',
+    titleBarOverlay: overlayOptions(),
     // In der gebauten App nimmt Windows das Symbol der LocalDesk.exe; beim Entwickeln
     // trüge das Fenster sonst das Electron-Symbol.
     ...(!app.isPackaged && {
@@ -70,6 +78,8 @@ const createWindow = () => {
       sandbox: true,
     },
   });
+
+  applyWindowChrome(mainWindow);
 
   // Links aus Chat-Antworten sollen im normalen Browser aufgehen,
   // nicht als neues Fenster innerhalb der App.
@@ -207,6 +217,7 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
 
   registerUpdateHandlers();
   registerAppearanceHandlers(new AppSettingsRepository(db));
+  registerWindowCommandHandler();
   // Erst jetzt (die Sprache steht fest): Beim ersten Start vier Beispiele in dieser Sprache.
   void createExampleSkills(skills, new AppSettingsRepository(db)).catch(
     (error) => console.error('Beispiel-Skills nicht angelegt:', error),
@@ -259,6 +270,8 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
 }
 
 app.whenReady().then(() => {
+  // Keine Menüzeile: Zoom, Vollbild u. a. laufen über window-chrome.ts.
+  Menu.setApplicationMenu(null);
   // Electron erlaubt Kamera, Mikrofon, Standort, Benachrichtigungen usw. sonst ohne
   // Rückfrage. LocalDesk braucht davon nichts – also alles ablehnen.
   session.defaultSession.setPermissionRequestHandler((_wc, _perm, callback) =>

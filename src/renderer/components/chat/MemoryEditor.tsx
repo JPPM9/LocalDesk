@@ -65,7 +65,7 @@ export function MemoryEditor({
         maxLength={MEMORY_TEXT_MAX}
         rows={2}
         aria-label={t('memories.text')}
-        className="w-full resize-y rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent"
+        className="field w-full resize-y"
       />
       <div className="flex flex-wrap items-center gap-2">
         {projectName && (
@@ -74,7 +74,7 @@ export function MemoryEditor({
             <select
               value={scope}
               onChange={(e) => setScope(e.target.value as MemoryScope)}
-              className="rounded border border-border bg-bg px-2 py-1 text-xs outline-none focus:border-accent"
+              className="field"
             >
               <option value="global">{t('memories.global')}</option>
               <option value="projekt">
@@ -93,7 +93,7 @@ export function MemoryEditor({
           type="button"
           disabled={!trimmed || busy}
           onClick={() => void save()}
-          className="rounded bg-accent px-3 py-1 text-xs text-white hover:opacity-90 disabled:opacity-50"
+          className="btn btn-primary"
         >
           {t('memories.save')}
         </button>
@@ -101,7 +101,7 @@ export function MemoryEditor({
           type="button"
           disabled={busy}
           onClick={onCancel}
-          className="rounded border border-border bg-surface px-3 py-1 text-xs hover:bg-surface-hover"
+          className="btn btn-secondary"
         >
           {cancelLabel}
         </button>

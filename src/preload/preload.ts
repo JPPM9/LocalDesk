@@ -140,6 +140,8 @@ const api: LocalDeskApi = {
   openSkillFolder: (id) => ipcRenderer.invoke(IpcChannels.openSkillFolder, id),
   getTheme: () => ipcRenderer.invoke(IpcChannels.getTheme),
   setTheme: (theme) => ipcRenderer.invoke(IpcChannels.setTheme, theme),
+  windowCommand: (command) =>
+    ipcRenderer.invoke(IpcChannels.windowCommand, command),
   getLanguage: () => ipcRenderer.invoke(IpcChannels.getLanguage),
   setLanguage: (choice) => ipcRenderer.invoke(IpcChannels.setLanguage, choice),
   getUpdateState: () => ipcRenderer.invoke(IpcChannels.getUpdateState),

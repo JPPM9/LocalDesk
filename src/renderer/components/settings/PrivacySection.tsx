@@ -25,7 +25,7 @@ export function PrivacySection() {
       <button
         type="button"
         onClick={() => void toggle()}
-        className="min-h-7 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
+        className="btn btn-secondary"
       >
         {open ? t('privacy.hide') : t('privacy.show')}
       </button>
@@ -33,7 +33,7 @@ export function PrivacySection() {
         <p className="text-xs text-error">{t('privacy.missing')}</p>
       )}
       {text && (
-        <div className="max-h-[32rem] overflow-y-auto rounded-xl border border-border bg-surface px-5 py-4 text-sm">
+        <div className="max-h-[32rem] overflow-y-auto rounded-xl bg-surface px-5 py-4 text-sm shadow-card">
           <Markdown text={text} />
         </div>
       )}

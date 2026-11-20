@@ -42,12 +42,12 @@ export function DownloadPanel({ downloads }: { downloads: DownloadView[] }) {
           }}
           placeholder={t('downloads.placeholder')}
           aria-label={t('downloads.placeholder')}
-          className="min-w-0 flex-1 rounded border border-border bg-surface px-3 py-2 outline-none focus:border-accent"
+          className="min-w-0 flex-1 rounded bg-surface px-3 py-2 outline-none focus:border-accent shadow-card"
         />
         <button
           type="submit"
           disabled={!name.trim()}
-          className="flex items-center gap-2 rounded bg-accent px-3 py-2 text-white disabled:opacity-40"
+          className="btn btn-primary flex items-center gap-2"
         >
           <Download size={15} />
           {t('downloads.start')}
@@ -110,7 +110,7 @@ function DownloadRow({ download }: { download: DownloadView }) {
     .join(' · ');
 
   return (
-    <li className="space-y-2 rounded-xl border border-border bg-surface px-3 py-3">
+    <li className="space-y-2 rounded-xl bg-surface px-3 py-3 shadow-card">
       <div className="flex items-center gap-2">
         {download.phase === 'done' && (
           <CircleCheck size={15} className="text-ok" />
@@ -134,7 +134,7 @@ function DownloadRow({ download }: { download: DownloadView }) {
           }
           title={t(running ? 'downloads.cancel' : 'downloads.dismiss')}
           aria-label={t(running ? 'downloads.cancel' : 'downloads.dismiss')}
-          className="grid h-7 w-7 place-items-center rounded text-muted hover:bg-surface-hover hover:text-text"
+          className="icon-btn"
         >
           <X size={14} />
         </button>

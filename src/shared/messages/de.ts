@@ -548,7 +548,7 @@ export const de = {
     'Plan-Modus: Änderungen, Befehle und Commits sind gesperrt. Beschreibe sie im Plan – sie laufen erst nach der Freigabe.',
   'access.noChoice': 'Keine Auswahl getroffen.',
   'access.alreadyGranted': 'Diesen Zugriff gibt es in diesem Chat schon.',
-  'access.noSuchAccount': 'Dieses Postfach gibt es nicht (mehr).',
+  'access.noSuchAccount': 'Dieses Konto gibt es nicht (mehr).',
   'access.noSuchServer':
     'Diesen Datei-Server gibt es nicht (mehr) oder er läuft nicht.',
   'access.scopeChat': 'für diesen Chat',

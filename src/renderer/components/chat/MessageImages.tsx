@@ -28,7 +28,7 @@ function Thumb({ image, onOpen }: { image: MessageImage; onOpen: () => void }) {
     return (
       <span
         title={t('chat.images.gone', { name: image.name })}
-        className="flex h-24 w-32 flex-col items-center justify-center gap-1 rounded-xl border border-border bg-surface px-2 text-center text-xs text-muted"
+        className="flex h-24 w-32 flex-col items-center justify-center gap-1 rounded-xl bg-surface px-2 text-center text-xs text-muted shadow-card"
       >
         <ImageOff size={16} />
         <span className="max-w-full truncate">{image.name}</span>
@@ -42,7 +42,7 @@ function Thumb({ image, onOpen }: { image: MessageImage; onOpen: () => void }) {
       disabled={!url}
       title={t('chat.images.enlarge', { name: image.name })}
       aria-label={t('chat.images.enlarge', { name: image.name })}
-      className="block overflow-hidden rounded-xl border border-border bg-surface hover:opacity-90"
+      className="block overflow-hidden rounded-xl bg-surface hover:opacity-90 shadow-card"
     >
       {url ? (
         <img

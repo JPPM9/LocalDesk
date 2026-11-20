@@ -128,7 +128,7 @@ export function CodeAgent({ sessionId, onChanged }: CodeAgentProps) {
               type="button"
               onClick={approvePlan}
               disabled={!model}
-              className="shrink-0 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+              className="btn btn-primary shrink-0"
             >
               {t('code.plan.execute')}
             </button>

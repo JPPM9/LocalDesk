@@ -23,7 +23,7 @@ export function CodeModeSwitch({
     <div
       role="radiogroup"
       aria-label={t('code.mode.title')}
-      className="flex gap-0.5 rounded-full border border-border bg-surface-2 p-0.5"
+      className="flex gap-0.5 rounded-full p-0.5 bg-surface shadow-card"
     >
       {CODE_MODES.map((value) => {
         const Icon = ICONS[value];

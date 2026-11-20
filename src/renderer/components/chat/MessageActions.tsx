@@ -133,18 +133,14 @@ export function EditBox({
       />
       <p className="text-xs text-muted">{t('chat.editHint')}</p>
       <div className="flex justify-end gap-2">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="rounded-lg border border-border bg-surface-2 px-3 py-1 text-sm hover:bg-surface-hover"
-        >
+        <button type="button" onClick={onCancel} className="btn btn-secondary">
           {t('dialog.cancel')}
         </button>
         <button
           type="button"
           onClick={send}
           disabled={!text.trim() && !allowEmpty}
-          className="rounded-lg bg-accent px-3 py-1 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+          className="btn btn-primary"
         >
           {t('chat.editSend')}
         </button>

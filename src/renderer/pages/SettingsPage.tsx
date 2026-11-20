@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AppInfo } from '../../shared/api';
+import { ManageLinks } from '../components/ManageLinks';
 import { PageHeader } from '../components/PageHeader';
 import { AppearanceSettings } from '../components/settings/AppearanceSettings';
 import { MailSettings } from '../components/settings/MailSettings';
@@ -15,6 +16,7 @@ import { WebSearchSettings } from '../components/settings/WebSearchSettings';
 /** Abschnitte in Reihenfolge – für die Sprungliste links. */
 const SECTIONS = [
   { id: 'darstellung', titleKey: 'appearance.title' },
+  { id: 'verwalten', titleKey: 'settings.manage' },
   { id: 'server', titleKey: 'servers.title' },
   { id: 'mcp', titleKey: 'mcp.title' },
   { id: 'obsidian', titleKey: 'obsidian.title' },
@@ -108,6 +110,13 @@ export function SettingsPage() {
 
         <div className="max-w-2xl min-w-0 flex-1 space-y-10 pb-[40vh]">
           {section('darstellung', <AppearanceSettings />)}
+          {section(
+            'verwalten',
+            <section>
+              <h2 className="mb-3 font-medium">{t('settings.manage')}</h2>
+              <ManageLinks />
+            </section>,
+          )}
           {section('server', <ServerSettings />)}
           {section('mcp', <McpSettings />)}
           {section('obsidian', <ObsidianSettings />)}
@@ -119,7 +128,7 @@ export function SettingsPage() {
             <section>
               <h2 className="mb-3 font-medium">{t('settings.about')}</h2>
               {info ? (
-                <dl className="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-1 rounded-xl border border-border bg-surface p-4 text-[13px] tabular-nums">
+                <dl className="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-1 rounded-xl bg-surface p-4 text-[13px] tabular-nums shadow-card">
                   <dt className="text-muted">{t('settings.version')}</dt>
                   <dd>{info.version}</dd>
                   <dt className="text-muted">Electron</dt>
@@ -129,7 +138,7 @@ export function SettingsPage() {
                   <dt className="text-muted">Chromium</dt>
                   <dd>{info.chrome}</dd>
                   <dt className="text-muted">{t('settings.dataPath')}</dt>
-                  <dd className="font-mono text-xs break-all">
+                  <dd className="tabular-nums text-xs break-all">
                     {info.dataPath}
                   </dd>
                 </dl>

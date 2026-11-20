@@ -49,7 +49,7 @@ export function MoveMenu({
       ref={ref}
       role="menu"
       aria-label={t('folders.moveTo')}
-      className="absolute right-1 z-20 mt-0.5 w-52 rounded border border-border bg-surface py-1 shadow-lg"
+      className="absolute right-1 z-20 mt-0.5 w-52 rounded-[var(--radius-lg)] bg-[var(--surface-raised)] py-2 shadow-[var(--shadow-4)]"
     >
       <div className="px-3 py-1 text-xs font-medium text-muted">
         {t('folders.moveTo')}

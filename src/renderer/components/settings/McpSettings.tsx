@@ -86,13 +86,13 @@ export function McpSettings() {
       ))}
 
       {form ? (
-        <div className="space-y-4 rounded-xl border border-border bg-surface p-4">
+        <div className="space-y-4 rounded-xl bg-surface p-4 shadow-card">
           <Field label={t('mcp.name')}>
             <input
               autoFocus
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent"
+              className="field w-full"
             />
           </Field>
           <Field label={t('mcp.folders')} hint={t('mcp.foldersHint')}>
@@ -100,7 +100,7 @@ export function McpSettings() {
               {form.folders.map((folder) => (
                 <li
                   key={folder}
-                  className="flex items-center gap-2 rounded border border-border bg-bg px-2 py-1"
+                  className="flex items-center gap-2 rounded px-2 py-1 bg-surface shadow-card"
                 >
                   <FolderOpen size={14} className="shrink-0 text-muted" />
                   <span
@@ -128,7 +128,7 @@ export function McpSettings() {
             <button
               type="button"
               onClick={() => void addFolders()}
-              className="flex items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
+              className="btn btn-secondary flex items-center gap-2"
             >
               <Plus size={13} />
               {t('mcp.addFolder')}
@@ -142,14 +142,14 @@ export function McpSettings() {
                 setForm(null);
                 setError(null);
               }}
-              className="rounded border border-border px-3 py-1 hover:bg-surface-hover"
+              className="btn btn-secondary"
             >
               {t('mcp.cancel')}
             </button>
             <button
               type="button"
               onClick={() => void save()}
-              className="rounded bg-accent px-3 py-1 text-white"
+              className="btn btn-primary"
             >
               {t('mcp.save')}
             </button>
@@ -166,7 +166,7 @@ export function McpSettings() {
               folders: [],
             })
           }
-          className="flex items-center gap-2 rounded border border-border px-3 py-2 hover:bg-surface-hover"
+          className="btn btn-secondary flex items-center gap-2"
         >
           <Plus size={15} />
           {t('mcp.addFilesystem')}
@@ -202,7 +202,7 @@ function ServerCard({
   }
 
   return (
-    <article className="space-y-3 rounded-xl border border-border bg-surface p-4">
+    <article className="space-y-3 rounded-xl bg-surface p-4 shadow-card">
       <div className="flex items-center gap-3">
         <span
           className={`h-2 w-2 shrink-0 rounded-full ${STATE_DOT[status.state]}`}
@@ -285,7 +285,7 @@ function ServerCard({
             })}
           </summary>
           <p className="mt-2 text-muted">{t('mcp.permissionHint')}</p>
-          <ul className="mt-2 divide-y divide-border rounded border border-border">
+          <ul className="mt-2 divide-y divide-border rounded bg-surface-hover">
             {status.tools.map((tool) => (
               <ToolRow
                 key={tool.name}
@@ -372,7 +372,7 @@ function ToolRow({
         <div
           role="radiogroup"
           aria-label={t('mcp.permissionFor', { name: tool.name })}
-          className="flex overflow-hidden rounded border border-border"
+          className="flex overflow-hidden rounded bg-surface-hover"
         >
           {PERMISSION_OPTIONS.map((permission) => (
             <button
@@ -385,7 +385,7 @@ function ToolRow({
                 current === permission
                   ? permission === 'off'
                     ? 'bg-surface-hover font-medium text-text'
-                    : 'bg-accent text-white'
+                    : 'bg-accent text-accent-fg'
                   : 'text-muted hover:bg-surface-hover'
               }`}
             >
@@ -437,7 +437,7 @@ function IconButton({
       disabled={disabled}
       title={label}
       aria-label={label}
-      className="grid h-7 w-7 place-items-center rounded text-muted hover:bg-surface-hover hover:text-text disabled:opacity-30"
+      className="icon-btn"
     >
       {children}
     </button>

@@ -10,13 +10,12 @@ import { useTranslation } from 'react-i18next';
 import {
   FolderOpen,
   ImageOff,
-  PanelLeftOpen,
   PanelRight,
   ScrollText,
   SlidersHorizontal,
   X,
 } from 'lucide-react';
-import type { ChatFolder, ChatSummary, ChatTemplate } from '../../shared/api';
+import type { ChatTemplate } from '../../shared/api';
 import { modelAfterSwitch } from '../../shared/failover';
 import { thinkFitsModel } from '../../shared/settings';
 import { useChat } from '../chat/useChat';
@@ -26,7 +25,7 @@ import {
   SidePanel,
   type SidePanelTab,
 } from '../components/chat/SidePanel';
-import { useChatList } from '../chat/useChatList';
+import { setChatRunning } from '../chat/runningState';
 import { useChatModels } from '../hooks/useChatModels';
 import { useTemplates } from '../templates/useTemplates';
 import { TemplatePicker } from '../components/chat/TemplatePicker';
@@ -36,7 +35,8 @@ import type { LayoutContext } from '../components/AppLayout';
 import { PageHeader } from '../components/PageHeader';
 import { StickyScroll } from '../components/StickyScroll';
 import { ChatInput } from '../components/chat/ChatInput';
-import { ChatList } from '../components/chat/ChatList';
+import { PlusMenu } from '../components/chat/PlusMenu';
+import { HomeStatus } from '../components/HomeStatus';
 import { ChatSettingsPanel } from '../components/chat/ChatSettingsPanel';
 import { MessageView } from '../components/chat/MessageView';
 import { SaveNoteButton } from '../components/chat/SaveNoteButton';
@@ -53,7 +53,6 @@ import { SkillsButton } from '../components/skills/SkillPicker';
 import { MailButton } from '../components/mail/MailButton';
 import { WebButton } from '../components/web/WebButton';
 import { ResearchButton } from '../components/research/ResearchButton';
-import { useConfirm } from '../components/ConfirmDialog';
 
 // Nur eine Bequemlichkeit pro Rechner: das zuletzt gewählte Modell für neue Chats.
 // Gespeicherte Chats merken sich ihr Modell in der Datenbank.
@@ -77,12 +76,9 @@ function saveLastModel(model: string) {
 
 export function ChatPage() {
   const { t } = useTranslation();
-  const confirm = useConfirm();
   const navigate = useNavigate();
   const chatId = useParams().chatId ?? null;
-  const { listCollapsed, toggleList } = useOutletContext<LayoutContext>();
-
-  const chatList = useChatList();
+  const { chatList } = useOutletContext<LayoutContext>();
   const {
     chat,
     messages,
@@ -113,6 +109,10 @@ export function ChatPage() {
   };
 
   useShortcut('chatSettings', () => setSettingsOpen((open) => !open));
+  useEffect(() => {
+    setChatRunning(isRunning);
+    return () => setChatRunning(false);
+  }, [isRunning]);
   // Esc stoppt nur, wenn gerade eine Antwort läuft – sonst passiert nichts.
   useShortcut('stop', () => {
     if (isRunning) stop();
@@ -140,6 +140,56 @@ export function ChatPage() {
     const { [key]: _old, ...rest } = settings;
     updateSettings(on ? { ...rest, [key]: true } : rest);
   };
+  // Eingeschaltete Funktionen als Marken über dem Textfeld (entfernbar).
+  const chipFor = (
+    id: string,
+    name: string,
+    count: number | null,
+    onRemove: () => void,
+  ) => ({
+    id,
+    label: count && count > 1 ? `${name} · ${count}` : name,
+    removeLabel: t('chips.remove', { name }),
+    onRemove,
+  });
+  const chips = [
+    settings.collections?.length
+      ? chipFor(
+          'collections',
+          t('chips.knowledge'),
+          settings.collections.length,
+          () => setList('collections', []),
+        )
+      : null,
+    settings.mcpServers?.length
+      ? chipFor('mcp', t('chips.tools'), settings.mcpServers.length, () =>
+          setList('mcpServers', []),
+        )
+      : null,
+    settings.skills?.length
+      ? chipFor('skills', t('chips.skills'), settings.skills.length, () =>
+          setList('skills', []),
+        )
+      : null,
+    settings.mailAccounts?.length
+      ? chipFor('mail', t('chips.mail'), settings.mailAccounts.length, () =>
+          setList('mailAccounts', []),
+        )
+      : null,
+    settings.web
+      ? chipFor('web', t('chips.web'), null, () => setFlag('web', false))
+      : null,
+    settings.webSearch
+      ? chipFor('webSearch', t('chips.webSearch'), null, () =>
+          setFlag('webSearch', false),
+        )
+      : null,
+    researchArmed
+      ? chipFor('research', t('chips.research'), null, () =>
+          setResearchArmed(false),
+        )
+      : null,
+  ].filter((chip): chip is NonNullable<typeof chip> => chip !== null);
 
   const {
     models,
@@ -327,48 +377,8 @@ export function ChatPage() {
     }
   };
 
-  const deleteChat = async (target: ChatSummary) => {
-    if (
-      !(await confirm({
-        message: t('chat.confirmDelete', { title: target.title }),
-        confirmLabel: t('dialog.delete'),
-        danger: true,
-      }))
-    )
-      return;
-    await chatList.remove(target.id);
-    if (target.id === chatId) navigate('/chat');
-  };
-
-  const deleteFolder = async (folder: ChatFolder) => {
-    if (
-      !(await confirm({
-        message: t('folders.confirmDelete', { name: folder.name }),
-        confirmLabel: t('dialog.delete'),
-        danger: true,
-      }))
-    )
-      return;
-    await chatList.deleteFolder(folder.id);
-  };
-
   return (
     <div className="flex h-full">
-      {!listCollapsed && (
-        <ChatList
-          onCollapse={toggleList}
-          chats={chatList.chats}
-          folders={chatList.folders}
-          onNew={() => navigate('/chat')}
-          onRename={(id, title) => void chatList.rename(id, title)}
-          onDelete={(target) => void deleteChat(target)}
-          onMove={(id, folderId) => void chatList.moveChat(id, folderId)}
-          onCreateFolder={chatList.createFolder}
-          onRenameFolder={(id, name) => void chatList.renameFolder(id, name)}
-          onDeleteFolder={(folder) => void deleteFolder(folder)}
-        />
-      )}
-
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader
           // Titel aus der Liste: Die wird nach dem Umbenennen sofort aktualisiert.
@@ -377,26 +387,13 @@ export function ChatPage() {
             chat?.title ??
             t('chat.newChat')
           }
-          leading={
-            listCollapsed && (
-              <button
-                type="button"
-                onClick={toggleList}
-                title={`${t('nav.expandList')} (${shortcutLabel('toggleSidebar')})`}
-                aria-label={t('nav.expandList')}
-                className="-ml-1 grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text"
-              >
-                <PanelLeftOpen size={17} />
-              </button>
-            )
-          }
           actions={
             <>
               {project && (
                 <Link
                   to={`/projects/${project.id}`}
                   title={t('folders.open')}
-                  className="flex max-w-48 items-center gap-2 rounded-full border border-border bg-surface-2 px-3 py-0.5 text-xs text-muted hover:text-text"
+                  className="flex max-w-48 items-center gap-2 rounded-full px-3 py-0.5 text-xs text-muted hover:text-text bg-surface shadow-card"
                 >
                   <FolderOpen size={13} className="shrink-0" />
                   <span className="truncate">
@@ -416,18 +413,12 @@ export function ChatPage() {
                       disabled={summary !== null && summary !== 'suggest'}
                       title={t('summary.button')}
                       aria-label={t('summary.button')}
-                      className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
+                      className="icon-btn shrink-0"
                     >
                       <ScrollText size={17} />
                     </button>
                   </>
                 )}
-              <ModelSelect
-                models={models}
-                value={model}
-                onChange={chooseModel}
-                disabled={isRunning}
-              />
               <button
                 type="button"
                 onClick={() => setSettingsOpen((open) => !open)}
@@ -487,7 +478,11 @@ export function ChatPage() {
             )}
             {messages.length === 0 && !loadError && (
               <div className="space-y-8 pt-12">
-                <p className="text-center text-muted">{t('chat.empty')}</p>
+                {chatId === null ? (
+                  <HomeStatus />
+                ) : (
+                  <p className="text-center text-muted">{t('chat.empty')}</p>
+                )}
                 {chatId === null && (
                   <TemplatePicker
                     templates={templates}
@@ -598,8 +593,17 @@ export function ChatPage() {
                   updateSettings({ ...settings, contextLength: length }),
               },
             }}
+            modelSelect={
+              <ModelSelect
+                models={models}
+                value={model}
+                onChange={chooseModel}
+                disabled={isRunning}
+              />
+            }
+            chips={chips}
             tools={
-              <>
+              <PlusMenu>
                 <KnowledgeButton
                   selected={settings.collections ?? []}
                   onChange={(ids) => setList('collections', ids)}
@@ -647,7 +651,7 @@ export function ChatPage() {
                     .find((m) => m.name === model)
                     ?.capabilities.includes('tools')}
                 />
-              </>
+              </PlusMenu>
             }
             research={{
               armed: researchArmed,

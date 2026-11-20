@@ -103,10 +103,7 @@ export function MailPage() {
           icon={Mail}
           text={t('mail.setupText')}
           action={
-            <Link
-              to="/settings"
-              className="inline-block rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-white hover:opacity-90"
-            >
+            <Link to="/settings" className="btn btn-primary">
               {t('mail.toSettings')}
             </Link>
           }
@@ -117,14 +114,14 @@ export function MailPage() {
 
   return (
     <div className="flex h-full">
-      <aside className="flex w-[320px] shrink-0 flex-col border-r border-border bg-surface">
+      <aside className="flex w-[320px] shrink-0 flex-col bg-surface">
         <div className="space-y-2 px-3 pt-3 pb-2">
           {accounts && accounts.length > 1 && (
             <select
               value={accountId ?? ''}
               onChange={(e) => chooseAccount(e.target.value)}
               aria-label={t('mail.account')}
-              className="w-full rounded-lg border border-border bg-bg px-2 py-2 text-[13px] outline-none focus:border-accent"
+              className="field w-full"
             >
               {accounts.map((a) => (
                 <option key={a.id} value={a.id}>
@@ -135,7 +132,7 @@ export function MailPage() {
           )}
           <div className="flex items-center gap-2">
             <form
-              className="flex min-w-0 flex-1 items-center gap-2 rounded-lg border border-border bg-bg px-3 focus-within:border-accent"
+              className="flex min-w-0 flex-1 items-center gap-2 rounded-lg px-3 focus-within:border-accent bg-surface shadow-card"
               onSubmit={(e) => {
                 e.preventDefault();
                 setQuery(input.trim());
@@ -241,7 +238,7 @@ export function MailPage() {
               type="button"
               onClick={() => void load(nextPage)}
               disabled={loading}
-              className="mt-1 w-full rounded-lg border border-border py-2 text-xs text-muted hover:bg-surface-hover hover:text-text disabled:opacity-40"
+              className="mt-1 w-full rounded-lg py-2 text-xs text-muted hover:bg-surface-hover hover:text-text disabled:opacity-40 bg-surface-hover"
             >
               {loading ? t('mail.loading') : t('mail.more')}
             </button>

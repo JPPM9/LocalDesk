@@ -23,14 +23,14 @@ export function ChatSettingsPanel({
   const { t } = useTranslation();
 
   return (
-    <aside className="flex w-[310px] shrink-0 flex-col border-l border-border bg-bg">
+    <aside className="flex w-[310px] shrink-0 flex-col bg-bg">
       <div className="flex h-14 shrink-0 items-center justify-between px-4">
         <h2 className="font-medium">{t('settingsPanel.title')}</h2>
         <button
           type="button"
           onClick={onClose}
           aria-label={t('settingsPanel.close')}
-          className="grid h-7 w-7 place-items-center rounded text-muted hover:bg-surface-hover hover:text-text"
+          className="icon-btn"
         >
           <X size={16} />
         </button>
@@ -45,7 +45,7 @@ export function ChatSettingsPanel({
         />
       </div>
 
-      <p className="border-t border-border px-4 py-3 text-xs text-muted">
+      <p className="px-4 py-3 text-xs text-muted">
         {t('settingsPanel.footer')}
       </p>
     </aside>
@@ -94,7 +94,7 @@ function SaveAsTemplate({
   };
 
   return (
-    <div className="space-y-2 border-t border-border pt-4">
+    <div className="space-y-2 pt-4">
       {name === null ? (
         <button
           type="button"
@@ -102,7 +102,7 @@ function SaveAsTemplate({
             setName('');
             setMessage(null);
           }}
-          className="flex w-full items-center justify-center gap-2 rounded border border-border px-3 py-2 hover:bg-surface-hover"
+          className="btn btn-secondary flex w-full items-center justify-center gap-2"
         >
           <BookmarkPlus size={15} />
           {t('templates.saveFromChat')}
@@ -116,12 +116,12 @@ function SaveAsTemplate({
             onKeyDown={onKeyDown}
             placeholder={t('templates.namePlaceholder')}
             aria-label={t('templates.name')}
-            className="min-w-0 flex-1 rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent"
+            className="field min-w-0 flex-1"
           />
           <button
             type="button"
             onClick={() => void save()}
-            className="rounded bg-accent px-3 text-white"
+            className="btn btn-primary"
           >
             {t('templates.save')}
           </button>

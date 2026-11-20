@@ -60,12 +60,12 @@ export function CodePage() {
 
   return (
     <div className="flex h-full">
-      <aside className="flex w-[270px] shrink-0 flex-col border-r border-border bg-surface">
+      <aside className="flex w-[270px] shrink-0 flex-col bg-surface">
         <div className="px-3 pt-3 pb-2">
           <button
             type="button"
             onClick={() => void create()}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-3 py-2 font-medium text-white hover:opacity-90"
+            className="btn btn-primary flex w-full items-center justify-center gap-2"
           >
             <Plus size={16} />
             {t('code.new')}
@@ -92,7 +92,7 @@ export function CodePage() {
               >
                 <div className="truncate">{s.title}</div>
                 <div
-                  className="truncate font-mono text-xs font-normal text-subtle"
+                  className="truncate tabular-nums text-xs font-normal text-subtle"
                   title={s.workspace}
                 >
                   {s.workspace}
@@ -114,8 +114,8 @@ export function CodePage() {
 
       {session ? (
         <>
-          <div className="flex w-[260px] shrink-0 flex-col border-r border-border">
-            <div className="flex h-14 shrink-0 items-center border-b border-border px-3">
+          <div className="flex w-[260px] shrink-0 flex-col">
+            <div className="flex h-14 shrink-0 items-center px-3">
               <span className="truncate font-medium" title={session.workspace}>
                 {session.title}
               </span>

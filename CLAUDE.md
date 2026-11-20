@@ -810,7 +810,7 @@
   per `taskkill /IM LocalDesk.exe` ALLE LocalDesk-Fenster – vorher sicherstellen, dass der Nutzer keins offen hat.
   Nächste Version: `package.json` erhöhen, neuer Changelog-Abschnitt, committen, pushen, `npm run release`, Freigabe,
   `npm run release -- --publish`.
-- **App-Symbol**: `assets/icon.svg` (Sprechblase mit „>_“, flach auf Akzent „Glut“ #b8501a) ist die Quelle;
+- **App-Symbol**: `assets/icon.svg` (Sprechblase mit „>_“, flach auf Bernstein #e69a58) ist die Quelle;
   `node scripts/build-icons.mjs` erzeugt `assets/icon.png` (512 px) und `assets/icon.ico`
   (16–256 px, PNG-Einträge) – ohne Pakete, gezeichnet mit Edge headless (transparenter Hintergrund).
   `.exe`-Symbol über `packagerConfig.icon` (Forge), Fenster im Dev-Modus über `BrowserWindow.icon`
@@ -1267,21 +1267,21 @@
   NICHT echt geprüft: Modell ohne Werkzeuge (keines installiert, nur Tests von `tableAsText`/`toRequestMessages`), Chats mit sehr breiten
   Tabellen (200 Spalten), mehrere Blätter.
 
-- **Oberfläche „Werkbank“ (Unslop-Durchgang, 2026-11-11, auf Wunsch des Nutzers mit dem Skill „unslop“, Richtung vom Nutzer gewählt):**
-  Audit fand wenig Slop (keine Emoji/Glows, ein Akzent): Verlauf in Logo-Kachel und Antwort-Avatar, 2 Beschriftungen in Großbuchstaben, 9
-  Schriftgrößen, 40× semibold, Abstände auf 2-px-Halbschritten (308 Stellen), blaue Fähigkeits-Pillen, Funkel-Icons (Skills, Mail),
-  Regenbogen im Kontext-Balken, bläuliche Graus. Richtung: Produkt = lokaler KI-Chat; Charakter trocken, genau, ruhig; Welt = Werkbank/
-  Messgeräte bei Nacht; Momente = Status-Seite (Messwerte groß in Mono) und Diagramme; Signatur = Messwerte in Mono. Umgesetzt: Graphit-
-  Rampe in `index.css` (dunkel #0f0f10/#141415/#19191b/#1f1f21, hell #fafafa/#fff/#f4f4f5, Text #ededed/#a1a1a6/#8b8b91 bzw.
-  #171717/#525252/#6e6e73), EIN Akzent „Glut“ #b8501a (weiße Schrift 5,0 : 1; als Schrift `accent-text` #f2a66b dunkel / #9a3f0c hell),
-  Meldefarben getönt (warn gelb, damit er vom Akzent unterscheidbar bleibt); Schriftgrößen 12/13/14/15 (`text-xs`, `text-[13px]`,
-  `text-sm`, `text-[15px]`), Gewichte 400/500; alle halben Tailwind-Schritte (1.5/2.5/3.5) auf das 4-px-Raster gehoben (nur 0.5 = 2 px
-  bleibt); aktive Navigation = Flächenstufe statt blauer Pille; Antwort-Kopf = Punkt + Modellname in Mono (kein Funkeln); Fähigkeiten
-  der Modelle als ruhiger Mono-Text mit „·“; Statistikzeile und Modelltabelle in Mono; Status-Seite mit 28-px-Messwerten; Kontext-
-  Balken in neutralen Stufen, Akzent nur für den Verlauf; Diagramme: Balken/Linie Akzent, Kreis = größtes Stück Akzent, Rest grau;
-  Skills-Icon `ScrollText`, Mail-Zusammenfassen `TextQuote`; Platzhalter ohne „ …“. App-Symbol neu gerendert
-  (`node scripts/build-icons.mjs`). Kontraste gerechnet (Skript im Scratchpad). Nicht geändert: Layout, Inhalte, Funktionen. Offen:
-  `docs/screenshot.png` im README zeigt noch das alte Blau; Mono ist Cascadia Mono/Consolas (keine Schrift mitgeliefert).
+- **Oberfläche „Späte Stunde“ (Umbau 2026-11, Zweig `feature/oberflaeche-design`):** Vorgaben in `DESIGN.md` (Look, Bausteine 1–24) und
+  `JOURNEY.md` (Struktur, Seiten, Texte, Glossar); die Mocks liegen lokal in `mocks/` (gitignoriert). Look: Bernstein führt, Blau nur als
+  Tiefe (kühler Grund rechts vom Lichtschnitt, Schatten); Palette wörtlich aus `scripts/palette.mjs` in `index.css`, `--ld-*`-Namen und
+  Tailwind-Klassen bleiben und zeigen auf die neuen Aliase. Signatur: schräger Lichtschnitt (104°, bei 61,8 %) im Körper-Hintergrund.
+  Bausteine als Klassen in `index.css` (`btn btn-primary|secondary|quiet|danger`, `icon-btn`, `field`, `card`, `dialog`, `dialog-scrim`);
+  Seiten schreiben keine eigenen Knopf-/Feld-Stile. Keine Rahmen und Trenner; nur Eingabefelder tragen `--control-edge`. Festbreite
+  (`font-mono`) nur für Code und Programm-Ausgaben. Rahmen: eigene Titelleiste (`titleBarStyle: 'hidden'` + `titleBarOverlay`), keine
+  Menüzeile (`Menu.setApplicationMenu(null)`); Zoom, Vollbild, DevTools, Neuladen fängt `src/main/window-chrome.ts` selbst ab und die
+  Palette ruft sie über den IPC-Kanal `window:command`. Eine Seitenleiste (`Sidebar.tsx`): Chat, Vorlagen, Code, Modelle, Projekte (5),
+  Letzte Chats (8), Modellstatus, Einstellungen; unter 1100 px immer schmal, Ausklappen = Überlagerung; Strg+B. Wissen, Skills, E-Mail nur
+  im „+“-Menü des Eingabefelds (`PlusMenu.tsx`), unter Einstellungen → Verwalten und in der Palette. Befehlspalette Strg+K
+  (`CommandPalette.tsx`, Befehle in `palette/commands.ts`); sie übernimmt die Chat-Suche. Startseite „Dein PC“ (`HomeStatus.tsx`).
+  Modellauswahl und Funktions-Marken (Chips) sitzen im Eingabefeld; Quellen als Fußnoten (`SourceList.tsx`). Offen: Status-Popup im
+  Leistenfuß, Palettenbefehl „Antwort stoppen“, Diagramm-/Kontext-Balken nach DESIGN.md §Daten, Texte der Seiten nur teilweise nach
+  JOURNEY.md angeglichen.
 
 ## Befehle
 

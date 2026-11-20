@@ -118,7 +118,7 @@ export function ProjectPage() {
             <button
               type="button"
               onClick={() => navigate(`/chat?project=${project.id}`)}
-              className="flex items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
+              className="btn btn-secondary flex items-center gap-2"
             >
               <MessageSquarePlus size={14} />
               {t('projects.newChat')}
@@ -135,7 +135,7 @@ export function ProjectPage() {
               onClick={() => void remove()}
               title={t('projects.delete')}
               aria-label={t('projects.delete')}
-              className="rounded border border-border px-2 py-1 hover:bg-surface-hover"
+              className="rounded px-2 py-1 hover:bg-surface-hover bg-surface-hover"
             >
               <Trash2 size={14} />
             </button>
@@ -162,7 +162,7 @@ export function ProjectPage() {
               onKeyDown={(e) => {
                 if (e.key === 'Enter') e.currentTarget.blur();
               }}
-              className="w-full rounded border border-border bg-surface px-2 py-2 outline-none focus:border-accent"
+              className="w-full rounded bg-surface px-2 py-2 outline-none focus:border-accent shadow-card"
             />
           </label>
 
@@ -182,7 +182,7 @@ export function ProjectPage() {
               onBlur={() => void saveInstructions()}
               rows={5}
               placeholder={t('projects.instructionsPlaceholder')}
-              className="w-full resize-y rounded border border-border bg-surface px-2 py-2 outline-none focus:border-accent"
+              className="w-full resize-y rounded bg-surface px-2 py-2 outline-none focus:border-accent shadow-card"
             />
             <span className="block text-xs text-muted">
               {t('projects.instructionsHint')}
@@ -194,7 +194,7 @@ export function ProjectPage() {
               <h2 className="font-medium">{t('projects.skills')}</h2>
               <p className="text-xs text-muted">{t('projects.skillsHint')}</p>
             </div>
-            <div className="rounded-xl border border-border bg-surface p-3">
+            <div className="rounded-xl bg-surface p-3 shadow-card">
               <SkillPicker
                 selected={project.skills ?? []}
                 onChange={(ids) =>

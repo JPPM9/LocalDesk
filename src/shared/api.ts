@@ -2,7 +2,7 @@
 // Main (Node) und Renderer (React) importieren beide aus dieser Datei,
 // damit sich beide Seiten auf dieselben Datenformen verlassen können.
 
-import type { ThemeChoice } from './appearance';
+import type { ThemeChoice, WindowCommand } from './appearance';
 import type { Language, LanguageChoice, LanguageState } from './language';
 import type {
   GoogleAppInput,
@@ -826,6 +826,8 @@ export interface LocalDeskApi {
   /** Farbschema (System / Hell / Dunkel) – wirkt sofort und bleibt gespeichert. */
   getTheme: () => Promise<ThemeChoice>;
   setTheme: (theme: ThemeChoice) => Promise<void>;
+  /** Zoom, Vollbild, Entwicklerwerkzeuge … (die Menüzeile gibt es nicht mehr). */
+  windowCommand: (command: WindowCommand) => Promise<void>;
   /** Sprache der Oberfläche (System / Deutsch / English) – wirkt sofort und bleibt gespeichert. */
   getLanguage: () => Promise<LanguageState>;
   setLanguage: (choice: LanguageChoice) => Promise<Language>;
@@ -1026,6 +1028,7 @@ export const IpcChannels = {
   openSkillFolder: 'skills:open-folder',
   getTheme: 'appearance:get-theme',
   setTheme: 'appearance:set-theme',
+  windowCommand: 'window:command',
   getLanguage: 'appearance:get-language',
   setLanguage: 'appearance:set-language',
   getUpdateState: 'update:state',
