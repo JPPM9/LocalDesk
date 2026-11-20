@@ -139,7 +139,7 @@ export function ToolCallView({
           <button
             type="button"
             onClick={() => onDecision(call.id, 'once')}
-            className="rounded bg-accent px-3 py-1 text-xs text-accent-fg hover:opacity-90"
+            className="btn btn-primary"
           >
             {isCommand
               ? t(`code.confirm.${call.toolName}`)
@@ -154,7 +154,7 @@ export function ToolCallView({
               type="button"
               onClick={() => onDecision(call.id, 'always')}
               title={t('toolCall.allowAlwaysHint')}
-              className="rounded border border-border bg-surface px-3 py-1 text-xs hover:bg-surface-hover"
+              className="btn btn-secondary"
             >
               {t('toolCall.allowAlways')}
             </button>
@@ -162,7 +162,7 @@ export function ToolCallView({
           <button
             type="button"
             onClick={() => onDecision(call.id, 'deny')}
-            className="rounded border border-border bg-surface px-3 py-1 text-xs hover:bg-surface-hover"
+            className="btn btn-secondary"
           >
             {t('toolCall.deny')}
           </button>

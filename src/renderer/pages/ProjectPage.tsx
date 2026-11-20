@@ -118,7 +118,7 @@ export function ProjectPage() {
             <button
               type="button"
               onClick={() => navigate(`/chat?project=${project.id}`)}
-              className="flex items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
+              className="btn btn-secondary flex items-center gap-2"
             >
               <MessageSquarePlus size={14} />
               {t('projects.newChat')}

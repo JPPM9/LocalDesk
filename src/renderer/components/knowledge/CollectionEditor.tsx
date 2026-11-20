@@ -106,7 +106,7 @@ export function SourcesEditor({
           type="button"
           onClick={() => void add('folder')}
           disabled={disabled}
-          className="flex items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-40"
+          className="btn btn-secondary flex items-center gap-2"
         >
           <FolderOpen size={13} />
           {t('knowledge.addFolder')}
@@ -115,7 +115,7 @@ export function SourcesEditor({
           type="button"
           onClick={() => void add('file')}
           disabled={disabled}
-          className="flex items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-40"
+          className="btn btn-secondary flex items-center gap-2"
         >
           <FileText size={13} />
           {t('knowledge.addFiles')}
@@ -141,7 +141,7 @@ export function IndexButton({
       <button
         type="button"
         onClick={() => void window.api.cancelIndexing(view.config.id)}
-        className="flex items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
+        className="btn btn-secondary flex items-center gap-2"
       >
         <Square size={13} />
         {t('knowledge.cancel')}
@@ -157,7 +157,7 @@ export function IndexButton({
       type="button"
       onClick={() => void start()}
       disabled={disabled || view.config.sources.length === 0}
-      className="flex items-center gap-2 rounded bg-accent px-3 py-1 text-xs text-accent-fg disabled:opacity-40"
+      className="btn btn-primary flex items-center gap-2"
     >
       <RefreshCw size={13} />
       {view.stats.indexedAt ? t('knowledge.reindex') : t('knowledge.index')}

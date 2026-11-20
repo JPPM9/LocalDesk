@@ -384,7 +384,7 @@ export function ChatPage() {
                 onClick={toggleList}
                 title={`${t('nav.expandList')} (${shortcutLabel('toggleSidebar')})`}
                 aria-label={t('nav.expandList')}
-                className="-ml-1 grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text"
+                className="icon-btn -ml-1 shrink-0"
               >
                 <PanelLeftOpen size={17} />
               </button>
@@ -416,7 +416,7 @@ export function ChatPage() {
                       disabled={summary !== null && summary !== 'suggest'}
                       title={t('summary.button')}
                       aria-label={t('summary.button')}
-                      className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text disabled:opacity-50"
+                      className="icon-btn shrink-0"
                     >
                       <ScrollText size={17} />
                     </button>

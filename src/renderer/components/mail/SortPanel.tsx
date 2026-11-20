@@ -144,7 +144,7 @@ export function SortPanel({
               <button
                 type="button"
                 onClick={() => void window.api.cancelMailSorting()}
-                className="flex shrink-0 items-center gap-2 rounded-lg border border-border px-3 py-2 text-[13px] hover:bg-surface-hover"
+                className="btn btn-secondary flex shrink-0 items-center gap-2"
               >
                 <LoaderCircle size={15} className="animate-spin" />
                 {t('mail.cancel')}
@@ -154,7 +154,7 @@ export function SortPanel({
                 type="button"
                 onClick={() => void suggest()}
                 disabled={!model || count === 0}
-                className="flex shrink-0 items-center gap-2 rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-accent-fg hover:opacity-90 disabled:opacity-40"
+                className="btn btn-primary flex shrink-0 items-center gap-2"
               >
                 <ScrollText size={15} />
                 {t('mailSort.start')}
@@ -165,7 +165,7 @@ export function SortPanel({
               onClick={onClose}
               title={t('mail.close')}
               aria-label={t('mail.close')}
-              className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text"
+              className="icon-btn shrink-0"
             >
               <X size={17} />
             </button>
@@ -289,7 +289,7 @@ export function SortPanel({
                         : new Set(allChanges.map(keyOf)),
                     )
                   }
-                  className="rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
+                  className="btn btn-secondary"
                 >
                   {selected.length === allChanges.length
                     ? t('mailSort.selectNone')
@@ -304,7 +304,7 @@ export function SortPanel({
                   type="button"
                   onClick={() => void apply()}
                   disabled={selected.length === 0 || applying}
-                  className="flex items-center gap-2 rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-accent-fg hover:opacity-90 disabled:opacity-40"
+                  className="btn btn-primary flex items-center gap-2"
                 >
                   {applying && (
                     <LoaderCircle size={15} className="animate-spin" />

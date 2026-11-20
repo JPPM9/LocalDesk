@@ -46,7 +46,7 @@ export function FileView({ sessionId, path, onClose }: FileViewProps) {
           onClick={onClose}
           title={t('code.closeFile')}
           aria-label={t('code.closeFile')}
-          className="grid h-7 w-7 shrink-0 place-items-center rounded text-muted hover:bg-surface-hover hover:text-text"
+          className="icon-btn shrink-0"
         >
           <X size={15} />
         </button>

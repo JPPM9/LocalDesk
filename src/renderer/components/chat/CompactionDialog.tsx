@@ -150,16 +150,12 @@ export function CompactionDialog({
             <button
               type="button"
               onClick={() => void run()}
-              className="rounded-lg border border-border bg-surface-2 px-4 py-2 text-sm hover:bg-surface-hover"
+              className="btn btn-secondary"
             >
               {t('compact.retry')}
             </button>
           )}
-          <button
-            type="button"
-            onClick={close}
-            className="rounded-lg border border-border bg-surface-2 px-4 py-2 text-sm hover:bg-surface-hover"
-          >
+          <button type="button" onClick={close} className="btn btn-secondary">
             {t('compact.cancel')}
           </button>
           {draft && (
@@ -167,7 +163,7 @@ export function CompactionDialog({
               type="button"
               onClick={() => void apply()}
               disabled={!text.trim()}
-              className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:opacity-90 disabled:opacity-50"
+              className="btn btn-primary"
             >
               {t('compact.apply')}
             </button>

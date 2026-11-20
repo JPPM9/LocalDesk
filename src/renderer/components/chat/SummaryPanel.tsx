@@ -265,7 +265,7 @@ function DraftEditor({
           type="button"
           disabled={!ready || saving}
           onClick={() => onSave({ title, text })}
-          className="rounded bg-accent px-3 py-1 text-xs text-accent-fg hover:opacity-90 disabled:opacity-50"
+          className="btn btn-primary"
         >
           {t('summary.save')}
         </button>
@@ -273,7 +273,7 @@ function DraftEditor({
           type="button"
           disabled={saving}
           onClick={onRetry}
-          className="rounded border border-border bg-surface px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-50"
+          className="btn btn-secondary"
         >
           {t('summary.again')}
         </button>
@@ -281,7 +281,7 @@ function DraftEditor({
           type="button"
           disabled={saving}
           onClick={onDiscard}
-          className="rounded border border-border bg-surface px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-50"
+          className="btn btn-secondary"
         >
           {t('summary.discard')}
         </button>

@@ -25,7 +25,7 @@ export function LicenseSection() {
       <button
         type="button"
         onClick={() => void toggle()}
-        className="min-h-7 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
+        className="btn btn-secondary"
       >
         {open ? t('settings.licensesHide') : t('settings.licensesShow')}
       </button>

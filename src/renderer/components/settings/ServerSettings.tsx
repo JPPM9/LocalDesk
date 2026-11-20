@@ -146,7 +146,7 @@ export function ServerSettings() {
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               placeholder={t('servers.namePlaceholder')}
-              className="w-full rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent"
+              className="field w-full"
             />
           </Field>
           <Field label={t('servers.address')} hint={t('servers.addressHint')}>
@@ -154,7 +154,7 @@ export function ServerSettings() {
               value={form.address}
               onChange={(e) => setForm({ ...form, address: e.target.value })}
               placeholder="192.168.1.20"
-              className="w-full rounded border border-border bg-bg px-2 py-2 font-mono outline-none focus:border-accent"
+              className="field w-full font-mono"
             />
           </Field>
           <div className="flex items-center gap-2">
@@ -166,14 +166,14 @@ export function ServerSettings() {
                 setForm(null);
                 setError(null);
               }}
-              className="rounded border border-border px-3 py-1 hover:bg-surface-hover"
+              className="btn btn-secondary"
             >
               {t('servers.cancel')}
             </button>
             <button
               type="button"
               onClick={() => void save()}
-              className="rounded bg-accent px-3 py-1 text-accent-fg"
+              className="btn btn-primary"
             >
               {t('servers.save')}
             </button>
@@ -185,7 +185,7 @@ export function ServerSettings() {
           onClick={() =>
             setForm({ id: crypto.randomUUID(), name: '', address: '' })
           }
-          className="flex items-center gap-2 rounded border border-border px-3 py-2 hover:bg-surface-hover"
+          className="btn btn-secondary flex items-center gap-2"
         >
           <Plus size={15} />
           {t('servers.add')}
@@ -262,7 +262,7 @@ function IconButton({
       disabled={disabled}
       title={label}
       aria-label={label}
-      className="grid h-7 w-7 place-items-center rounded text-muted hover:bg-surface-hover hover:text-text disabled:opacity-30"
+      className="icon-btn"
     >
       {children}
     </button>

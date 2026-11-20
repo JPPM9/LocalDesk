@@ -143,13 +143,13 @@ export function MemoryList() {
           }}
           placeholder={t('memories.placeholder')}
           maxLength={500}
-          className="min-w-0 flex-1 rounded border border-border bg-bg px-2 py-2 text-sm outline-none focus:border-accent"
+          className="field min-w-0 flex-1"
         />
         <select
           value={scope}
           onChange={(e) => setScope(e.target.value)}
           aria-label={t('memories.scope')}
-          className="max-w-40 rounded border border-border bg-bg px-2 py-2 text-xs outline-none focus:border-accent"
+          className="field max-w-40"
         >
           <option value="">{t('memories.global')}</option>
           {projects.map((p) => (
@@ -162,7 +162,7 @@ export function MemoryList() {
           type="button"
           onClick={() => void add()}
           disabled={!text.trim()}
-          className="flex shrink-0 items-center gap-1 rounded bg-accent px-3 py-1 text-xs text-accent-fg disabled:opacity-40"
+          className="btn btn-primary flex shrink-0 items-center gap-1"
         >
           <Plus size={13} />
           {t('memories.add')}

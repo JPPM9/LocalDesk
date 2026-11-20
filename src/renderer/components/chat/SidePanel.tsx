@@ -81,7 +81,7 @@ export function SidePanel(props: SidePanelProps) {
           type="button"
           onClick={props.onClose}
           aria-label={t('sidePanel.close')}
-          className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text"
+          className="icon-btn shrink-0"
         >
           <X size={16} />
         </button>
@@ -301,7 +301,7 @@ function ContextTab({
           <button
             type="button"
             onClick={onClearCompaction}
-            className="rounded border border-border px-3 py-1 hover:bg-surface-hover"
+            className="btn btn-secondary"
           >
             {t('compact.clear')}
           </button>
@@ -327,7 +327,7 @@ function ContextTab({
                 onClick={() =>
                   onChangeSettings({ ...settings, contextLength: suggestion })
                 }
-                className="rounded bg-accent px-3 py-1 text-accent-fg"
+                className="btn btn-primary"
               >
                 {t('sidePanel.increase', { size: formatContext(suggestion) })}
               </button>
@@ -359,7 +359,7 @@ function ContextTab({
               <button
                 type="button"
                 onClick={onCompact}
-                className="rounded border border-border bg-surface px-3 py-1 hover:bg-surface-hover"
+                className="btn btn-secondary"
               >
                 {t('compact.button')}
               </button>

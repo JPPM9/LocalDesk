@@ -65,7 +65,7 @@ export function CodePage() {
           <button
             type="button"
             onClick={() => void create()}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-3 py-2 font-medium text-accent-fg hover:opacity-90"
+            className="btn btn-primary flex w-full items-center justify-center gap-2"
           >
             <Plus size={16} />
             {t('code.new')}

@@ -103,7 +103,7 @@ export function StatusFlyout({
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label={t('status.close')}
-                className="grid h-7 w-7 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text"
+                className="icon-btn"
               >
                 <X size={15} />
               </button>

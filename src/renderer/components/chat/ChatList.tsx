@@ -108,7 +108,7 @@ export function ChatList(props: ChatListProps) {
             type="button"
             onClick={onNew}
             title={shortcutLabel('newChat')}
-            className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg bg-accent px-3 py-2 font-medium text-accent-fg hover:opacity-90"
+            className="btn btn-primary flex min-w-0 flex-1 items-center justify-center gap-2"
           >
             <Plus size={16} />
             {t('chat.newChat')}
@@ -118,7 +118,7 @@ export function ChatList(props: ChatListProps) {
             onClick={() => setNewFolder('')}
             title={t('folders.new')}
             aria-label={t('folders.new')}
-            className="grid w-9 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text"
+            className="icon-btn"
           >
             <FolderPlus size={17} />
           </button>
@@ -127,7 +127,7 @@ export function ChatList(props: ChatListProps) {
             onClick={props.onCollapse}
             title={`${t('nav.collapseList')} (${shortcutLabel('toggleSidebar')})`}
             aria-label={t('nav.collapseList')}
-            className="grid w-9 place-items-center rounded-lg text-muted hover:bg-surface-hover hover:text-text"
+            className="icon-btn"
           >
             <PanelLeftClose size={17} />
           </button>

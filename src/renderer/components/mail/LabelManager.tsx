@@ -109,20 +109,20 @@ export function LabelManager({
                           if (e.key === 'Enter' && !busy) void rename();
                           if (e.key === 'Escape') setEditing(null);
                         }}
-                        className="min-w-0 flex-1 rounded border border-border bg-bg px-2 py-1 outline-none focus:border-accent"
+                        className="field min-w-0 flex-1"
                       />
                       <button
                         type="button"
                         onClick={() => void rename()}
                         disabled={busy || !editing.name.trim()}
-                        className="rounded bg-accent px-3 py-1 text-xs text-accent-fg disabled:opacity-40"
+                        className="btn btn-primary"
                       >
                         {t('mailLabels.save')}
                       </button>
                       <button
                         type="button"
                         onClick={() => setEditing(null)}
-                        className="rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
+                        className="btn btn-secondary"
                       >
                         {t('mailLabels.cancel')}
                       </button>
@@ -140,7 +140,7 @@ export function LabelManager({
                         }}
                         title={t('mailLabels.rename')}
                         aria-label={`${t('mailLabels.rename')}: ${label.name}`}
-                        className="grid h-7 w-7 shrink-0 place-items-center rounded text-muted hover:bg-surface-hover hover:text-text"
+                        className="icon-btn shrink-0"
                       >
                         <Pencil size={14} />
                       </button>
@@ -160,13 +160,13 @@ export function LabelManager({
                 if (e.key === 'Enter' && newName.trim() && !busy) void create();
               }}
               placeholder={t('mailLabels.newPlaceholder')}
-              className="min-w-0 flex-1 rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent"
+              className="field min-w-0 flex-1"
             />
             <button
               type="button"
               onClick={() => void create()}
               disabled={busy || !newName.trim()}
-              className="shrink-0 rounded bg-accent px-3 py-2 text-[13px] text-accent-fg disabled:opacity-40"
+              className="btn btn-primary shrink-0"
             >
               {t('mailLabels.create')}
             </button>

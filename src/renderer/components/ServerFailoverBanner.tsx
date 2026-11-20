@@ -53,14 +53,14 @@ export function ServerFailoverBanner({ chatModel }: { chatModel: string }) {
           <button
             type="button"
             onClick={() => void switchTo(back.profileId)}
-            className="rounded-lg bg-accent px-3 py-1 text-[13px] font-medium text-accent-fg hover:opacity-90"
+            className="btn btn-primary"
           >
             {t('failover.back', { name: name(back.name) })}
           </button>
           <button
             type="button"
             onClick={failover.stay}
-            className="rounded-lg border border-border px-3 py-1 text-[13px] hover:bg-surface-hover"
+            className="btn btn-secondary"
           >
             {t('failover.stay')}
           </button>
@@ -128,7 +128,7 @@ export function ServerFailoverBanner({ chatModel }: { chatModel: string }) {
             <button
               type="button"
               onClick={() => void switchTo(probe.profileId)}
-              className="rounded-lg bg-accent px-3 py-1 text-[13px] font-medium text-accent-fg hover:opacity-90"
+              className="btn btn-primary"
             >
               {t('failover.switch', { name: name(probe.name) })}
             </button>

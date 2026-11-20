@@ -179,7 +179,7 @@ export function SkillImportDialog({
                   <button
                     type="button"
                     onClick={() => inputRef.current?.click()}
-                    className="rounded-lg border border-border bg-surface-2 px-3 py-2 text-text hover:bg-surface-hover"
+                    className="btn btn-secondary text-text"
                   >
                     {t('skills.import.choose')}
                   </button>
@@ -377,16 +377,12 @@ export function SkillImportDialog({
                 setPreview(null);
                 setFailed([]);
               }}
-              className="rounded-lg border border-border bg-surface-2 px-4 py-2 text-sm hover:bg-surface-hover"
+              className="btn btn-secondary"
             >
               {onBack ? t('skills.github.back') : t('skills.import.other')}
             </button>
           )}
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg border border-border bg-surface-2 px-4 py-2 text-sm hover:bg-surface-hover"
-          >
+          <button type="button" onClick={onClose} className="btn btn-secondary">
             {t('dialog.cancel')}
           </button>
           {preview && (
@@ -394,7 +390,7 @@ export function SkillImportDialog({
               type="button"
               onClick={() => void add()}
               disabled={ready.length === 0 || blocked || busy !== null}
-              className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:opacity-90 disabled:opacity-50"
+              className="btn btn-primary flex items-center gap-2"
             >
               {busy === 'adding' && (
                 <LoaderCircle size={15} className="animate-spin" />

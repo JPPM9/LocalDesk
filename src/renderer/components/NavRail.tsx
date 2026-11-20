@@ -111,7 +111,7 @@ export function NavRail() {
             current: t(`appearance.${theme}`),
           })}
           aria-label={t('appearance.title')}
-          className="grid h-10 w-10 place-items-center rounded-xl text-muted hover:bg-surface-hover hover:text-text"
+          className="icon-btn"
         >
           <ThemeIcon size={18} />
         </button>

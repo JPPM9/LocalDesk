@@ -65,7 +65,7 @@ export function MailReader({ accountId, messageId }: MailReaderProps) {
                 <button
                   type="button"
                   onClick={() => void window.api.cancelMailSummary()}
-                  className="flex shrink-0 items-center gap-2 rounded-lg border border-border px-3 py-2 text-[13px] hover:bg-surface-hover"
+                  className="btn btn-secondary flex shrink-0 items-center gap-2"
                 >
                   <LoaderCircle size={15} className="animate-spin" />
                   {t('mail.cancel')}
@@ -75,7 +75,7 @@ export function MailReader({ accountId, messageId }: MailReaderProps) {
                   type="button"
                   onClick={() => void summarize()}
                   disabled={!model}
-                  className="flex shrink-0 items-center gap-2 rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-accent-fg hover:opacity-90 disabled:opacity-40"
+                  className="btn btn-primary flex shrink-0 items-center gap-2"
                 >
                   <TextQuote size={15} />
                   {t('mail.summarize')}
@@ -147,7 +147,7 @@ export function MailReader({ accountId, messageId }: MailReaderProps) {
                     onClick={() => setSummary({ kind: 'idle' })}
                     title={t('mail.close')}
                     aria-label={t('mail.close')}
-                    className="grid h-6 w-6 place-items-center rounded text-muted hover:bg-surface-hover hover:text-text"
+                    className="icon-btn"
                   >
                     <X size={14} />
                   </button>

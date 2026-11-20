@@ -120,7 +120,7 @@ export function TemplatesPage() {
           <button
             type="button"
             onClick={() => navigate(`/templates/${NEW}`)}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-3 py-2 font-medium text-accent-fg hover:opacity-90"
+            className="btn btn-primary flex w-full items-center justify-center gap-2"
           >
             <BookmarkPlus size={15} />
             {t('templates.new')}
@@ -167,7 +167,7 @@ export function TemplatesPage() {
                     onClick={() => navigate(`/chat?template=${draft.id}`)}
                     disabled={dirty}
                     title={dirty ? t('templates.saveFirst') : undefined}
-                    className="flex items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-50"
+                    className="btn btn-secondary flex items-center gap-2"
                   >
                     <MessageSquarePlus size={14} />
                     {t('templates.startChat')}
@@ -188,7 +188,7 @@ export function TemplatesPage() {
                   type="button"
                   onClick={() => void onSave()}
                   disabled={!dirty}
-                  className="flex items-center gap-2 rounded bg-accent px-3 py-1 text-xs text-accent-fg disabled:opacity-40"
+                  className="btn btn-primary flex items-center gap-2"
                 >
                   <Save size={14} />
                   {t('templates.save')}

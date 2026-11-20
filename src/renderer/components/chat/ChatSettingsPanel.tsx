@@ -30,7 +30,7 @@ export function ChatSettingsPanel({
           type="button"
           onClick={onClose}
           aria-label={t('settingsPanel.close')}
-          className="grid h-7 w-7 place-items-center rounded text-muted hover:bg-surface-hover hover:text-text"
+          className="icon-btn"
         >
           <X size={16} />
         </button>
@@ -102,7 +102,7 @@ function SaveAsTemplate({
             setName('');
             setMessage(null);
           }}
-          className="flex w-full items-center justify-center gap-2 rounded border border-border px-3 py-2 hover:bg-surface-hover"
+          className="btn btn-secondary flex w-full items-center justify-center gap-2"
         >
           <BookmarkPlus size={15} />
           {t('templates.saveFromChat')}
@@ -116,12 +116,12 @@ function SaveAsTemplate({
             onKeyDown={onKeyDown}
             placeholder={t('templates.namePlaceholder')}
             aria-label={t('templates.name')}
-            className="min-w-0 flex-1 rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent"
+            className="field min-w-0 flex-1"
           />
           <button
             type="button"
             onClick={() => void save()}
-            className="rounded bg-accent px-3 text-accent-fg"
+            className="btn btn-primary"
           >
             {t('templates.save')}
           </button>

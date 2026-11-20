@@ -103,10 +103,7 @@ export function MailPage() {
           icon={Mail}
           text={t('mail.setupText')}
           action={
-            <Link
-              to="/settings"
-              className="inline-block rounded-lg bg-accent px-3 py-2 text-[13px] font-medium text-accent-fg hover:opacity-90"
-            >
+            <Link to="/settings" className="btn btn-primary inline-block">
               {t('mail.toSettings')}
             </Link>
           }
@@ -124,7 +121,7 @@ export function MailPage() {
               value={accountId ?? ''}
               onChange={(e) => chooseAccount(e.target.value)}
               aria-label={t('mail.account')}
-              className="w-full rounded-lg border border-border bg-bg px-2 py-2 text-[13px] outline-none focus:border-accent"
+              className="field w-full"
             >
               {accounts.map((a) => (
                 <option key={a.id} value={a.id}>

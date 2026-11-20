@@ -59,7 +59,7 @@ export function ModelsPage() {
       type="button"
       onClick={load}
       disabled={loading}
-      className="flex items-center gap-2 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-50"
+      className="btn btn-secondary flex items-center gap-2"
     >
       <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
       {t('models.refresh')}

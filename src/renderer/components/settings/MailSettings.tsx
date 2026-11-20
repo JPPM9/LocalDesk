@@ -116,7 +116,7 @@ export function MailSettings() {
                 onChange={(e) => setClientId(e.target.value)}
                 placeholder="123456789012-abc….apps.googleusercontent.com"
                 spellCheck={false}
-                className="w-full rounded border border-border bg-bg px-2 py-2 font-mono text-xs outline-none focus:border-accent"
+                className="field w-full font-mono"
               />
             </Field>
             <Field
@@ -130,7 +130,7 @@ export function MailSettings() {
                 placeholder="GOCSPX-…"
                 spellCheck={false}
                 autoComplete="off"
-                className="w-full rounded border border-border bg-bg px-2 py-2 font-mono text-xs outline-none focus:border-accent"
+                className="field w-full font-mono"
               />
             </Field>
             {error && <p className="text-xs text-error">{error}</p>}
@@ -138,7 +138,7 @@ export function MailSettings() {
               <button
                 type="button"
                 onClick={() => setEditing(false)}
-                className="rounded border border-border px-3 py-1 hover:bg-surface-hover"
+                className="btn btn-secondary"
               >
                 {t('mcp.cancel')}
               </button>
@@ -146,7 +146,7 @@ export function MailSettings() {
                 type="button"
                 onClick={() => void save()}
                 disabled={!clientId.trim() || !clientSecret.trim()}
-                className="rounded bg-accent px-3 py-1 text-accent-fg disabled:opacity-40"
+                className="btn btn-primary"
               >
                 {t('mcp.save')}
               </button>
@@ -167,7 +167,7 @@ export function MailSettings() {
                   type="button"
                   onClick={startEdit}
                   disabled={locked}
-                  className="rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-40"
+                  className="btn btn-secondary"
                 >
                   {t('mailSettings.change')}
                 </button>
@@ -175,7 +175,7 @@ export function MailSettings() {
                   type="button"
                   onClick={() => void remove()}
                   disabled={locked}
-                  className="rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-40"
+                  className="btn btn-secondary"
                 >
                   {t('mailSettings.remove')}
                 </button>
@@ -208,7 +208,7 @@ export function MailSettings() {
                       <button
                         type="button"
                         onClick={() => void disconnect(account)}
-                        className="min-h-7 rounded border border-border px-3 py-1 text-xs hover:bg-surface-hover"
+                        className="btn btn-secondary"
                       >
                         {t('mailSettings.disconnect')}
                       </button>
@@ -229,7 +229,7 @@ export function MailSettings() {
                   <button
                     type="button"
                     onClick={() => void window.api.cancelMailConnect()}
-                    className="rounded border border-border bg-surface px-3 py-1 text-xs hover:bg-surface-hover"
+                    className="btn btn-secondary"
                   >
                     {t('mailSettings.cancel')}
                   </button>
@@ -238,7 +238,7 @@ export function MailSettings() {
                 <button
                   type="button"
                   onClick={() => void connect()}
-                  className="rounded bg-accent px-3 py-1 text-xs text-accent-fg hover:opacity-90"
+                  className="btn btn-primary"
                 >
                   {t(
                     accounts.length > 0
@@ -262,7 +262,7 @@ export function MailSettings() {
               <button
                 type="button"
                 onClick={startEdit}
-                className="rounded bg-accent px-3 py-1 text-xs text-accent-fg hover:opacity-90"
+                className="btn btn-primary"
               >
                 {t('mailSettings.setUp')}
               </button>

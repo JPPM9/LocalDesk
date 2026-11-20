@@ -527,7 +527,7 @@ export function ChatInput({
             <button
               type="button"
               onClick={() => context.onRaise(raiseTo)}
-              className="rounded-lg bg-accent px-3 py-1 text-xs font-medium text-accent-fg hover:opacity-90"
+              className="btn btn-primary"
             >
               {t('chat.files.raise', { length: formatContext(raiseTo) })}
             </button>
