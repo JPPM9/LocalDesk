@@ -14,6 +14,7 @@ import {
   type PaletteGroup,
   type PaletteItem,
 } from '../palette/commands';
+import { useChatRunning } from '../chat/runningState';
 import { triggerShortcut } from '../shortcuts/useShortcut';
 
 export type PaletteScope = 'all' | 'projects' | 'chats';
@@ -36,6 +37,7 @@ export function CommandPalette(props: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const inChat = useLocation().pathname.startsWith('/chat');
+  const running = useChatRunning();
   const [scope, setScope] = useState(props.scope);
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
@@ -155,10 +157,18 @@ export function CommandPalette(props: Props) {
         },
       );
     }
+    if (running)
+      items.push({
+        id: 'P-18',
+        group: 'inChat',
+        label: t('shortcuts.stop'),
+        shortcut: 'Esc',
+        run: () => triggerShortcut('stop'),
+      });
     return items;
     // props.* sind stabile Rückruf-Funktionen des Rahmens
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [t, navigate, inChat]);
+  }, [t, navigate, inChat, running]);
 
   const dynamic = useMemo(() => {
     const projectName = new Map(props.folders.map((f) => [f.id, f.name]));

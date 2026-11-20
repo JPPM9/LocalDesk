@@ -25,6 +25,7 @@ import {
   SidePanel,
   type SidePanelTab,
 } from '../components/chat/SidePanel';
+import { setChatRunning } from '../chat/runningState';
 import { useChatModels } from '../hooks/useChatModels';
 import { useTemplates } from '../templates/useTemplates';
 import { TemplatePicker } from '../components/chat/TemplatePicker';
@@ -108,6 +109,10 @@ export function ChatPage() {
   };
 
   useShortcut('chatSettings', () => setSettingsOpen((open) => !open));
+  useEffect(() => {
+    setChatRunning(isRunning);
+    return () => setChatRunning(false);
+  }, [isRunning]);
   // Esc stoppt nur, wenn gerade eine Antwort läuft – sonst passiert nichts.
   useShortcut('stop', () => {
     if (isRunning) stop();

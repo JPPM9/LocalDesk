@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useOllamaStatus } from '../hooks/useOllamaStatus';
@@ -57,32 +58,104 @@ export function StatusPill() {
     .filter(Boolean)
     .join('\n');
 
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (event: MouseEvent) => {
+      if (!ref.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey, true);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey, true);
+    };
+  }, [open]);
+
   return (
-    <Link
-      to="/status"
-      title={tooltip}
-      className="-mx-2 block rounded-lg px-2 py-1 hover:bg-surface-hover"
-    >
-      <div className="flex items-start gap-3 text-xs" role="status">
-        <span
-          className={`mt-1 inline-block h-2 w-2 shrink-0 rounded-full ${dotClass}`}
-        />
-        <div className="min-w-0 space-y-0.5">
-          <div className="truncate font-medium">{label}</div>
-          {loadedText && (
-            <div
-              className={`truncate text-xs ${partlyOnCpu ? 'text-warn' : 'text-muted'}`}
-            >
-              {loadedText}
-            </div>
-          )}
-          {gpuText && (
-            <div className="truncate text-xs text-subtle tabular-nums">
-              {gpuText}
-            </div>
-          )}
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        title={tooltip}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+        className="-mx-2 block w-full rounded-[var(--radius-md)] px-2 py-1 text-left hover:bg-surface-hover"
+      >
+        <div className="flex items-start gap-3 text-xs" role="status">
+          <span
+            className={`mt-1 inline-block h-2 w-2 shrink-0 rounded-full ${dotClass}`}
+          />
+          <div className="min-w-0 space-y-0.5">
+            <div className="truncate font-medium">{label}</div>
+            {loadedText && (
+              <div
+                className={`truncate text-xs ${partlyOnCpu ? 'text-warn' : 'text-muted'}`}
+              >
+                {loadedText}
+              </div>
+            )}
+            {gpuText && (
+              <div className="truncate text-xs text-muted tabular-nums">
+                {gpuText}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </Link>
+      </button>
+      {open && (
+        <div
+          role="dialog"
+          aria-label={t('statusPopup.title')}
+          className="dialog absolute bottom-full left-0 z-40 mb-2 w-[300px] space-y-3 !p-4 text-sm"
+        >
+          <div className="flex items-center justify-between">
+            <h2 className="font-semibold">{t('statusPopup.title')}</h2>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="btn btn-quiet !min-h-8 !px-3"
+            >
+              {t('status.close')}
+            </button>
+          </div>
+          {status && !status.online ? (
+            <p className="text-muted">
+              {t('statusPopup.offline', { name: status.baseUrl })}
+            </p>
+          ) : loaded.length === 0 ? (
+            <p className="text-muted">{t('statusPopup.noneLoaded')}</p>
+          ) : (
+            <ul className="space-y-1">
+              {loaded.map((m) => (
+                <li key={m.name} className="flex justify-between gap-3">
+                  <span className="truncate">{m.name}</span>
+                  <span className="text-muted tabular-nums">
+                    {formatMemory(m.vramBytes)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <p className="text-xs text-muted tabular-nums">
+            {gpuText || t('statusPopup.noGpu')}
+          </p>
+          <Link
+            to="/status"
+            onClick={() => setOpen(false)}
+            className="btn btn-secondary w-full"
+          >
+            {t('status.openPage')}
+          </Link>
+        </div>
+      )}
+    </div>
   );
 }

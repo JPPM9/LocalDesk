@@ -208,6 +208,19 @@
  * Tailwind setzt „rounded“ fest auf 4 px (lässt sich nicht per Token ändern) – bei uns
  * folgt es --radius-sm (8 px). Gleiche Ebene wie Tailwinds Utilities, steht danach → gewinnt.
  */
+/* Schraffur der Daten (DESIGN.md §Daten): senkrechte Streifen des Akzents mit Umriss. */
+@layer utilities {
+  .data-hatch {
+    background-image: repeating-linear-gradient(
+      90deg,
+      var(--accent-solid) 0 3px,
+      transparent 3px 6px
+    );
+    outline: 1.5px solid var(--accent-solid);
+    outline-offset: -1.5px;
+  }
+}
+
 @layer utilities {
   .rounded {
     border-radius: var(--radius-sm);

@@ -185,16 +185,18 @@ function ProjectTab({ project }: { project: ChatFolder | undefined }) {
   );
 }
 
+// Aussehen nach Platz (DESIGN.md §Daten): Pol voll, Akzent voll, Akzent schraffiert – der Name
+// und die Reihenfolge der Liste tragen die Identität, nie die Farbe.
 const PART_COLORS: Record<ContextPart, string> = {
-  instructions: 'bg-muted/25',
-  memory: 'bg-muted/35',
-  summary: 'bg-muted/45',
-  skills: 'bg-muted/55',
+  instructions: 'bg-text',
+  memory: 'bg-accent',
+  summary: 'data-hatch',
+  skills: 'bg-text',
   history: 'bg-accent',
-  images: 'bg-muted/65',
-  files: 'bg-muted/75',
-  knowledge: 'bg-muted/90',
-  tools: 'bg-muted/15',
+  images: 'data-hatch',
+  files: 'bg-text',
+  knowledge: 'bg-accent',
+  tools: 'data-hatch',
 };
 
 /** Füllstand: Anteile, Warnung, „Kontextlänge erhöhen“ mit geschätztem Speicher. */
@@ -262,7 +264,7 @@ function ContextTab({
             {percent} %
           </span>
         </div>
-        <div className="flex h-2.5 overflow-hidden rounded bg-bg">
+        <div className="flex h-2.5 gap-px overflow-hidden rounded border border-dashed border-muted bg-surface-active">
           {(Object.keys(usage.parts) as ContextPart[]).map((part) => (
             <div
               key={part}

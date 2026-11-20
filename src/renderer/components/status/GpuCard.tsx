@@ -100,7 +100,10 @@ function GpuCard({
           })}
         >
           <div className="bg-accent" style={{ width: `${percent(ollama)}%` }} />
-          <div className="bg-muted" style={{ width: `${percent(others)}%` }} />
+          <div
+            className="data-hatch"
+            style={{ width: `${percent(others)}%` }}
+          />
         </div>
         <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 tabular-nums tabular-nums text-xs">
           <Legend
@@ -109,7 +112,7 @@ function GpuCard({
             value={formatMemory(ollama)}
           />
           <Legend
-            className="bg-muted"
+            className="data-hatch"
             label={t('gpu.others')}
             value={formatMemory(others)}
           />

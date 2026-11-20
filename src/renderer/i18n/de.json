@@ -1085,5 +1085,11 @@
     "webSearch": "Im Web suchen",
     "research": "Recherche",
     "remove": "{{name}} ausschalten"
+  },
+  "statusPopup": {
+    "title": "Modellstatus",
+    "offline": "Der Ollama-Server „{{name}}“ ist nicht erreichbar. Ollama läuft nicht, oder die Adresse stimmt nicht. Starte Ollama; LocalDesk prüft von selbst weiter.",
+    "noneLoaded": "Ollama ist erreichbar. Ein Modell wird beim ersten Senden geladen.",
+    "noGpu": "Keine NVIDIA-Grafikkarte gefunden, darum gibt es keine Messung. Die geladenen Modelle zeigen, wie viel VRAM Ollama nutzt."
   }
 }

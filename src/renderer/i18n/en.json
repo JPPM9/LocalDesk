@@ -1085,5 +1085,11 @@
     "webSearch": "Search the web",
     "research": "Research",
     "remove": "Turn off {{name}}"
+  },
+  "statusPopup": {
+    "title": "Model status",
+    "offline": "The Ollama server “{{name}}” is not reachable. Ollama is not running, or the address is wrong. Start Ollama; LocalDesk keeps checking on its own.",
+    "noneLoaded": "Ollama is reachable. A model loads when you send your first message.",
+    "noGpu": "No NVIDIA graphics card found, so nothing is measured. The loaded models show how much VRAM Ollama uses."
   }
 }

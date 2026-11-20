@@ -11,32 +11,23 @@ const WIDTH = 640;
 const HEIGHT = 320;
 
 /**
- * Farben der Stücke eines Kreisdiagramms: Das größte Stück bekommt den Akzent, alle anderen
- * Graustufen (die Legende und der Tooltip sagen, welches Stück was ist).
+ * Aussehen der Stücke eines Kreises (DESIGN.md §Daten): Platz k hat Aussehen k mod 3 aus
+ * Pol voll, Akzent voll, Akzent schraffiert. Das letzte Stück darf nicht wie das erste aussehen
+ * (der Ring schließt sich): dann nimmt es „Akzent voll“. Die Nummer am Stück und die Reihenfolge
+ * tragen die Identität, nie die Farbe.
  */
-const PIE_NEUTRALS = [
-  '#9a9aa0',
-  '#76767c',
-  '#b5b5ba',
-  '#5f5f65',
-  '#cdcdd1',
-  '#85858b',
-  '#a6a6ab',
-  '#6b6b71',
-  '#c0c0c5',
-  '#8f8f95',
-  '#b0b0b5',
-];
-const PIE_ACCENT = 'var(--color-accent)';
-
-/** Farbe je Stück: Rang 1 = Akzent, die übrigen der Reihe nach grau. */
-function pieColors(values: number[]): string[] {
-  const lead = values.indexOf(Math.max(...values));
-  let next = 0;
-  return values.map((_, i) =>
-    i === lead ? PIE_ACCENT : PIE_NEUTRALS[next++ % PIE_NEUTRALS.length],
-  );
+type Look = 'pole' | 'accent' | 'hatch';
+const LOOKS: Look[] = ['pole', 'accent', 'hatch'];
+function pieLooks(count: number): Look[] {
+  const looks = Array.from({ length: count }, (_, i) => LOOKS[i % 3]);
+  if (count > 1 && looks[count - 1] === looks[0]) looks[count - 1] = 'accent';
+  return looks;
 }
+const LOOK_FILL: Record<Look, string> = {
+  pole: 'var(--text)',
+  accent: 'var(--accent-solid)',
+  hatch: 'url(#data-hatch)',
+};
 
 /**
  * Ein Diagramm aus einer Tabelle (Werkzeug `table_chart`): Balken, Linie oder Kreis als SVG.
@@ -112,14 +103,17 @@ function Axes({
     >
       {axis.ticks.map((tick) => (
         <g key={tick}>
-          <line
-            x1={left}
-            x2={WIDTH - right}
-            y1={y(tick)}
-            y2={y(tick)}
-            className="stroke-border"
-            strokeWidth={1}
-          />
+          {/* Keine Rasterlinien (DESIGN.md §Daten): nur die Nulllinie. */}
+          {tick === 0 && (
+            <line
+              x1={left}
+              x2={WIDTH - right}
+              y1={y(tick)}
+              y2={y(tick)}
+              className="stroke-muted"
+              strokeWidth={1}
+            />
+          )}
           <text
             x={left - 8}
             y={y(tick)}
@@ -220,7 +214,7 @@ function Pie({
   format: (n: number) => string;
 }) {
   const slices = pieSlices(chart.values);
-  const colors = pieColors(chart.values);
+  const looks = pieLooks(chart.values.length);
   const cx = 150;
   const cy = 150;
   const r = 120;
@@ -232,13 +226,27 @@ function Pie({
       className="h-auto w-full max-w-[640px]"
       aria-hidden="true"
     >
+      <defs>
+        <pattern
+          id="data-hatch"
+          width={6}
+          height={6}
+          patternUnits="userSpaceOnUse"
+        >
+          <rect width={3} height={6} fill="var(--accent-solid)" />
+        </pattern>
+      </defs>
       {slices.map((slice) => (
         <path
           key={slice.index}
           d={slicePath(cx, cy, r, slice.start, slice.end)}
-          style={{ fill: colors[slice.index] }}
-          className="stroke-bg"
-          strokeWidth={1.5}
+          fill={LOOK_FILL[looks[slice.index]]}
+          stroke={
+            looks[slice.index] === 'hatch'
+              ? 'var(--accent-solid)'
+              : 'var(--background)'
+          }
+          strokeWidth={looks[slice.index] === 'hatch' ? 1.5 : 2}
         >
           <title>{`${chart.labels[slice.index]}: ${format(chart.values[slice.index])} (${percent(slice.share)})`}</title>
         </path>
@@ -249,10 +257,13 @@ function Pie({
             width={12}
             height={12}
             rx={2}
-            style={{ fill: colors[slice.index] }}
+            fill={LOOK_FILL[looks[slice.index]]}
+            stroke={
+              looks[slice.index] === 'hatch' ? 'var(--accent-solid)' : 'none'
+            }
           />
           <text x={20} y={10} className="fill-text" fontSize={12}>
-            {shortLabel(chart.labels[slice.index], 28)}
+            {`${slice.index + 1}  ${shortLabel(chart.labels[slice.index], 26)}`}
           </text>
           <text
             x={270}
