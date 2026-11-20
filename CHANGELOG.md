@@ -3,7 +3,7 @@
 Jede Version hat hier einen Abschnitt `## <Version> – <Datum>`. Sein Text wird beim Release zu
 den Release-Notizen auf GitHub – und erscheint in LocalDesk unter „Nach Updates suchen“.
 
-## Unveröffentlicht
+## 0.2.0 – 2026-11-20
 
 **ArtCraft**
 

@@ -1,7 +1,7 @@
 {
   "name": "localdesk",
   "productName": "LocalDesk",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
   "description": "Desktop-App für lokale KI-Modelle über Ollama",
   "keywords": [],
