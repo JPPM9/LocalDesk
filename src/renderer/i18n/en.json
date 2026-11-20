@@ -407,6 +407,10 @@
       "thinking": "Thinking",
       "embedding": "Embedding",
       "insert": "Insert"
+    },
+    "tab": {
+      "installed": "Installed",
+      "discover": "Discover"
     }
   },
   "mcp": {
@@ -1091,5 +1095,30 @@
     "offline": "The Ollama server “{{name}}” is not reachable. Ollama is not running, or the address is wrong. Start Ollama; LocalDesk keeps checking on its own.",
     "noneLoaded": "Ollama is reachable. A model loads when you send your first message.",
     "noGpu": "No NVIDIA graphics card found, so nothing is measured. The loaded models show how much VRAM Ollama uses."
+  },
+  "discover": {
+    "pc": "Your PC",
+    "ram": "{{size}} memory",
+    "vram": "{{name}} · {{size}} graphics memory",
+    "noVram": "Graphics memory unknown (no NVIDIA card found)",
+    "estimate": "Whether a model fits is an estimate: file size plus reserve and context memory at 4096 tokens. A model can still run slower or faster.",
+    "placeholder": "Search models, e.g. qwen3 or llama",
+    "search": "Search",
+    "privacy": "The search goes to huggingface.co. Hugging Face sees your search term and IP address. Nothing is sent until you click “Search”.",
+    "onlyFitting": "Only what fits this PC",
+    "error": "Hugging Face did not answer: {{error}}. Check your internet connection and try again.",
+    "started": "Download started: {{name}}. Progress is shown above.",
+    "loading": "Loading …",
+    "none": "Nothing found. Try another word.",
+    "noFiles": "This repo has no GGUF files with a recognizable quantization.",
+    "stats": "{{downloads}} downloads · {{likes}} likes",
+    "fits": "Fits?",
+    "downloadFor": "Download {{name}}",
+    "fit": {
+      "gpu": "Fits the graphics card (about {{need}})",
+      "partial": "Partly on the processor, slower (about {{need}})",
+      "cpu": "Processor only, slow (about {{need}})",
+      "no": "Does not fit (about {{need}})"
+    }
   }
 }

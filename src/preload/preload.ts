@@ -20,6 +20,11 @@ const api: LocalDeskApi = {
   listRunningModels: () => ipcRenderer.invoke(IpcChannels.listRunningModels),
   deleteModel: (model) => ipcRenderer.invoke(IpcChannels.deleteModel, model),
   getGpuStatus: () => ipcRenderer.invoke(IpcChannels.getGpuStatus),
+  getSystemMemory: () => ipcRenderer.invoke(IpcChannels.getSystemMemory),
+  searchCatalog: (query) =>
+    ipcRenderer.invoke(IpcChannels.searchCatalog, query),
+  listCatalogFiles: (repoId) =>
+    ipcRenderer.invoke(IpcChannels.listCatalogFiles, repoId),
   getKvBytesPerToken: (model) =>
     ipcRenderer.invoke(IpcChannels.getKvBytesPerToken, model),
 

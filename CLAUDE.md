@@ -298,6 +298,7 @@
   (nennt Größe, sagt „endgültig“, Chats bleiben). Chats mit gelöschtem Modell bleiben lesbar.
 - **GPU-Last** über `nvidia-smi` (nur bei lokalem Ollama); geladene Modelle/VRAM über Ollama `/api/ps`.
 - **Netzwerk**: nur Ollama-Server (lokal/LAN), Modell-Downloads über Ollama, Update-Prüfung nur per Knopf,
+  Modell-Katalog (`huggingface.co`, nur auf Klick in „Modelle → Entdecken“, `catalog-service.ts`),
   und (Phase 11, vom Nutzer freigegeben) Gmail: nur `accounts.google.com`, `oauth2.googleapis.com`,
   `gmail.googleapis.com` über HTTPS, erzwungen in `mail/mail-fetch.ts`. Keine Telemetrie.
   Dazu (Wunschliste Schritt 4a, vom Nutzer freigegeben): beliebige Webseiten, aber NUR über das Werkzeug `read_webpage`

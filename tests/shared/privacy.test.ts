@@ -3,10 +3,16 @@ import { describe, expect, it } from 'vitest';
 import { MAIL_HOSTS } from '../../src/main/mail/mail-fetch';
 import { GITHUB_API_HOST, GITHUB_RAW_HOST } from '../../src/shared/github';
 import { WEB_SEARCH_HOST } from '../../src/shared/web';
+import { CATALOG_HOST } from '../../src/shared/catalog';
 
 const privacy = readFileSync('docs/privacy.md', 'utf8');
 
 describe('Datenschutzerklärung', () => {
+  it('nennt den Host des Modell-Katalogs in beiden Sprachen', () => {
+    expect(privacy).toContain(`Model catalog (\`${CATALOG_HOST}\`)`);
+    expect(privacy).toContain(`Modell-Katalog (\`${CATALOG_HOST}\`)`);
+  });
+
   it('nennt jede Adresse, die LocalDesk für Mail erreichen darf', () => {
     for (const host of MAIL_HOSTS) {
       expect(privacy, host).toContain(host);

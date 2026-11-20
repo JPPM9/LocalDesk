@@ -407,6 +407,10 @@
       "thinking": "Denken",
       "embedding": "Embedding",
       "insert": "Einfügen"
+    },
+    "tab": {
+      "installed": "Installiert",
+      "discover": "Entdecken"
     }
   },
   "mcp": {
@@ -1091,5 +1095,30 @@
     "offline": "Der Ollama-Server „{{name}}“ ist nicht erreichbar. Ollama läuft nicht, oder die Adresse stimmt nicht. Starte Ollama; LocalDesk prüft von selbst weiter.",
     "noneLoaded": "Ollama ist erreichbar. Ein Modell wird beim ersten Senden geladen.",
     "noGpu": "Keine NVIDIA-Grafikkarte gefunden, darum gibt es keine Messung. Die geladenen Modelle zeigen, wie viel VRAM Ollama nutzt."
+  },
+  "discover": {
+    "pc": "Dein PC",
+    "ram": "{{size}} Arbeitsspeicher",
+    "vram": "{{name}} · {{size}} Grafikspeicher",
+    "noVram": "Grafikspeicher unbekannt (keine NVIDIA-Karte erkannt)",
+    "estimate": "Ob ein Modell passt, ist geschätzt: Dateigröße plus Reserve und Kontext-Speicher bei 4096 Token. Ein Modell kann trotzdem langsamer oder schneller laufen.",
+    "placeholder": "Modell suchen, z. B. qwen3 oder llama",
+    "search": "Suchen",
+    "privacy": "Die Suche geht an huggingface.co. Hugging Face sieht dein Suchwort und deine IP-Adresse. Ohne Klick auf „Suchen“ wird nichts gesendet.",
+    "onlyFitting": "Nur was auf diesen PC passt",
+    "error": "Hugging Face hat nicht geantwortet: {{error}}. Prüfe die Internetverbindung und versuche es noch einmal.",
+    "started": "Download gestartet: {{name}}. Der Fortschritt steht oben.",
+    "loading": "Lädt …",
+    "none": "Nichts gefunden. Versuche ein anderes Wort.",
+    "noFiles": "In diesem Repo gibt es keine GGUF-Dateien mit erkennbarer Quantisierung.",
+    "stats": "{{downloads}} Downloads · {{likes}} Likes",
+    "fits": "Passt?",
+    "downloadFor": "{{name}} herunterladen",
+    "fit": {
+      "gpu": "Passt auf die Grafikkarte (ca. {{need}})",
+      "partial": "Teils auf dem Prozessor, langsamer (ca. {{need}})",
+      "cpu": "Nur Prozessor, langsam (ca. {{need}})",
+      "no": "Passt nicht (ca. {{need}})"
+    }
   }
 }

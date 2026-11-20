@@ -246,6 +246,28 @@ export type GpuStatus =
       error?: string;
     };
 
+/** Arbeitsspeicher und Prozessorkerne dieses PCs. */
+export interface SystemMemory {
+  totalBytes: number;
+  freeBytes: number;
+  cpuCount: number;
+}
+
+/** Ein GGUF-Modell aus dem Hugging-Face-Katalog. */
+export interface CatalogModel {
+  id: string;
+  downloads: number;
+  likes: number;
+  tags: string[];
+}
+
+/** Eine Quantisierung eines Katalog-Modells mit der Gesamtgröße ihrer Datei(en). */
+export interface CatalogFile {
+  quant: string;
+  sizeBytes: number;
+  files: number;
+}
+
 /** Eine Fortschrittsmeldung von Ollama beim Herunterladen (eine Zeile aus /api/pull). */
 export interface PullChunk {
   status: string;
@@ -641,6 +663,12 @@ export interface LocalDeskApi {
   /** Löscht ein Modell endgültig vom aktiven Server. */
   deleteModel: (model: string) => Promise<Result<void>>;
   getGpuStatus: () => Promise<GpuStatus>;
+  /** Arbeitsspeicher und Kerne dieses PCs (für „passt auf deinen PC“). */
+  getSystemMemory: () => Promise<SystemMemory>;
+  /** Sucht GGUF-Modelle auf Hugging Face (nur auf Knopfdruck; geht ins Internet). */
+  searchCatalog: (query: string) => Promise<Result<CatalogModel[]>>;
+  /** Quantisierungen und Größen eines Katalog-Modells. */
+  listCatalogFiles: (repoId: string) => Promise<Result<CatalogFile[]>>;
   /**
    * Grafikspeicher pro Token Kontext (KV-Cache, geschätzt); null = für dieses
    * Modell nicht vorhersagbar.
@@ -966,6 +994,9 @@ export const IpcChannels = {
   listRunningModels: 'models:list-running',
   deleteModel: 'models:delete',
   getGpuStatus: 'system:gpu-status',
+  getSystemMemory: 'system:memory',
+  searchCatalog: 'catalog:search',
+  listCatalogFiles: 'catalog:files',
   getKvBytesPerToken: 'models:kv-bytes',
   listMcpServers: 'mcp:list',
   saveMcpServer: 'mcp:save',

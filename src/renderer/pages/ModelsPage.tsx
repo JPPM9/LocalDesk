@@ -7,6 +7,7 @@ import { DownloadPanel } from '../components/models/DownloadPanel';
 import { useDownloads } from '../hooks/useDownloads';
 import { formatBytes, formatContext, formatDate } from '../utils/format';
 import { useConfirm } from '../components/ConfirmDialog';
+import { DiscoverPanel } from '../components/models/DiscoverPanel';
 
 // "completion" (Text erzeugen) können alle Chat-Modelle – das Abzeichen wäre nur Rauschen.
 const HIDDEN_CAPABILITIES = new Set(['completion']);
@@ -30,6 +31,7 @@ export function ModelsPage() {
   // Ist ein Download fertig, erscheint das neue Modell sofort in der Tabelle.
   const downloads = useDownloads(() => void load());
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [tab, setTab] = useState<'installed' | 'discover'>('installed');
 
   /** Löschen ist endgültig – deshalb immer mit Rückfrage, die Größe und Folgen nennt. */
   const deleteModel = async (model: ModelInfo) => {
@@ -71,12 +73,31 @@ export function ModelsPage() {
       <PageHeader title={t('models.title')} actions={refreshButton} />
       <div className="space-y-6 p-6">
         <DownloadPanel downloads={downloads} />
-        {deleteError && (
+        <div
+          role="tablist"
+          aria-label={t('models.title')}
+          className="flex gap-2"
+        >
+          {(['installed', 'discover'] as const).map((id) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={tab === id}
+              onClick={() => setTab(id)}
+              className={`btn ${tab === id ? 'btn-secondary' : 'btn-quiet'}`}
+            >
+              {t(`models.tab.${id}`)}
+            </button>
+          ))}
+        </div>
+        {tab === 'discover' && <DiscoverPanel />}
+        {tab === 'installed' && deleteError && (
           <p className="rounded border border-error/40 bg-error/10 px-3 py-2 text-error">
             {deleteError}
           </p>
         )}
-        {renderBody()}
+        {tab === 'installed' && renderBody()}
       </div>
     </>
   );

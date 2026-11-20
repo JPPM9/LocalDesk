@@ -3,6 +3,14 @@
 Jede Version hat hier einen Abschnitt `## <Version> – <Datum>`. Sein Text wird beim Release zu
 den Release-Notizen auf GitHub – und erscheint in LocalDesk unter „Nach Updates suchen“.
 
+## Unveröffentlicht
+
+**Modelle**
+
+- Neuer Reiter „Entdecken“ unter Modelle: GGUF-Modelle auf Hugging Face suchen, Größen je Quantisierung vergleichen und sehen, ob ein
+  Modell auf diesen PC passt (Arbeitsspeicher und NVIDIA-Grafikspeicher, geschätzt). Der Download läuft über Ollama. Die Suche geht nur
+  auf Klick an huggingface.co.
+
 ## 0.1.1 – 2026-11-20
 
 **Oberfläche**
