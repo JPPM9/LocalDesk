@@ -23,7 +23,7 @@ export function ChatSettingsPanel({
   const { t } = useTranslation();
 
   return (
-    <aside className="flex w-[310px] shrink-0 flex-col border-l border-border bg-bg">
+    <aside className="flex w-[310px] shrink-0 flex-col bg-bg">
       <div className="flex h-14 shrink-0 items-center justify-between px-4">
         <h2 className="font-medium">{t('settingsPanel.title')}</h2>
         <button
@@ -45,7 +45,7 @@ export function ChatSettingsPanel({
         />
       </div>
 
-      <p className="border-t border-border px-4 py-3 text-xs text-muted">
+      <p className="px-4 py-3 text-xs text-muted">
         {t('settingsPanel.footer')}
       </p>
     </aside>
@@ -94,7 +94,7 @@ function SaveAsTemplate({
   };
 
   return (
-    <div className="space-y-2 border-t border-border pt-4">
+    <div className="space-y-2 pt-4">
       {name === null ? (
         <button
           type="button"

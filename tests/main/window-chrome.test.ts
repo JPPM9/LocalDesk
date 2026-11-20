@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('electron', () => ({ nativeTheme: { shouldUseDarkColors: false } }));
+vi.mock('electron', () => ({
+  nativeTheme: { shouldUseDarkColors: false },
+  ipcMain: {},
+  BrowserWindow: {},
+}));
 
 import { commandForInput } from '../../src/main/window-chrome';
 

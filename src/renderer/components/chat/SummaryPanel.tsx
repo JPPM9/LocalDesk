@@ -92,8 +92,7 @@ export function SummaryPanel({
       {children}
     </div>
   );
-  const button =
-    'rounded border border-border bg-surface px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-50';
+  const button = 'btn btn-secondary';
   const primary =
     'rounded bg-accent px-3 py-1 text-xs text-accent-fg hover:opacity-90 disabled:opacity-50';
 
@@ -236,8 +235,7 @@ function DraftEditor({
   const [title, setTitle] = useState(draft.title);
   const [text, setText] = useState(draft.text);
   const ready = title.trim() !== '' && text.trim() !== '';
-  const field =
-    'w-full rounded border border-border bg-bg px-2 py-2 outline-none focus:border-accent';
+  const field = 'field w-full';
 
   return frame(
     <>
@@ -258,7 +256,7 @@ function DraftEditor({
         onChange={(e) => setText(e.target.value)}
         aria-label={t('summary.noteText')}
         rows={10}
-        className={`${field} max-h-[45vh] resize-y font-mono text-xs`}
+        className={`${field} max-h-[45vh] resize-y tabular-nums text-xs`}
       />
       <div className="flex flex-wrap gap-2">
         <button

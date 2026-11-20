@@ -133,14 +133,14 @@ export function SkillImportDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center dialog-scrim p-4"
       onClick={onClose}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="skill-import-title"
-        className="flex max-h-[90vh] w-full max-w-2xl flex-col space-y-3 rounded-xl border border-border bg-surface p-5 shadow-xl"
+        className="flex max-h-[90vh] w-full max-w-2xl flex-col space-y-3 dialog"
         onClick={(event) => event.stopPropagation()}
         onDragOver={(event) => {
           event.preventDefault();
@@ -221,7 +221,7 @@ export function SkillImportDialog({
             {preview.candidates.map((candidate) => (
               <article
                 key={candidate.index}
-                className="space-y-2 rounded-xl border border-border bg-bg px-4 py-3"
+                className="space-y-2 rounded-xl px-4 py-3 bg-surface shadow-card"
               >
                 <label className="flex cursor-pointer items-start gap-3">
                   <input
@@ -280,7 +280,7 @@ export function SkillImportDialog({
                             count: candidate.files.length,
                           })}
                         </summary>
-                        <ul className="mt-1 space-y-0.5 font-mono">
+                        <ul className="mt-1 space-y-0.5 tabular-nums">
                           {candidate.files.map((file) => (
                             <li key={file.path} className="flex gap-3">
                               <span className="min-w-0 flex-1 truncate">
@@ -304,8 +304,8 @@ export function SkillImportDialog({
                         <ul className="mt-1 space-y-0.5">
                           {candidate.skipped.map((file) => (
                             <li key={file.path}>
-                              <span className="font-mono">{file.path}</span> –{' '}
-                              {file.reason}
+                              <span className="tabular-nums">{file.path}</span>{' '}
+                              – {file.reason}
                             </li>
                           ))}
                         </ul>
@@ -315,7 +315,7 @@ export function SkillImportDialog({
                       <summary className="cursor-pointer select-none text-muted">
                         {t('skills.import.showText')}
                       </summary>
-                      <pre className="mt-1 max-h-60 overflow-auto whitespace-pre-wrap rounded border border-border bg-surface p-2 font-mono text-xs">
+                      <pre className="mt-1 max-h-60 overflow-auto whitespace-pre-wrap rounded bg-surface p-2 tabular-nums text-xs shadow-card">
                         {candidate.bodyPreview}
                         {candidate.bodyLength > candidate.bodyPreview.length &&
                           `\n\n${t('skills.import.cut', {

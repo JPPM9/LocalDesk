@@ -1,4 +1,6 @@
-import { nativeTheme, type BrowserWindow, type Input } from 'electron';
+import { ipcMain, nativeTheme, BrowserWindow, type Input } from 'electron';
+import { IpcChannels } from '../shared/api';
+import type { WindowCommand } from '../shared/appearance';
 
 /** Höhe der eigenen Titelleiste (DESIGN.md: --titlebar-h). */
 export const TITLEBAR_HEIGHT = 40;
@@ -14,16 +16,6 @@ export function overlayOptions() {
     height: TITLEBAR_HEIGHT,
   };
 }
-
-/** Funktionen der entfallenen Menüzeile (JOURNEY.md „Menüzeile: Verbleib der Funktionen“). */
-export type WindowCommand =
-  | 'zoomIn'
-  | 'zoomOut'
-  | 'zoomReset'
-  | 'fullscreen'
-  | 'devtools'
-  | 'reload'
-  | 'reloadHard';
 
 export function runWindowCommand(win: BrowserWindow, cmd: WindowCommand) {
   const wc = win.webContents;
@@ -81,4 +73,23 @@ export function applyWindowChrome(win: BrowserWindow) {
   };
   nativeTheme.on('updated', onTheme);
   win.on('closed', () => nativeTheme.off('updated', onTheme));
+}
+
+const COMMANDS: readonly WindowCommand[] = [
+  'zoomIn',
+  'zoomOut',
+  'zoomReset',
+  'fullscreen',
+  'devtools',
+  'reload',
+  'reloadHard',
+];
+
+/** Die Palette (Fenster-Befehle) löst dieselben Funktionen aus wie die Kürzel. */
+export function registerWindowCommandHandler() {
+  ipcMain.handle(IpcChannels.windowCommand, (event, command: unknown) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win && COMMANDS.includes(command as WindowCommand))
+      runWindowCommand(win, command as WindowCommand);
+  });
 }

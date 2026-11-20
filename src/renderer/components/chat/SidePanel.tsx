@@ -51,7 +51,7 @@ export function SidePanel(props: SidePanelProps) {
   const tabs: SidePanelTab[] = ['sources', 'project', 'context', 'gpu'];
 
   return (
-    <aside className="flex w-[310px] shrink-0 flex-col border-l border-border bg-bg">
+    <aside className="flex w-[310px] shrink-0 flex-col bg-bg">
       <div className="flex h-14 shrink-0 items-center gap-2 px-3">
         <div
           role="tablist"
@@ -288,7 +288,7 @@ function ContextTab({
       </div>
 
       {compaction && (
-        <div className="space-y-2 rounded border border-border bg-surface px-3 py-2 text-xs">
+        <div className="space-y-2 rounded bg-surface px-3 py-2 text-xs shadow-card">
           <p>
             {t('compact.active', {
               count: compaction.messagesCovered,
@@ -355,7 +355,7 @@ function ContextTab({
             <p className="text-muted">{t('sidePanel.atMaximum')}</p>
           )}
           {canCompact && (
-            <div className="space-y-1 border-t border-border/60 pt-2">
+            <div className="space-y-1 pt-2">
               <button
                 type="button"
                 onClick={onCompact}
@@ -370,7 +370,7 @@ function ContextTab({
       )}
 
       {last?.stats && (
-        <div className="space-y-0.5 rounded border border-border px-3 py-2 text-xs">
+        <div className="space-y-0.5 rounded px-3 py-2 text-xs bg-surface-hover">
           <p className="font-medium">{t('sidePanel.measured')}</p>
           <p className="text-muted">
             {t('sidePanel.measuredValue', {

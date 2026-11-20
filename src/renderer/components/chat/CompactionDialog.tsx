@@ -94,14 +94,14 @@ export function CompactionDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center dialog-scrim p-4"
       onClick={close}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="compact-title"
-        className="flex max-h-[90vh] w-full max-w-xl flex-col space-y-3 rounded-xl border border-border bg-surface p-5 shadow-xl"
+        className="flex max-h-[90vh] w-full max-w-xl flex-col space-y-3 dialog"
         onClick={(event) => event.stopPropagation()}
       >
         <h2 id="compact-title" className="font-medium">
@@ -126,7 +126,7 @@ export function CompactionDialog({
               maxLength={COMPACTION_SUMMARY_MAX}
               onChange={(event) => setText(event.target.value)}
               rows={12}
-              className="min-h-40 w-full resize-y rounded border border-border bg-bg px-3 py-2 text-[13px] leading-relaxed outline-none focus:border-accent"
+              className="min-h-40 w-full resize-y rounded px-3 py-2 text-[13px] leading-relaxed outline-none focus:border-accent bg-surface shadow-card"
             />
             <p className="text-xs text-muted">
               {t('compact.covered', { count: draft.messagesCovered })}{' '}

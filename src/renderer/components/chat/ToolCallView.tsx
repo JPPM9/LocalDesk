@@ -176,7 +176,7 @@ export function ToolCallView({
   // Diagramm aus `table_chart`: gleich sichtbar unter der Zeile (nur, wenn es die Prüfung besteht).
   const chart = isTableChart(call.chart) ? call.chart : null;
   const row = (
-    <details className="group rounded-xl border border-border text-[13px]">
+    <details className="group rounded-xl text-[13px] bg-surface-hover">
       <summary className="flex cursor-pointer items-center gap-2 px-3 py-2 text-muted select-none hover:text-text">
         <StatusIcon status={call.status} />
         {isMemory ||
@@ -227,7 +227,7 @@ export function ToolCallView({
                 : t(`toolCall.status.${call.status}`)}
         </span>
       </summary>
-      <div className="space-y-2 border-t border-border px-3 py-2">
+      <div className="space-y-2 px-3 py-2">
         <p className="text-xs text-muted">
           {t('toolCall.server', { name: call.serverName || '–' })}
         </p>
@@ -248,7 +248,7 @@ export function ToolCallView({
   return (
     <div className="space-y-2">
       {row}
-      <div className="rounded-xl border border-border bg-surface px-3 py-3">
+      <div className="rounded-xl bg-surface px-3 py-3 shadow-card">
         <TableChartView chart={chart} />
       </div>
     </div>

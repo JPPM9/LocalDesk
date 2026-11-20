@@ -418,8 +418,10 @@ export function ChatInput({
 
   return (
     <div
-      className={`rounded-2xl border bg-surface-2 px-3 pt-3 pb-2 transition-colors focus-within:border-accent/60 ${
-        dragging ? 'border-accent ring-2 ring-accent/30' : 'border-border'
+      className={`rounded-[var(--radius-xl)] border bg-[var(--surface-raised)] px-3 pt-3 pb-2 shadow-[var(--shadow-3)] transition-colors focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--focus-ring)] ${
+        dragging
+          ? 'border-accent ring-2 ring-accent/30'
+          : 'border-[var(--control-edge)]'
       }`}
     >
       {dragging && (
@@ -433,7 +435,7 @@ export function ChatInput({
             <li
               key={file.id}
               title={file.name}
-              className="relative flex max-w-[260px] items-center gap-2 rounded-lg border border-border bg-surface py-2 pr-3 pl-3 text-xs"
+              className="relative flex max-w-[260px] items-center gap-2 rounded-lg bg-surface py-2 pr-3 pl-3 text-xs shadow-card"
             >
               <FileText size={16} className="shrink-0 text-muted" />
               <span className="min-w-0">
@@ -449,7 +451,7 @@ export function ChatInput({
                 onClick={() => removeFile(file.id)}
                 title={t('chat.files.remove', { name: file.name })}
                 aria-label={t('chat.files.remove', { name: file.name })}
-                className="absolute -top-1.5 -right-1.5 grid h-5 w-5 place-items-center rounded-full border border-border bg-surface text-muted hover:text-text"
+                className="absolute -top-1.5 -right-1.5 grid h-5 w-5 place-items-center rounded-full bg-surface text-muted hover:text-text shadow-card"
               >
                 <X size={12} />
               </button>
@@ -459,7 +461,7 @@ export function ChatInput({
             <li
               key={table.id}
               title={table.name}
-              className="relative flex max-w-[260px] items-center gap-2 rounded-lg border border-border bg-surface py-2 pr-3 pl-3 text-xs"
+              className="relative flex max-w-[260px] items-center gap-2 rounded-lg bg-surface py-2 pr-3 pl-3 text-xs shadow-card"
             >
               <Table2 size={16} className="shrink-0 text-muted" />
               <span className="min-w-0">
@@ -476,7 +478,7 @@ export function ChatInput({
                 onClick={() => removeTable(table.id)}
                 title={t('chat.files.remove', { name: table.name })}
                 aria-label={t('chat.files.remove', { name: table.name })}
-                className="absolute -top-1.5 -right-1.5 grid h-5 w-5 place-items-center rounded-full border border-border bg-surface text-muted hover:text-text"
+                className="absolute -top-1.5 -right-1.5 grid h-5 w-5 place-items-center rounded-full bg-surface text-muted hover:text-text shadow-card"
               >
                 <X size={12} />
               </button>
@@ -488,14 +490,14 @@ export function ChatInput({
                 src={image.url}
                 alt={image.name}
                 title={image.name}
-                className="h-16 w-16 rounded-lg border border-border object-cover"
+                className="h-16 w-16 rounded-lg object-cover bg-surface-hover"
               />
               <button
                 type="button"
                 onClick={() => removeImage(image.id)}
                 title={t('chat.images.remove', { name: image.name })}
                 aria-label={t('chat.images.remove', { name: image.name })}
-                className="absolute -top-1.5 -right-1.5 grid h-5 w-5 place-items-center rounded-full border border-border bg-surface text-muted hover:text-text"
+                className="absolute -top-1.5 -right-1.5 grid h-5 w-5 place-items-center rounded-full bg-surface text-muted hover:text-text shadow-card"
               >
                 <X size={12} />
               </button>
@@ -557,14 +559,14 @@ export function ChatInput({
         )}
         disabled={disabled}
         rows={1}
-        className="field-sizing-content max-h-48 min-h-11 w-full resize-none bg-transparent px-2 py-1 text-[15px] outline-none placeholder:text-subtle disabled:opacity-50"
+        className="field-sizing-content max-h-48 min-h-11 w-full resize-none bg-transparent px-2 py-1 text-base outline-none focus-visible:outline-none placeholder:text-muted disabled:opacity-50"
       />
       {problem && (
         <p role="alert" className="px-2 pb-1 text-xs text-error">
           {problem}
         </p>
       )}
-      <div className="mt-2 flex items-center gap-2 border-t border-border pt-2">
+      <div className="mt-2 flex items-center gap-2 pt-2">
         {attach && (
           <>
             <input
@@ -584,7 +586,7 @@ export function ChatInput({
               disabled={disabled}
               title={t('chat.attach.button')}
               aria-label={t('chat.attach.button')}
-              className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-border text-muted hover:bg-surface-hover hover:text-text disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-muted"
+              className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-muted hover:bg-surface-hover hover:text-text disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-muted bg-surface-hover"
             >
               <Paperclip size={15} />
             </button>
@@ -597,7 +599,7 @@ export function ChatInput({
             type="button"
             onClick={onStop}
             title={t('chat.stop')}
-            className="flex h-9 items-center gap-2 rounded-xl border border-border bg-surface px-3 text-sm hover:bg-surface-hover"
+            className="btn btn-secondary"
           >
             <Square size={13} className="fill-current" />
             {t('chat.stop')}
@@ -609,7 +611,7 @@ export function ChatInput({
             disabled={!canSend}
             title={t('chat.send')}
             aria-label={t('chat.send')}
-            className="grid h-9 w-9 place-items-center rounded-xl bg-accent text-accent-fg hover:opacity-90 disabled:opacity-35"
+            className="btn btn-primary !h-10 !w-10 !rounded-full !p-0"
           >
             <ArrowUp size={18} />
           </button>

@@ -106,10 +106,10 @@
     "title": "Keyboard shortcuts",
     "close": "Close",
     "newChat": "New chat",
-    "search": "Search chats",
+    "search": "Open command palette",
     "focusInput": "Jump to the message box",
     "chatSettings": "Open/close chat settings",
-    "toggleSidebar": "Collapse/expand chat list",
+    "toggleSidebar": "Collapse/expand sidebar",
     "settings": "Settings",
     "stop": "Stop the running answer",
     "help": "This overview",
@@ -525,7 +525,8 @@
     "licensesIntro": "LocalDesk is released under the MIT License. It ships packages by other authors – their licenses are listed here.",
     "licensesShow": "Show licenses",
     "licensesHide": "Hide licenses",
-    "licensesMissing": "The license files were not found."
+    "licensesMissing": "The license files were not found.",
+    "manage": "Manage"
   },
   "templates": {
     "title": "Templates",
@@ -1013,5 +1014,65 @@
     "show": "Show privacy policy",
     "hide": "Hide privacy policy",
     "missing": "The privacy policy was not found."
+  },
+  "sidebar": {
+    "search": "Search",
+    "projects": "Projects",
+    "recent": "Recent chats",
+    "showAll": "Show all",
+    "showAllCount": "Show all ({{count}})",
+    "emptyProjects": "Group chats here, with their own instructions and documents.",
+    "emptyChats": "Your chats appear here, the most recent first.",
+    "more": "More",
+    "moreFor": "More for “{{name}}”",
+    "noModel": "No model loaded",
+    "expandTip": "Expand sidebar · Ctrl+B",
+    "collapseTip": "Collapse sidebar · Ctrl+B",
+    "searchTip": "Search · Ctrl+K",
+    "newChatTip": "New chat · Ctrl+N",
+    "settingsTip": "Settings · Ctrl+,"
+  },
+  "palette": {
+    "title": "Command palette",
+    "placeholder": "Search pages, commands or chats",
+    "scopeProjects": "Projects",
+    "scopeChats": "Chats",
+    "recent": "Recently used",
+    "goTo": "Go to",
+    "commands": "Commands",
+    "projects": "Projects",
+    "chats": "Chats",
+    "inChat": "In this chat",
+    "appearance": "Appearance",
+    "window": "Window",
+    "help": "Help",
+    "empty": "Nothing found for “{{query}}”. Check the spelling or search for the name of a page.",
+    "clear": "Clear input",
+    "searching": "Searching chats …",
+    "footer": "↑↓ select · Enter run · Esc close",
+    "manageKnowledge": "Manage knowledge",
+    "manageSkills": "Manage skills",
+    "manageMail": "Manage e-mail",
+    "searchChats": "Search chats",
+    "themeLight": "Theme: Light",
+    "themeDark": "Theme: Dark",
+    "themeSystem": "Theme: Like Windows",
+    "showShortcuts": "Show keyboard shortcuts",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "zoomReset": "Reset zoom",
+    "fullscreen": "Toggle full screen",
+    "devtools": "Developer tools"
+  },
+  "home": {
+    "title": "Your PC",
+    "lead": "Everything runs on this PC. Ask your first question.",
+    "modelCard": "Loaded model",
+    "gpuCard": "Graphics memory",
+    "gpuNone": "No NVIDIA graphics card found, so nothing is measured."
+  },
+  "plus": {
+    "open": "Add features",
+    "hint": "Turn on for this chat"
   }
 }

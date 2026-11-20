@@ -165,6 +165,7 @@
   --color-surface: var(--ld-surface);
   --color-surface-2: var(--ld-surface-2);
   --color-surface-hover: var(--ld-surface-hover);
+  --color-surface-active: var(--surface-active);
   --color-sidebar: var(--ld-sidebar);
   --color-border: var(--ld-border);
   --color-text: var(--ld-text);
@@ -357,10 +358,16 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+kbd {
+  font-family: inherit;
+}
+
 /* Sichtbare Markierung für die Tastatur – aber nicht beim Klicken mit der Maus. */
-:focus-visible {
-  outline: var(--focus-outline);
-  outline-offset: 2px;
+@layer base {
+  :focus-visible {
+    outline: var(--focus-outline);
+    outline-offset: 2px;
+  }
 }
 
 /*

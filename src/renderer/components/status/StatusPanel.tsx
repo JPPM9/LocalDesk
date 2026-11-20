@@ -66,7 +66,7 @@ export function StatusPanel({
     }
     if (result.value.length === 0) {
       return (
-        <p className="rounded-xl border border-border bg-surface px-4 py-6 text-center text-muted">
+        <p className="rounded-xl bg-surface px-4 py-6 text-center text-muted shadow-card">
           {t('status.noneLoaded')}
         </p>
       );
@@ -93,7 +93,7 @@ function LoadedModelCard({ model, now }: { model: RunningModel; now: number }) {
   const unload = expiresIn(model.expiresAt, now);
 
   return (
-    <article className="space-y-3 rounded-xl border border-border bg-surface p-4">
+    <article className="space-y-3 rounded-xl bg-surface p-4 shadow-card">
       <div className="flex items-baseline justify-between gap-3">
         <h3 className="truncate font-medium">{model.name}</h3>
         <span className="shrink-0 text-xs text-muted tabular-nums">

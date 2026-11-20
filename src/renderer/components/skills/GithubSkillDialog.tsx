@@ -26,8 +26,7 @@ interface GithubSkillDialogProps {
   onClose: () => void;
 }
 
-const BUTTON =
-  'rounded-lg border border-border bg-surface-2 px-4 py-2 text-sm hover:bg-surface-hover';
+const BUTTON = 'btn btn-quiet';
 
 /**
  * „Von GitHub“: Suchbegriff → Projekte → Skills darin → Auswahl → Vorschau mit
@@ -130,14 +129,14 @@ export function GithubSkillDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center dialog-scrim p-4"
       onClick={onClose}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="github-skill-title"
-        className="flex max-h-[90vh] w-full max-w-2xl flex-col space-y-3 rounded-xl border border-border bg-surface p-5 shadow-xl"
+        className="flex max-h-[90vh] w-full max-w-2xl flex-col space-y-3 dialog"
         onClick={(event) => event.stopPropagation()}
       >
         <h2 id="github-skill-title" className="font-medium">
@@ -155,7 +154,7 @@ export function GithubSkillDialog({
             placeholder={t('skills.github.placeholder')}
             aria-label={t('skills.github.title')}
             spellCheck={false}
-            className="min-w-0 flex-1 rounded-lg border border-border bg-bg px-3 py-2 text-[13px]"
+            className="min-w-0 flex-1 rounded-lg px-3 py-2 text-[13px] bg-surface shadow-card"
           />
           <button
             type="button"
@@ -197,7 +196,7 @@ export function GithubSkillDialog({
                     {t('skills.github.backHits')}
                   </button>
                 )}
-                <span className="font-mono text-sm">{list.label}</span>
+                <span className="tabular-nums text-sm">{list.label}</span>
                 <span className="text-xs text-muted">
                   {t('skills.github.skills', { count: list.skills.length })}
                 </span>
@@ -220,7 +219,7 @@ export function GithubSkillDialog({
                   const checked = picked.has(skill.index);
                   return (
                     <li key={skill.index}>
-                      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-bg px-4 py-3">
+                      <label className="flex cursor-pointer items-start gap-3 rounded-xl px-4 py-3 bg-surface shadow-card">
                         <input
                           type="checkbox"
                           checked={checked}
@@ -232,7 +231,7 @@ export function GithubSkillDialog({
                           <span className="block font-medium">
                             {skill.name}
                           </span>
-                          <span className="block truncate font-mono text-xs text-subtle">
+                          <span className="block truncate tabular-nums text-xs text-subtle">
                             {skill.path || '/'}
                           </span>
                           <span className="block text-xs text-subtle">
@@ -267,7 +266,7 @@ export function GithubSkillDialog({
                 {hits.hits.map((hit) => (
                   <li
                     key={hit.fullName}
-                    className="flex items-start gap-3 rounded-xl border border-border bg-bg px-4 py-3"
+                    className="flex items-start gap-3 rounded-xl px-4 py-3 bg-surface shadow-card"
                   >
                     <div className="min-w-0 flex-1 space-y-1">
                       <p className="truncate font-medium">{hit.fullName}</p>

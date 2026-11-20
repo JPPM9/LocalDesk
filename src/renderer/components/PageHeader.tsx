@@ -10,13 +10,13 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, actions, leading }: PageHeaderProps) {
   return (
-    <header className="flex h-14 shrink-0 items-center justify-between gap-4 overflow-hidden border-b border-border px-5">
+    <header className="flex h-14 shrink-0 items-center justify-between gap-4 overflow-hidden px-6">
       {leading}
       {/* Lange Titel einzeilig kürzen, der volle Titel steht im Tooltip. Der Titel
           füllt nur den übrigen Platz, bleibt aber mindestens 6rem breit – sonst
           verschwände er bei offenem Seitenbereich. */}
       <h1
-        className="min-w-24 flex-1 basis-24 truncate text-base font-medium"
+        className="min-w-24 flex-1 basis-24 truncate text-xl font-semibold tracking-tight"
         title={title}
       >
         {title}

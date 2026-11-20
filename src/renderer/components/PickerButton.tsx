@@ -65,7 +65,7 @@ export function PickerButton({
         className={`flex items-center gap-2 rounded-full border px-3 py-1 text-[13px] ${
           active || open
             ? 'border-transparent bg-accent-soft text-accent-text'
-            : 'border-border bg-surface text-muted hover:text-text'
+            : 'border-transparent bg-bg text-muted hover:text-text'
         }`}
       >
         <Icon size={14} />
@@ -76,7 +76,7 @@ export function PickerButton({
         <div
           role="dialog"
           aria-label={label}
-          className="absolute bottom-full left-0 z-30 mb-2 w-72 space-y-2 rounded-xl border border-border bg-surface p-3 shadow-card"
+          className="absolute bottom-full left-0 z-30 mb-2 w-72 space-y-2 rounded-xl bg-surface p-3 shadow-card"
         >
           <div>
             <h3 className="text-xs font-medium">{title}</h3>

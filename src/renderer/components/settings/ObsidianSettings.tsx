@@ -68,8 +68,8 @@ export function ObsidianSettings() {
       </div>
 
       {status && !editing && (
-        <div className="space-y-2 rounded-xl border border-border bg-surface p-4">
-          <p className="font-mono text-xs break-all">{status.vaultPath}</p>
+        <div className="space-y-2 rounded-xl bg-surface p-4 shadow-card">
+          <p className="tabular-nums text-xs break-all">{status.vaultPath}</p>
           {!status.ok ? (
             <p className="flex items-center gap-2 text-xs text-error">
               <TriangleAlert size={13} />
@@ -115,14 +115,14 @@ export function ObsidianSettings() {
 
       {(editing || status === null) &&
         (editing ? (
-          <div className="space-y-4 rounded-xl border border-border bg-surface p-4">
+          <div className="space-y-4 rounded-xl bg-surface p-4 shadow-card">
             <Field label={t('obsidian.vault')} hint={t('obsidian.vaultHint')}>
               <div className="flex gap-2">
                 <input
                   value={vaultPath}
                   onChange={(e) => setVaultPath(e.target.value)}
                   placeholder="C:\\Users\\…\\Obsidian\\Mein Vault"
-                  className="field min-w-0 flex-1 font-mono"
+                  className="field min-w-0 flex-1 tabular-nums"
                 />
                 <button
                   type="button"

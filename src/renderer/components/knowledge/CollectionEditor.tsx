@@ -75,7 +75,7 @@ export function SourcesEditor({
         {sources.map((source) => (
           <li
             key={source.path}
-            className="flex items-center gap-2 rounded border border-border bg-surface px-2 py-1"
+            className="flex items-center gap-2 rounded bg-surface px-2 py-1 shadow-card"
           >
             {source.kind === 'folder' ? (
               <FolderOpen size={14} className="shrink-0 text-muted" />
@@ -83,7 +83,7 @@ export function SourcesEditor({
               <FileText size={14} className="shrink-0 text-muted" />
             )}
             <span
-              className="min-w-0 flex-1 truncate font-mono text-xs"
+              className="min-w-0 flex-1 truncate tabular-nums text-xs"
               title={source.path}
             >
               {source.path}
@@ -178,7 +178,7 @@ export function ProgressBox({ view }: { view: CollectionView }) {
         ? Math.round((progress.done / progress.total) * 100)
         : 0;
     return (
-      <div className="space-y-2 rounded-xl border border-border bg-surface px-3 py-3">
+      <div className="space-y-2 rounded-xl bg-surface px-3 py-3 shadow-card">
         <div className="flex justify-between text-xs">
           <span>
             {progress.phase === 'scanning'
@@ -200,7 +200,7 @@ export function ProgressBox({ view }: { view: CollectionView }) {
         </div>
         {progress.current && (
           <p
-            className="truncate font-mono text-xs text-muted"
+            className="truncate tabular-nums text-xs text-muted"
             title={progress.current}
           >
             {progress.current}
@@ -211,7 +211,7 @@ export function ProgressBox({ view }: { view: CollectionView }) {
   }
 
   return (
-    <div className="space-y-1 rounded-xl border border-border bg-surface px-3 py-3 text-xs">
+    <div className="space-y-1 rounded-xl bg-surface px-3 py-3 text-xs shadow-card">
       <div className="flex flex-wrap gap-x-4 gap-y-1">
         <span>{t('knowledge.statFiles', { count: stats.documents })}</span>
         <span>{t('knowledge.statChunks', { count: stats.chunks })}</span>
@@ -287,7 +287,7 @@ export function DocumentList({ view }: { view: CollectionView }) {
       {documents.length === 0 ? (
         <p className="text-xs text-muted">{t('knowledge.noFiles')}</p>
       ) : (
-        <ul className="divide-y divide-border rounded border border-border bg-surface text-xs">
+        <ul className="divide-y divide-border rounded bg-surface text-xs shadow-card">
           {shown.slice(0, MAX_ROWS).map((doc) => (
             <DocumentRow key={doc.id} doc={doc} sources={config.sources} />
           ))}
@@ -319,7 +319,7 @@ function DocumentRow({
   const { t } = useTranslation();
   return (
     <li className="flex items-center gap-3 px-3 py-2" title={doc.path}>
-      <span className="min-w-0 flex-1 truncate font-mono">
+      <span className="min-w-0 flex-1 truncate tabular-nums">
         {shortPath(doc.path, sources)}
       </span>
       {doc.error && (

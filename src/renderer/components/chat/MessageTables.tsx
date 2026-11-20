@@ -11,7 +11,7 @@ export function MessageTables({ tables }: { tables: MessageTable[] }) {
         <li
           key={table.id}
           title={table.name}
-          className="flex max-w-[280px] items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2 text-xs"
+          className="flex max-w-[280px] items-center gap-2 rounded-xl bg-surface px-3 py-2 text-xs shadow-card"
         >
           <Table2 size={16} className="shrink-0 text-muted" />
           <span className="min-w-0">

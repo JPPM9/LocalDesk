@@ -199,7 +199,7 @@ export function SortPanel({
             </div>
           )}
           {outcome && (
-            <div className="space-y-1 rounded-xl border border-border bg-surface px-4 py-3 text-[13px]">
+            <div className="space-y-1 rounded-xl bg-surface px-4 py-3 text-[13px] shadow-card">
               <p className="text-ok">
                 {t('mailSort.applied', { count: outcome.applied })}
               </p>
@@ -221,7 +221,7 @@ export function SortPanel({
                 {suggestions.map((s) => (
                   <li
                     key={s.messageId}
-                    className="space-y-2 rounded-xl border border-border bg-surface px-4 py-3"
+                    className="space-y-2 rounded-xl bg-surface px-4 py-3 shadow-card"
                   >
                     <div className="flex items-baseline gap-2">
                       <span className="shrink-0 font-medium">
@@ -279,7 +279,7 @@ export function SortPanel({
                   </li>
                 ))}
               </ul>
-              <div className="sticky bottom-0 flex flex-wrap items-center gap-2 border-t border-border bg-bg py-3">
+              <div className="sticky bottom-0 flex flex-wrap items-center gap-2 bg-bg py-3">
                 <button
                   type="button"
                   onClick={() =>

@@ -76,7 +76,7 @@ export function MemoryList() {
   ];
 
   return (
-    <div className="space-y-3 rounded-xl border border-border bg-surface p-4">
+    <div className="space-y-3 rounded-xl bg-surface p-4 shadow-card">
       <div className="flex items-baseline justify-between">
         <h3 className="text-sm font-medium">
           {t('memories.title', { count: memories.length })}
@@ -100,7 +100,7 @@ export function MemoryList() {
               {group.items.map((memory) => (
                 <li
                   key={memory.id}
-                  className="group flex items-start gap-2 rounded border border-border bg-bg px-2 py-2 text-sm"
+                  className="group flex items-start gap-2 rounded px-2 py-2 text-sm bg-surface shadow-card"
                 >
                   <span className="min-w-0 flex-1 whitespace-pre-wrap">
                     {memory.text}

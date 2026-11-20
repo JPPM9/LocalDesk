@@ -29,7 +29,7 @@ export function FileView({ sessionId, path, onClose }: FileViewProps) {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="flex h-10 shrink-0 items-center gap-2 border-b border-border px-4">
+      <div className="flex h-10 shrink-0 items-center gap-2 px-4">
         <span
           className="min-w-0 flex-1 truncate font-mono text-[13px]"
           title={path}

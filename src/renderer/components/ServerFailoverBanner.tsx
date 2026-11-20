@@ -38,7 +38,7 @@ export function ServerFailoverBanner({ chatModel }: { chatModel: string }) {
     return (
       <div
         role="status"
-        className="mb-2 space-y-2 rounded-xl border border-border bg-surface px-4 py-3 text-sm"
+        className="mb-2 space-y-2 rounded-xl bg-surface px-4 py-3 text-sm shadow-card"
       >
         <p className="flex items-center gap-2 font-medium">
           <Undo2 size={15} className="shrink-0 text-ok" />
@@ -104,7 +104,7 @@ export function ServerFailoverBanner({ chatModel }: { chatModel: string }) {
           <li key={probe.profileId} className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-medium">{name(probe.name)}</span>
-              <span className="font-mono text-xs text-muted">
+              <span className="tabular-nums text-xs text-muted">
                 {probe.baseUrl}
               </span>
               <span className="text-xs text-ok">{t('failover.online')}</span>

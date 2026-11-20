@@ -49,7 +49,7 @@ export function KnowledgePage() {
 
   return (
     <div className="flex h-full">
-      <aside className="flex w-[270px] shrink-0 flex-col border-r border-border bg-surface">
+      <aside className="flex w-[270px] shrink-0 flex-col bg-surface">
         <div className="px-3 pt-3 pb-2">
           <button
             type="button"
@@ -165,7 +165,7 @@ function CollectionDetail({ view }: { view: CollectionView }) {
                 onClick={() => void remove()}
                 title={t('knowledge.delete')}
                 aria-label={t('knowledge.delete')}
-                className="rounded border border-border px-2 py-1 hover:bg-surface-hover"
+                className="rounded px-2 py-1 hover:bg-surface-hover bg-surface-hover"
               >
                 <Trash2 size={14} />
               </button>
@@ -188,7 +188,7 @@ function CollectionDetail({ view }: { view: CollectionView }) {
           )}
 
           {managed && (
-            <p className="rounded border border-border bg-surface px-3 py-2 text-xs text-muted">
+            <p className="rounded bg-surface px-3 py-2 text-xs text-muted shadow-card">
               {t('knowledge.obsidianManaged')}{' '}
               <Link to="/settings" className="text-accent-text hover:underline">
                 {t('knowledge.obsidianSettings')}
@@ -212,7 +212,7 @@ function CollectionDetail({ view }: { view: CollectionView }) {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') e.currentTarget.blur();
                   }}
-                  className="w-full rounded border border-border bg-surface px-2 py-2 outline-none focus:border-accent"
+                  className="w-full rounded bg-surface px-2 py-2 outline-none focus:border-accent shadow-card"
                 />
               </label>
 

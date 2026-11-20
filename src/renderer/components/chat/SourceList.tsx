@@ -91,7 +91,7 @@ export function SourceList({ sources, focus, expanded }: SourceListProps) {
               </button>
             </div>
             {open.has(source.n) && (
-              <div className="space-y-1 border-t border-border px-3 py-2">
+              <div className="space-y-1 px-3 py-2">
                 {source.heading && (
                   <p className="text-xs text-muted">{source.heading}</p>
                 )}

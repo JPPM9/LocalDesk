@@ -106,10 +106,10 @@
     "title": "Tastenkürzel",
     "close": "Schließen",
     "newChat": "Neuer Chat",
-    "search": "Chats durchsuchen",
+    "search": "Befehlspalette öffnen",
     "focusInput": "Ins Eingabefeld springen",
     "chatSettings": "Chat-Einstellungen öffnen/schließen",
-    "toggleSidebar": "Chatliste ein-/ausklappen",
+    "toggleSidebar": "Seitenleiste ein-/ausklappen",
     "settings": "Einstellungen",
     "stop": "Laufende Antwort stoppen",
     "help": "Diese Übersicht",
@@ -525,7 +525,8 @@
     "licensesIntro": "LocalDesk steht unter der MIT-Lizenz. Es bringt Pakete anderer Autorinnen und Autoren mit – ihre Lizenzen stehen hier.",
     "licensesShow": "Lizenzen anzeigen",
     "licensesHide": "Lizenzen ausblenden",
-    "licensesMissing": "Die Lizenzdateien wurden nicht gefunden."
+    "licensesMissing": "Die Lizenzdateien wurden nicht gefunden.",
+    "manage": "Verwalten"
   },
   "templates": {
     "title": "Vorlagen",
@@ -1013,5 +1014,65 @@
     "show": "Datenschutzerklärung anzeigen",
     "hide": "Datenschutzerklärung ausblenden",
     "missing": "Die Datenschutzerklärung wurde nicht gefunden."
+  },
+  "sidebar": {
+    "search": "Suchen",
+    "projects": "Projekte",
+    "recent": "Letzte Chats",
+    "showAll": "Alle anzeigen",
+    "showAllCount": "Alle anzeigen ({{count}})",
+    "emptyProjects": "Hier bündelst du Chats mit eigenen Anweisungen und Dokumenten.",
+    "emptyChats": "Deine Chats erscheinen hier, der zuletzt aktive oben.",
+    "more": "Mehr",
+    "moreFor": "Mehr zu „{{name}}“",
+    "noModel": "Kein Modell geladen",
+    "expandTip": "Seitenleiste ausklappen · Strg+B",
+    "collapseTip": "Seitenleiste einklappen · Strg+B",
+    "searchTip": "Suchen · Strg+K",
+    "newChatTip": "Neuer Chat · Strg+N",
+    "settingsTip": "Einstellungen · Strg+,"
+  },
+  "palette": {
+    "title": "Befehlspalette",
+    "placeholder": "Seite, Befehl oder Chat suchen",
+    "scopeProjects": "Projekte",
+    "scopeChats": "Chats",
+    "recent": "Zuletzt benutzt",
+    "goTo": "Gehen zu",
+    "commands": "Befehle",
+    "projects": "Projekte",
+    "chats": "Chats",
+    "inChat": "In diesem Chat",
+    "appearance": "Darstellung",
+    "window": "Fenster",
+    "help": "Hilfe",
+    "empty": "Nichts gefunden für „{{query}}“. Prüfe die Schreibweise oder suche nach dem Namen einer Seite.",
+    "clear": "Eingabe leeren",
+    "searching": "Suche in Chats …",
+    "footer": "↑↓ wählen · Enter ausführen · Esc schließen",
+    "manageKnowledge": "Wissen verwalten",
+    "manageSkills": "Skills verwalten",
+    "manageMail": "E-Mail verwalten",
+    "searchChats": "Chats durchsuchen",
+    "themeLight": "Design: Hell",
+    "themeDark": "Design: Dunkel",
+    "themeSystem": "Design: Wie Windows",
+    "showShortcuts": "Tastenkürzel anzeigen",
+    "zoomIn": "Vergrößern",
+    "zoomOut": "Verkleinern",
+    "zoomReset": "Zoom zurücksetzen",
+    "fullscreen": "Vollbild ein/aus",
+    "devtools": "Entwicklerwerkzeuge"
+  },
+  "home": {
+    "title": "Dein PC",
+    "lead": "Alles läuft auf diesem PC. Stell deine erste Frage.",
+    "modelCard": "Geladenes Modell",
+    "gpuCard": "Grafikspeicher",
+    "gpuNone": "Keine NVIDIA-Grafikkarte gefunden, darum gibt es keine Messung."
+  },
+  "plus": {
+    "open": "Funktionen hinzufügen",
+    "hint": "Für diesen Chat einschalten"
   }
 }

@@ -5,7 +5,7 @@
 export function DiffView({ text }: { text: string }) {
   const lines = text.split('\n');
   return (
-    <pre className="max-h-96 overflow-auto rounded-lg border border-border bg-bg py-2 font-mono text-xs leading-[1.5]">
+    <pre className="max-h-96 overflow-auto rounded-lg py-2 font-mono text-xs leading-[1.5] bg-surface shadow-card">
       {lines.map((line, i) => (
         <div key={i} className={`px-3 whitespace-pre ${lineClass(line)}`}>
           {line || ' '}

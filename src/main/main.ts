@@ -44,7 +44,11 @@ import { registerCodeHandlers } from './code-service';
 import { CodeBackups } from './code/backups';
 import { MailAccountRepository } from './db/mail-account-repository';
 import { tr } from '../shared/messages';
-import { applyWindowChrome, overlayOptions } from './window-chrome';
+import {
+  applyWindowChrome,
+  overlayOptions,
+  registerWindowCommandHandler,
+} from './window-chrome';
 
 // Gleiche Kennung wie im Installer (electron-builder.yml, appId): Taskleiste und
 // Verknüpfungen gehören so zusammen.
@@ -213,6 +217,7 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
 
   registerUpdateHandlers();
   registerAppearanceHandlers(new AppSettingsRepository(db));
+  registerWindowCommandHandler();
   // Erst jetzt (die Sprache steht fest): Beim ersten Start vier Beispiele in dieser Sprache.
   void createExampleSkills(skills, new AppSettingsRepository(db)).catch(
     (error) => console.error('Beispiel-Skills nicht angelegt:', error),

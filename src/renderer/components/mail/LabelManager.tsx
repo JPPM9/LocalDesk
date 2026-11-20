@@ -72,7 +72,7 @@ export function LabelManager({
   };
 
   return (
-    <section className="rounded-xl border border-border bg-surface">
+    <section className="rounded-xl bg-surface shadow-card">
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -84,13 +84,13 @@ export function LabelManager({
         {t('mailLabels.title')}
       </button>
       {open && (
-        <div className="space-y-3 border-t border-border px-4 py-3">
+        <div className="space-y-3 px-4 py-3">
           <p className="text-xs text-muted">{t('mailLabels.intro')}</p>
 
           {own.length === 0 ? (
             <p className="text-xs text-subtle">{t('mailLabels.none')}</p>
           ) : (
-            <ul className="divide-y divide-border rounded-lg border border-border">
+            <ul className="divide-y divide-border rounded-lg bg-surface-hover">
               {own.map((label) => (
                 <li
                   key={label.id}

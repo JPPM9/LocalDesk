@@ -77,7 +77,7 @@ export function ServerSettings() {
         <p className="mt-1 text-xs text-muted">{t('servers.intro')}</p>
       </div>
 
-      <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
+      <ul className="divide-y divide-border rounded-xl bg-surface shadow-card">
         {profiles.map((profile) => (
           <li key={profile.id} className="flex items-center gap-3 px-3 py-3">
             {/* Größere Klickfläche um den kleinen Radio-Knopf (mind. 24 px). */}
@@ -104,7 +104,7 @@ export function ServerSettings() {
                   </span>
                 )}
               </div>
-              <div className="truncate font-mono text-xs text-muted">
+              <div className="truncate tabular-nums text-xs text-muted">
                 {profile.baseUrl}
               </div>
             </div>
@@ -139,7 +139,7 @@ export function ServerSettings() {
       )}
 
       {form ? (
-        <div className="space-y-4 rounded-xl border border-border bg-surface p-4">
+        <div className="space-y-4 rounded-xl bg-surface p-4 shadow-card">
           <Field label={t('servers.name')}>
             <input
               autoFocus
@@ -154,7 +154,7 @@ export function ServerSettings() {
               value={form.address}
               onChange={(e) => setForm({ ...form, address: e.target.value })}
               placeholder="192.168.1.20"
-              className="field w-full font-mono"
+              className="field w-full tabular-nums"
             />
           </Field>
           <div className="flex items-center gap-2">
@@ -236,7 +236,7 @@ function TestButton({ address }: { address: string }) {
         type="button"
         onClick={() => void test()}
         disabled={status === 'testing' || !address.trim()}
-        className="rounded border border-border px-2 py-1 text-xs hover:bg-surface-hover disabled:opacity-50"
+        className="rounded px-2 py-1 text-xs hover:bg-surface-hover disabled:opacity-50 bg-surface-hover"
       >
         {status === 'testing' ? t('servers.testing') : t('servers.test')}
       </button>

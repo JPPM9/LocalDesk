@@ -86,7 +86,7 @@ export function McpSettings() {
       ))}
 
       {form ? (
-        <div className="space-y-4 rounded-xl border border-border bg-surface p-4">
+        <div className="space-y-4 rounded-xl bg-surface p-4 shadow-card">
           <Field label={t('mcp.name')}>
             <input
               autoFocus
@@ -100,7 +100,7 @@ export function McpSettings() {
               {form.folders.map((folder) => (
                 <li
                   key={folder}
-                  className="flex items-center gap-2 rounded border border-border bg-bg px-2 py-1"
+                  className="flex items-center gap-2 rounded px-2 py-1 bg-surface shadow-card"
                 >
                   <FolderOpen size={14} className="shrink-0 text-muted" />
                   <span
@@ -202,7 +202,7 @@ function ServerCard({
   }
 
   return (
-    <article className="space-y-3 rounded-xl border border-border bg-surface p-4">
+    <article className="space-y-3 rounded-xl bg-surface p-4 shadow-card">
       <div className="flex items-center gap-3">
         <span
           className={`h-2 w-2 shrink-0 rounded-full ${STATE_DOT[status.state]}`}
@@ -285,7 +285,7 @@ function ServerCard({
             })}
           </summary>
           <p className="mt-2 text-muted">{t('mcp.permissionHint')}</p>
-          <ul className="mt-2 divide-y divide-border rounded border border-border">
+          <ul className="mt-2 divide-y divide-border rounded bg-surface-hover">
             {status.tools.map((tool) => (
               <ToolRow
                 key={tool.name}
@@ -372,7 +372,7 @@ function ToolRow({
         <div
           role="radiogroup"
           aria-label={t('mcp.permissionFor', { name: tool.name })}
-          className="flex overflow-hidden rounded border border-border"
+          className="flex overflow-hidden rounded bg-surface-hover"
         >
           {PERMISSION_OPTIONS.map((permission) => (
             <button

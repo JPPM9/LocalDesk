@@ -126,7 +126,7 @@ export function MailReader({ accountId, messageId }: MailReaderProps) {
                   {mail.attachments.map((a, i) => (
                     <li
                       key={`${a.name}-${i}`}
-                      className="flex items-center gap-2 rounded-lg border border-border px-2 py-1 text-xs"
+                      className="flex items-center gap-2 rounded-lg px-2 py-1 text-xs bg-surface-hover"
                     >
                       <Paperclip size={12} className="text-subtle" />
                       <span className="font-mono">{a.name}</span>
@@ -174,7 +174,7 @@ export function MailReader({ accountId, messageId }: MailReaderProps) {
             {mail.truncated && (
               <p className="text-xs text-warn">{t('mail.truncated')}</p>
             )}
-            <div className="border-t border-border pt-5 text-sm leading-relaxed break-words whitespace-pre-wrap">
+            <div className="pt-5 text-sm leading-relaxed break-words whitespace-pre-wrap">
               {mail.text || mail.snippet}
             </div>
           </article>

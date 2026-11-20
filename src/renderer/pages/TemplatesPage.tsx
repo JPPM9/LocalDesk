@@ -115,7 +115,7 @@ export function TemplatesPage() {
 
   return (
     <div className="flex h-full">
-      <aside className="flex w-[270px] shrink-0 flex-col border-r border-border bg-surface">
+      <aside className="flex w-[270px] shrink-0 flex-col bg-surface">
         <div className="px-3 pt-3 pb-2">
           <button
             type="button"
@@ -179,7 +179,7 @@ export function TemplatesPage() {
                     onClick={() => void onDelete()}
                     title={t('templates.delete')}
                     aria-label={t('templates.delete')}
-                    className="rounded border border-border px-2 py-1 hover:bg-surface-hover"
+                    className="rounded px-2 py-1 hover:bg-surface-hover bg-surface-hover"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -212,7 +212,7 @@ export function TemplatesPage() {
                   value={draft.name}
                   onChange={(e) => update({ name: e.target.value })}
                   placeholder={t('templates.namePlaceholder')}
-                  className="w-full rounded border border-border bg-surface px-2 py-2 outline-none focus:border-accent"
+                  className="w-full rounded bg-surface px-2 py-2 outline-none focus:border-accent shadow-card"
                 />
               </Field>
 
@@ -227,7 +227,7 @@ export function TemplatesPage() {
                 <select
                   value={draft.model ?? ''}
                   onChange={(e) => chooseModel(e.target.value)}
-                  className="w-full rounded border border-border bg-surface px-2 py-2 outline-none focus:border-accent"
+                  className="w-full rounded bg-surface px-2 py-2 outline-none focus:border-accent shadow-card"
                 >
                   <option value="">{t('templates.anyModel')}</option>
                   {modelMissing && (

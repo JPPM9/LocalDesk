@@ -56,7 +56,7 @@ export function CodeChangeRow({ call }: { call: ToolCallRecord }) {
         : FilePen;
 
   return (
-    <details className="group rounded-xl border border-border text-[13px]">
+    <details className="group rounded-xl text-[13px] bg-surface-hover">
       <summary className="flex cursor-pointer items-center gap-2 px-3 py-2 text-muted select-none hover:text-text">
         {call.status === 'error' ? (
           <CircleAlert size={14} className="shrink-0 text-error" />
@@ -81,14 +81,14 @@ export function CodeChangeRow({ call }: { call: ToolCallRecord }) {
               e.preventDefault();
               void undo();
             }}
-            className="flex min-h-7 shrink-0 items-center gap-1 rounded border border-border bg-surface px-2 py-1 text-xs text-text hover:bg-surface-hover"
+            className="flex min-h-7 shrink-0 items-center gap-1 rounded bg-surface px-2 py-1 text-xs text-text hover:bg-surface-hover shadow-card"
           >
             <Undo2 size={12} />
             {t('code.undo')}
           </button>
         )}
       </summary>
-      <div className="space-y-2 border-t border-border px-3 py-2">
+      <div className="space-y-2 px-3 py-2">
         {error && <p className="text-xs text-error">{error}</p>}
         {call.preview ? (
           <DiffView text={call.preview} />

@@ -47,14 +47,14 @@ export function TemplatePicker({
             className={`flex flex-col justify-start rounded-xl border p-4 text-left hover:shadow-card ${
               template.id === activeId
                 ? 'border-accent bg-accent-soft'
-                : 'border-border bg-surface-2 hover:bg-surface'
+                : 'border-transparent bg-surface shadow-card hover:bg-surface-hover'
             }`}
           >
             <div className="flex items-center gap-2 font-medium">
               <BookMarked size={14} className="shrink-0 text-accent-text" />
               <span className="truncate">{template.name}</span>
             </div>
-            <div className="mt-0.5 truncate font-mono text-xs text-muted">
+            <div className="mt-0.5 truncate tabular-nums text-xs text-muted">
               {template.model ?? t('templates.anyModel')}
             </div>
             {template.settings.systemPrompt && (

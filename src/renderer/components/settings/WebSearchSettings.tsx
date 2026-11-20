@@ -70,7 +70,7 @@ export function WebSearchSettings() {
         </p>
       </div>
 
-      <div className="space-y-3 rounded-xl border border-border bg-surface p-4">
+      <div className="space-y-3 rounded-xl bg-surface p-4 shadow-card">
         <div className="flex items-center gap-2 font-medium">
           <Search size={15} className="text-muted" />
           {t('webSearchSettings.provider')}
@@ -89,7 +89,7 @@ export function WebSearchSettings() {
                 placeholder={t('webSearchSettings.keyPlaceholder')}
                 spellCheck={false}
                 autoComplete="off"
-                className="field w-full font-mono"
+                className="field w-full tabular-nums"
               />
             </Field>
             {error && <p className="text-xs text-error">{error}</p>}

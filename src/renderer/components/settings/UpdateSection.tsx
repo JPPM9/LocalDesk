@@ -26,8 +26,7 @@ export function UpdateSection({ version }: { version: string }) {
 
   if (!state) return null;
 
-  const button =
-    'flex items-center gap-2 rounded border border-border bg-surface px-3 py-1 text-xs hover:bg-surface-hover disabled:opacity-50';
+  const button = 'btn btn-secondary flex items-center gap-2';
   const primary =
     'flex items-center gap-2 rounded bg-accent px-3 py-1 text-xs text-accent-fg hover:opacity-90';
   const check = (
@@ -42,7 +41,7 @@ export function UpdateSection({ version }: { version: string }) {
   );
 
   return (
-    <div className="mt-3 space-y-2 rounded-xl border border-border bg-surface p-4 text-sm">
+    <div className="mt-3 space-y-2 rounded-xl bg-surface p-4 text-sm shadow-card">
       {state.kind === 'dev' && (
         <p className="text-xs text-muted">{t('update.dev')}</p>
       )}
