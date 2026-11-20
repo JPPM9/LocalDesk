@@ -3,6 +3,7 @@
 // damit sich beide Seiten auf dieselben Datenformen verlassen können.
 
 import type { ThemeChoice, WindowCommand } from './appearance';
+import type { ArtcraftApp } from './artcraft';
 import type { Language, LanguageChoice, LanguageState } from './language';
 import type {
   GoogleAppInput,
@@ -75,14 +76,18 @@ export type ProviderStatus =
   | { online: true; baseUrl: string; version: string }
   | { online: false; baseUrl: string; error: string };
 
-/** Ein eingerichteter MCP-Server. Bisher gibt es nur die Art „filesystem“. */
+/** Ein eingerichteter MCP-Server: Dateisystem-Server oder eine ArtCraft-App (geschlossene Arten). */
 export interface McpServerConfig {
   id: string;
   name: string;
-  kind: 'filesystem';
-  /** Ordner, auf die der Dateisystem-Server zugreifen darf – nur diese. */
+  kind: 'filesystem' | 'artcraft';
+  /** Ordner, auf die der Server zugreifen darf – nur diese. */
   folders: string[];
   enabled: boolean;
+  /** Nur bei `artcraft`: welche App. */
+  app?: ArtcraftApp;
+  /** Nur bei `artcraft`: darf die App in den Ordnern Dateien schreiben? Standard: nein. */
+  allowWrite?: boolean;
 }
 
 export type McpServerInput = Omit<McpServerConfig, 'enabled'>;
@@ -699,6 +704,8 @@ export interface LocalDeskApi {
   ) => Promise<void>;
   /** Öffnet den Windows-Ordnerdialog; leer = abgebrochen. */
   pickFolders: () => Promise<string[]>;
+  /** Welche ArtCraft-Apps sind auf diesem PC installiert? */
+  detectArtcraft: () => Promise<Record<ArtcraftApp, boolean>>;
 
   /** Code-Sitzungen (Seite „Code“), neueste zuerst. */
   listCodeSessions: () => Promise<CodeSession[]>;
@@ -1019,6 +1026,7 @@ export const IpcChannels = {
   deleteMcpServer: 'mcp:delete',
   setToolPermission: 'mcp:set-permission',
   pickFolders: 'dialog:pick-folders',
+  detectArtcraft: 'mcp:detect-artcraft',
   listCodeSessions: 'code:list-sessions',
   createCodeSession: 'code:create-session',
   listCodeDir: 'code:list-dir',

@@ -5,6 +5,12 @@ den Release-Notizen auf GitHub – und erscheint in LocalDesk unter „Nach Upda
 
 ## Unveröffentlicht
 
+**ArtCraft**
+
+- PdfCraft und PhotoCraft (ArtCraft-Apps) lassen sich unter Einstellungen → MCP-Server als Werkzeuge hinzufügen: „ArtCraft-App
+  hinzufügen“. LocalDesk erkennt installierte Apps, startet ihren MCP-Server nur mit den Ordnern, die du freigibst (Lesen), und erlaubt
+  Schreiben nur mit eigenem Haken. Veränderndes fragt wie bei allen Werkzeugen nach.
+
 **KI-Server**
 
 - LocalDesk spricht jetzt auch mit OpenAI-kompatiblen Servern: LM Studio, llama.cpp-Server und Cloud-Anbieter (Einstellungen → KI-Server,

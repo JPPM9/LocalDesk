@@ -1,6 +1,7 @@
 import path from 'node:path';
 import type { DatabaseSync } from 'node:sqlite';
 import type { McpServerConfig, Result, ToolPermission } from '../../shared/api';
+import { isArtcraftApp, type ArtcraftApp } from '../../shared/artcraft';
 import { isToolPermission } from '../../shared/permissions';
 import { tr } from '../../shared/messages';
 
@@ -44,14 +45,20 @@ export class McpRepository {
   saveServer(input: unknown): Result<McpServerConfig> {
     const checked = checkInput(input);
     if (!checked.ok) return checked;
-    const { id, name, folders } = checked.value;
+    const { id, name, folders, kind, app, allowWrite } = checked.value;
     this.db
       .prepare(
         `INSERT INTO mcp_servers (id, name, kind, config_json, enabled, created_at)
-         VALUES (?, ?, 'filesystem', ?, 1, ?)
+         VALUES (?, ?, ?, ?, 1, ?)
          ON CONFLICT(id) DO UPDATE SET name = excluded.name, config_json = excluded.config_json`,
       )
-      .run(id, name, JSON.stringify({ folders }), this.now());
+      .run(
+        id,
+        name,
+        kind,
+        JSON.stringify({ folders, app, allowWrite }),
+        this.now(),
+      );
     return { ok: true, value: this.getServer(id)! };
   }
 
@@ -110,9 +117,14 @@ export class McpRepository {
  * Prüft Name und Ordner. Ordner müssen absolute Pfade sein; ein ganzes
  * Laufwerk (z. B. „C:\“) ist zu weit gefasst und wird abgelehnt.
  */
-export function checkInput(
-  input: unknown,
-): Result<{ id: string; name: string; folders: string[] }> {
+export function checkInput(input: unknown): Result<{
+  id: string;
+  name: string;
+  folders: string[];
+  kind: 'filesystem' | 'artcraft';
+  app?: ArtcraftApp;
+  allowWrite?: boolean;
+}> {
   if (typeof input !== 'object' || input === null) {
     return { ok: false, error: tr('error.invalidInput') };
   }
@@ -120,7 +132,10 @@ export function checkInput(
   if (typeof raw.id !== 'string' || raw.id === '') {
     return { ok: false, error: tr('mcp.noId') };
   }
-  if (raw.kind !== 'filesystem') {
+  if (raw.kind !== 'filesystem' && raw.kind !== 'artcraft') {
+    return { ok: false, error: tr('mcp.unknownKind') };
+  }
+  if (raw.kind === 'artcraft' && !isArtcraftApp(raw.app)) {
     return { ok: false, error: tr('mcp.unknownKind') };
   }
   const name = typeof raw.name === 'string' ? raw.name.trim() : '';
@@ -155,7 +170,16 @@ export function checkInput(
   }
   return {
     ok: true,
-    value: { id: raw.id, name: name.slice(0, NAME_MAX_LENGTH), folders },
+    value: {
+      id: raw.id,
+      name: name.slice(0, NAME_MAX_LENGTH),
+      folders,
+      kind: raw.kind,
+      ...(raw.kind === 'artcraft' && {
+        app: raw.app as ArtcraftApp,
+        allowWrite: raw.allowWrite === true,
+      }),
+    },
   };
 }
 
@@ -165,10 +189,18 @@ export function isDriveRoot(folder: string): boolean {
 }
 
 function toConfig(row: ServerRow): McpServerConfig | null {
-  if (row.kind !== 'filesystem') return null; // unbekannte Art (z. B. aus einer neueren Version)
+  if (row.kind !== 'filesystem' && row.kind !== 'artcraft') return null; // unbekannte Art (z. B. aus einer neueren Version)
   let folders: string[] = [];
+  let app: ArtcraftApp | undefined;
+  let allowWrite = false;
   try {
-    const config = JSON.parse(row.config_json) as { folders?: unknown };
+    const config = JSON.parse(row.config_json) as {
+      folders?: unknown;
+      app?: unknown;
+      allowWrite?: unknown;
+    };
+    if (isArtcraftApp(config.app)) app = config.app;
+    allowWrite = config.allowWrite === true;
     if (Array.isArray(config.folders)) {
       folders = config.folders.filter(
         (f): f is string => typeof f === 'string',
@@ -177,11 +209,13 @@ function toConfig(row: ServerRow): McpServerConfig | null {
   } catch {
     // kaputtes JSON → keine Ordner → Server startet nicht
   }
+  if (row.kind === 'artcraft' && !app) return null;
   return {
     id: row.id,
     name: row.name,
-    kind: 'filesystem',
+    kind: row.kind,
     folders,
     enabled: row.enabled === 1,
+    ...(row.kind === 'artcraft' && { app, allowWrite }),
   };
 }

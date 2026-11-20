@@ -452,7 +452,14 @@
       "starting": "startet …",
       "running": "läuft",
       "error": "Fehler"
-    }
+    },
+    "addArtcraft": "ArtCraft-App hinzufügen",
+    "app": "App",
+    "appMissing": "nicht gefunden",
+    "allowWrite": "Darf in diesen Ordnern Dateien anlegen und ändern",
+    "allowWriteHint": "Ohne Haken kann die App Dateien nur lesen; Speichern und Exportieren sind gesperrt. LocalDesk fragt vor jedem Werkzeug, das etwas ändert, trotzdem nach.",
+    "writeBadge": "darf schreiben",
+    "readBadge": "nur lesen"
   },
   "servers": {
     "title": "KI-Server",

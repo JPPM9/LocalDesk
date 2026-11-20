@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   FolderOpen,
@@ -19,6 +19,7 @@ import {
   defaultPermission,
   effectivePermission,
 } from '../../../shared/permissions';
+import { ARTCRAFT_APPS, type ArtcraftApp } from '../../../shared/artcraft';
 import { useMcpServers } from '../../hooks/useMcpServers';
 import { Field } from './SettingsFields';
 import { useConfirm } from '../ConfirmDialog';
@@ -30,6 +31,14 @@ export function McpSettings() {
   const servers = useMcpServers();
   const [form, setForm] = useState<McpServerInput | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Welche ArtCraft-Apps sind installiert?
+  const [installed, setInstalled] = useState<Record<
+    ArtcraftApp,
+    boolean
+  > | null>(null);
+  useEffect(() => {
+    void window.api.detectArtcraft().then(setInstalled);
+  }, []);
 
   const save = async () => {
     if (!form) return;
@@ -77,8 +86,10 @@ export function McpSettings() {
             setForm({
               id: server.config.id,
               name: server.config.name,
-              kind: 'filesystem',
+              kind: server.config.kind,
               folders: server.config.folders,
+              app: server.config.app,
+              allowWrite: server.config.allowWrite,
             })
           }
           onDelete={() => void remove(server)}
@@ -95,6 +106,44 @@ export function McpSettings() {
               className="field w-full"
             />
           </Field>
+          {form.kind === 'artcraft' && (
+            <>
+              <Field label={t('mcp.app')}>
+                <select
+                  value={form.app ?? 'pdfcraft'}
+                  onChange={(e) =>
+                    setForm({ ...form, app: e.target.value as ArtcraftApp })
+                  }
+                  className="field w-full"
+                >
+                  {(Object.keys(ARTCRAFT_APPS) as ArtcraftApp[]).map((app) => (
+                    <option key={app} value={app}>
+                      {ARTCRAFT_APPS[app].name}
+                      {installed && !installed[app]
+                        ? ` (${t('mcp.appMissing')})`
+                        : ''}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <label className="flex items-start gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={form.allowWrite === true}
+                  onChange={(e) =>
+                    setForm({ ...form, allowWrite: e.target.checked })
+                  }
+                  className="mt-1 accent-[var(--ld-accent)]"
+                />
+                <span>
+                  {t('mcp.allowWrite')}
+                  <span className="block text-xs text-muted">
+                    {t('mcp.allowWriteHint')}
+                  </span>
+                </span>
+              </label>
+            </>
+          )}
           <Field label={t('mcp.folders')} hint={t('mcp.foldersHint')}>
             <ul className="space-y-1">
               {form.folders.map((folder) => (
@@ -172,6 +221,29 @@ export function McpSettings() {
           {t('mcp.addFilesystem')}
         </button>
       )}
+      {!form && (
+        <button
+          type="button"
+          onClick={() => {
+            const app: ArtcraftApp =
+              (Object.keys(ARTCRAFT_APPS) as ArtcraftApp[]).find(
+                (a) => installed?.[a],
+              ) ?? 'pdfcraft';
+            setForm({
+              id: crypto.randomUUID(),
+              name: ARTCRAFT_APPS[app].name,
+              kind: 'artcraft',
+              folders: [],
+              app,
+              allowWrite: false,
+            });
+          }}
+          className="btn btn-secondary flex items-center gap-2"
+        >
+          <Plus size={15} />
+          {t('mcp.addArtcraft')}
+        </button>
+      )}
     </section>
   );
 }
@@ -218,6 +290,11 @@ function ServerCard({
             className="truncate font-mono text-xs text-muted"
             title={config.folders.join('\n')}
           >
+            {config.kind === 'artcraft' && config.app
+              ? `${ARTCRAFT_APPS[config.app].name} · ${
+                  config.allowWrite ? t('mcp.writeBadge') : t('mcp.readBadge')
+                } · `
+              : ''}
             {config.folders.join(' · ')}
           </div>
         </div>

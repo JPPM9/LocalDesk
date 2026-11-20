@@ -1,5 +1,7 @@
 import { stat } from 'node:fs/promises';
 import { BrowserWindow, dialog, ipcMain } from 'electron';
+import { ARTCRAFT_APPS, type ArtcraftApp } from '../shared/artcraft';
+import { findArtcraftCli } from './mcp/artcraft';
 import {
   IpcChannels,
   type McpServerConfig,
@@ -40,6 +42,15 @@ export function registerMcpHandlers(servers: McpRepository) {
   };
 
   ipcMain.handle(IpcChannels.listMcpServers, () => views());
+
+  ipcMain.handle(IpcChannels.detectArtcraft, () =>
+    Object.fromEntries(
+      (Object.keys(ARTCRAFT_APPS) as ArtcraftApp[]).map((app) => [
+        app,
+        findArtcraftCli(app) !== null,
+      ]),
+    ),
+  );
 
   ipcMain.handle(
     IpcChannels.saveMcpServer,

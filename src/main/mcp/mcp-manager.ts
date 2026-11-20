@@ -54,7 +54,17 @@ export class McpManager {
       this.onChange();
     };
 
-    const { command, args } = buildCommand(config);
+    let built: { command: string; args: string[] };
+    try {
+      built = buildCommand(config);
+    } catch (error) {
+      update({
+        state: 'error',
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return;
+    }
+    const { command, args } = built;
     const transport = new StdioClientTransport({
       command,
       args,

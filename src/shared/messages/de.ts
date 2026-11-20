@@ -501,6 +501,8 @@ export const de = {
   'mcp.foldersNotFound': 'Ordner nicht gefunden: {paths}',
   'mcp.notRunning': 'Der MCP-Server läuft nicht mehr.',
   'mcp.noId': 'Server ohne ID',
+  'mcp.appNotFound':
+    '{app} ist auf diesem PC nicht installiert. Installiere sie über den ArtCraft-Launcher und starte den Server neu.',
   'mcp.unknownKind': 'Unbekannte Server-Art',
   'mcp.needFolder': 'Bitte mindestens einen Ordner freigeben.',
   'mcp.maxFolders': 'Höchstens {max} Ordner.',

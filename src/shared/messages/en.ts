@@ -486,6 +486,8 @@ export const en: Record<MessageKey, string> = {
   'mcp.foldersNotFound': 'Folder not found: {paths}',
   'mcp.notRunning': 'The MCP server is no longer running.',
   'mcp.noId': 'Server without ID',
+  'mcp.appNotFound':
+    '{app} is not installed on this PC. Install it with the ArtCraft Launcher and restart the server.',
   'mcp.unknownKind': 'Unknown server type',
   'mcp.needFolder': 'Please share at least one folder.',
   'mcp.maxFolders': 'At most {max} folders.',

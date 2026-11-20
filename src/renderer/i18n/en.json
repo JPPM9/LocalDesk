@@ -452,7 +452,14 @@
       "starting": "starting …",
       "running": "running",
       "error": "error"
-    }
+    },
+    "addArtcraft": "Add ArtCraft app",
+    "app": "App",
+    "appMissing": "not found",
+    "allowWrite": "May create and change files in these folders",
+    "allowWriteHint": "Without the tick the app can only read files; saving and exporting are blocked. LocalDesk still asks before every tool that changes something.",
+    "writeBadge": "may write",
+    "readBadge": "read only"
   },
   "servers": {
     "title": "AI servers",

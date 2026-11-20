@@ -1,4 +1,7 @@
 import type { McpServerConfig, McpToolInfo } from '../../shared/api';
+import { ARTCRAFT_APPS } from '../../shared/artcraft';
+import { tr } from '../../shared/messages';
+import { artcraftArgs, findArtcraftCli } from './artcraft';
 
 /**
  * Feste Version des offiziellen Dateisystem-Servers. Bewusst festgelegt statt
@@ -11,7 +14,10 @@ export const FILESYSTEM_PACKAGE =
  * Baut den Startbefehl aus der Server-Art. Nur hier entsteht ein Befehl – die
  * Oberfläche kann keinen eigenen Befehl vorgeben.
  */
-export function buildCommand(config: McpServerConfig): {
+export function buildCommand(
+  config: McpServerConfig,
+  find: typeof findArtcraftCli = findArtcraftCli,
+): {
   command: string;
   args: string[];
 } {
@@ -23,6 +29,22 @@ export function buildCommand(config: McpServerConfig): {
         command: 'npx',
         args: ['-y', FILESYSTEM_PACKAGE, ...config.folders],
       };
+    case 'artcraft': {
+      if (!config.app) throw new Error(tr('mcp.unknownKind'));
+      const cli = find(config.app);
+      if (!cli)
+        throw new Error(
+          tr('mcp.appNotFound', { app: ARTCRAFT_APPS[config.app].name }),
+        );
+      return {
+        command: cli,
+        args: artcraftArgs(
+          config.app,
+          config.folders,
+          config.allowWrite === true,
+        ),
+      };
+    }
   }
 }
 
