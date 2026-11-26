@@ -12,6 +12,7 @@ import { effectivePermission, isToolPermission } from '../shared/permissions';
 import type { NamedTool, OfferedTool } from '../shared/tools';
 import type { McpRepository } from './db/mcp-repository';
 import { McpManager } from './mcp/mcp-manager';
+import { withPathHint } from './mcp/path-hint';
 import { toToolResult } from './mcp/tool-result';
 import type { ToolResult } from './tool-loop';
 import { tr } from '../shared/messages';
@@ -145,7 +146,7 @@ export function registerMcpHandlers(servers: McpRepository) {
             serverId,
             serverName: config.name,
             toolName: tool.name,
-            description: tool.description,
+            description: withPathHint(tool.description, tool.inputSchema),
             inputSchema: tool.inputSchema,
             destructive: tool.destructive,
             permission,

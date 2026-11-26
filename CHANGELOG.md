@@ -3,6 +3,13 @@
 Jede Version hat hier einen Abschnitt `## <Version> – <Datum>`. Sein Text wird beim Release zu
 den Release-Notizen auf GitHub – und erscheint in LocalDesk unter „Nach Updates suchen“.
 
+## Unveröffentlicht
+
+**Werkzeuge**
+
+- Werkzeuge mit Pfad-Eingaben (MCP-Server, ArtCraft-Apps) tragen jetzt den Hinweis, Pfade mit Schrägstrichen zu schreiben. Mit
+  Backslashes brach Ollama Werkzeug-Aufrufe manchmal mit „invalid character in string escape code“ ab.
+
 ## 0.2.0 – 2026-11-20
 
 **ArtCraft**
