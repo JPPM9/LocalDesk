@@ -27,6 +27,13 @@ import {
 } from '../components/chat/SidePanel';
 import { setChatRunning } from '../chat/runningState';
 import { useChatModels } from '../hooks/useChatModels';
+import { useRunningModels } from '../hooks/useRunningModels';
+import {
+  AUTO_MODEL,
+  detectSignals,
+  pickModel,
+} from '../../shared/model-router';
+import type { Hardware } from '../../shared/model-fit';
 import { useTemplates } from '../templates/useTemplates';
 import { TemplatePicker } from '../components/chat/TemplatePicker';
 import { shortcutLabel } from '../shortcuts/keymap';
@@ -63,6 +70,25 @@ function readLastModel(): string | null {
     return localStorage.getItem(LAST_MODEL_KEY);
   } catch {
     return null;
+  }
+}
+
+const AUTO_CONFIRM_KEY = 'localdesk.autoConfirm';
+
+/** Soll der Auto-Modus vor dem Senden einen Vorschlag zeigen? (Standard: ja) */
+function readAutoConfirm(): boolean {
+  try {
+    return localStorage.getItem(AUTO_CONFIRM_KEY) !== '0';
+  } catch {
+    return true;
+  }
+}
+
+function saveAutoConfirm(on: boolean) {
+  try {
+    localStorage.setItem(AUTO_CONFIRM_KEY, on ? '1' : '0');
+  } catch {
+    // ohne Speicher gilt es nur bis zum Schließen
   }
 }
 
@@ -197,7 +223,57 @@ export function ChatPage() {
     error: loadError,
     epoch: modelsEpoch,
   } = useChatModels();
-  const [model, setModel] = useState('');
+  const [choice, setChoice] = useState('');
+  // Auto-Modus: das zuletzt gewählte Modell und die Hardware, nach der gewählt wird.
+  const [autoPicked, setAutoPicked] = useState('');
+  const [hardware, setHardware] = useState<Hardware | null>(null);
+  const [autoConfirm, setAutoConfirm] = useState(readAutoConfirm);
+  const runningModels = useRunningModels(5000);
+  const loadedNames =
+    runningModels?.ok === true ? runningModels.value.map((m) => m.name) : [];
+  const usesTools = Boolean(
+    settings.mcpServers?.length ||
+    settings.mailAccounts?.length ||
+    settings.web ||
+    settings.webSearch,
+  );
+  useEffect(() => {
+    if (choice !== AUTO_MODEL || hardware) return;
+    void (async () => {
+      const [memory, gpu] = await Promise.all([
+        window.api.getSystemMemory(),
+        window.api.getGpuStatus(),
+      ]);
+      const vram = gpu.available
+        ? gpu.gpus.reduce((sum, g) => sum + (g.memoryTotalBytes ?? 0), 0)
+        : 0;
+      setHardware({
+        ramBytes: memory.totalBytes,
+        vramBytes: vram > 0 ? vram : null,
+      });
+    })();
+  }, [choice, hardware]);
+  const hasImagesSoFar = messages.some((m) => (m.images?.length ?? 0) > 0);
+  const baselinePick =
+    choice === AUTO_MODEL && hardware
+      ? (pickModel(
+          models,
+          {
+            images: hasImagesSoFar,
+            tools: usesTools,
+            code: false,
+            reasoning: false,
+            contextTokens: 0,
+          },
+          hardware,
+          loadedNames,
+        )?.model ?? '')
+      : '';
+  // Das Modell, mit dem gerade gearbeitet wird (bei „Auto“: der letzte oder der vorgesehene Vorschlag).
+  const model =
+    choice === AUTO_MODEL
+      ? autoPicked || baselinePick || models[0]?.name || ''
+      : choice;
 
   const {
     templates,
@@ -214,10 +290,14 @@ export function ChatPage() {
   useEffect(() => {
     if (!modelsLoaded) return;
     const last = readLastModel();
-    setModel(
+    setChoice(
       (current) =>
         current ||
-        (models.find((m) => m.name === last)?.name ?? models[0]?.name ?? ''),
+        (last === AUTO_MODEL
+          ? AUTO_MODEL
+          : (models.find((m) => m.name === last)?.name ??
+            models[0]?.name ??
+            '')),
     );
   }, [models, modelsLoaded]);
 
@@ -225,7 +305,7 @@ export function ChatPage() {
   useEffect(() => {
     if (modelsEpoch === 0 || models.length === 0) return;
     const last = readLastModel();
-    setModel((current) =>
+    setChoice((current) =>
       modelAfterSwitch(
         models.map((m) => m.name),
         current,
@@ -236,6 +316,7 @@ export function ChatPage() {
 
   useEffect(() => {
     setActiveTemplate(null);
+    setAutoPicked('');
   }, [chatId]);
 
   /**
@@ -245,7 +326,7 @@ export function ChatPage() {
   const applyTemplate = (template: ChatTemplate) => {
     const templateModel = models.find((m) => m.name === template.model);
     const targetModel = templateModel ?? models.find((m) => m.name === model);
-    if (templateModel) setModel(templateModel.name);
+    if (templateModel) setChoice(templateModel.name);
     const { think, ...rest } = template.settings;
     updateSettings(
       thinkFitsModel(think, targetModel) ? template.settings : rest,
@@ -327,7 +408,7 @@ export function ChatPage() {
   // sofern es noch installiert ist.
   useEffect(() => {
     if (chat && models.some((m) => m.name === chat.model)) {
-      setModel(chat.model);
+      setChoice(chat.model);
     }
   }, [chat, models]);
 
@@ -365,9 +446,25 @@ export function ChatPage() {
     return () => clearTimeout(timer);
   }, [highlightId]);
 
+  /** Auto: das passendste Modell für diese neue Nachricht. */
+  const routeAuto = (text: string, attachments: { images: unknown[] }) => {
+    if (!hardware) return null;
+    return pickModel(
+      models,
+      detectSignals(text, {
+        images: hasImagesSoFar || attachments.images.length > 0,
+        tools: usesTools,
+        contextTokens: contextUsage.used + Math.ceil(text.length / 4),
+      }),
+      hardware,
+      loadedNames,
+    );
+  };
+
   const chooseModel = (name: string) => {
-    setModel(name);
+    setChoice(name);
     saveLastModel(name);
+    if (name === AUTO_MODEL) return; // „Auto“ wählt erst beim Senden
     // „Denken: Aus“ von qwen3 passt nicht zu gpt-oss (nur Stufen) und umgekehrt –
     // dann lieber zurück auf den Standard des neuen Modells.
     const next = models.find((m) => m.name === name);
@@ -596,9 +693,10 @@ export function ChatPage() {
             modelSelect={
               <ModelSelect
                 models={models}
-                value={model}
+                value={choice}
                 onChange={chooseModel}
                 disabled={isRunning}
+                autoPick={choice === AUTO_MODEL ? model : undefined}
               />
             }
             chips={chips}
@@ -669,9 +767,34 @@ export function ChatPage() {
             }}
             disabled={!model}
             isRunning={isRunning}
-            onSend={(text, attachments) =>
-              send(text, model, project?.id, attachments)
+            beforeSend={
+              choice === AUTO_MODEL && autoConfirm
+                ? (text, attachments) => {
+                    const pick = routeAuto(text, attachments);
+                    // Bleibt es beim Modell dieses Chats, gibt es nichts zu bestätigen.
+                    if (!pick || pick.model === chat?.model) return null;
+                    return {
+                      model: pick.model,
+                      reasons: pick.reasons,
+                      choices:
+                        pick.ranked.length > 0 ? pick.ranked : [pick.model],
+                    };
+                  }
+                : undefined
             }
+            onDontAsk={() => {
+              setAutoConfirm(false);
+              saveAutoConfirm(false);
+            }}
+            onSend={(text, attachments, override) => {
+              const target =
+                override ??
+                (choice === AUTO_MODEL
+                  ? (routeAuto(text, attachments)?.model ?? model)
+                  : model);
+              if (choice === AUTO_MODEL) setAutoPicked(target);
+              send(text, target, project?.id, attachments);
+            }}
             onStop={stop}
           />
           <p className="mt-2 text-center text-xs text-subtle">

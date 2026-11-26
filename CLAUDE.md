@@ -1288,6 +1288,19 @@
   Leistenfuß, Palettenbefehl „Antwort stoppen“, Diagramm-/Kontext-Balken nach DESIGN.md §Daten, Texte der Seiten nur teilweise nach
   JOURNEY.md angeglichen.
 
+- **Arbeitsweise (Teil A, 2026-11):** `shared/working-style.ts` (`withWorkingStyle`, Text in `messages/*` als `prompt.workingStyle`, eigene
+  Formulierung nach Karpathys Beobachtungen – das Quell-Repo hat keine Lizenz, nichts kopieren) wird in `chat-service.ts` vor
+  Projekt-Anweisungen bzw. `codeAgentPrompt` gesetzt; Einstellung `chat.workingStyle` (Standard an, `working-style-service.ts`),
+  Kontext-Anzeige zählt ihn mit (`useContextUsage`). **Auto-Modus (Teil B):** `shared/model-router.ts` (`pickModel`, `detectSignals`, `AUTO_MODEL`; Regeln, keine KI) – ChatPage hält `choice`
+  (kann „Auto“ sein) und leitet daraus `model` ab; `ChatInput.beforeSend` zeigt den Vorschlag, der Text bleibt bis zur Bestätigung im
+  Feld; „Nicht mehr fragen“ = localStorage `localdesk.autoConfirm`. Grenzen: nur Modelle des aktiven Servers, Code-Erkennung nur per
+  Stichwort, öffnet man einen alten Chat, gilt wieder dessen Modell (nicht „Auto“), Code-Bereich nutzt Auto noch nicht. **CodeGraph (Teil C):** MCP-Art `codegraph` (`mcp/codegraph.ts`: `findCodegraphCli`, `codegraphArgs` = `serve --mcp --path <Ordner>`,
+  Umgebung `CODEGRAPH_TELEMETRY=0`/`DO_NOT_TRACK=1`; `--no-telemetry` kennt nur neues CodeGraph, 1.6.2 lehnt es ab), genau ein Ordner je
+  Server; `McpTools.forWorkspace(folder)` gibt dem Code-Agent die laufenden CodeGraph-Server seines Ordners (vorher bekam er keine MCP-
+  Werkzeuge). Bekannt: CodeGraph startet einen Hintergrundprozess (Daemon) je Projekt, der nach dem Schließen von LocalDesk weiterläuft
+  (`codegraph daemons` zeigt ihn). Ursprünglich geplant war:
+  CodeGraph als MCP-Art (`serve --mcp --no-telemetry`; der Code-Agent bekommt heute keine MCP-Werkzeuge, siehe `workspace ? [] : …`).
+
 ## Befehle
 
 - `npm start` – Entwicklungsmodus · `npm test` – Vitest (Tests in `tests/`) · `npm run typecheck` · `npm run lint` · `npm run dist` – Installer · `npm run make` – portable ZIP

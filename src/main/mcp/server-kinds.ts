@@ -2,6 +2,7 @@ import type { McpServerConfig, McpToolInfo } from '../../shared/api';
 import { ARTCRAFT_APPS } from '../../shared/artcraft';
 import { tr } from '../../shared/messages';
 import { artcraftArgs, findArtcraftCli } from './artcraft';
+import { CODEGRAPH_ENV, codegraphArgs, findCodegraphCli } from './codegraph';
 
 /**
  * Feste Version des offiziellen Dateisystem-Servers. Bewusst festgelegt statt
@@ -17,9 +18,12 @@ export const FILESYSTEM_PACKAGE =
 export function buildCommand(
   config: McpServerConfig,
   find: typeof findArtcraftCli = findArtcraftCli,
+  findCodegraph: typeof findCodegraphCli = findCodegraphCli,
 ): {
   command: string;
   args: string[];
+  /** Zusätzliche Umgebungsvariablen (zu denen von LocalDesk). */
+  env?: Record<string, string>;
 } {
   switch (config.kind) {
     case 'filesystem':
@@ -29,6 +33,16 @@ export function buildCommand(
         command: 'npx',
         args: ['-y', FILESYSTEM_PACKAGE, ...config.folders],
       };
+    case 'codegraph': {
+      const cli = findCodegraph();
+      if (!cli || config.folders.length !== 1)
+        throw new Error(tr('mcp.codegraphNotFound'));
+      return {
+        command: cli,
+        args: codegraphArgs(config.folders[0]),
+        env: CODEGRAPH_ENV,
+      };
+    }
     case 'artcraft': {
       if (!config.app) throw new Error(tr('mcp.unknownKind'));
       const cli = find(config.app);

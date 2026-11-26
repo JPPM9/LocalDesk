@@ -231,7 +231,8 @@
       "month": "Letzte 30 Tage",
       "older": "Älter"
     },
-    "modelNamed": "Modell: {{name}}"
+    "modelNamed": "Modell: {{name}}",
+    "auto": "Auto"
   },
   "compact": {
     "button": "Älteren Teil verdichten",
@@ -460,7 +461,16 @@
     "allowWriteHint": "Ohne Haken kann die App Dateien nur lesen; Speichern und Exportieren sind gesperrt. LocalDesk fragt vor jedem Werkzeug, das etwas ändert, trotzdem nach.",
     "writeBadge": "darf schreiben",
     "readBadge": "nur lesen",
-    "unconfined": "Craft Anything lässt sich nicht auf Ordner beschränken: Es untersucht Dateien und Programme, die du im Chat nennst. LocalDesk startet es im eingeschränkten Modus (nichts ausführen, kein Web, keine Aufnahmen) und fragt bei jedem Werkzeug nach."
+    "unconfined": "Craft Anything lässt sich nicht auf Ordner beschränken: Es untersucht Dateien und Programme, die du im Chat nennst. LocalDesk startet es im eingeschränkten Modus (nichts ausführen, kein Web, keine Aufnahmen) und fragt bei jedem Werkzeug nach.",
+    "addCodegraph": "CodeGraph hinzufügen",
+    "cgIndexed": "Index vorhanden – CodeGraph hält ihn selbst aktuell.",
+    "cgNotIndexed": "In diesem Ordner gibt es noch keinen Index.",
+    "cgIndex": "Projekt indizieren",
+    "cgIndexing": "Indiziere …",
+    "cgConfirmIndex": "CodeGraph legt im Ordner „{{folder}}“ einen Ordner „.codegraph“ an und liest dafür alle Quelldateien. Bei großen Projekten kann das Minuten dauern. Fortfahren?",
+    "cgPrivacy": "CodeGraph arbeitet nur auf diesem PC. LocalDesk schaltet seine anonyme Statistik ab. Im Code-Bereich bekommt die Sitzung die Werkzeuge automatisch, wenn der Ordner dieses Projekt ist.",
+    "cgInstall": "CodeGraph installieren",
+    "cgInstallHint": "CodeGraph ist nicht installiert. LocalDesk installiert es nicht selbst. Der Befehl aus der CodeGraph-Anleitung (PowerShell) lädt ein Skript von GitHub und führt es aus – lies es vorher auf github.com/colbymchenry/codegraph:"
   },
   "servers": {
     "title": "KI-Server",
@@ -1141,5 +1151,32 @@
       "cpu": "Nur Prozessor, langsam (ca. {{need}})",
       "no": "Passt nicht (ca. {{need}})"
     }
+  },
+  "workingStyle": {
+    "title": "Arbeitsweise",
+    "intro": "Ein kurzer Block, den LocalDesk in jedem Chat und im Code-Bereich vor die Anweisungen setzt: erst verstehen, einfach halten, nur das Nötige ändern, am Ziel prüfen. Die Idee stammt aus Andrej Karpathys Beobachtungen zu typischen Fehlern von Sprachmodellen beim Programmieren; der Text ist eigenständig formuliert. Er kostet etwa 250 Token Kontext.",
+    "enable": "Arbeitsweise in jedem Chat anwenden",
+    "show": "Text anzeigen, der an das Modell geht"
+  },
+  "auto": {
+    "title": "Auto-Modus",
+    "proposal": "Auto schlägt {{model}} vor.",
+    "because": "Gründe: {{reasons}}.",
+    "send": "Mit {{model}} senden",
+    "other": "Anderes Modell wählen",
+    "dontAsk": "Nicht mehr fragen",
+    "reason": {
+      "vision": "Bilder im Chat",
+      "tools": "Werkzeuge sind eingeschaltet",
+      "code": "sieht nach Programmieren aus",
+      "thinking": "kann nachdenken",
+      "fitsGpu": "passt auf die Grafikkarte",
+      "partial": "läuft teils auf dem Prozessor",
+      "cpu": "läuft auf dem Prozessor",
+      "loaded": "schon geladen, kein Warten",
+      "largest": "das größte passende Modell"
+    },
+    "setting": "Auto-Modus: Vorschlag vor dem Senden bestätigen",
+    "settingHint": "Bei „Auto“ in der Modellauswahl zeigt LocalDesk vor dem Senden das gewählte Modell samt Gründen. Ohne Haken sendet es sofort; das gewählte Modell steht dann in der Auswahl."
   }
 }

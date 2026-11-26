@@ -39,6 +39,31 @@ export function McpSettings() {
   useEffect(() => {
     void window.api.detectArtcraft().then(setInstalled);
   }, []);
+  // CodeGraph: installiert? hat der gewählte Ordner schon einen Index?
+  const [codegraph, setCodegraph] = useState<{
+    installed: boolean;
+    indexed: boolean;
+  } | null>(null);
+  const [indexing, setIndexing] = useState(false);
+  const cgFolder = form?.kind === 'codegraph' ? form.folders[0] : undefined;
+  useEffect(() => {
+    void window.api.detectCodegraph(cgFolder).then(setCodegraph);
+  }, [cgFolder, form === null]);
+
+  const buildIndex = async (folder: string) => {
+    if (
+      !(await confirm({
+        message: t('mcp.cgConfirmIndex', { folder }),
+        confirmLabel: t('mcp.cgIndex'),
+      }))
+    )
+      return;
+    setIndexing(true);
+    const result = await window.api.initCodegraph(folder);
+    setIndexing(false);
+    setError(result.ok ? null : result.error);
+    setCodegraph(await window.api.detectCodegraph(folder));
+  };
 
   const save = async () => {
     if (!form) return;
@@ -54,7 +79,11 @@ export function McpSettings() {
   const addFolders = async () => {
     if (!form) return;
     const picked = await window.api.pickFolders();
-    if (picked.length) {
+    if (picked.length && form.kind === 'codegraph') {
+      // Ein CodeGraph-Server gehört zu genau einem Projektordner.
+      const name = picked[0].split(/[\\/]/).filter(Boolean).pop() ?? '';
+      setForm({ ...form, folders: [picked[0]], name: `CodeGraph · ${name}` });
+    } else if (picked.length) {
       setForm({ ...form, folders: [...new Set([...form.folders, ...picked])] });
     }
   };
@@ -194,6 +223,26 @@ export function McpSettings() {
               </button>
             </Field>
           )}
+          {form.kind === 'codegraph' && (
+            <div className="space-y-2 text-sm">
+              <p>
+                {codegraph?.indexed
+                  ? t('mcp.cgIndexed')
+                  : t('mcp.cgNotIndexed')}
+              </p>
+              {!codegraph?.indexed && form.folders[0] && (
+                <button
+                  type="button"
+                  disabled={indexing}
+                  onClick={() => void buildIndex(form.folders[0])}
+                  className="btn btn-secondary"
+                >
+                  {indexing ? t('mcp.cgIndexing') : t('mcp.cgIndex')}
+                </button>
+              )}
+              <p className="text-xs text-muted">{t('mcp.cgPrivacy')}</p>
+            </div>
+          )}
           {error && <p className="text-xs text-error">{error}</p>}
           <div className="flex justify-end gap-2">
             <button
@@ -255,6 +304,37 @@ export function McpSettings() {
           {t('mcp.addArtcraft')}
         </button>
       )}
+      {!form && (
+        <button
+          type="button"
+          disabled={!codegraph?.installed}
+          onClick={() =>
+            setForm({
+              id: crypto.randomUUID(),
+              name: 'CodeGraph',
+              kind: 'codegraph',
+              folders: [],
+            })
+          }
+          className="btn btn-secondary flex items-center gap-2"
+        >
+          <Plus size={15} />
+          {t('mcp.addCodegraph')}
+        </button>
+      )}
+      {!form && codegraph && !codegraph.installed && (
+        <details className="text-xs text-muted">
+          <summary className="cursor-pointer select-none">
+            {t('mcp.cgInstall')}
+          </summary>
+          <p className="mt-2">{t('mcp.cgInstallHint')}</p>
+          <code className="mt-1 block rounded bg-surface-hover p-2 select-all">
+            irm
+            https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.ps1
+            | iex
+          </code>
+        </details>
+      )}
     </section>
   );
 }
@@ -301,6 +381,7 @@ function ServerCard({
             className="truncate font-mono text-xs text-muted"
             title={config.folders.join('\n')}
           >
+            {config.kind === 'codegraph' ? 'CodeGraph · ' : ''}
             {config.kind === 'artcraft' && config.app
               ? `${ARTCRAFT_APPS[config.app].name} · ${
                   config.allowWrite ? t('mcp.writeBadge') : t('mcp.readBadge')

@@ -54,7 +54,7 @@ export class McpManager {
       this.onChange();
     };
 
-    let built: { command: string; args: string[] };
+    let built: ReturnType<typeof buildCommand>;
     try {
       built = buildCommand(config);
     } catch (error) {
@@ -64,10 +64,21 @@ export class McpManager {
       });
       return;
     }
-    const { command, args } = built;
+    const { command, args, env } = built;
     const transport = new StdioClientTransport({
       command,
       args,
+      // CodeGraph braucht die Umgebung des Benutzers (PATH, Profil) und bekommt dazu die Telemetrie-Abschaltung.
+      ...(env && {
+        env: {
+          ...Object.fromEntries(
+            Object.entries(process.env).filter(
+              (e): e is [string, string] => typeof e[1] === 'string',
+            ),
+          ),
+          ...env,
+        },
+      }),
       stderr: 'pipe',
     });
     transport.stderr?.on('data', (chunk: Buffer) => {

@@ -39,6 +39,8 @@ export const de = {
     'Die Bilder sind zusammen zu groß (höchstens {max} MB).',
   'images.notFound': 'Dieses Bild gibt es nicht (mehr).',
   'chat.fileTitle': 'Datei: {name}',
+  'prompt.workingStyle':
+    'Arbeitsweise (gilt für dein Vorgehen, nicht für deinen Ton):\n1. Erst verstehen, dann handeln. Nenne deine Annahmen. Ist die Aufgabe unklar oder gibt es mehrere sinnvolle Deutungen, frage kurz nach, statt zu raten.\n2. Einfach halten. Liefere die kleinste Lösung, die die Aufgabe vollständig erfüllt – keine Zusatzfunktionen und keine Vorsorge für Fälle, die niemand verlangt hat.\n3. Nur ändern, was nötig ist. Fasse bestehenden Text oder Code nur an, wo die Aufgabe es verlangt, bleibe bei seinem Stil und räume nicht nebenbei auf.\n4. Am Ziel prüfen. Lege vorab fest, woran ein richtiges Ergebnis zu erkennen ist, und prüfe es am Ende. Sage klar, was du geprüft hast und was nicht.',
   'prompt.fileBlock': '[Datei: {name}]\n{text}\n[Ende der Datei: {name}]',
   'prompt.fileMarker': '[Datei: {name}]',
   'prompt.fileOld': '[Datei: {name} – nicht mehr im Kontext]',
@@ -505,6 +507,8 @@ export const de = {
     '{app} ist auf diesem PC nicht installiert. Installiere sie über den ArtCraft-Launcher und starte den Server neu.',
   'mcp.pathHint':
     'Schreibe Pfade immer mit Schrägstrichen (C:/Ordner/Datei.pdf), nie mit Backslashes.',
+  'mcp.codegraphNotFound':
+    'CodeGraph ist auf diesem PC nicht installiert (oder der Ordner fehlt). Installiere es mit dem Befehl aus der CodeGraph-Anleitung und starte den Server neu.',
   'mcp.unknownKind': 'Unbekannte Server-Art',
   'mcp.needFolder': 'Bitte mindestens einen Ordner freigeben.',
   'mcp.maxFolders': 'Höchstens {max} Ordner.',

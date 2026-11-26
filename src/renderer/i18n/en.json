@@ -231,7 +231,8 @@
       "month": "Last 30 days",
       "older": "Older"
     },
-    "modelNamed": "Model: {{name}}"
+    "modelNamed": "Model: {{name}}",
+    "auto": "Auto"
   },
   "compact": {
     "button": "Condense older part",
@@ -460,7 +461,16 @@
     "allowWriteHint": "Without the tick the app can only read files; saving and exporting are blocked. LocalDesk still asks before every tool that changes something.",
     "writeBadge": "may write",
     "readBadge": "read only",
-    "unconfined": "Craft Anything cannot be limited to folders: it examines files and programs you name in the chat. LocalDesk starts it in restricted mode (no running code, no web, no capture) and asks before every tool."
+    "unconfined": "Craft Anything cannot be limited to folders: it examines files and programs you name in the chat. LocalDesk starts it in restricted mode (no running code, no web, no capture) and asks before every tool.",
+    "addCodegraph": "Add CodeGraph",
+    "cgIndexed": "Index exists – CodeGraph keeps it up to date itself.",
+    "cgNotIndexed": "This folder has no index yet.",
+    "cgIndex": "Index project",
+    "cgIndexing": "Indexing …",
+    "cgConfirmIndex": "CodeGraph will create a “.codegraph” folder in “{{folder}}” and read all source files for it. This can take minutes for large projects. Continue?",
+    "cgPrivacy": "CodeGraph works only on this PC. LocalDesk turns its anonymous statistics off. In the code area the session gets the tools automatically when the folder is this project.",
+    "cgInstall": "Install CodeGraph",
+    "cgInstallHint": "CodeGraph is not installed. LocalDesk does not install it itself. The command from the CodeGraph instructions (PowerShell) downloads a script from GitHub and runs it – read it first at github.com/colbymchenry/codegraph:"
   },
   "servers": {
     "title": "AI servers",
@@ -1141,5 +1151,32 @@
       "cpu": "Processor only, slow (about {{need}})",
       "no": "Does not fit (about {{need}})"
     }
+  },
+  "workingStyle": {
+    "title": "Way of working",
+    "intro": "A short block LocalDesk puts before the instructions in every chat and in the code area: understand first, keep it simple, change only what is needed, check against the goal. The idea comes from Andrej Karpathy’s observations about typical mistakes language models make when coding; the text is independently worded. It costs about 250 tokens of context.",
+    "enable": "Apply the way of working in every chat",
+    "show": "Show the text sent to the model"
+  },
+  "auto": {
+    "title": "Auto mode",
+    "proposal": "Auto suggests {{model}}.",
+    "because": "Reasons: {{reasons}}.",
+    "send": "Send with {{model}}",
+    "other": "Choose another model",
+    "dontAsk": "Do not ask again",
+    "reason": {
+      "vision": "images in the chat",
+      "tools": "tools are switched on",
+      "code": "looks like programming",
+      "thinking": "can think",
+      "fitsGpu": "fits the graphics card",
+      "partial": "runs partly on the processor",
+      "cpu": "runs on the processor",
+      "loaded": "already loaded, no waiting",
+      "largest": "the largest model that fits"
+    },
+    "setting": "Auto mode: confirm the suggestion before sending",
+    "settingHint": "With “Auto” in the model menu, LocalDesk shows the chosen model and its reasons before sending. Without the tick it sends right away; the chosen model then shows in the menu."
   }
 }

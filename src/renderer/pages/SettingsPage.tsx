@@ -8,6 +8,7 @@ import { MailSettings } from '../components/settings/MailSettings';
 import { PrivacySection } from '../components/settings/PrivacySection';
 import { McpSettings } from '../components/settings/McpSettings';
 import { ObsidianSettings } from '../components/settings/ObsidianSettings';
+import { WorkingStyleSettings } from '../components/settings/WorkingStyleSettings';
 import { ServerSettings } from '../components/settings/ServerSettings';
 import { LicenseSection } from '../components/settings/LicenseSection';
 import { UpdateSection } from '../components/settings/UpdateSection';
@@ -17,6 +18,7 @@ import { WebSearchSettings } from '../components/settings/WebSearchSettings';
 const SECTIONS = [
   { id: 'darstellung', titleKey: 'appearance.title' },
   { id: 'verwalten', titleKey: 'settings.manage' },
+  { id: 'arbeitsweise', titleKey: 'workingStyle.title' },
   { id: 'server', titleKey: 'servers.title' },
   { id: 'mcp', titleKey: 'mcp.title' },
   { id: 'obsidian', titleKey: 'obsidian.title' },
@@ -117,6 +119,7 @@ export function SettingsPage() {
               <ManageLinks />
             </section>,
           )}
+          {section('arbeitsweise', <WorkingStyleSettings />)}
           {section('server', <ServerSettings />)}
           {section('mcp', <McpSettings />)}
           {section('obsidian', <ObsidianSettings />)}

@@ -45,6 +45,7 @@ import { CodeBackups } from './code/backups';
 import { MailAccountRepository } from './db/mail-account-repository';
 import { tr } from '../shared/messages';
 import { registerCatalogHandlers } from './catalog-service';
+import { registerWorkingStyleHandlers } from './working-style-service';
 import {
   applyWindowChrome,
   overlayOptions,
@@ -199,6 +200,9 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
   );
   const webSearchKey = registerWebHandlers(new AppSettingsRepository(db));
 
+  const workingStyle = registerWorkingStyleHandlers(
+    new AppSettingsRepository(db),
+  );
   registerChatHandlers(
     getProvider,
     chats,
@@ -214,6 +218,7 @@ function registerIpcHandlers(db: DatabaseSync, chats: ChatRepository) {
     },
     codeBackups,
     () => webSearchKey.load(),
+    () => workingStyle.on(),
   );
 
   registerUpdateHandlers();

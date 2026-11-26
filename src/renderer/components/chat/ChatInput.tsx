@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { ANSWER_RESERVE, suggestContextLength } from '../../../shared/context';
 import { READABLE_EXTENSIONS } from '../../../shared/file-kinds';
+import type { AutoProposal } from '../../../shared/model-router';
 import {
   FILE_DOCUMENT_MAX_BYTES,
   FILES_MAX_PER_MESSAGE,
@@ -54,7 +55,16 @@ import { ResearchStartCard } from '../research/ResearchStartCard';
 interface ChatInputProps {
   disabled: boolean;
   isRunning: boolean;
-  onSend: (text: string, attachments: Attachments) => void;
+  /** `modelOverride`: Das Modell, das du im Auto-Vorschlag bestätigt oder gewählt hast. */
+  onSend: (
+    text: string,
+    attachments: Attachments,
+    modelOverride?: string,
+  ) => void;
+  /** Auto-Modus: Soll vor dem Senden ein Modell vorgeschlagen werden? (null = gleich senden) */
+  beforeSend?: (text: string, attachments: Attachments) => AutoProposal | null;
+  /** „Nicht mehr fragen“ im Vorschlag wurde angehakt. */
+  onDontAsk?: () => void;
   onStop: () => void;
   /** Schalter in der Leiste unter dem Text (Wissen, Werkzeuge). */
   tools?: ReactNode;
@@ -120,6 +130,8 @@ export function ChatInput({
   disabled,
   isRunning,
   onSend,
+  beforeSend,
+  onDontAsk,
   onStop,
   tools,
   modelSelect,
@@ -129,6 +141,10 @@ export function ChatInput({
 }: ChatInputProps) {
   const { t, i18n } = useTranslation();
   const [text, setText] = useState('');
+  // Auto-Vorschlag, der auf deine Bestätigung wartet (der Text bleibt im Feld).
+  const [proposal, setProposal] = useState<
+    (AutoProposal & { chosen: string }) | null
+  >(null);
   // Die Startkarte einer Recherche ist offen.
   const [startCard, setStartCard] = useState(false);
   const researchArmed = research?.armed === true;
@@ -382,8 +398,17 @@ export function ChatInput({
       else setStartCard(true);
       return;
     }
+    const attachments = { images, files, tables };
+    if (!proposal) {
+      const suggested = beforeSend?.(text, attachments);
+      if (suggested) {
+        setProposal({ ...suggested, chosen: suggested.model });
+        return;
+      }
+    }
     // Die Vorschau-Adressen der Bilder gehen mit: Die Nachricht zeigt dieselben Bilder.
-    onSend(text, { images, files, tables });
+    onSend(text, attachments, proposal?.chosen);
+    setProposal(null);
     setText('');
     setImages([]);
     setFiles([]);
@@ -580,10 +605,64 @@ export function ChatInput({
           ))}
         </ul>
       )}
+      {proposal && (
+        <div
+          role="group"
+          aria-label={t('auto.title')}
+          className="mb-2 space-y-2 rounded-[var(--radius-lg)] bg-surface-hover p-3 text-sm"
+        >
+          <p>
+            <strong>{t('auto.proposal', { model: proposal.model })}</strong>{' '}
+            {proposal.reasons.length > 0 &&
+              t('auto.because', {
+                reasons: proposal.reasons
+                  .map((reason) => t(`auto.reason.${reason}`))
+                  .join(', '),
+              })}
+          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <select
+              value={proposal.chosen}
+              onChange={(e) =>
+                setProposal({ ...proposal, chosen: e.target.value })
+              }
+              aria-label={t('auto.other')}
+              className="field !py-1 text-sm"
+            >
+              {proposal.choices.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
+            <button type="button" onClick={submit} className="btn btn-primary">
+              {t('auto.send', { model: proposal.chosen })}
+            </button>
+            <button
+              type="button"
+              onClick={() => setProposal(null)}
+              className="btn btn-quiet"
+            >
+              {t('dialog.cancel')}
+            </button>
+            <label className="ml-auto flex items-center gap-2 text-xs text-muted">
+              <input
+                type="checkbox"
+                onChange={(e) => e.target.checked && onDontAsk?.()}
+                className="accent-[var(--ld-accent)]"
+              />
+              {t('auto.dontAsk')}
+            </label>
+          </div>
+        </div>
+      )}
       <textarea
         ref={textareaRef}
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => {
+          setText(e.target.value);
+          setProposal(null);
+        }}
         onKeyDown={onKeyDown}
         onPaste={onPaste}
         placeholder={t(

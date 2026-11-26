@@ -1,11 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import type { ModelInfo } from '../../../shared/api';
+import { AUTO_MODEL } from '../../../shared/model-router';
 
 interface ModelSelectProps {
   models: ModelInfo[];
   value: string;
   onChange: (model: string) => void;
   disabled?: boolean;
+  /** Bei „Auto“: welches Modell gerade vorgesehen ist. */
+  autoPick?: string;
 }
 
 export function ModelSelect({
@@ -13,12 +16,17 @@ export function ModelSelect({
   value,
   onChange,
   disabled,
+  autoPick,
 }: ModelSelectProps) {
   const { t } = useTranslation();
   const current = models.find((m) => m.name === value);
-  const label = value
-    ? `${value}${current?.parameterSize ? ` · ${current.parameterSize}` : ''}`
-    : t('chat.noModels');
+  const auto = value === AUTO_MODEL;
+  const autoLabel = `${t('chat.auto')}${autoPick ? ` · ${autoPick}` : ''}`;
+  const label = auto
+    ? autoLabel
+    : value
+      ? `${value}${current?.parameterSize ? ` · ${current.parameterSize}` : ''}`
+      : t('chat.noModels');
   return (
     <label className="flex min-w-24 shrink items-center gap-2 rounded-[var(--radius-md)] px-2 hover:bg-surface-hover focus-within:bg-surface-hover">
       <span
@@ -35,6 +43,7 @@ export function ModelSelect({
         className="min-w-0 flex-1 bg-transparent py-1 text-sm font-medium outline-none focus-visible:outline-none disabled:opacity-50 [&>option]:bg-[var(--surface-raised)]"
       >
         {models.length === 0 && <option value="">{t('chat.noModels')}</option>}
+        {models.length > 0 && <option value={AUTO_MODEL}>{autoLabel}</option>}
         {models.map((model) => (
           <option key={model.name} value={model.name}>
             {model.name}

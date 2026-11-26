@@ -49,6 +49,7 @@ import {
 import type { OfferedTool } from '../shared/tools';
 import { isLocalServer } from '../shared/server';
 import { buildChatRequest, normalizeSettings } from '../shared/settings';
+import { withWorkingStyle } from '../shared/working-style';
 import { describeChatError } from './chat-errors';
 import { CODE_CHANGE_TOOLS } from '../shared/code';
 import type { CodeBackups } from './code/backups';
@@ -151,6 +152,8 @@ export function registerChatHandlers(
   codeBackups: CodeBackups,
   /** Der Ollama-Schlüssel für die Websuche (null = keiner gespeichert). */
   webSearchKey: () => Promise<string | null>,
+  /** Gilt die Arbeitsweise (Einstellungen)? Standard: ja. */
+  workingStyleOn: () => boolean = () => true,
 ) {
   const running = new Map<string, AbortController>();
   /** Gelesene, noch nicht gesendete Tabellen (die Oberfläche kennt nur ihre Nummern). */
@@ -375,9 +378,12 @@ export function registerChatHandlers(
       request.model,
       sendable,
       settings,
-      workspace
-        ? codeAgentPrompt(path.basename(workspace), new Date(), codeMode)
-        : project?.instructions,
+      withWorkingStyle(
+        workingStyleOn(),
+        workspace
+          ? codeAgentPrompt(path.basename(workspace), new Date(), codeMode)
+          : project?.instructions,
+      ),
       {
         vision,
         data: (id) => imageData.get(id),
@@ -420,8 +426,10 @@ export function registerChatHandlers(
       provider,
       event.sender,
       chatRequest,
-      // Der Code-Agent hat nur seine eigenen Werkzeuge.
-      workspace ? [] : (settings.mcpServers ?? []),
+      // Der Code-Agent hat seine eigenen Werkzeuge, dazu CodeGraph, wenn für diesen Ordner eingerichtet.
+      workspace
+        ? mcpTools.forWorkspace(workspace)
+        : (settings.mcpServers ?? []),
       // Projekt-Skills gelten in jedem Chat des Projekts, dazu die des Chats.
       workspace
         ? (settings.skills ?? [])

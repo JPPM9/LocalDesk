@@ -3,6 +3,12 @@ import { BrowserWindow, dialog, ipcMain } from 'electron';
 import { ARTCRAFT_APPS, type ArtcraftApp } from '../shared/artcraft';
 import { findArtcraftCli } from './mcp/artcraft';
 import {
+  findCodegraphCli,
+  hasCodegraphIndex,
+  runCodegraphInit,
+  sameFolder,
+} from './mcp/codegraph';
+import {
   IpcChannels,
   type McpServerConfig,
   type McpServerView,
@@ -43,6 +49,37 @@ export function registerMcpHandlers(servers: McpRepository) {
   };
 
   ipcMain.handle(IpcChannels.listMcpServers, () => views());
+
+  ipcMain.handle(IpcChannels.detectCodegraph, (_event, folder: unknown) => ({
+    installed: findCodegraphCli() !== null,
+    indexed: typeof folder === 'string' && hasCodegraphIndex(folder),
+  }));
+
+  // Index bauen: nur für einen Ordner, der als CodeGraph-Server eingetragen ist (Formular zeigt den Knopf erst dann).
+  ipcMain.handle(
+    IpcChannels.initCodegraph,
+    async (_event, folder: unknown): Promise<Result<null>> => {
+      const cli = findCodegraphCli();
+      if (!cli) return { ok: false, error: tr('mcp.codegraphNotFound') };
+      if (
+        typeof folder !== 'string' ||
+        (await missingFolders({ folders: [folder] })) !== null
+      )
+        return {
+          ok: false,
+          error: tr('mcp.foldersNotFound', { paths: String(folder) }),
+        };
+      try {
+        await runCodegraphInit(cli, folder);
+        return { ok: true, value: null };
+      } catch (error) {
+        return {
+          ok: false,
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+    },
+  );
 
   ipcMain.handle(IpcChannels.detectArtcraft, () =>
     Object.fromEntries(
@@ -132,6 +169,18 @@ export function registerMcpHandlers(servers: McpRepository) {
         )
         .map(({ id, name, folders }) => ({ id, name, folders }));
     },
+    forWorkspace(folder) {
+      return servers
+        .listServers()
+        .filter(
+          (config) =>
+            config.kind === 'codegraph' &&
+            config.enabled &&
+            manager.status(config.id).state === 'running' &&
+            config.folders.some((f) => sameFolder(f, folder)),
+        )
+        .map((config) => config.id);
+    },
     offered(serverIds) {
       const offered: OfferedTool[] = [];
       for (const serverId of serverIds) {
@@ -195,6 +244,8 @@ const TOOL_TIMEOUT_MS = 120_000;
 
 /** Was der Chat von den MCP-Servern braucht. */
 export interface McpTools {
+  /** Laufende CodeGraph-Server für diesen Projektordner (der Code-Agent bekommt sie automatisch). */
+  forWorkspace(folder: string): string[];
   /** Tools der genannten Server, die laufen – ohne die ausgeschalteten. */
   offered(serverIds: string[]): OfferedTool[];
   /** Server, die eingeschaltet sind und laufen (das Modell darf um sie bitten). */

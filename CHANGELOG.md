@@ -3,6 +3,26 @@
 Jede Version hat hier einen Abschnitt `## <Version> – <Datum>`. Sein Text wird beim Release zu
 den Release-Notizen auf GitHub – und erscheint in LocalDesk unter „Nach Updates suchen“.
 
+## Unveröffentlicht
+
+**Chat**
+
+- Neue „Arbeitsweise“ (Einstellungen → Arbeitsweise, standardmäßig an): ein kurzer Block vor den Anweisungen jedes Chats und im
+  Code-Bereich. Das Modell soll erst verstehen und bei Unklarem nachfragen, die einfachste Lösung liefern, nur das Nötige ändern und am
+  Ziel prüfen. Die Idee stammt aus Andrej Karpathys Beobachtungen zu Fehlern von Sprachmodellen beim Programmieren; der Text ist
+  eigenständig formuliert. Er kostet etwa 250 Token Kontext und ist ausschaltbar.
+
+- Neu in der Modellauswahl: „Auto“. LocalDesk wählt aus den installierten Modellen das passendste für die Aufgabe: Bilder verlangen ein
+  Vision-Modell, eingeschaltete Werkzeuge ein Modell mit Werkzeugen, Programmieraufgaben bevorzugen ein Coder-Modell, Modelle, die nicht in
+  Grafik- und Arbeitsspeicher passen, fallen weg, ein bereits geladenes Modell hat Vorrang bei knappem Abstand. Vor dem Senden steht der
+  Vorschlag mit Gründen; du bestätigst, wählst ein anderes Modell oder schaltest die Rückfrage unter Einstellungen → Arbeitsweise ab.
+
+- CodeGraph als Werkzeug (Einstellungen → MCP-Server → „CodeGraph hinzufügen“): ein lokaler Code-Index, mit dem das Modell Fragen zu
+  einem Projekt mit einem Aufruf beantwortet, statt viele Dateien zu lesen. LocalDesk erkennt das installierte CodeGraph, startet es
+  für den gewählten Projektordner (Statistik immer aus), zeigt, ob der Ordner einen Index hat, und baut ihn auf Wunsch nach Rückfrage.
+  Im Code-Bereich bekommt eine Sitzung die Werkzeuge automatisch, wenn ihr Ordner so eingerichtet ist. Installiert wird CodeGraph nicht
+  von LocalDesk.
+
 ## 0.2.1 – 2026-11-26
 
 **Werkzeuge**

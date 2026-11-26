@@ -35,6 +35,8 @@ export const en: Record<MessageKey, string> = {
   'images.totalTooBig': 'The images are too large together (at most {max} MB).',
   'images.notFound': 'This image no longer exists.',
   'chat.fileTitle': 'File: {name}',
+  'prompt.workingStyle':
+    'Way of working (about how you proceed, not about your tone):\n1. Understand first, then act. State your assumptions. If the task is unclear or has several sensible readings, ask briefly instead of guessing.\n2. Keep it simple. Deliver the smallest solution that fully does the task – no extra features and no provisions for cases nobody asked for.\n3. Change only what is needed. Touch existing text or code only where the task requires it, keep its style, and do not tidy up on the side.\n4. Check against the goal. Decide up front how a correct result can be recognized, and check it at the end. Say clearly what you checked and what you did not.',
   'prompt.fileBlock': '[File: {name}]\n{text}\n[End of file: {name}]',
   'prompt.fileMarker': '[File: {name}]',
   'prompt.fileOld': '[File: {name} – no longer in the context]',
@@ -490,6 +492,8 @@ export const en: Record<MessageKey, string> = {
     '{app} is not installed on this PC. Install it with the ArtCraft Launcher and restart the server.',
   'mcp.pathHint':
     'Always write paths with forward slashes (C:/Folder/File.pdf), never with backslashes.',
+  'mcp.codegraphNotFound':
+    'CodeGraph is not installed on this PC (or the folder is missing). Install it with the command from the CodeGraph instructions and restart the server.',
   'mcp.unknownKind': 'Unknown server type',
   'mcp.needFolder': 'Please share at least one folder.',
   'mcp.maxFolders': 'At most {max} folders.',

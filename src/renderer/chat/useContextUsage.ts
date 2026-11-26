@@ -19,6 +19,7 @@ import {
 import { memoryPrompt, selectMemories } from '../../shared/memory';
 import { skillsPrompt, skillTools, type SkillView } from '../../shared/skills';
 import { effectivePermission } from '../../shared/permissions';
+import { workingStylePrompt } from '../../shared/working-style';
 import { useMcpServers } from '../hooks/useMcpServers';
 
 /**
@@ -39,6 +40,11 @@ export function useContextUsage(
   const servers = useMcpServers();
   const [memories, setMemories] = useState<MemoryView[]>([]);
   const [skills, setSkills] = useState<SkillView[]>([]);
+  // Die Arbeitsweise (Einstellungen) gehört zu den Anweisungen und zählt im Kontext mit.
+  const [workingStyleOn, setWorkingStyleOn] = useState(true);
+  useEffect(() => {
+    void window.api.getWorkingStyle().then(setWorkingStyleOn);
+  }, []);
 
   // Erinnerungen neu lesen, wenn sich der Chat-Verlauf ändert (neue Erinnerung möglich).
   useEffect(() => {
@@ -123,7 +129,11 @@ export function useContextUsage(
       skillsText: skillsPrompt(
         skills.filter((s) => activeSkills.includes(s.id) && !s.error),
       ),
-      instructions: [project?.instructions, settings.systemPrompt]
+      instructions: [
+        workingStyleOn ? workingStylePrompt() : '',
+        project?.instructions,
+        settings.systemPrompt,
+      ]
         .filter(Boolean)
         .join('\n\n'),
       // Hier zählen nur die Bilder (nicht ihr Inhalt) und die Dateien extra – Platzhalter reichen.
@@ -150,6 +160,7 @@ export function useContextUsage(
     servers,
     memories,
     skills,
+    workingStyleOn,
     modelSupportsTools,
     modelSupportsVision,
     compaction,

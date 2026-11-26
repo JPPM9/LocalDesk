@@ -21,6 +21,10 @@ const api: LocalDeskApi = {
   deleteModel: (model) => ipcRenderer.invoke(IpcChannels.deleteModel, model),
   getGpuStatus: () => ipcRenderer.invoke(IpcChannels.getGpuStatus),
   detectArtcraft: () => ipcRenderer.invoke(IpcChannels.detectArtcraft),
+  detectCodegraph: (folder) =>
+    ipcRenderer.invoke(IpcChannels.detectCodegraph, folder),
+  initCodegraph: (folder) =>
+    ipcRenderer.invoke(IpcChannels.initCodegraph, folder),
   getSystemMemory: () => ipcRenderer.invoke(IpcChannels.getSystemMemory),
   searchCatalog: (query) =>
     ipcRenderer.invoke(IpcChannels.searchCatalog, query),
@@ -144,6 +148,8 @@ const api: LocalDeskApi = {
   installSkills: (importId, picks) =>
     ipcRenderer.invoke(IpcChannels.installSkills, importId, picks),
   openSkillFolder: (id) => ipcRenderer.invoke(IpcChannels.openSkillFolder, id),
+  getWorkingStyle: () => ipcRenderer.invoke(IpcChannels.getWorkingStyle),
+  setWorkingStyle: (on) => ipcRenderer.invoke(IpcChannels.setWorkingStyle, on),
   getTheme: () => ipcRenderer.invoke(IpcChannels.getTheme),
   setTheme: (theme) => ipcRenderer.invoke(IpcChannels.setTheme, theme),
   windowCommand: (command) =>

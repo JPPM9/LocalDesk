@@ -80,7 +80,7 @@ export type ProviderStatus =
 export interface McpServerConfig {
   id: string;
   name: string;
-  kind: 'filesystem' | 'artcraft';
+  kind: 'filesystem' | 'artcraft' | 'codegraph';
   /** Ordner, auf die der Server zugreifen darf – nur diese. */
   folders: string[];
   enabled: boolean;
@@ -706,6 +706,12 @@ export interface LocalDeskApi {
   pickFolders: () => Promise<string[]>;
   /** Welche ArtCraft-Apps sind auf diesem PC installiert? */
   detectArtcraft: () => Promise<Record<ArtcraftApp, boolean>>;
+  /** CodeGraph installiert? Hat der Ordner schon einen Index? */
+  detectCodegraph: (
+    folder?: string,
+  ) => Promise<{ installed: boolean; indexed: boolean }>;
+  /** Baut den CodeGraph-Index eines Ordners (`codegraph init`). */
+  initCodegraph: (folder: string) => Promise<Result<null>>;
 
   /** Code-Sitzungen (Seite „Code“), neueste zuerst. */
   listCodeSessions: () => Promise<CodeSession[]>;
@@ -869,6 +875,9 @@ export interface LocalDeskApi {
   openSkillFolder: (id?: string) => Promise<Result<void>>;
 
   /** Farbschema (System / Hell / Dunkel) – wirkt sofort und bleibt gespeichert. */
+  /** Gilt die Arbeitsweise (Block vor den Anweisungen jedes Chats)? */
+  getWorkingStyle: () => Promise<boolean>;
+  setWorkingStyle: (on: boolean) => Promise<void>;
   getTheme: () => Promise<ThemeChoice>;
   setTheme: (theme: ThemeChoice) => Promise<void>;
   /** Zoom, Vollbild, Entwicklerwerkzeuge … (die Menüzeile gibt es nicht mehr). */
@@ -1027,6 +1036,8 @@ export const IpcChannels = {
   setToolPermission: 'mcp:set-permission',
   pickFolders: 'dialog:pick-folders',
   detectArtcraft: 'mcp:detect-artcraft',
+  detectCodegraph: 'mcp:detect-codegraph',
+  initCodegraph: 'mcp:init-codegraph',
   listCodeSessions: 'code:list-sessions',
   createCodeSession: 'code:create-session',
   listCodeDir: 'code:list-dir',
@@ -1079,6 +1090,8 @@ export const IpcChannels = {
   inspectSkillFiles: 'skills:inspect',
   installSkills: 'skills:install',
   openSkillFolder: 'skills:open-folder',
+  getWorkingStyle: 'working-style:get',
+  setWorkingStyle: 'working-style:set',
   getTheme: 'appearance:get-theme',
   setTheme: 'appearance:set-theme',
   windowCommand: 'window:command',

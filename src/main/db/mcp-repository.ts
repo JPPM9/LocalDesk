@@ -125,7 +125,7 @@ export function checkInput(input: unknown): Result<{
   id: string;
   name: string;
   folders: string[];
-  kind: 'filesystem' | 'artcraft';
+  kind: 'filesystem' | 'artcraft' | 'codegraph';
   app?: ArtcraftApp;
   allowWrite?: boolean;
 }> {
@@ -136,7 +136,11 @@ export function checkInput(input: unknown): Result<{
   if (typeof raw.id !== 'string' || raw.id === '') {
     return { ok: false, error: tr('mcp.noId') };
   }
-  if (raw.kind !== 'filesystem' && raw.kind !== 'artcraft') {
+  if (
+    raw.kind !== 'filesystem' &&
+    raw.kind !== 'artcraft' &&
+    raw.kind !== 'codegraph'
+  ) {
     return { ok: false, error: tr('mcp.unknownKind') };
   }
   if (raw.kind === 'artcraft' && !isArtcraftApp(raw.app)) {
@@ -154,8 +158,12 @@ export function checkInput(input: unknown): Result<{
     : [];
   const needsFolder =
     raw.kind === 'filesystem' ||
+    raw.kind === 'codegraph' ||
     (isArtcraftApp(raw.app) && ARTCRAFT_APPS[raw.app].roots);
   if (folders.length === 0 && needsFolder) {
+    return { ok: false, error: tr('mcp.needFolder') };
+  }
+  if (raw.kind === 'codegraph' && folders.length !== 1) {
     return { ok: false, error: tr('mcp.needFolder') };
   }
   if (folders.length > MAX_FOLDERS) {
@@ -196,7 +204,12 @@ export function isDriveRoot(folder: string): boolean {
 }
 
 function toConfig(row: ServerRow): McpServerConfig | null {
-  if (row.kind !== 'filesystem' && row.kind !== 'artcraft') return null; // unbekannte Art (z. B. aus einer neueren Version)
+  if (
+    row.kind !== 'filesystem' &&
+    row.kind !== 'artcraft' &&
+    row.kind !== 'codegraph'
+  )
+    return null; // unbekannte Art (z. B. aus einer neueren Version)
   let folders: string[] = [];
   let app: ArtcraftApp | undefined;
   let allowWrite = false;
