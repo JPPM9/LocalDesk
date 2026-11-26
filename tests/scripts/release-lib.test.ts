@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   changelogSection,
+  latestYml,
   parseLatestYml,
   sha512Base64,
 } from '../../scripts/release-lib.mjs';
@@ -75,5 +76,24 @@ describe('sha512Base64', () => {
     expect(sha512Base64(new TextEncoder().encode('abc'))).toBe(
       '3a81oZNherrMQXNJriBBMRLm+k6JqX6iCp7u5ktV05ohkpkqJ0/BqDa6PCOj/uu9RU1EI2Q86A4qmslPpUyknw==',
     );
+  });
+});
+
+describe('latestYml', () => {
+  it('baut dasselbe Format wie electron-builder und lässt sich wieder lesen', async () => {
+    const { parseLatestYml } = await import('../../scripts/release-lib.mjs');
+    const text = latestYml({
+      version: '1.2.3',
+      fileName: 'LocalDesk-Setup-1.2.3.exe',
+      sha512: 'abc==',
+      size: 42,
+      releaseDate: '2026-01-01T00:00:00.000Z',
+    });
+    expect(parseLatestYml(text)).toEqual({
+      version: '1.2.3',
+      path: 'LocalDesk-Setup-1.2.3.exe',
+      sha512: 'abc==',
+    });
+    expect(text).toContain('size: 42');
   });
 });

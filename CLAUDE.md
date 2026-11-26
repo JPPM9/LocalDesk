@@ -843,6 +843,9 @@
   Prüfbare Teile in `scripts/release-lib.mjs` (Tests in `tests/scripts/`). Im Skript läuft nur `npm`
   über die Shell (npm.cmd) – git/gh ohne, sonst zerfallen Argumente mit Leerzeichen.
   Neue Version: `package.json` erhöhen, Changelog-Abschnitt schreiben, committen, pushen, `npm run release`.
+  **Signiert (SignPath Foundation, sobald zugesagt):** Actions → „Release (signiert)“ (`.github/workflows/release-signed.yml`): baut, SignPath
+  signiert nach Freigabe dort, `scripts/finalize-signed.mjs` schreibt `latest.yml` neu (neue Prüfsumme, keine .blockmap → Update lädt voll),
+  die CI legt einen Entwurf an; Veröffentlichen = Entwurf freigeben. Richtlinie steht im README („Code signing policy").
 - **Update-Knopf** (`src/main/update-service.ts`, `shared/update.ts`, `settings/UpdateSection.tsx` unter
   „Über LocalDesk“): electron-updater 6.8.10 (fest, von Vite in main.cjs gebündelt – geprüft in der
   gebauten App). `autoDownload`/`autoInstallOnAppQuit` aus, kein Logger; Feed per `setFeedURL` GitHub

@@ -1,0 +1,74 @@
+# Signiertes Release: bauen → SignPath signiert (nach deiner Freigabe dort) → Entwurf auf GitHub.
+# Gestartet wird von Hand (Actions → „Release (signiert)“). Der Entwurf wird erst von dir veröffentlicht.
+#
+# Einmalig einzurichten (nach der Zusage der SignPath Foundation), unter Settings → Secrets and variables → Actions:
+#   Secret    SIGNPATH_API_TOKEN          API-Token des SignPath-Benutzers (CI-Benutzer)
+#   Variable  SIGNPATH_ORGANIZATION_ID    Organisations-ID aus SignPath
+#   Variable  SIGNPATH_PROJECT_SLUG       Projekt-Kürzel, z. B. localdesk
+#   Variable  SIGNPATH_SIGNING_POLICY     Signatur-Richtlinie, z. B. release-signing
+name: Release (signiert)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    outputs:
+      artifact-id: ${{ steps.upload.outputs.artifact-id }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      # Baut App und (unsignierten) Installer: out/installer/LocalDesk-Setup-<Version>.exe
+      - run: npm run dist
+      - id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: installer-unsigned
+          path: out/installer/LocalDesk-Setup-*.exe
+          if-no-files-found: error
+
+  sign-and-draft:
+    needs: build
+    runs-on: windows-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Zur Signatur an SignPath schicken (Freigabe dort nötig)
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY }}
+          github-artifact-id: ${{ needs.build.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed
+      - name: Release-Dateien aus dem signierten Installer machen
+        shell: bash
+        run: |
+          installer=$(ls signed/LocalDesk-Setup-*.exe)
+          node scripts/finalize-signed.mjs "$installer" release-files
+      - name: Entwurf anlegen (du veröffentlichst ihn selbst)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(node -p "require('./package.json').version")
+          gh release create "v$version" release-files/LocalDesk-Setup-$version.exe release-files/latest.yml \
+            --draft --target "$GITHUB_SHA" --title "LocalDesk $version" --notes-file release-files/release-notes.md

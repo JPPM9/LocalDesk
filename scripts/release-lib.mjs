@@ -48,3 +48,26 @@ export function parseLatestYml(text) {
 export function sha512Base64(bytes) {
   return createHash('sha512').update(bytes).digest('base64');
 }
+
+/**
+ * latest.yml für den Update-Knopf (gleiches Format wie von electron-builder). Nach dem Signieren
+ * muss sie neu entstehen: Die Signatur verändert die Datei, also auch Prüfsumme und Größe.
+ * @param {{ version: string, fileName: string, sha512: string, size: number, releaseDate: string }} info
+ */
+export function latestYml({ version, fileName, sha512, size, releaseDate }) {
+  return [
+    `version: ${version}`,
+    'files:',
+    `  - url: ${fileName}`,
+    `    sha512: ${sha512}`,
+    `    size: ${size}`,
+    `path: ${fileName}`,
+    `sha512: ${sha512}`,
+    `releaseDate: '${releaseDate}'`,
+    '',
+  ].join('\n');
+}
+
+/** Hinweis für die Release-Seite (SignPath verlangt ihn auf der Download-/Release-Seite). */
+export const SIGNING_NOTE =
+  'Code signing policy: https://github.com/JPPM9/LocalDesk#code-signing-policy – free code signing provided by SignPath.io, certificate by SignPath Foundation.';

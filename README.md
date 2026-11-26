@@ -184,6 +184,14 @@ src/
 - Before you open a pull request, run `npm run lint`, `npm run typecheck` and `npm test`. All three must pass.
 - Keep the privacy promise: a change that adds a new network connection must be added to [docs/privacy.md](docs/privacy.md) in the same change.
 
+## Code signing policy
+
+Free code signing provided by [SignPath.io](https://signpath.io), certificate by [SignPath Foundation](https://signpath.org).
+
+- **Authors, reviewers and approvers:** [JPPM9](https://github.com/JPPM9) (the sole maintainer holds all three roles).
+- **What is signed:** only the Windows installer `LocalDesk-Setup-<version>.exe`, built from the source code in this repository by the release workflow (`.github/workflows/release-signed.yml`). Every release needs a manual approval before it is signed.
+- **Privacy policy:** see [docs/privacy.md](docs/privacy.md). LocalDesk does not transfer any information to other networked systems unless you request it (for example a model search, a web search or an update check).
+
 ## 6. Conclusion and License
 
 LocalDesk is a small, careful tool: local models, your own files, and a confirmation card before anything changes. It is developed in small steps and tested by running the real app.
