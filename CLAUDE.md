@@ -300,7 +300,7 @@
 - **Netzwerk**: nur Ollama-Server (lokal/LAN), Modell-Downloads über Ollama, Update-Prüfung nur per Knopf,
   Modell-Katalog (`huggingface.co`, nur auf Klick in „Modelle → Entdecken“, `catalog-service.ts`),
   ArtCraft-Apps als MCP-Server (geschlossene Art `artcraft`: `<app>-cli.exe mcp` aus „Programme“, Lesen/Schreiben nur in freigegebenen Ordnern
-  über `--automation-read-root`/`--automation-write-root`, Schreiben standardmäßig aus; Liste in `shared/artcraft.ts`, Start in `mcp/artcraft.ts`),
+  über `--automation-read-root`/`--automation-write-root`, Schreiben standardmäßig aus; Liste in `shared/artcraft.ts`, Start in `mcp/artcraft.ts`; Craft Anything ohne Ordner-Beschränkung: nur `mcp --restricted`, jedes Werkzeug fragt),
   weitere KI-Server (OpenAI-kompatibel, `providers/openai-compat.ts`; nur selbst eingetragene Profile, API-Schlüssel verschlüsselt in
   `server_profiles.api_key_enc`, bei Servern außerhalb des eigenen Netzes `confirmAll` = Rückfrage vor jedem Werkzeug),
   und (Phase 11, vom Nutzer freigegeben) Gmail: nur `accounts.google.com`, `oauth2.googleapis.com`,

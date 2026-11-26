@@ -459,7 +459,8 @@
     "allowWrite": "May create and change files in these folders",
     "allowWriteHint": "Without the tick the app can only read files; saving and exporting are blocked. LocalDesk still asks before every tool that changes something.",
     "writeBadge": "may write",
-    "readBadge": "read only"
+    "readBadge": "read only",
+    "unconfined": "Craft Anything cannot be limited to folders: it examines files and programs you name in the chat. LocalDesk starts it in restricted mode (no running code, no web, no capture) and asks before every tool."
   },
   "servers": {
     "title": "AI servers",

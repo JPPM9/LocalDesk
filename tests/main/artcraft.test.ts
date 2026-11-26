@@ -54,6 +54,16 @@ describe('ArtCraft-Apps', () => {
     ]);
   });
 
+  it('Craft Anything startet nur im eingeschränkten Modus und ohne Ordner-Argumente', () => {
+    expect(artcraftArgs('craftanything', ['D:\\a'], true)).toEqual([
+      'mcp',
+      '--restricted',
+    ]);
+    expect(artcraftArgs('craftanything', [], false)).not.toContain(
+      '--allow-run',
+    );
+  });
+
   it('meldet eine fehlende App mit Namen statt zu starten', () => {
     const config = {
       id: 'x',
@@ -85,6 +95,28 @@ describe('Speichern als MCP-Server', () => {
       ok: true,
       value: { kind: 'artcraft', app: 'pdfcraft', allowWrite: false },
     });
+  });
+
+  it('Craft Anything braucht keinen Ordner, PdfCraft schon', () => {
+    const repo = new McpRepository(openDatabase(':memory:'));
+    expect(
+      repo.saveServer({
+        id: 'c',
+        name: 'Craft Anything',
+        kind: 'artcraft',
+        app: 'craftanything',
+        folders: [],
+      }).ok,
+    ).toBe(true);
+    expect(
+      repo.saveServer({
+        id: 'p',
+        name: 'PdfCraft',
+        kind: 'artcraft',
+        app: 'pdfcraft',
+        folders: [],
+      }).ok,
+    ).toBe(false);
   });
 
   it('lehnt unbekannte Apps und ein ganzes Laufwerk ab', () => {

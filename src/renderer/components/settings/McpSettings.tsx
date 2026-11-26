@@ -126,63 +126,74 @@ export function McpSettings() {
                   ))}
                 </select>
               </Field>
-              <label className="flex items-start gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={form.allowWrite === true}
-                  onChange={(e) =>
-                    setForm({ ...form, allowWrite: e.target.checked })
-                  }
-                  className="mt-1 accent-[var(--ld-accent)]"
-                />
-                <span>
-                  {t('mcp.allowWrite')}
-                  <span className="block text-xs text-muted">
-                    {t('mcp.allowWriteHint')}
+              {form.app && !ARTCRAFT_APPS[form.app].roots && (
+                <p role="note" className="text-sm text-warn">
+                  {t('mcp.unconfined')}
+                </p>
+              )}
+              {(!form.app || ARTCRAFT_APPS[form.app].roots) && (
+                <label className="flex items-start gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={form.allowWrite === true}
+                    onChange={(e) =>
+                      setForm({ ...form, allowWrite: e.target.checked })
+                    }
+                    className="mt-1 accent-[var(--ld-accent)]"
+                  />
+                  <span>
+                    {t('mcp.allowWrite')}
+                    <span className="block text-xs text-muted">
+                      {t('mcp.allowWriteHint')}
+                    </span>
                   </span>
-                </span>
-              </label>
+                </label>
+              )}
             </>
           )}
-          <Field label={t('mcp.folders')} hint={t('mcp.foldersHint')}>
-            <ul className="space-y-1">
-              {form.folders.map((folder) => (
-                <li
-                  key={folder}
-                  className="flex items-center gap-2 rounded px-2 py-1 bg-surface shadow-card"
-                >
-                  <FolderOpen size={14} className="shrink-0 text-muted" />
-                  <span
-                    className="min-w-0 flex-1 truncate font-mono text-xs"
-                    title={folder}
+          {(form.kind === 'filesystem' ||
+            !form.app ||
+            ARTCRAFT_APPS[form.app].roots) && (
+            <Field label={t('mcp.folders')} hint={t('mcp.foldersHint')}>
+              <ul className="space-y-1">
+                {form.folders.map((folder) => (
+                  <li
+                    key={folder}
+                    className="flex items-center gap-2 rounded px-2 py-1 bg-surface shadow-card"
                   >
-                    {folder}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setForm({
-                        ...form,
-                        folders: form.folders.filter((f) => f !== folder),
-                      })
-                    }
-                    aria-label={t('mcp.removeFolder')}
-                    className="grid h-7 w-7 place-items-center rounded text-muted hover:text-text"
-                  >
-                    <X size={13} />
-                  </button>
-                </li>
-              ))}
-            </ul>
-            <button
-              type="button"
-              onClick={() => void addFolders()}
-              className="btn btn-secondary flex items-center gap-2"
-            >
-              <Plus size={13} />
-              {t('mcp.addFolder')}
-            </button>
-          </Field>
+                    <FolderOpen size={14} className="shrink-0 text-muted" />
+                    <span
+                      className="min-w-0 flex-1 truncate font-mono text-xs"
+                      title={folder}
+                    >
+                      {folder}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setForm({
+                          ...form,
+                          folders: form.folders.filter((f) => f !== folder),
+                        })
+                      }
+                      aria-label={t('mcp.removeFolder')}
+                      className="grid h-7 w-7 place-items-center rounded text-muted hover:text-text"
+                    >
+                      <X size={13} />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                onClick={() => void addFolders()}
+                className="btn btn-secondary flex items-center gap-2"
+              >
+                <Plus size={13} />
+                {t('mcp.addFolder')}
+              </button>
+            </Field>
+          )}
           {error && <p className="text-xs text-error">{error}</p>}
           <div className="flex justify-end gap-2">
             <button

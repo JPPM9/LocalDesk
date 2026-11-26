@@ -7,6 +7,10 @@ den Release-Notizen auf GitHub – und erscheint in LocalDesk unter „Nach Upda
 
 **Werkzeuge**
 
+- Neu unter ArtCraft-Apps: Craft Anything (untersucht Dateien, Programme und Webseiten). Es lässt sich nicht auf Ordner beschränken;
+  LocalDesk startet es deshalb nur im eingeschränkten Modus (nichts ausführen, kein Web, keine Aufnahmen) und fragt bei jedem Werkzeug
+  nach, auch bei lesenden.
+
 - Werkzeuge mit Pfad-Eingaben (MCP-Server, ArtCraft-Apps) tragen jetzt den Hinweis, Pfade mit Schrägstrichen zu schreiben. Mit
   Backslashes brach Ollama Werkzeug-Aufrufe manchmal mit „invalid character in string escape code“ ab.
 

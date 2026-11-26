@@ -1,7 +1,11 @@
 import path from 'node:path';
 import type { DatabaseSync } from 'node:sqlite';
 import type { McpServerConfig, Result, ToolPermission } from '../../shared/api';
-import { isArtcraftApp, type ArtcraftApp } from '../../shared/artcraft';
+import {
+  ARTCRAFT_APPS,
+  isArtcraftApp,
+  type ArtcraftApp,
+} from '../../shared/artcraft';
 import { isToolPermission } from '../../shared/permissions';
 import { tr } from '../../shared/messages';
 
@@ -148,7 +152,10 @@ export function checkInput(input: unknown): Result<{
         ),
       ]
     : [];
-  if (folders.length === 0) {
+  const needsFolder =
+    raw.kind === 'filesystem' ||
+    (isArtcraftApp(raw.app) && ARTCRAFT_APPS[raw.app].roots);
+  if (folders.length === 0 && needsFolder) {
     return { ok: false, error: tr('mcp.needFolder') };
   }
   if (folders.length > MAX_FOLDERS) {

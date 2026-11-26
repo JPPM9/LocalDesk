@@ -38,6 +38,8 @@ export function artcraftArgs(
   folders: string[],
   allowWrite: boolean,
 ): string[] {
+  // Ohne Ordner-Beschränkung (Craft Anything): nur der eingeschränkte Modus, nie `--allow-run`.
+  if (!ARTCRAFT_APPS[app].roots) return ['mcp', '--restricted'];
   return [
     'mcp',
     ...(ARTCRAFT_APPS[app].compact ? ['--compact'] : []),

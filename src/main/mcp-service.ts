@@ -140,8 +140,18 @@ export function registerMcpHandlers(servers: McpRepository) {
         if (!config?.enabled || status.state !== 'running') continue;
         const overrides = servers.listPermissions(serverId);
         for (const tool of status.tools) {
-          const permission = effectivePermission(tool, overrides);
+          let permission = effectivePermission(tool, overrides);
           if (permission === 'off') continue;
+          // Apps ohne Ordner-Beschränkung: auch „nur lesende“ Werkzeuge fragen, außer du hast
+          // selbst „immer erlauben“ gewählt.
+          if (
+            config.kind === 'artcraft' &&
+            config.app &&
+            !ARTCRAFT_APPS[config.app].roots &&
+            permission === 'always' &&
+            overrides[tool.name] !== 'always'
+          )
+            permission = 'ask';
           offered.push({
             serverId,
             serverName: config.name,

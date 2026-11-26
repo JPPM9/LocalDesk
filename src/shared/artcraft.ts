@@ -1,6 +1,6 @@
 // ArtCraft-Apps, die LocalDesk über deren MCP-Server bedienen darf (geschlossene Liste).
 // Jede App bringt `<name>-cli.exe` mit; `mcp` startet den MCP-Server. Geprüft ist die Liste
-// mit den installierten Apps (PdfCraft 0.21, PhotoCraft 0.23): beide kennen
+// mit den installierten Apps (PdfCraft 0.21, PhotoCraft 0.23, Craft Anything 0.6): PdfCraft und PhotoCraft kennen
 // `--automation-read-root` und `--automation-write-root` – ohne Angabe ist der Zugriff gesperrt.
 
 export const ARTCRAFT_APPS = {
@@ -11,12 +11,24 @@ export const ARTCRAFT_APPS = {
     dir: 'PdfCraft',
     exe: 'pdfcraft-cli.exe',
     compact: true,
+    roots: true,
   },
   photocraft: {
     name: 'PhotoCraft',
     dir: 'PhotoCraft',
     exe: 'photocraft-cli.exe',
     compact: false,
+    roots: true,
+  },
+  // Untersucht Dateien, Programme und Webseiten (Reverse Engineering). Hat keine Ordner-Beschränkung:
+  // LocalDesk startet sie nur mit `--restricted` (nichts ausführen, kein Web, keine Aufnahmen) und
+  // fragt bei JEDEM Werkzeug nach – auch bei „nur lesenden“.
+  craftanything: {
+    name: 'Craft Anything',
+    dir: 'Craft Anything',
+    exe: 'craft-anything-cli.exe',
+    compact: false,
+    roots: false,
   },
 } as const;
 
